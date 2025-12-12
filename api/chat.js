@@ -199,7 +199,7 @@ Si besoin, tu peux rappeler : « Ce test et mes réponses sont des outils de bie
 `;
 
 // 🔧 2) Handler Vercel pour /api/chat
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method Not Allowed" });
     return;
@@ -261,4 +261,4 @@ module.exports = async (req, res) => {
     console.error("THYREN OpenAI proxy error:", err);
     res.status(500).json({ error: "THYREN OpenAI proxy error" });
   }
-};
+}
