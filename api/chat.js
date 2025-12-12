@@ -237,6 +237,24 @@ export default async function handler(req, res) {
 
   try {
     const { messages, conversationId } = req.body || {};
+// 🔒 Détection explicite du démarrage du quiz
+const firstUserMessage = (messages || [])
+  .find(m => m?.role === "user")?.content || "";
+
+const QUIZ_LOCK = /commencer le quiz/i.test(String(firstUserMessage))
+  ? `
+MODE QUIZ FORCÉ — OBLIGATOIRE
+L’utilisateur a demandé explicitement de commencer le quiz.
+
+INSTRUCTIONS ABSOLUES :
+- Tu dois suivre STRICTEMENT le document [QUESTION_THYREN]
+- Tu dois poser les questions DANS L’ORDRE
+- UNE SEULE question à la fois
+- Tu ne peux PAS improviser
+- Tu ne peux PAS sauter de question
+- Tu ne peux PAS reformuler la structure du quiz
+`
+  : "";
 
     if (!Array.isArray(messages)) {
       res.status(400).json({ error: "messages must be an array" });
@@ -249,8 +267,9 @@ export default async function handler(req, res) {
       return;
     }
 
-    const DOCS_SYSTEM = `
+   const DOCS_SYSTEM = `
 DOCS SUPLEMINT (à suivre strictement, ne rien inventer)
+${QUIZ_LOCK}
 
 [QUESTION_THYREN]
 ${QUESTION_THYREN}
