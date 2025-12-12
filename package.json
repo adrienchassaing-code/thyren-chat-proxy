@@ -1,0 +1,10 @@
+{
+  "name": "thyren-chat-proxy",
+  "version": "1.0.0",
+  "description": "Proxy OpenAI pour THYREN 0.7",
+  "main": "api/chat.js",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
