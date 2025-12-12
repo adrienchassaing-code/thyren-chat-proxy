@@ -1,1 +1,0 @@
-# thyren-chat-proxy
