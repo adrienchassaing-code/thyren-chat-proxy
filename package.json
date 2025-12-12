@@ -1,7 +1,7 @@
 {
   "name": "thyren-chat-proxy",
   "version": "1.0.0",
-  "description": "Proxy OpenAI pour THYREN 0.7",
+  "description": "Proxy OpenAI pour THYREN",
   "private": true,
   "type": "module",
   "main": "api/chat.js",
