@@ -11,43 +11,31 @@ const readDataFile = (filename) => {
   }
 };
 
-// ⚠️ On lit les fichiers (ils existent dans ton repo)
 const QUESTION_THYREN = readDataFile("QUESTION_THYREN.txt");
 const LES_CURES_ALL = readDataFile("LES_CURES_ALL.txt");
 const COMPOSITIONS = readDataFile("COMPOSITIONS.txt");
 const SAV_FAQ = readDataFile("SAV_FAQ.txt");
 
-// ====== Helpers ======
-function lastUserText(messages) {
-  for (let i = messages.length - 1; i >= 0; i--) {
-    if (messages[i]?.role === "user") return String(messages[i]?.content || "");
-  }
-  return "";
-}
-
-// On limite pour éviter d’exploser le contexte
-function clip(text, maxChars) {
-  if (!text) return "";
-  if (text.length <= maxChars) return text;
-  return text.slice(0, maxChars) + "\n...[TRONQUÉ POUR LIMITE TECHNIQUE]...";
-}
-
-// Détection simple pour n’injecter les gros docs que quand c’est utile
-function needsFAQ(text) {
-  return /livraison|retour|remboursement|abonnement|paiement|commande|sav|faq|support/i.test(text);
-}
-function needsCompositions(text) {
-  return /composition|ingr[eé]dient|dosage|g[ée]lule|allerg|iode|selen|zinc|fer|vitamine/i.test(text);
-}
-function needsCures(text) {
-  return /cure|produit|prendre|posologie|combiner|pack|thyro|thyro[iï]de/i.test(text);
-}
-function isQuizStart(text) {
-  return /commencer le quiz|commencez le quiz|faire le test|test thyren|quiz/i.test(text);
-}
-
-// ====== 🔐 TON SCRIPT (inchangé) ======
+// 🔐 Prompt système THYREN (avec injection des docs)
 const SYSTEM_PROMPT = `
+SCRIPT THYREN 0.8.4 — VERSION JSON UNIQUEMENT
+
+===== BASE DE DONNÉES SUPLEMINT =====
+
+[QUESTION_THYREN]
+${QUESTION_THYREN}
+
+[LES_CURES_ALL]
+${LES_CURES_ALL}
+
+[COMPOSITIONS]
+${COMPOSITIONS}
+
+[SAV_FAQ]
+${SAV_FAQ}
+
+===== FIN BASE DE DONNÉES =====
+
 SCRIPT THYREN 0.8.4 — VERSION JSON UNIQUEMENT
 1. RÔLE & TON GÉNÉRAL
 Tu es THYREN, l’IA scientifique de SUPLEMINT®.
@@ -245,28 +233,7 @@ Si une cure contient un ingrédient potentiellement allergène pour l’utilisat
 Tu ne formules jamais de diagnostic médical.
 Si besoin, tu peux rappeler : « Ce test et mes réponses sont des outils de bien-être et d’éducation à la santé. Ils ne remplacent pas un avis médical. En cas de doute ou de symptômes persistants, consulte un professionnel de santé. »
 
-// ====== Construire le message "DOCS" séparé ======
-function buildDocsSystemMessage(userText) {
-  // Toujours présent pour le quiz (sinon ça improvise)
-  let docs = `DOCS SUPLEMINT (à suivre strictement, ne rien inventer)\n`;
-
-  // QUESTION_THYREN toujours (car même après 1-2 questions, il doit continuer l’ordre)
-  docs += `\n[QUESTION_THYREN]\n${clip(QUESTION_THYREN, 20000)}\n`;
-
-  // On ajoute les gros docs seulement si utile (sinon on détruit la qualité)
-  const wantFAQ = needsFAQ(userText);
-  const wantComp = needsCompositions(userText);
-  const wantCures = needsCures(userText);
-
-  // Si l’utilisateur démarre le quiz, inutile d’ajouter cures/compo/faq au départ
-  const quizStart = isQuizStart(userText);
-
-  if (!quizStart && wantFAQ) docs += `\n[SAV_FAQ]\n${clip(SAV_FAQ, 12000)}\n`;
-  if (!quizStart && wantComp) docs += `\n[COMPOSITIONS]\n${clip(COMPOSITIONS, 12000)}\n`;
-  if (!quizStart && wantCures) docs += `\n[LES_CURES_ALL]\n${clip(LES_CURES_ALL, 12000)}\n`;
-
-  return docs;
-}
+`;
 
 // 🔧 Handler Vercel pour /api/chat
 export default async function handler(req, res) {
@@ -275,7 +242,7 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // ✅ preflight
+  // ✅ Réponse au preflight CORS
   if (req.method === "OPTIONS") {
     res.status(204).end();
     return;
@@ -300,13 +267,8 @@ export default async function handler(req, res) {
       return;
     }
 
-    const userText = lastUserText(messages);
-    const DOCS_SYSTEM = buildDocsSystemMessage(userText);
-
-    // ✅ IMPORTANT : script (règles) séparé des docs
     const openAiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
-      { role: "system", content: DOCS_SYSTEM },
       ...messages.map((m) => ({
         role: m.role === "assistant" ? "assistant" : "user",
         content: String(m.content || ""),
@@ -322,7 +284,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: "gpt-4.1-mini",
         messages: openAiMessages,
-        response_format: { type: "json_object" }, // force JSON unique
+        response_format: { type: "json_object" },
         temperature: 0.2,
       }),
     });
