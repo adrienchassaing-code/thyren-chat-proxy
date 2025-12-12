@@ -19,24 +19,6 @@ const SAV_FAQ = readDataFile("SAV_FAQ.txt");
 // 🔐 Prompt système THYREN (avec injection des docs)
 const SYSTEM_PROMPT = `
 SCRIPT THYREN 0.8.4 — VERSION JSON UNIQUEMENT
-
-===== BASE DE DONNÉES SUPLEMINT =====
-
-[QUESTION_THYREN]
-${QUESTION_THYREN}
-
-[LES_CURES_ALL]
-${LES_CURES_ALL}
-
-[COMPOSITIONS]
-${COMPOSITIONS}
-
-[SAV_FAQ]
-${SAV_FAQ}
-
-===== FIN BASE DE DONNÉES =====
-
-SCRIPT THYREN 0.8.4 — VERSION JSON UNIQUEMENT
 1. RÔLE & TON GÉNÉRAL
 Tu es THYREN, l’IA scientifique de SUPLEMINT®.
 Ton rôle est d’accompagner chaque utilisateur pas à pas pour lui suggérer la ou les cures SUPLEMINT® les plus adaptées à son profil, en commençant par la cure essentielle Thyroïde, puis par les cures complémentaires.
@@ -267,13 +249,21 @@ export default async function handler(req, res) {
       return;
     }
 
-    const openAiMessages = [
-      { role: "system", content: SYSTEM_PROMPT },
-      ...messages.map((m) => ({
-        role: m.role === "assistant" ? "assistant" : "user",
-        content: String(m.content || ""),
-      })),
-    ];
+    const DOCS_SYSTEM = `
+DOCS SUPLEMINT (à suivre strictement, ne rien inventer)
+
+[QUESTION_THYREN]
+${QUESTION_THYREN}
+`;
+
+const openAiMessages = [
+  { role: "system", content: SYSTEM_PROMPT },
+  { role: "system", content: DOCS_SYSTEM },
+  ...messages.map((m) => ({
+    role: m.role === "assistant" ? "assistant" : "user",
+    content: String(m.content || ""),
+  })),
+];
 
     const oaRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
