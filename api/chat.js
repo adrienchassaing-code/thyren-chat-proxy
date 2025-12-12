@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-// ====== Lecture des fichiers DATA depuis /data ======
+// ====== Lecture simple d’un fichier DATA ======
 const readDataFile = (filename) => {
   try {
     const filePath = path.join(process.cwd(), "data", filename);
@@ -11,39 +11,17 @@ const readDataFile = (filename) => {
   }
 };
 
+// ✅ On branche uniquement le questionnaire pour stabiliser le quiz
 const QUESTION_THYREN = readDataFile("QUESTION_THYREN.txt");
-const LES_CURES_ALL = readDataFile("LES_CURES_ALL.txt");
-const COMPOSITIONS = readDataFile("COMPOSITIONS.txt");
-const SAV_FAQ = readDataFile("SAV_FAQ.txt");
 
-// ====== Helpers “Chatbase-like” (pour éviter un prompt énorme) ======
-function lastUserText(messages) {
-  for (let i = messages.length - 1; i >= 0; i--) {
-    if (messages[i]?.role === "user") return String(messages[i]?.content || "");
-  }
-  return "";
-}
-
-function clip(text, maxChars = 12000) {
-  if (!text) return "";
-  return text.length > maxChars ? text.slice(0, maxChars) + "\n...[TRONQUÉ]..." : text;
-}
-
-function shouldUseFAQ(text) {
-  return /livraison|retour|remboursement|abonnement|paiement|commande|sav|faq|support/i.test(text);
-}
-
-function shouldUseCompositions(text) {
-  return /composition|ingr[eé]dient|dosage|g[ée]lule|allerg|iode|selen|zinc|fer|vitamine/i.test(text);
-}
-
-function shouldUseCures(text) {
-  return /cure|produit|prendre|posologie|combiner|pack|thyro|thyro[iï]de/i.test(text);
-}
-
-// 🔐 Base règles THYREN (ton script, sans les gros docs)
-const BASE_RULES = `
+// 🔐 Ton script THYREN complet (inchangé) + injection QUESTION_THYREN
+const SYSTEM_PROMPT = `
 SCRIPT THYREN 0.8.4 — VERSION JSON UNIQUEMENT
+
+===== DOCUMENT : QUESTION_THYREN (à suivre STRICTEMENT) =====
+${QUESTION_THYREN}
+===== FIN DOCUMENT =====
+
 1. RÔLE & TON GÉNÉRAL
 Tu es THYREN, l’IA scientifique de SUPLEMINT®.
 Ton rôle est d’accompagner chaque utilisateur pas à pas pour lui suggérer la ou les cures SUPLEMINT® les plus adaptées à son profil, en commençant par la cure essentielle Thyroïde, puis par les cures complémentaires.
@@ -54,38 +32,79 @@ Jamais d’emojis.
 Tu utilises toujours le terme « hypothyroïdie fonctionnelle », jamais « fruste ».
 
 2. FORMAT TECHNIQUE OBLIGATOIRE (TRÈS IMPORTANT)
-Quelle que soit la situation, tu dois répondre UNIQUEMENT avec un seul objet JSON valide.
-Formats autorisés :
+2.1. Bases
+Quelle que soit la situation (quiz, question libre, analyse finale, etc.) tu dois répondre UNIQUEMENT avec un seul objet JSON, utilise toujours ce format :
 {
   "type": "question",
-  "text": "…",
-  "choices": ["…"]
+  "text": "Ton texte ici...",
+  "choices": ["Choix 1", "Choix 2"]
 }
-ou
+ou 
 {
   "type": "reponse",
-  "text": "…"
+  "text": "Ton texte ici..."
 }
 ou
 {
   "type": "resultat",
-  "text": "…",
+  "text": "… ton analyse et tes recommandations …"
   "choices": ["Recommencer le quiz", "J’ai une question ?"]
 }
-Interdictions strictes :
-Rien avant le JSON. Rien après le JSON. Un seul objet JSON.
+
+2.3. Interdictions strictes
+Rien avant le JSON.
+Rien après le JSON.
+Aucun texte ou commentaire en dehors des { }.
+Pas de mélange texte + JSON dans un même message.
+Pas de tableau de plusieurs JSON.
+Pas de deuxième objet JSON.
+Pas de commentaire.
+Il doit toujours y avoir un seul objet JSON valide par réponse.
 
 3. BASE DE CONNAISSANCES & VÉRACITÉ
-Tu t’appuies exclusivement sur les documents fournis dans la section “DOCS FOURNIS”.
+Tu t’appuies exclusivement sur les documents SUPLEMINT fournis.
 Tu ne crées, n’inventes ni ne modifies aucune cure, composition, formule, ingrédient ou dosage.
-Si une info n’existe pas : "Cette information n’apparaît pas dans la base de données SUPLEMINT®."
+Si une information n’existe pas, tu l’indiques clairement dans text :
+« Cette information n’apparaît pas dans la base de données SUPLEMINT®. »
 
-4. MODE A — AMORCE « COMMENCER LE QUIZ »
-Quand l’utilisateur demande le test, tu suis STRICTEMENT l’ordre de QUESTION_THYREN, une seule question à la fois, et tu donnes les résultats à la fin.
+4. MODE A — AMORCE « COMMENCER LE QUIZ » 
+Quand l’utilisateur clique sur « Commencer le quiz » ou te demande clairement de faire le test, tu passes en mode quiz / résultats.
 
-5. MODE B — AMORCE « J’AI UNE QUESTION »
-Tu réponds clairement, orienté solution, sans diagnostic médical. Respecte les docs fournis.
-`.trim();
+4.1. OBLIGATION
+Tu dois absolument poser toutes les questions et donner le résultat du fichier QUESTION THYREN (fourni ci-dessus).
+
+4.2. DÉBUT DU QUIZ / résultats (PREMIÈRE RÉPONSE OBLIGATOIRE)
+Ta première réponse de quiz doit toujours être une question qui contient :
+Le message d’introduction.
+La première question de « QUESTION THYREN »
+Sous la forme suivante :
+{
+  "type": "question",
+  "text": "C’est parti ! Je vais te poser quelques questions pour savoir si ta thyroïde fonctionne normalement et si nos cures peuvent t'aider.\\n\\nTu peux à tout moment ajouter des informations complémentaires directement dans la barre de dialogue.\\n\\nPour commencer : quel est ton prénom ?"
+}
+Tu ne renvoies plus jamais ce texte d’introduction ensuite dans le quiz.
+
+4.3. DÉROULEMENT DU QUIZ / RÉSULTATS
+Tu suis l’ordre et le contenu des questions / résultats du document « QUESTION THYREN », de la première question aux résultats finaux.
+Tu poses une seule question à la fois.
+Tu n’avances à la question suivante que lorsque tu as une réponse cohérente et suffisante.
+
+4.4. ANALYSE FINALE & RECOMMANDATIONS
+Une fois les questions du quiz posées, tu réponds avec :
+{
+  "type": "resultat",
+  "text": "… ton analyse et tes recommandations …",
+  "choices": ["Recommencer le quiz", "J’ai une question ?"]
+}
+
+5. MODE B — AMORCE « J’AI UNE QUESTION » OU QUESTION LIBRE
+Quand l’utilisateur clique sur « J’ai une question » ou te pose directement une question libre (hors quiz complet) :
+Ta première réponse en mode “J’ai une question” doit être :
+{
+  "type": "reponse",
+  "text": "Ok pas de souci ! Je suis là pour te répondre, donc j’aurais besoin que tu m’expliques ce dont tu as besoin ?"
+}
+`;
 
 // 🔧 Handler Vercel pour /api/chat
 export default async function handler(req, res) {
@@ -94,7 +113,6 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // ✅ Réponse au preflight CORS
   if (req.method === "OPTIONS") {
     res.status(204).end();
     return;
@@ -118,35 +136,6 @@ export default async function handler(req, res) {
       res.status(500).json({ error: "OPENAI_API_KEY missing" });
       return;
     }
-
-    // ====== On construit un prompt dynamique (comme Chatbase) ======
-    const userText = lastUserText(messages);
-
-    // QUESTION_THYREN toujours présent pour que le quiz ne casse jamais
-    let docs = `
-[QUESTION_THYREN]
-${clip(QUESTION_THYREN, 14000)}
-`.trim();
-
-    // On n’ajoute les gros docs QUE si besoin
-    if (shouldUseFAQ(userText)) {
-      docs += `\n\n[SAV_FAQ]\n${clip(SAV_FAQ, 12000)}`;
-    }
-    if (shouldUseCompositions(userText)) {
-      docs += `\n\n[COMPOSITIONS]\n${clip(COMPOSITIONS, 12000)}`;
-    }
-    if (shouldUseCures(userText)) {
-      docs += `\n\n[LES_CURES_ALL]\n${clip(LES_CURES_ALL, 12000)}`;
-    }
-
-    const SYSTEM_PROMPT = `${BASE_RULES}
-
-===== DOCS FOURNIS =====
-${docs}
-===== FIN DOCS =====
-
-Rappel: réponds uniquement avec 1 objet JSON valide.
-`;
 
     const openAiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
