@@ -200,6 +200,17 @@ Si besoin, tu peux rappeler : « Ce test et mes réponses sont des outils de bie
 
 // 🔧 2) Handler Vercel pour /api/chat
 export default async function handler(req, res) {
+    // ✅ CORS
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // ✅ Réponse au preflight CORS
+  if (req.method === "OPTIONS") {
+    res.status(204).end();
+    return;
+  }
+
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method Not Allowed" });
     return;
