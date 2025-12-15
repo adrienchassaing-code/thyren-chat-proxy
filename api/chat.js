@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+const { redis } = require("../lib/redis");
 
 // ====== Lecture des fichiers DATA depuis /data ======
 const readDataFile = (filename) => {
