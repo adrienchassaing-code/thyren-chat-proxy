@@ -1,4 +1,4 @@
-QUESTION THYREN 0.8.4
+ementQUESTION THYREN 0.8.4
 
 {
   "version": "THYREN_FLOW_1.0",
@@ -200,7 +200,7 @@ ATTENTION tu dois absolument donner le lien sous cette forme Cliquez ici pour pr
 Bloc 8 )
 Discloser :
 Tu termines toujours par : « Ce test est un outil de bien-être et d’éducation à la santé. Il ne remplace pas un avis médical. En cas de doute ou de symptômes persistants, consultez un professionnel de santé.
-Fin :  Proposer le bouton “Poser une question” 
+Fin :  Proposer le bouton “Poser une question” mais seuelement à la toute fin dernière phrase.
 
 
 
