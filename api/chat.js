@@ -17,11 +17,6 @@ const LES_CURES_ALL = readDataFile("LES_CURES_ALL.txt");
 const COMPOSITIONS = readDataFile("COMPOSITIONS.txt");
 const SAV_FAQ = readDataFile("SAV_FAQ.txt");
 
-// ====== Mémoire simple en RAM (par conversationId) ======
-// (suffisant pour commencer; sur Vercel ça peut reset parfois, mais ça aide déjà beaucoup)
-const memory = globalThis.__THYREN_MEMORY__ || new Map();
-globalThis.__THYREN_MEMORY__ = memory;
-
 // 🔐 Prompt système THYREN (TON TEXTE EXACT)
 const SYSTEM_PROMPT = `
 SCRIPT THYREN 0.8.4 — VERSION JSON UNIQUEMENT
@@ -33,7 +28,6 @@ Ton ton est professionnel, doux, clair, humain, avec une pointe d’humour quand
 Tes phrases sont courtes, dynamiques, faciles à lire.
 Jamais d’emojis.
 Tu utilises toujours le terme « hypothyroïdie fonctionnelle », jamais « fruste ».
-
 
 2. FORMAT TECHNIQUE OBLIGATOIRE (TRÈS IMPORTANT)
 2.1. Bases
@@ -64,7 +58,27 @@ Si tu veux expliquer quelque chose, tu l’écris directement dans text.
 choices (facultatif) : 
 - Tu l’utilises uniquement quand tu proposes des réponses cliquables.
 - C’est un tableau de chaînes : ["Choix 1", "Choix 2", "Choix 3"].
- - Si la question est ouverte (prénom, email, question libre, précision écrite,        etc.), tu ne mets pas de champ “choices”.
+ - Si la question est ouverte (prénom, email, question libre, précision écrite, etc.), tu ne mets pas de champ “choices”.
+
+2.3. Interdictions strictes
+Rien avant le JSON.
+Rien après le JSON.
+Aucun texte ou commentaire en dehors des { }.
+Pas de mélange texte + JSON dans un même message.
+Pas de tableau de plusieurs JSON.
+Pas de deuxième objet JSON.
+Pas de commentaire de type “QUESTION THYREN” dans la réponse.
+Pas de retour à la ligne qui casse la validité JSON.
+Il doit toujours y avoir un seul objet JSON valide par réponse.
+
+3. BASE DE CONNAISSANCES & VÉRACITÉ
+3.1. Bases
+Tu t’appuies exclusivement sur :
+« LES CURES ALL » : toutes les cures, les gélules, leur composition et leur temps de prise.
+« QUESTION THYREN » : la structure complète du questionnaire
+« COMPOSITIONS » : composition précise des gélules et ingrédients des cures.
+« SAV - FAQ » : Toutes les FAQ et les questions récurrentes du SAV.
+Tu ne crées, n’inventes ni ne modifies aucune cure, composition, formule, ingrédient ou dosage.
 `;
 
 // 🔧 Handler Vercel pour /api/chat
@@ -74,6 +88,7 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
+  // ✅ Réponse au preflight CORS
   if (req.method === "OPTIONS") {
     res.status(204).end();
     return;
@@ -98,50 +113,12 @@ export default async function handler(req, res) {
       return;
     }
 
-    // ✅ Sécurité : data bien chargée
-    if (!QUESTION_THYREN || QUESTION_THYREN.length < 100) {
-      res.status(500).json({ error: "QUESTION_THYREN vide côté serveur" });
-      return;
-    }
-
-    const cid = conversationId || "no-conversation-id";
-    const state = memory.get(cid) || { mode: "idle" };
-
-    // Detect intention
-    const lastUserMsg =
-      [...messages].reverse().find((m) => m?.role === "user")?.content || "";
-    const txt = String(lastUserMsg || "").toLowerCase();
-
-    // Mode switch
-    if (txt.includes("commencer le quiz") || txt.includes("commencer le test") || txt.includes("commencer quiz")) {
-      state.mode = "quiz";
-    }
-    if (txt.includes("j’ai une question") || txt.includes("j'ai une question")) {
-      state.mode = "qa";
-    }
-    if (txt.includes("recommencer le quiz") || txt.includes("refaire le test") || txt.includes("on repart de zéro")) {
-      state.mode = "quiz";
-    }
-
-    memory.set(cid, state);
-
-    // ✅ On n’envoie PAS tous les docs tout le temps
-    // - Quiz: seulement QUESTION_THYREN
-    // - QA / résultat: cures + compositions + faq
-    let DOCS_SYSTEM = "";
-
-    if (state.mode === "quiz") {
-      DOCS_SYSTEM = `
-MODE QUIZ — TU DOIS SUIVRE STRICTEMENT [QUESTION_THYREN], DANS L’ORDRE, 1 QUESTION À LA FOIS.
-Tu ne peux pas improviser. Tu ne peux pas sauter de question.
-Si l’utilisateur répond, tu passes à la question suivante du document.
+    // ✅ DOCS (injectés dans un 2e message system)
+    const DOCS_SYSTEM = `
+DOCS SUPLEMINT (à suivre strictement, ne rien inventer)
 
 [QUESTION_THYREN]
 ${QUESTION_THYREN}
-`;
-    } else {
-      DOCS_SYSTEM = `
-MODE CONSEIL / FAQ — Tu t’appuies sur les documents suivants, sans rien inventer :
 
 [LES_CURES_ALL]
 ${LES_CURES_ALL}
@@ -152,7 +129,6 @@ ${COMPOSITIONS}
 [SAV_FAQ]
 ${SAV_FAQ}
 `;
-    }
 
     const openAiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
@@ -179,6 +155,7 @@ ${SAV_FAQ}
 
     if (!oaRes.ok) {
       const errText = await oaRes.text();
+      console.error("OpenAI error:", oaRes.status, errText);
       res.status(500).json({ error: "OpenAI API error", details: errText });
       return;
     }
@@ -188,8 +165,7 @@ ${SAV_FAQ}
 
     res.status(200).json({
       reply,
-      conversationId: cid,
-      mode: state.mode,
+      conversationId: conversationId || null,
     });
   } catch (err) {
     console.error("THYREN OpenAI proxy error:", err);
