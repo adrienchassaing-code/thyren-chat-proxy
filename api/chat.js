@@ -225,19 +225,40 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // ✅ Réponse au preflight CORS
-  if (req.method === "OPTIONS") {
-    res.status(204).end();
-    return;
-  }
+// ✅ Réponse au preflight CORS
+if (req.method === "OPTIONS") {
+  res.status(204).end();
+  return;
+}
 
-  if (req.method !== "POST") {
-    res.status(405).json({ error: "Method Not Allowed" });
-    return;
-  }
+if (req.method !== "POST") {
+  res.status(405).json({ error: "Method Not Allowed" });
+  return;
+}
 
-  try {
-    const { messages, conversationId } = req.body || {};
+// 🟢 présence "en ligne" (TTL 60s) — placé tôt pour être toujours exécuté
+try {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (url && token) {
+    const base = url.replace(/\/$/, "");
+
+    const presenceId =
+      (req.body?.conversationId && String(req.body.conversationId)) ||
+      (req.headers["x-forwarded-for"]?.split(",")[0]?.trim()) ||
+      `anon:${Math.random().toString(36).slice(2, 10)}`;
+
+    const key = `online:${presenceId}`;
+
+    fetch(`${base}/set/${encodeURIComponent(key)}/1?ex=60`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).catch(() => {});
+  }
+} catch (_) {}
+
+try {
+  const { messages, conversationId } = req.body || {};
+
 
     if (!Array.isArray(messages)) {
       res.status(400).json({ error: "messages must be an array" });
