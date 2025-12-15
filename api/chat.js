@@ -300,39 +300,21 @@ ${SAV_FAQ}
     const oaData = await oaRes.json();
     const reply = oaData.choices?.[0]?.message?.content || "";
 
-// 📊 compteur réponses par jour (UPSTASH REST, safe + attend un peu)
+// 📊 compteur réponses par jour (Upstash REST, safe)
 try {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
   if (url && token) {
     const today = new Date().toISOString().slice(0, 10);
     const key = `chat:responses:${today}`;
-
     const endpoint = `${url.replace(/\/$/, "")}/incr/${encodeURIComponent(key)}`;
 
-    const upstashPromise = fetch(endpoint, {
+    fetch(endpoint, {
       headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const resUpstash = await Promise.race([
-      upstashPromise,
-      new Promise((resolve) => setTimeout(() => resolve(null), 800)),
-    ]);
-
-    if (resUpstash && resUpstash.ok === false) {
-      const t = await resUpstash.text().catch(() => "");
-      console.log("Upstash incr failed:", resUpstash.status, t);
-    } else if (resUpstash) {
-      console.log("Upstash incr ok:", resUpstash.status);
-    } else {
-      console.log("Upstash incr skipped (timeout 800ms)");
-    }
-  } else {
-    console.log("Upstash env missing");
+    }).catch(() => {});
   }
-} catch (e) {
-  console.log("Upstash incr error:", e?.message || e);
-}    
+} catch (_) {}
+    
     res.status(200).json({
       reply,
       conversationId: conversationId || null,
