@@ -1,3 +1,12 @@
+res.setHeader("Access-Control-Allow-Origin", "*");
+res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+if (req.method === "OPTIONS") {
+  res.status(204).end();
+  return;
+}
+
 export default async function handler(req, res) {
   try {
     const url = process.env.UPSTASH_REDIS_REST_URL;
