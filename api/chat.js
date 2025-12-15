@@ -314,6 +314,26 @@ try {
     }).catch(() => {});
   }
 } catch (_) {}
+
+    // 🟢 présence "en ligne" (TTL 60s)
+try {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (url && token) {
+    const presenceId =
+      (conversationId && String(conversationId)) ||
+      (req.headers["x-forwarded-for"]?.split(",")[0]?.trim()) ||
+      "unknown";
+
+    const key = `online:${presenceId}`;
+    const base = url.replace(/\/$/, "");
+
+    // SET key "1" EX 60
+    fetch(`${base}/set/${encodeURIComponent(key)}/1?ex=60`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).catch(() => {});
+  }
+} catch (_) {}
     
     res.status(200).json({
       reply,
