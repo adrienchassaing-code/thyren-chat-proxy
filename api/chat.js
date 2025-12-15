@@ -301,6 +301,14 @@ ${SAV_FAQ}
     const oaData = await oaRes.json();
     const reply = oaData.choices?.[0]?.message?.content || "";
 
+    // 📊 compteur réponses par jour (safe)
+try {
+  const today = new Date().toISOString().slice(0, 10);
+  await redis.incr(`chat:responses:${today}`);
+} catch (e) {
+  console.error("Redis incr failed", e?.message || e);
+}
+    
     res.status(200).json({
       reply,
       conversationId: conversationId || null,
