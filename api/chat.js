@@ -7,6 +7,7 @@ const readDataFile = (filename) => {
     const filePath = path.join(process.cwd(), "data", filename);
     return fs.readFileSync(filePath, "utf8");
   } catch (e) {
+    console.error("Erreur lecture fichier", filename, e);
     return "";
   }
 };
@@ -16,7 +17,7 @@ const LES_CURES_ALL = readDataFile("LES_CURES_ALL.txt");
 const COMPOSITIONS = readDataFile("COMPOSITIONS.txt");
 const SAV_FAQ = readDataFile("SAV_FAQ.txt");
 
-// 🔐 Prompt système THYREN (avec injection des docs)
+// 🔐 Prompt système THYREN (TON TEXTE EXACT)
 const SYSTEM_PROMPT = `
 SCRIPT THYREN 0.8.4 — VERSION JSON UNIQUEMENT
 1. RÔLE & TON GÉNÉRAL
@@ -214,7 +215,6 @@ Tu respectes les règles d’allergies, de sécurité et de véracité :
 Si une cure contient un ingrédient potentiellement allergène pour l’utilisateur : « Cette cure serait adaptée sur le plan fonctionnel, mais elle contient un ingrédient marin allergène. Je ne peux donc pas la recommander sans avis médical. »
 Tu ne formules jamais de diagnostic médical.
 Si besoin, tu peux rappeler : « Ce test et mes réponses sont des outils de bien-être et d’éducation à la santé. Ils ne remplacent pas un avis médical. En cas de doute ou de symptômes persistants, consulte un professionnel de santé. »
-
 `;
 
 // 🔧 Handler Vercel pour /api/chat
@@ -237,12 +237,18 @@ export default async function handler(req, res) {
 
   try {
     const { messages, conversationId } = req.body || {};
-// 🔒 Détection explicite du démarrage du quiz
-const firstUserMessage = (messages || [])
-  .find(m => m?.role === "user")?.content || "";
 
-const QUIZ_LOCK = /commencer le quiz/i.test(String(firstUserMessage))
-  ? `
+    if (!Array.isArray(messages)) {
+      res.status(400).json({ error: "messages must be an array" });
+      return;
+    }
+
+    // 🔒 Détection explicite du démarrage du quiz
+    const firstUserMessage =
+      (messages || []).find((m) => m?.role === "user")?.content || "";
+
+    const QUIZ_LOCK = /commencer le quiz/i.test(String(firstUserMessage))
+      ? `
 MODE QUIZ FORCÉ — OBLIGATOIRE
 L’utilisateur a demandé explicitement de commencer le quiz.
 
@@ -254,12 +260,7 @@ INSTRUCTIONS ABSOLUES :
 - Tu ne peux PAS sauter de question
 - Tu ne peux PAS reformuler la structure du quiz
 `
-  : "";
-
-    if (!Array.isArray(messages)) {
-      res.status(400).json({ error: "messages must be an array" });
-      return;
-    }
+      : "";
 
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     if (!OPENAI_API_KEY) {
@@ -267,22 +268,31 @@ INSTRUCTIONS ABSOLUES :
       return;
     }
 
-   const DOCS_SYSTEM = `
+    const DOCS_SYSTEM = `
 DOCS SUPLEMINT (à suivre strictement, ne rien inventer)
 ${QUIZ_LOCK}
 
 [QUESTION_THYREN]
 ${QUESTION_THYREN}
+
+[LES_CURES_ALL]
+${LES_CURES_ALL}
+
+[COMPOSITIONS]
+${COMPOSITIONS}
+
+[SAV_FAQ]
+${SAV_FAQ}
 `;
 
-const openAiMessages = [
-  { role: "system", content: SYSTEM_PROMPT },
-  { role: "system", content: DOCS_SYSTEM },
-  ...messages.map((m) => ({
-    role: m.role === "assistant" ? "assistant" : "user",
-    content: String(m.content || ""),
-  })),
-];
+    const openAiMessages = [
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "system", content: DOCS_SYSTEM },
+      ...messages.map((m) => ({
+        role: m.role === "assistant" ? "assistant" : "user",
+        content: String(m.content || ""),
+      })),
+    ];
 
     const oaRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
