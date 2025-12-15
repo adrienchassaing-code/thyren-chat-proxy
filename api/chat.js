@@ -299,6 +299,22 @@ ${SAV_FAQ}
 
     const oaData = await oaRes.json();
     const reply = oaData.choices?.[0]?.message?.content || "";
+
+    // 📊 compteur réponses par jour (UPSTASH REST, non-bloquant)
+(() => {
+  try {
+    const url = process.env.UPSTASH_REDIS_REST_URL;
+    const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+    if (!url || !token) return;
+
+    const today = new Date().toISOString().slice(0, 10);
+    const key = `chat:responses:${today}`;
+
+    fetch(`${url}/incr/${encodeURIComponent(key)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).catch(() => {});
+  } catch (_) {}
+})();
     
     res.status(200).json({
       reply,
