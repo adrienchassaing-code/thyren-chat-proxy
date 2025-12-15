@@ -172,7 +172,7 @@ Une fois les questions du quiz posées (email reçu ou refus explicite), tu rép
 Tu n’utilises uniquement le "type": "resultat" pour les résultats.
 Ne pas renvoyer les résultats sous forme de boutons.
 4.4.2. Structure de text pour la réponse finale
-Tu organises le texte en plusieurs blocs, séparés par une ligne vide (\n\n).
+Tu organises le texte en plusieurs blocs, séparés par une ligne vide (\\n\\n).
 Chaque bloc deviendra une bulle distincte et lisible pour l’utilisateur côté interface.
 4.5. FIN DU QUIZ
 Après l’analyse finale :
@@ -224,7 +224,6 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // ✅ Réponse au preflight CORS
   if (req.method === "OPTIONS") {
     res.status(204).end();
     return;
@@ -238,33 +237,15 @@ export default async function handler(req, res) {
   try {
     const { messages, conversationId } = req.body || {};
 
-    // ====== STATS TEMPS RÉEL (REDIS) ======
+    if (!Array.isArray(messages)) {
+      res.status(400).json({ error: "messages must be an array" });
+      return;
+    }
 
-// 1️⃣ Nombre de questions aujourd’hui
-const todayKey = `thyren:questions:${new Date().toISOString().slice(0, 10)}`;
-await redis.incr(todayKey);
-await redis.expire(todayKey, 60 * 60 * 24 * 2);
-
-// 2️⃣ Utilisateurs actifs (TTL 30s)
-if (conversationId) {
-  await redis.set(`thyren:user:${conversationId}`, 1, { ex: 30 });
-}
-
-// 3️⃣ Lecture des stats
-const activeUsers = await redis.keys("thyren:user:*");
-const questionsToday = await redis.get(todayKey) || 0;
-
-// On stocke pour la réponse finale
-res.locals.thyrenStats = {
-  activeUsers: activeUsers.length,
-  questionsToday: Number(questionsToday),
-};
-
-
-    // 🔥 TEST CRITIQUE : vérifier si les fichiers DATA existent sur Vercel
+    // ⚠️ Si tes fichiers DATA ne sont pas chargés, on renvoie une erreur claire
     if (!QUESTION_THYREN || QUESTION_THYREN.length < 50) {
       res.status(500).json({
-        error: "QUESTION_THYREN vide ou introuvable sur Vercel",
+        error: "DATA files introuvables ou vides",
         debug: {
           question_len: QUESTION_THYREN?.length || 0,
           cures_len: LES_CURES_ALL?.length || 0,
@@ -276,8 +257,9 @@ res.locals.thyrenStats = {
       return;
     }
 
-    if (!Array.isArray(messages)) {
-      res.status(400).json({ error: "messages must be an array" });
+    const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+    if (!OPENAI_API_KEY) {
+      res.status(500).json({ error: "OPENAI_API_KEY missing" });
       return;
     }
 
@@ -288,23 +270,12 @@ res.locals.thyrenStats = {
     const QUIZ_LOCK = /commencer le quiz/i.test(String(firstUserMessage))
       ? `
 MODE QUIZ FORCÉ — OBLIGATOIRE
-L’utilisateur a demandé explicitement de commencer le quiz.
-
-INSTRUCTIONS ABSOLUES :
-- Tu dois suivre STRICTEMENT le document [QUESTION_THYREN]
-- Tu dois poser les questions DANS L’ORDRE
+- Suivre STRICTEMENT [QUESTION_THYREN]
+- Questions DANS L’ORDRE
 - UNE SEULE question à la fois
-- Tu ne peux PAS improviser
-- Tu ne peux PAS sauter de question
-- Tu ne peux PAS reformuler la structure du quiz
+- Ne rien improviser
 `
       : "";
-
-    const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-    if (!OPENAI_API_KEY) {
-      res.status(500).json({ error: "OPENAI_API_KEY missing" });
-      return;
-    }
 
     const DOCS_SYSTEM = `
 DOCS SUPLEMINT (à suivre strictement, ne rien inventer)
@@ -354,7 +325,7 @@ ${SAV_FAQ}
     }
 
     const oaData = await oaRes.json();
-    const reply = oaData.choices?.[0]?.message?.content || "";
+    const reply = oaData?.choices?.[0]?.message?.content || "";
 
     res.status(200).json({
       reply,
