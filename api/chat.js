@@ -244,6 +244,29 @@ export default async function handler(req, res) {
   try {
     const { messages, conversationId } = req.body || {};
 
+    // ====== STATS TEMPS RÉEL (REDIS) ======
+
+// 1️⃣ Nombre de questions aujourd’hui
+const todayKey = `thyren:questions:${new Date().toISOString().slice(0, 10)}`;
+await redis.incr(todayKey);
+await redis.expire(todayKey, 60 * 60 * 24 * 2);
+
+// 2️⃣ Utilisateurs actifs (TTL 30s)
+if (conversationId) {
+  await redis.set(`thyren:user:${conversationId}`, 1, { ex: 30 });
+}
+
+// 3️⃣ Lecture des stats
+const activeUsers = await redis.keys("thyren:user:*");
+const questionsToday = await redis.get(todayKey) || 0;
+
+// On stocke pour la réponse finale
+res.locals.thyrenStats = {
+  activeUsers: activeUsers.length,
+  questionsToday: Number(questionsToday),
+};
+
+
     // 🔥 TEST CRITIQUE : vérifier si les fichiers DATA existent sur Vercel
     if (!QUESTION_THYREN || QUESTION_THYREN.length < 50) {
       res.status(500).json({
