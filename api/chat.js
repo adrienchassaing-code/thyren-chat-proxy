@@ -237,20 +237,22 @@ export default async function handler(req, res) {
 
   try {
     const { messages, conversationId } = req.body || {};
-   // 🔥 TEST CRITIQUE : vérifier si les fichiers DATA existent sur Vercel
-if (!QUESTION_THYREN || QUESTION_THYREN.length < 50) {
-  res.status(500).json({
-    error: "QUESTION_THYREN vide ou introuvable sur Vercel",
-    debug: {
-      question_len: QUESTION_THYREN?.length || 0,
-      cures_len: LES_CURES_ALL?.length || 0,
-      compo_len: COMPOSITIONS?.length || 0,
-      faq_len: SAV_FAQ?.length || 0,
-      cwd: process.cwd()
+
+    // 🔥 TEST CRITIQUE : vérifier si les fichiers DATA existent sur Vercel
+    if (!QUESTION_THYREN || QUESTION_THYREN.length < 50) {
+      res.status(500).json({
+        error: "QUESTION_THYREN vide ou introuvable sur Vercel",
+        debug: {
+          question_len: QUESTION_THYREN?.length || 0,
+          cures_len: LES_CURES_ALL?.length || 0,
+          compo_len: COMPOSITIONS?.length || 0,
+          faq_len: SAV_FAQ?.length || 0,
+          cwd: process.cwd(),
+        },
+      });
+      return;
     }
-  });
-  return;
-}
+
     if (!Array.isArray(messages)) {
       res.status(400).json({ error: "messages must be an array" });
       return;
