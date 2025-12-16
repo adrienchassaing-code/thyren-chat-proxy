@@ -178,9 +178,10 @@ Vous trouverez même une petite graine de menthe à l’arrière : vous pouvez l
 
 
 Comment choisissez-vous vos ingrédients ?
-Deux critères guident nos choix :
+Trois critères guident nos choix :
 - Efficacité
 - Naturalité
+- Expériences
 Pour chaque formule, nos équipes :
 - s’appuient sur les dernières données scientifiques,
 - collaborent avec le Dr Stéphane Résimont (cofondateur, spécialiste de la médecine fonctionnelle),
@@ -213,6 +214,7 @@ Sur notre site, vous pouvez régler votre commande via :
 - iDEAL
 - Klarna
 D’autres méthodes de paiement pourront être ajoutées dans le futur.
+Vous pouvez également vous rendre directement au 431H chaussée de Louvain pour payer sur place et repartir immédiatement avec vos produits.
 
 
 Comment utiliser mon code promotionnel ?
@@ -223,6 +225,7 @@ Si le code ne fonctionne pas, cela peut être dû au fait que :
 - le code a déjà été utilisé,
 - le code a expiré,
 - ou qu’il ne s’applique pas aux produits de votre panier.
+- Il y a un conflit entre deux réductions (une seule réduction promotionnelle peut être appliquée à la fois)
 Si vous pensez que votre code est valide, écrivez-nous à info@suplemint.com et nous vérifierons cela avec vous.
 
 
@@ -242,19 +245,31 @@ Après votre commande :
   - colis en cours de livraison
   - colis livré
 Chaque e-mail contient un lien de suivi ou un code tracking pour suivre votre colis sur le site du transporteur.
+- Attention : il arrive que le suivi de nos prestataires ne soit pas toujours précis. Il est donc possible que le colis apparaisse comme livré alors qu’il ne l’est pas encore. Dans ce cas, veuillez patienter 24 heures. Si le problème persiste, contactez-nous à info@suplemint.com
 
 
 Ma commande est en retard
 Les transporteurs peuvent parfois rencontrer des retards indépendants de notre volonté.
 - Vérifiez d’abord le tracking via le lien reçu par e-mail.
+- Attention : il arrive que le suivi de nos prestataires ne soit pas toujours précis. Il est donc possible que le colis apparaisse comme livré alors qu’il ne l’est pas encore. Dans ce cas, veuillez patienter 24 heures. Si le problème persiste, contactez-nous à info@suplemint.com
+ ou directement au +32 2 884 56 99.
 - Si votre colis présente un retard de plus de 5 jours ouvrables, contactez-nous à info@suplemint.com avec votre numéro de commande : nous vous aiderons à trouver une solution.
 
 
-Où puis-je trouver l’historique de mes commandes ?
+Où puis-je trouver l’historique de mes commandes et/ou des abonnements?
 En vous connectant à votre compte client sur notre site, vous pourrez consulter :
-- l’historique de vos commandes,
-- le détail de chaque commande,
+- l’historique de vos commandes / abonnements,
+- le détail de chaque commande / abonnements,
 - l’état de vos abonnements éventuels.
+PS : Aucun mot de passe requis. Il suffit d’indiquer l’adresse e-mail utilisée lors de votre commande. Vous recevrez immédiatement un code à usage unique sur cette adresse e-mail pour vous connecter.
+
+
+Délais de livraison et transporteur
+- Belgique (GLS) : 1 à 2 jours ouvrables
+- France & Luxembourg (GLS) : 2 à 3 jours ouvrables
+- Suisse & reste de l’Europe (La Poste Suisse / GLS) : 3 à 5 jours ouvrables
+- Autres pays (GLS) : 5 à 8 jours ouvrables
+PS : Tous les autres pays sont à sélectionner lors du choix de la livraison au moment du paiement. Si l’option n’est pas disponible, veuillez nous contacter : nous pouvons nous arranger directement au +32 2 884 56 99.
 
 
 Où puis-je obtenir ma facture de commande ?
@@ -267,33 +282,33 @@ Nous vous enverrons la facture par e-mail.
 
 Puis-je annuler ma commande ?
 Oui, tant que le colis n’a pas été expédié.
-- Les commandes passées avant 11h sont généralement expédiées le jour même.
-- Les commandes passées après 11h sont expédiées le lendemain.
+- Les commandes passées avant 12h sont généralement expédiées le jour même.
+- Les commandes passées après 12h sont expédiées le lendemain.
 Si vous souhaitez annuler :
-- Contactez-nous le plus rapidement possible à info@suplemint.com.
+- Contactez-nous le plus rapidement possible à info@suplemint.com ou directment au +32 2 884 56 99.
 Une fois le colis expédié, il n’est plus possible d’annuler, mais vous pouvez nous le retourner dans les 14 jours suivant la réception, conformément à nos conditions générales de vente.
 
 
 Puis-je modifier ma commande ?
-La commande est modifiable tant que le colis n’est pas expédié.
+La commande est modifiable tant que le colis n’est pas expédié, qui se fait généralement le jour même vers midi ou le lendemain vers midi.
 Si vous souhaitez :
 - ajouter ou retirer un produit,
 - modifier une cure,
-contactez-nous rapidement via info@suplemint.com.
+contactez-nous rapidement via info@suplemint.com ou directment au +32 2 884 56 99.
 Nous ferons le maximum pour adapter votre commande avant l’expédition.
 
 
 J’ai reçu le mauvais produit ou un produit endommagé
 Nous sommes désolés pour ce désagrément.
 Malgré toutes nos précautions (fabriqué et préparé avec une part d’artisanat et d’intervention humaine), une erreur peut parfois se produire.
-Contactez-nous à info@suplemint.com avec :
+Contactez-nous à info@suplemint.com ou directment au +32 2 884 56 99 avec :
 - votre numéro de commande,
 - une photo du produit reçu et/ou endommagé.
 Nous trouverons une solution avec vous (remplacement, renvoi, etc.).
 
 
 Puis-je modifier l’adresse de livraison de ma commande ?
-Oui, mais uniquement avant l’expédition du colis.
+Oui, mais uniquement avant l’expédition du colis, qui se fait généralement le jour même vers midi ou le lendemain vers midi.
 Si vous vous rendez compte d’une erreur d’adresse, contactez-nous au plus vite à info@suplemint.com.
 Une fois le colis expédié, nous ne pouvons plus modifier l’adresse, mais nous pourrons voir si une solution est possible avec le transporteur.
 
