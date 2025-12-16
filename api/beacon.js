@@ -1,5 +1,4 @@
-// api/beacon.js  (CommonJS compatible)
-const { Redis } = require("@upstash/redis");
+import { Redis } from "@upstash/redis";
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL,
@@ -19,7 +18,7 @@ function ymdUTC() {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   res.setHeader("Content-Type", "image/gif");
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
   res.setHeader("Pragma", "no-cache");
@@ -55,4 +54,4 @@ module.exports = async function handler(req, res) {
   } catch (e) {
     return res.status(200).end(GIF_1x1);
   }
-};
+}
