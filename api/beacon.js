@@ -1,4 +1,10 @@
-import { redis } from "../lib/redis.js";
+// api/beacon.js  (CommonJS compatible)
+const { Redis } = require("@upstash/redis");
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 const GIF_1x1 = Buffer.from(
   "R0lGODlhAQABAPAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
@@ -13,8 +19,7 @@ function ymdUTC() {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-export default async function handler(req, res) {
-  // Répond toujours une image → pas de CORS / pas de fetch
+module.exports = async function handler(req, res) {
   res.setHeader("Content-Type", "image/gif");
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
   res.setHeader("Pragma", "no-cache");
@@ -22,10 +27,8 @@ export default async function handler(req, res) {
   try {
     const type = String(req.query.type || ""); // "online" ou "qpd"
     const sid = String(req.query.sid || "");
-
     if (!sid) return res.status(200).end(GIF_1x1);
 
-    // ONLINE (fenêtre 45s)
     if (type === "online") {
       const now = Date.now();
       const cutoff = now - 45_000;
@@ -37,7 +40,6 @@ export default async function handler(req, res) {
       await p.exec();
     }
 
-    // QPD (questions/day + total)
     if (type === "qpd") {
       const dayKey = `qpd:thyren:${ymdUTC()}`;
       const totalKey = "qtotal:thyren";
@@ -51,7 +53,6 @@ export default async function handler(req, res) {
 
     return res.status(200).end(GIF_1x1);
   } catch (e) {
-    // même en erreur on renvoie le gif
     return res.status(200).end(GIF_1x1);
   }
-}
+};
