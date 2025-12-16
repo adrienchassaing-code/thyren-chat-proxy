@@ -53,7 +53,7 @@ https://www.suplemint.com/collections/trouvezvotrecure
 
 Combien de temps dois-je prendre ma cure avant de sentir des résultats ?
 Cela dépend de votre situation de départ, mais en général :
-- certains effets peuvent se faire sentir dès la première ou deuxième semaine (énergie, sommeil, confort digestif…),
+- certains effets peuvent se faire sentir dès la première ou deuxième semaine (thyroïde, énergie, sommeil, intestin…),
 - pour une action en profondeur, nos experts recommandent au minimum 3 mois de cure,
 - pour un résultat optimal et durable, nous conseillons souvent 6 mois ou plus, surtout pour la thyroïde et l’équilibre hormonal.
 Le corps a besoin de temps pour corriger des carences, rééquilibrer les systèmes hormonaux et stabiliser les effets. La régularité est beaucoup plus importante qu’une prise ponctuelle.
@@ -80,7 +80,7 @@ En résumé : grossesse et allaitement = toujours avis médical personnalisé av
 
 Quand dois-je prendre mes compléments ?
 Cela dépend de la cure :
-- les compléments énergisants (énergie, thyroïde, métabolisme…) se prennent en général le matin,
+- les compléments énergisants (énergie, thyroïde, poids…) se prennent en général le matin,
 - les compléments liés au sommeil se prennent plutôt le soir,
 - certaines gélules se prennent au milieu ou à la fin d’un repas pour une meilleure tolérance.
 Le mode d’emploi exact est indiqué :
@@ -129,6 +129,7 @@ Cela signifie que :
 - certaines formules peuvent être temporairement retirées le temps d’une mise à jour ou d’une revalidation auprès des autorités,
 - si un produit n’est pas autorisé à la vente dans votre pays, il ne sera tout simplement pas disponible au moment du paiement (aucune livraison ne sera proposée).
 Si un produit n’apparaît plus ou n’est plus livrable dans votre pays, il est possible qu’il soit en cours de reformulation ou de validation. Merci pour votre compréhension.
+2026 ils sont tous homologués europe et USA
 
 
 Allergies & types d’alimentation
@@ -228,14 +229,7 @@ Si vous pensez que votre code est valide, écrivez-nous à info@suplemint.com et
 Commandes & expéditions
 Dans quels pays livrez-vous ?
 Nous livrons actuellement en :
-- Belgique
-- France
-- Pays-Bas
-- Luxembourg
-- Suisse
-- Espagne
-- Portugal
-- Suisse
+- toute l'europe et USA
 D’autres pays pourront être ajoutés progressivement.
 
 
