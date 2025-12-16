@@ -7,7 +7,7 @@ ementQUESTION THYREN 0.8.4
     "Q1": {
       "id": "Q1",
       "type": "open",
-      "text": "C’est parti ! Je vais te poser quelques questions pour savoir si ta thyroïde fonctionne normalement et si nos cures peuvent t’aider. \n\nTu peux à tout moment ajouter des informations complémentaires directement dans la barre de dialogue. \n\nPour commencer : quel est ton prénom ?",
+      "text": "C’est parti ! Je vais te poser quelques questions pour savoir si ta thyroïde fonctionne normalement et si nos cures peuvent t’aider.\n\nPour commencer : quel est ton prénom ?",
       "next": "Q2",
       "meta": {"capture": "first_name"}
     },
