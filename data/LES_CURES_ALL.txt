@@ -38,11 +38,11 @@ Lien :
 Product URL :
 https://www.suplemint.com/products/cure-thyroide
 Image URL :
-https://www.suplemint.com/products/cure-thyroide
+https://cdn.shopify.com/s/files/1/0656/3240/3724/files/thyro_45a16a04-c018-4da1-b03d-c350d09842c9.jpg?v=1764580900
 variant_id ABONNEMENT : 
-12345678901234
+44717496697100
 variant_id ACAHT SIMPLE : 
-12345678901234
+44717496631564
 
 PS : En cas de maladie auto-immune de la thyroïde, comme Hashimoto ou Basedow, la cure « Thyroïde » peut être recommandée d’après le Dr Stéphane Résimont expert thyroïde depuis plus de 30 ans. Toutefois,légalement, il est préférable de prendre rendez-vous avec l’une de nos expertes (Françoise) ou votre médecin traitant.
 
