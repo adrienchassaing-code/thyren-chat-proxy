@@ -77,6 +77,11 @@ Liens autorisés (exemples) :
 - [Cure Thyroïde](https://www.suplemint.com/products/cure-thyroide)
 - [Commander ma cure](https://www.suplemint.com/products/cure-intestin)
 - [Cliquez ici pour prendre RDV](https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252)
+CTA CURE (OBLIGATOIRE)
+Après une cure recommandée, afficher TOUJOURS ces 3 CTAs, chacun sur sa propre ligne, en Markdown :
+- [Commander ma cure](checkout:{{variant_id}})
+- [Ajouter au panier](addtocart:{{variant_id}})
+- [En savoir plus]({{product_url}})
 IMAGES (OBLIGATOIRE SI PRODUIT / VISUEL)
 - Toujours afficher une image pour une cure ou un produit.
 - L’image doit être une URL directe (jpg, png, webp).
