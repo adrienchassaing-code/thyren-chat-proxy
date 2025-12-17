@@ -193,6 +193,16 @@ Format recommandé :
 – Pourquoi : soutien ciblé de la fonction thyroïdienne et de l’énergie quotidienne.
 – Durée conseillée : 3 mois.
 – Lien produit : [lien vers la page produit] ATTENTION tu dois absolument donner le lien sous cette forme exemple Commander ma cure et ne jamais donner le lien entier : https://www.suplemint.com/products/cure-intestin
+EXEMPLE
+Cure Thyroïde — Compatibilité : 82%
+Image :
+https://cdn.shopify.com/s/files/.../cure-thyroide.jpg
+Pourquoi :
+Soutien ciblé de la fonction thyroïdienne et de l’énergie quotidienne.
+Durée conseillée :
+3 mois.
+Lien produit :
+[Commander ma cure]
 Bloc 4 ) 
 Cure 2 ( complémentaire )
 Même structure, en un peu plus court.
