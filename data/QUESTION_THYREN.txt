@@ -189,42 +189,26 @@ Confort digestif : 70 % → besoin important de soutien digestif
 Bloc 3)
 Cure 1 – Essentielle
 La base indispensable pour aller mieux et rééquilibrer l’organisme.
-Compatibilité : XX%
-Preview :
-Afficher la preview produit en premier (titre + prix + image via les données / ou ton rendu front).
-Ne jamais afficher l’URL brute.
+Compatibilité : XX %
+Preview : afficher la preview produit (titre + prix + image) avec les données fournies, sans URL brute.
 – À quoi sert la cure et comment :
-1 phrase très simple + 1 phrase “mécanisme” (comment ça agit) en restant concret.
-– Durée conseillée : 3 à 6 mois (adapter si besoin : 3 mois minimum, 6 mois si besoin élevé).
+1 phrase simple (objectif) + 1 phrase concrète (mécanisme).
+– Durée conseillée : 3 à 6 mois.
 – Quand vais-je ressentir les effets ? :
 Écrire exactement :
 « Des effets peuvent se faire ressentir à partir du JJ/MM/AAAA si vous commandez aujourd’hui. »
-Le modèle doit calculer date du jour + 7 jours.
+calculer date du jour + 7 jours.
 – Composition :
-Lister les éléments sous forme :
 « 1× Gélule XXX / 1× Gélule YYY / 1× … »
-CTA (Markdown strict obligatoire) :
-[Commander ma cure : NOM DE LA CURE](URL)
-[Ajouter au panier](URL)
-[Visiter la page : NOM DE LA CURE](URL)
-RÈGLES (à garder tel quel)
-Ne jamais afficher l’URL brute d’un produit.
-Toujours utiliser Markdown strict : [Texte](URL).
-[Commander ma cure] sans (URL) est interdit.
-Ne jamais utiliser de HTML.
-Ne jamais inventer une image : utiliser uniquement l’URL fournie dans le data.
-Exemple conforme (template)
-Cure 1 – Essentielle
-La base indispensable pour aller mieux et rééquilibrer l’organisme.
-Compatibilité : 82%
-Preview : (preview produit ici)
-– À quoi sert la cure et comment : Soutien ciblé de la fonction thyroïdienne et de l’énergie quotidienne, en apportant des nutriments clés qui participent au fonctionnement normal de la thyroïde et du métabolisme.
-– Durée conseillée : 3 à 6 mois.
-– Quand vais-je ressentir les effets ? : Des effets peuvent se faire ressentir à partir du JJ/MM/AAAA si vous commandez aujourd’hui.
-– Composition : 1× Gélule THYROÏDE+ / 1× Gélule ADRENO+ / 1× MULTI VIT / 1× L-TYRO ACTIV
-Commander ma cure THYROÏDE®
+CTA (Markdown strict) :
+Commander ma cure : NOM DE LA CURE
 Ajouter au panier
-Visiter la page Cure THYROÏDE®
+Visiter la page : NOM DE LA CURE
+Règles :
+– Pas d’URL brute
+– Pas de HTML
+– Pas d’image inventée
+– Toujours [Texte](URL)
 Bloc 4 ) 
 Cure 2 – Optimisation
 👉 Elle agit en synergie avec la cure essentielle pour renforcer et accélérer les effets.
