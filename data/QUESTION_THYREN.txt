@@ -14,7 +14,7 @@ ementQUESTION THYREN 0.8.4
     "Q2": {
   "id": "Q2",
   "type": "choices",
-  "text": "Enchanté {{first_name}}. Quel est ton sexe biologique ?",
+  "text": "text": "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + "Enchanté {{first_name}}. Quel est ton sexe biologique ?",
   "choices": ["Femme", "Homme"],
   "next_map": {
     "Femme": "Q2_plus",
@@ -25,7 +25,7 @@ ementQUESTION THYREN 0.8.4
 "Q2_plus": {
   "id": "Q2_plus",
   "type": "choices",
-  "text": "Es-tu enceinte ou allaitante ?",
+  "text": "text": "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + "Es-tu enceinte ou allaitante ?",
   "choices": ["oui", "non"],
   "next": "Q3",
   "meta": { "capture": "enceinte" }
