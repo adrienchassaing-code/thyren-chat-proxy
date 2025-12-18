@@ -38,7 +38,7 @@ Lien :
 Product URL :
 https://www.suplemint.com/products/cure-thyroide
 Image URL :
-https://cdn.shopify.com/s/files/1/0656/3240/3724/files/thyro_45a16a04-c018-4da1-b03d-c350d09842c9.jpg?v=1764580900
+https://www.suplemint.com/products/cure-thyroide
 variant_id ABONNEMENT : 
 44717496697100
 variant_id ACAHT SIMPLE : 
