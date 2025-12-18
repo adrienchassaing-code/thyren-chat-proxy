@@ -12,22 +12,23 @@ ementQUESTION THYREN 0.8.4
       "meta": {"capture": "first_name"}
     },
     "Q2": {
-      "id": "Q2",
-      "type": "choices",
-      "text": "Enchanté {{first_name}}. Quel est ton sexe biologique ?",
-      "choices": ["Femme","Homme"],
-      "next": "Q3" ou "Q2_plus" si "choices": ["Femme"]
-      "meta": {"capture": "sex"}
-
-    "Q2_plus": {
-      "id": "Q2_plus",
-      "type": "choices",
-      "text": "Es-tu enceinte ou allaitante ?",
-      "choices": ["oui","non"],
-      "next": "Q3",
-      "meta": { "capture": "enceinte" }
-    },
-
+  "id": "Q2",
+  "type": "choices",
+  "text": "Enchanté {{first_name}}. Quel est ton sexe biologique ?",
+  "choices": ["Femme", "Homme"],
+  "next_map": {
+    "Femme": "Q2_plus",
+    "Homme": "Q3"
+  },
+  "meta": { "capture": "sex" }
+},
+"Q2_plus": {
+  "id": "Q2_plus",
+  "type": "choices",
+  "text": "Es-tu enceinte ou allaitante ?",
+  "choices": ["oui", "non"],
+  "next": "Q3",
+  "meta": { "capture": "enceinte" }
     },
     "Q3": {
       "id": "Q3",
