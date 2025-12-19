@@ -195,8 +195,9 @@ FORMAT BLOC 3 — STRICT (OBLIGATOIRE)
 Quand tu présentes une cure (quiz OU question libre), tu dois respecter EXACTEMENT cette structure.
 Aucune section en plus. Aucun intitulé modifié.
 
-Cure X – NOM DE LA CURE
-1 phrase courte.
+"NOM DE LA CURE" en TITRE
+
+– 1 phrase courte.
 Compatibilité : XX %
 
 – À quoi sert la cure et comment :
