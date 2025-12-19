@@ -135,10 +135,7 @@ Ta première réponse quand l’utilisateur lance le quiz est un seul objet JSON
   "text": "C’est parti ! Je vais te poser quelques questions pour savoir si ta thyroïde fonctionne normalement et si nos cures peuvent t'aider. Quelle est ton prénon ?"
 }
 Tu ne renvoies plus jamais ce texte d’introduction ensuite dans le quiz.
-Tu ne reposes plus une question déjà posée de « QUESTION THYREN » pendant le reste du quiz, sauf si l’utilisateur te demande de recommencer le test depuis le début. Exemples de demandes de redémarrage où tu peux repartir de zéro :
-« On recommence le quiz »
-« Je veux refaire le test »
-« On repart de zéro »
+Tu ne reposes plus une question déjà posée de « QUESTION THYREN » pendant le reste du quiz, sauf si l’utilisateur te demande de recommencer le test depuis le début.
 
 4.3 DÉROULEMENT DU QUIZ / RÉSULTATS
 
@@ -150,42 +147,9 @@ Tu ne recommences pas le quiz, sauf si l’utilisateur le demande explicitement.
 Règles de comportement :
 Tu poses une seule question à la fois.
 Tu n’avances à la question suivante que lorsque tu as une réponse cohérente et suffisante.
-Si l’utilisateur répond en texte libre plutôt qu’en cliquant :
-– Tu vérifies la cohérence (prénom blague, âge irréaliste, pathologie inventée, hors sujet…).
-– Tu peux répondre avec une touche d’humour si c’est une plaisanterie ou tu peux répondre de manière plus scientifique si l’information est importante.
-– Tu peux poser 1 à 2 questions supplémentaires pour clarifier et rattacher la réponse à l’un de tes choix.
-– Tant que la réponse n’est pas exploitable, tu restes sur la même question logique.
 Structure de text pour la réponse finale 
 - Chaque bloc de texte dans le champ 'text' doit être séparé par un double saut de ligne pour garantir qu’il soit affiché dans une bulle distincte. 
 - Il est important de ne jamais fusionner plusieurs blocs dans une seule bulle afin d'assurer une lisibilité optimale. 
-
-4.3.2 FORMAT DES QUESTIONS
-a) Questions à choix (avec boutons)
-Pour les questions avec options (cliquables), tu utilises :
-{
-  "type": "question",
-  "text": "Ta question ici, interprétation personnalisée de la réponse précédente avec une courte explication scientifique.",
-  "choices": [
-    "Choix 1",
-    "Choix 2",
-    "Choix 3"
-  ]
-}
-Dans text, tu doit inclure :
-une très courte interprétation personnalisée de la réponse précédente
-une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle, puis ta question. Exemple :
-{
-  "type": "question",
-  "text": "Une baisse de T3 peut influencer ton niveau d’énergie quotidien. Comment décrirais-tu ton niveau d'énergie aujourd’hui ?",
-  "choices": ["Faible", "Moyen", "Bon"]
-}
-b) Questions ouvertes (sans boutons)
-Pour les questions ouvertes (prénom, email, explications libres), tu utilises :
-{
-  "type": "question",
-  "text": "Quel est ton email ?"
-}
-Tu ne mets pas de champ choices pour les questions ouvertes.
 
 4.4 ANALYSES / RESULTATS FINALAUX & RECOMMANDATIONS
 
@@ -217,45 +181,7 @@ Plus le pourcentage est élevé, plus le besoin est important (ce n’est pas un
 - Puis 5 lignes au format :
 "X : NN % → …"
 ===BLOCK===
-Bloc 3 (Cure 1)
-FORMAT STRICT CURE (aucun champ en plus, aucun intitulé modifié) :
-"NOM DE LA CURE" en TITRE : Compatibilité : XX %
-– À quoi sert la cure et comment :
-(2 phrases, objectif + mécanisme concret)
-– Durée conseillée et quand prendre la cure  :
-(texte)
-– Quand vais-je ressentir les effets ? :
-Des effets peuvent se faire ressentir à partir du JJ/MM/AAAA si vous commandez aujourd’hui.
-(date du jour + 7 jours)
-– Composition :
-1× … / 1× … / 1× …
-[Commander ma cure](checkout:{{variant_id}})
-[Ajouter au panier](addtocart:{{variant_id}})
-[En savoir plus]({{product_url}})
-===BLOCK===
-Bloc 4 (Cure 2) = même format STRICT que Bloc 3
-===BLOCK===
-Bloc 5 (Cure 3) = même format STRICT que Bloc 3
-===BLOCK===
-Bloc 6 (Contre indication)
-- Une seule phrase courte.
-- Si allergène / risque : utiliser exactement la phrase imposée.
-===BLOCK===
-Bloc 7 (Nutritionniste)
-Texte EXACT (ne pas reformuler) :
-"Besoin de discuter avec une nutritionniste ? Nos nutritionnistes sont là pour vous écouter et connaissent parfaitement nos cures 😉
-C’est 100 % gratuit, par téléphone ou par vidéo : c’est vous qui choisissez.
-Réservez sur notre agenda en ligne, à votre convenance."
-Puis sur une ligne :
-[Cliquez ici pour prendre RDV](https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252)
-===BLOCK===
-Bloc 8 (Disclaimer)
-Texte EXACT :
-"Ce test est un outil de bien-être et d’éducation à la santé. Il ne remplace pas un avis médical. En cas de doute ou de symptômes persistants, consultez un professionnel de santé."
-===BLOCK===
-Bloc 9 (Question finale)
-Texte EXACT :
-"Avez-vous d’autres questions en tête ?"
+Bloc 3 (Cure 1) ... etc
 AUTO-CHECK AVANT ENVOI :
 Avant de répondre, tu vérifies :
 - JSON valide
@@ -265,56 +191,85 @@ Avant de répondre, tu vérifies :
 Si une règle échoue, tu corriges et tu renvoies le JSON conforme.
 
 4.5 FIN DU QUIZ
-Après l’analyse finale :
-Tu ne recommences jamais automatiquement le questionnaire.
-Tu ne reposes pas « Quel est ton prénom ? ».
-Tu ne reproposes pas automatiquement « Commencer le quiz ».
-Tu ne recommences le quiz depuis le début que si l’utilisateur le demande clairement : « je veux refaire le test », « recommencer le quiz », « on repart de zéro », etc.
-Après les recommandations :
-Si l’utilisateur pose d’autres questions (cure, ingrédients, contre-indications, SAV, etc.), tu réponds en mode “reponse”, sans relancer le quiz, sauf demande explicite de sa part.
+...
 
 5. MODE B — AMORCE « J’AI UNE QUESTION » OU QUESTION LIBRE
-Quand l’utilisateur clique sur « J’ai une question » ou te pose directement une question libre (hors quiz complet) :
-5.1 Introduction obligatoire (une fois au début)
-Ta première réponse en mode “J’ai une question” doit être :
-{
-  "type": "reponse",
-  "text": "Ok pas de souci ! Je suis là pour te répondre, donc j’aurais besoin que tu m’expliques ce dont tu as besoin ?"
-}
-Tu n’envoies cette phrase d’introduction qu’une seule fois, au début de ce mode.
-
-5.2 Format des réponses en mode “question libre” autre que 5.2 DÉCLENCHEUR BLOC 3 (MODE B)
-– Pour toutes les réponses suivantes dans ce mode ,tu utilises en priorité :
-{
-  "type": "reponse",
-  "text": "Ta réponse ici, claire, courte et orientée solution."
-}
-Tu peux si besoin poser des questions de clarification avec :
-{
-  "type": "question",
-  "text": "Petite question pour mieux te conseiller : ..."
-}
-– Tu n’utilises des choices que si c’est vraiment utile (par exemple, proposer 2–3 options de cures ou de thématiques).
-
-5.3 Contenu & limites en mode “J’ai une question”
-- Tu expliques, tu rassures, tu clarifies les cures, la prise, les combinaisons possibles, les contre-indications éventuelles.
-- Tu t’appuies exclusivement sur :
-« LES CURES ALL » : toutes les cures, les gélules, leur composition et leur temps de prise.
-« QUESTION THYREN » : la structure complète du questionnaire
-« COMPOSITIONS » : composition précise des gélules et ingrédients des cures.
-« SAV - FAQ 0.1 » : Toutes les FAQ et les questions récurrentes du SAV.
-Tu peux éventuellement t’appuyer sur des sources scientifiques fiables (revues, autorités de santé, institutions publiques), mais tu respectes strictement les allégations nutritionnelles et de santé autorisées par la réglementation européenne et appliquées par l’AFSCA.
-- Tu ne formules jamais de diagnostic médical.
-- Si besoin, tu peux rappeler : « Ce test et mes réponses sont des outils de bien-être et d’éducation à la santé. Ils ne remplacent pas un avis médical. En cas de doute ou de symptômes persistants, consulte un professionnel de santé. »
-
-5.4 ALLERGÈNES — OBLIGATION D’EXHAUSTIVITÉ
-Si l’utilisateur mentionne un allergène (ex: poisson), tu DOIS :
-1) Passer en revue TOUTES les cures de « LES CURES ALL » ET TOUTES les gélules de « COMPOSITIONS ».
-2) Lister explicitement chaque cure contenant l’allergène (ou un dérivé évident) + les gélules concernées.
-3) Si aucune cure ne contient l’allergène : l’écrire clairement.
-4) Finir par : “Cette recommandation nécessite un avis médical.”
-Interdiction : répondre partiellement ou seulement avec “les plus probables”
+...
 `;
+
+// ==============================
+// ✅ VALIDATION + REPAIR (résultats stricts)
+// ==============================
+function isValidResultPayload(obj){
+  if (!obj || typeof obj !== "object") return false;
+  if (obj.type !== "resultat") return false;
+  if (typeof obj.text !== "string") return false;
+  if ("choices" in obj) return false;
+
+  const parts = obj.text.split("===BLOCK===");
+  if (parts.length !== 9) return false;
+
+  // interdit dans le visible (tu peux en ajouter)
+  const forbidden = /\bBloc\s*\d+\b|Bloc fin|RÉSULTATS\b|Choisis une option|Recommencer le quiz|J[’']ai une question/i;
+  if (forbidden.test(obj.text)) return false;
+
+  return true;
+}
+
+function looksLikeFinalResultsText(t){
+  t = String(t || "");
+  // Heuristique: si on voit clairement disclaimer + question finale + cures, c'est un "résultat"
+  const hasDisclaimer = /Ce test est un outil de bien-être/i.test(t);
+  const hasFinalQ = /Avez-vous d[’']autres questions/i.test(t);
+  const hasCure = /\bCure\s*1\b|\bCure\s*2\b|\bCure\s*3\b|\bCompatibilit/i.test(t);
+  return (hasDisclaimer && hasFinalQ) || (hasDisclaimer && hasCure) || (hasFinalQ && hasCure);
+}
+
+async function repairToStrictNineBlocks({ apiKey, badText }){
+  const repairSystem =
+    "Tu sors uniquement un objet JSON valide. AUCUN texte hors JSON. Pas de backticks.";
+  const repairUser = `
+Convertis le TEXTE ci-dessous en JSON STRICT exactement :
+{"type":"resultat","text":"..."}
+RÈGLES ABSOLUES:
+- Le champ text contient EXACTEMENT 9 blocs
+- Séparation UNIQUE et exacte entre blocs: ===BLOCK===
+- Il doit y avoir EXACTEMENT 8 séparateurs ===BLOCK===
+- INTERDIT d’écrire "Bloc 1", "Bloc 2", "Bloc fin", "RÉSULTATS" dans le texte visible
+- INTERDIT d’ajouter "choices"
+- INTERDIT d’inclure "Choisis une option", "Recommencer le quiz", "J’ai une question ?"
+- Retourne UNIQUEMENT le JSON final.
+
+TEXTE:
+${String(badText || "").trim()}
+`.trim();
+
+  const r = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "gpt-4.1-mini",
+      messages: [
+        { role: "system", content: repairSystem },
+        { role: "user", content: repairUser },
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0,
+    }),
+  });
+
+  if (!r.ok) {
+    const t = await r.text();
+    console.error("Repair OpenAI error:", r.status, t);
+    return "";
+  }
+
+  const j = await r.json();
+  return j.choices?.[0]?.message?.content?.trim() || "";
+}
 
 // 🔧 Handler Vercel pour /api/chat
 export default async function handler(req, res) {
@@ -323,40 +278,39 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-// ✅ Réponse au preflight CORS
-if (req.method === "OPTIONS") {
-  res.status(204).end();
-  return;
-}
-
-if (req.method !== "POST") {
-  res.status(405).json({ error: "Method Not Allowed" });
-  return;
-}
-
-// 🟢 présence "en ligne" (TTL 60s) — placé tôt pour être toujours exécuté
-try {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (url && token) {
-    const base = url.replace(/\/$/, "");
-
-    const presenceId =
-      (req.body?.conversationId && String(req.body.conversationId)) ||
-      (req.headers["x-forwarded-for"]?.split(",")[0]?.trim()) ||
-      `anon:${Math.random().toString(36).slice(2, 10)}`;
-
-    const key = `online:${presenceId}`;
-
-    fetch(`${base}/set/${encodeURIComponent(key)}/1?ex=60`, {
-      headers: { Authorization: `Bearer ${token}` },
-    }).catch(() => {});
+  // ✅ Réponse au preflight CORS
+  if (req.method === "OPTIONS") {
+    res.status(204).end();
+    return;
   }
-} catch (_) {}
 
-try {
-  const { messages, conversationId } = req.body || {};
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method Not Allowed" });
+    return;
+  }
 
+  // 🟢 présence "en ligne" (TTL 60s) — placé tôt pour être toujours exécuté
+  try {
+    const url = process.env.UPSTASH_REDIS_REST_URL;
+    const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+    if (url && token) {
+      const base = url.replace(/\/$/, "");
+
+      const presenceId =
+        (req.body?.conversationId && String(req.body.conversationId)) ||
+        (req.headers["x-forwarded-for"]?.split(",")[0]?.trim()) ||
+        `anon:${Math.random().toString(36).slice(2, 10)}`;
+
+      const key = `online:${presenceId}`;
+
+      fetch(`${base}/set/${encodeURIComponent(key)}/1?ex=60`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }).catch(() => {});
+    }
+  } catch (_) {}
+
+  try {
+    const { messages, conversationId } = req.body || {};
 
     if (!Array.isArray(messages)) {
       res.status(400).json({ error: "messages must be an array" });
@@ -419,43 +373,81 @@ ${SAV_FAQ}
     const oaData = await oaRes.json();
     const reply = oaData.choices?.[0]?.message?.content || "";
 
-// 📊 compteur réponses par jour (Upstash REST, safe)
-try {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (url && token) {
-    const today = new Date().toISOString().slice(0, 10);
-    const key = `chat:responses:${today}`;
-    const endpoint = `${url.replace(/\/$/, "")}/incr/${encodeURIComponent(key)}`;
+    // 📊 compteur réponses par jour (Upstash REST, safe)
+    try {
+      const url = process.env.UPSTASH_REDIS_REST_URL;
+      const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+      if (url && token) {
+        const today = new Date().toISOString().slice(0, 10);
+        const key = `chat:responses:${today}`;
+        const endpoint = `${url.replace(/\/$/, "")}/incr/${encodeURIComponent(key)}`;
 
-    fetch(endpoint, {
-      headers: { Authorization: `Bearer ${token}` },
-    }).catch(() => {});
-  }
-} catch (_) {}
+        fetch(endpoint, {
+          headers: { Authorization: `Bearer ${token}` },
+        }).catch(() => {});
+      }
+    } catch (_) {}
 
     // 🟢 présence "en ligne" (TTL 60s)
-try {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (url && token) {
-    const presenceId =
-      (conversationId && String(conversationId)) ||
-      (req.headers["x-forwarded-for"]?.split(",")[0]?.trim()) ||
-      "unknown";
+    try {
+      const url = process.env.UPSTASH_REDIS_REST_URL;
+      const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+      if (url && token) {
+        const presenceId =
+          (conversationId && String(conversationId)) ||
+          (req.headers["x-forwarded-for"]?.split(",")[0]?.trim()) ||
+          "unknown";
 
-    const key = `online:${presenceId}`;
-    const base = url.replace(/\/$/, "");
+        const key = `online:${presenceId}`;
+        const base = url.replace(/\/$/, "");
 
-    // SET key "1" EX 60
-    fetch(`${base}/set/${encodeURIComponent(key)}/1?ex=60`, {
-      headers: { Authorization: `Bearer ${token}` },
-    }).catch(() => {});
-  }
-} catch (_) {}
-    
+        fetch(`${base}/set/${encodeURIComponent(key)}/1?ex=60`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }).catch(() => {});
+      }
+    } catch (_) {}
+
+    // ==========================================
+    // ✅ ICI : Validation + Repair du payload final
+    // ==========================================
+    let replyText = String(reply || "").trim();
+
+    let parsed = null;
+    try { parsed = JSON.parse(replyText); } catch (e) { parsed = null; }
+
+    // Si c'est déjà un "resultat", on vérifie la conformité stricte
+    if (parsed && parsed.type === "resultat") {
+      if (!isValidResultPayload(parsed)) {
+        const repaired = await repairToStrictNineBlocks({
+          apiKey: OPENAI_API_KEY,
+          badText: parsed.text || replyText,
+        });
+        if (repaired) replyText = repaired;
+      }
+    } else if (parsed && typeof parsed === "object") {
+      // Si le modèle a renvoyé "reponse" mais que ça ressemble à un résultat final,
+      // on force une conversion en "resultat" strict
+      const maybeText = String(parsed.text || "");
+      if (looksLikeFinalResultsText(maybeText)) {
+        const repaired = await repairToStrictNineBlocks({
+          apiKey: OPENAI_API_KEY,
+          badText: maybeText || replyText,
+        });
+        if (repaired) replyText = repaired;
+      }
+    } else {
+      // Cas rarissime: pas du JSON alors qu'on demande json_object.
+      // On tente une réparation quand même.
+      const repaired = await repairToStrictNineBlocks({
+        apiKey: OPENAI_API_KEY,
+        badText: replyText,
+      });
+      if (repaired) replyText = repaired;
+    }
+
+    // ✅ réponse finale
     res.status(200).json({
-      reply,
+      reply: replyText,
       conversationId: conversationId || null,
     });
   } catch (err) {
