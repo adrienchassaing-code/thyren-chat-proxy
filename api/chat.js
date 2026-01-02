@@ -317,6 +317,27 @@ ${String(badText || "").trim()}
   return j.choices?.[0]?.message?.content?.trim() || "";
 }
 
+function getBrusselsNowString(){
+  const now = new Date();
+
+  const parts = new Intl.DateTimeFormat("fr-BE", {
+    timeZone: "Europe/Brussels",
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(now);
+
+  const map = {};
+  parts.forEach(p => { map[p.type] = p.value; });
+
+  // Exemple: vendredi 02 janvier 2026, 14:07
+  return `${map.weekday} ${map.day} ${map.month} ${map.year}, ${map.hour}:${map.minute}`;
+}
+
 // 🔧 Handler Vercel pour /api/chat
 export default async function handler(req, res) {
   // ✅ CORS
@@ -386,14 +407,21 @@ ${COMPOSITIONS}
 ${SAV_FAQ}
 `;
 
-    const openAiMessages = [
-      { role: "system", content: SYSTEM_PROMPT },
-      { role: "system", content: DOCS_SYSTEM },
-      ...messages.map((m) => ({
-        role: m.role === "assistant" ? "assistant" : "user",
-        content: String(m.content || ""),
-      })),
-    ];
+    const NOW_SYSTEM = `
+DATE ET HEURE SYSTÈME (FIABLE)
+Nous sommes actuellement : ${getBrusselsNowString()} (timezone: Europe/Brussels).
+Règle: si l'utilisateur demande la date/le jour/l'heure, tu dois utiliser STRICTEMENT cette information. Ne devine jamais.
+`.trim();
+
+const openAiMessages = [
+  { role: "system", content: SYSTEM_PROMPT },
+  { role: "system", content: NOW_SYSTEM },     // ✅ AJOUT ICI
+  { role: "system", content: DOCS_SYSTEM },
+  ...messages.map((m) => ({
+    role: m.role === "assistant" ? "assistant" : "user",
+    content: String(m.content || ""),
+  })),
+];
 
     const oaRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
