@@ -11,11 +11,35 @@ const readDataFile = (filename) => {
     return "";
   }
 };
+// ====== Lecture de TOUS les fichiers d'un dossier (/data/<folder>) ======
+const readDataFolder = (folderName) => {
+  try {
+    const folderPath = path.join(process.cwd(), "data", folderName);
 
+    const files = fs
+      .readdirSync(folderPath)
+      .filter((f) => !f.startsWith("."))
+      .filter((f) => fs.statSync(path.join(folderPath, f)).isFile())
+      .sort((a, b) => a.localeCompare(b, "fr"));
+
+    return files
+      .map((filename) => {
+        const content = fs.readFileSync(path.join(folderPath, filename), "utf8");
+        return `\n\n===== ${folderName} / ${filename} =====\n${content}`;
+      })
+      .join("")
+      .trim();
+  } catch (e) {
+    console.error("Erreur lecture dossier", folderName, e);
+    return "";
+  }
+};
 const QUESTION_THYREN = readDataFile("QUESTION_THYREN.txt");
 const LES_CURES_ALL = readDataFile("LES_CURES_ALL.txt");
 const COMPOSITIONS = readDataFile("COMPOSITIONS.txt");
 const SAV_FAQ = readDataFile("SAV_FAQ.txt");
+// ✅ AJOUT : charge tout le dossier /data/RESIMONT
+const RESIMONT = readDataFolder("RESIMONT");
 
 // 🔐 Prompt système THYREN (TON TEXTE EXACT)
 const SYSTEM_PROMPT = `
@@ -408,6 +432,9 @@ ${COMPOSITIONS}
 
 [SAV_FAQ]
 ${SAV_FAQ}
+
+[RESIMONT]
+${RESIMONT}
 `;
 
     const NOW_SYSTEM = `
@@ -418,7 +445,7 @@ Règle: si l'utilisateur demande la date/le jour/l'heure, tu dois utiliser STRIC
 
 const openAiMessages = [
   { role: "system", content: SYSTEM_PROMPT },
-  { role: "system", content: NOW_SYSTEM },     // ✅ AJOUT ICI
+  { role: "system", content: NOW_SYSTEM }, 
   { role: "system", content: DOCS_SYSTEM },
   ...messages.map((m) => ({
     role: m.role === "assistant" ? "assistant" : "user",
