@@ -8,8 +8,7 @@ ementQUESTION THYREN 0.8.4
       "id": "Q1",
       "type": "open",
       "text": "C’est parti !
-Je vais te poser 18 questions rapides pour évaluer le fonctionnement de ta thyroïde et déterminer si nos cures peuvent t’aider.
-La majorité des utilisateurs complètent ce questionnaire en moins de 3 minutes.
+Je vais te poser 18 à 20 questions rapides ( environ 2 min de ton temp ) pour évaluer tes besoin et le fonctionnement de ta thyroïde pour déterminer si nos cures peuvent t’aider.
 Pour commencer, quel est ton prénom ?",
       "next": "Q2",
       "meta": {"capture": "first_name"}
