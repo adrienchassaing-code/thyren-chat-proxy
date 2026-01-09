@@ -480,15 +480,11 @@ export default async function handler(req, res) {
       return;
     }
 
-    // ✅ DOCS (injectés dans un 2e message system)
     const DOCS_SYSTEM = `
 DOCS SUPLEMINT (à suivre strictement, ne rien inventer)
 
-[QUESTION_THYROIDE]
-${QUESTION_THYROIDE}
-
-[QUESTION_ALL]
-${QUESTION_ALL}
+${activeMode === "A" ? `[QUESTION_THYROIDE]\n${QUESTION_THYROIDE}\n` : ""}
+${activeMode === "C" ? `[QUESTION_ALL]\n${QUESTION_ALL}\n` : ""}
 
 [LES_CURES_ALL]
 ${LES_CURES_ALL}
@@ -503,6 +499,8 @@ ${SAV_FAQ}
 ${RESIMONT}
 `;
 
+
+
     const NOW_SYSTEM = `
 DATE ET HEURE SYSTÈME (FIABLE)
 Nous sommes actuellement : ${getBrusselsNowString()} (timezone: Europe/Brussels).
@@ -510,25 +508,39 @@ Règle: si l'utilisateur demande la date/le jour/l'heure, tu dois utiliser STRIC
 `.trim();
 
 // ==============================
-// 🔥 ROUTER AMORCES (force le démarrage des quiz)
+// 🔥 ROUTER AMORCES + LOCK MODE
 // ==============================
 const lastUserMsg = String(
   [...messages].reverse().find(m => (m.role || "") === "user")?.content || ""
 ).trim();
 
-const isModeC = /trouver la cure dont j[’']ai besoin\.?\s*$/i.test(lastUserMsg);
-const isModeA = /sympt[oô]mes d[’']hypothyro/i.test(lastUserMsg);
+// Détection des triggers (clics)
+const triggerModeC = /trouver la cure dont j[’']ai besoin/i.test(lastUserMsg);
+const triggerModeA = /est-ce que j[’']ai des sympt[oô]mes d[’']hypothyro/i.test(lastUserMsg);
 
-// Message système "hard force" pour démarrer au bon quiz
-const ROUTER_SYSTEM = isModeC
-  ? `MODE C DÉCLENCHÉ.
-Tu dois DÉMARRER IMMÉDIATEMENT le quiz QUESTION_ALL au noeud Q1.
-Tu dois renvoyer EXACTEMENT cet objet JSON (copie conforme, pas de reformulation, pas de phrase en plus):
-{"type":"question","text":"C’est parti !\\nJe vais te poser quelques questions ciblées (environ 2 minutes) afin d’analyser tes besoins et ton profil, et déterminer si nos cures sont adaptées pour toi.\\nPour commencer, quel est ton prénom ?"}`
-  : isModeA
-  ? `MODE A DÉCLENCHÉ.
-Tu dois DÉMARRER IMMÉDIATEMENT le quiz QUESTION_THYROIDE au noeud Q1.
-Réponds UNIQUEMENT avec l'objet JSON de type "question" correspondant à Q1 (sans choices si open).`
+// LOCK par historique (si le quiz a déjà commencé, on garde le mode)
+const historyText = messages.map(m => String(m.content || "")).join("\n");
+const startedModeC = /Je vais te poser quelques questions ciblées/i.test(historyText);
+const startedModeA = /fonctionnement de ta thyroïde/i.test(historyText);
+
+// Mode actif final
+const activeMode = triggerModeC || (startedModeC && !startedModeA)
+  ? "C"
+  : triggerModeA || (startedModeA && !startedModeC)
+  ? "A"
+  : null;
+
+// System router (si mode locké, on force le questionnaire correspondant)
+const ROUTER_SYSTEM = activeMode === "C"
+  ? `MODE C ACTIF (LOCK).
+Tu dois suivre EXCLUSIVEMENT le questionnaire QUESTION_ALL, dans l’ordre du flow_order, du Q1 jusqu’à RESULT.
+INTERDICTION ABSOLUE d’utiliser QUESTION_THYROIDE tant que RESULT n’est pas terminé.
+Si tu hésites, tu reviens toujours à QUESTION_ALL.`
+  : activeMode === "A"
+  ? `MODE A ACTIF (LOCK).
+Tu dois suivre EXCLUSIVEMENT le questionnaire QUESTION_THYROIDE, dans l’ordre du flow_order, du Q1 jusqu’à RESULT.
+INTERDICTION ABSOLUE d’utiliser QUESTION_ALL tant que RESULT n’est pas terminé.
+Si tu hésites, tu reviens toujours à QUESTION_THYROIDE.`
   : "";
 
     
