@@ -7,7 +7,7 @@ ementQUESTION THYREN 0.8.4
     "Q1": {
       "id": "Q1",
       "type": "open",
-      "text": "C’est parti !
+      "text": "D’accord, on va tout vérifier ensemble.
 Je vais te poser quelques questions rapides ( environ 2 min de ton temp ) pour évaluer tes besoin et le fonctionnement de ta thyroïde pour déterminer si nos cures peuvent t’aider.
 Pour commencer, quel est ton prénom ?",
       "next": "Q2",
