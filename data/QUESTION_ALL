@@ -9,28 +9,22 @@
       "next": "Q2",
       "meta": { "capture": "first_name" }
     },
-
     "Q2": {
       "id": "Q2",
       "type": "choices",
       "text": "Interprétation personnalisée très courte de la réponse précédente + explication scientifique très courte liée à la médecine fonctionnelle.\n\nEnchanté {{first_name}}. Quel est ton sexe biologique ?",
-      "choices": ["Femme", "Homme"],
-      "next_map": {
-        "Femme": "Q2_plus",
-        "Homme": "Q3"
-      },
+      "choices": ["Femme","Homme"],
+      "next_map": { "Femme": "Q2_plus", "Homme": "Q3" },
       "meta": { "capture": "sex" }
     },
-
     "Q2_plus": {
       "id": "Q2_plus",
       "type": "choices",
       "text": "Interprétation personnalisée très courte de la réponse précédente + explication scientifique très courte liée à la médecine fonctionnelle.\n\nEs-tu enceinte ou allaitante ?",
-      "choices": ["Oui", "Non"],
+      "choices": ["Oui","Non"],
       "next": "Q3",
       "meta": { "capture": "enceinte" }
     },
-
     "Q3": {
       "id": "Q3",
       "type": "choices",
@@ -39,19 +33,14 @@
       "next": "Q4",
       "meta": { "capture": "age_band" }
     },
-
     "Q4": {
       "id": "Q4",
       "type": "choices",
       "text": "Interprétation personnalisée très courte de la réponse précédente + explication scientifique très courte liée à la médecine fonctionnelle.\n\nAs-tu une condition médicale ou une allergie à signaler ?",
       "choices": ["Tout va bien","J’ai des allergies ou une condition médicale à signaler"],
-      "next_map": {
-        "Tout va bien": "Q5",
-        "J’ai des allergies ou une condition médicale à signaler": "Q4b"
-      },
+      "next_map": { "Tout va bien": "Q5", "J’ai des allergies ou une condition médicale à signaler": "Q4b" },
       "meta": { "capture": "safety_flag" }
     },
-
     "Q4b": {
       "id": "Q4b",
       "type": "open",
@@ -59,7 +48,6 @@
       "next": "Q5",
       "meta": { "capture": "safety_details" }
     },
-
     "Q5": {
       "id": "Q5",
       "type": "open",
@@ -67,195 +55,68 @@
       "next": "Q6",
       "meta": { "capture": "plainte_client" }
     },
-
     "Q6": {
-  "id": "Q6",
-  "type": "choices",
-  "text": "Interprétation personnalisée très courte de la réponse précédente + explication scientifique très courte liée à la médecine fonctionnelle.\n\nSi tu devais te concentrer sur un seul problème, lequel serait-ce ?",
-  "choices": [],
-  "next": "Q7",
-  "meta": { "capture": "priorité" },
-  "ai": {
-    "goal": "Générer des choices personnalisés (max 10) à partir du texte libre de Q5.",
-    "inputs": ["plainte_client", "sex", "age_band", "enceinte", "safety_flag", "safety_details"],
-    "rules": [
-      "Créer entre 5 et 10 choices maximum.",
-      "Chaque choice doit être court (2 à 6 mots), concret et compréhensible.",
-      "Les choices doivent reprendre les thèmes/symptômes réellement mentionnés dans plainte_client (pas de catégories génériques).",
-      "Éviter les doublons et regrouper les synonymes.",
-      "Si plainte_client est flou, proposer des choices de clarification basés sur les mots présents (ex: fatigue, sommeil, digestion, stress, douleurs, peau, poids, libido, etc.).",
-      "Ajouter en dernier: \"Autre (préciser)\" uniquement si c’est utile."
-    ],
-    "output_format": "Tu dois retourner une question JSON avec type=\"question\" et un champ choices (array) contenant les choices générés."
-  }
-}
-
+      "id": "Q6",
+      "type": "choices",
+      "text": "Interprétation personnalisée très courte de la réponse précédente + explication scientifique très courte liée à la médecine fonctionnelle.\n\nSi tu devais te concentrer sur un seul problème, lequel serait-ce ?",
+      "choices": [],
+      "next": "Q7",
+      "meta": { "capture": "priorité" },
+      "ai": {
+        "goal": "Générer des choices personnalisés (max 10) à partir du texte libre de Q5.",
+        "inputs": ["plainte_client","sex","age_band","enceinte","safety_flag","safety_details"],
+        "rules": [
+          "Créer entre 5 et 10 choices maximum.",
+          "Chaque choice doit être court (2 à 6 mots), concret et compréhensible.",
+          "Reprendre les thèmes/symptômes réellement mentionnés dans plainte_client (pas de catégories génériques).",
+          "Éviter les doublons et regrouper les synonymes.",
+          "Si plainte_client est flou, proposer des choices de clarification basés sur les mots présents.",
+          "Optionnel: ajouter en dernier \"Autre (préciser)\" si utile."
+        ],
+        "output_format": "Retourner une réponse JSON de type \"question\" contenant \"choices\" (array) rempli."
+      }
+    },
     "Q7": {
       "id": "Q7",
       "type": "open",
       "text": "{{AI_Q7_TEXT}}",
       "next": "Q8",
-      "meta": { "capture": "detail_1" },
-      "ai": {
-        "goal": "Approfondir la plainte prioritaire sélectionnée en Q6 à partir du texte libre de Q5.",
-        "inputs": ["plainte_client","priorité","sex","age_band","enceinte","safety_flag","safety_details"],
-        "output_format": "Interprétation (1 phrase). Explication scientifique (1 phrase). Question ciblée (1 phrase).",
-        "question_strategy": "Reprendre les mots exacts de l’utilisateur et demander un exemple concret."
-      }
+      "meta": { "capture": "detail_1" }
     },
-
     "Q8": {
       "id": "Q8",
       "type": "open",
       "text": "{{AI_Q8_TEXT}}",
       "next": "Q9",
-      "meta": { "capture": "detail_2" },
-      "ai": {
-        "goal": "Clarifier l’intensité et l’impact sur la vie quotidienne.",
-        "inputs": ["plainte_client","priorité","detail_1"],
-        "output_format": "Interprétation + science + question.",
-        "must_include": "Une mesure chiffrée (1–10, fréquence ou durée)."
-      }
+      "meta": { "capture": "detail_2" }
     },
-
     "Q9": {
       "id": "Q9",
       "type": "open",
       "text": "{{AI_Q9_TEXT}}",
       "next": "Q10",
-      "meta": { "capture": "detail_3" },
-      "ai": {
-        "goal": "Comprendre la chronologie et l’évolution du symptôme.",
-        "inputs": ["plainte_client","priorité","detail_1","detail_2"],
-        "output_format": "Interprétation + science + question.",
-        "must_include": "Depuis quand + fréquence."
-      }
+      "meta": { "capture": "detail_3" }
     },
-
     "Q10": {
       "id": "Q10",
       "type": "open",
       "text": "{{AI_Q10_TEXT}}",
       "next": "Q11",
-      "meta": { "capture": "detail_4" },
-      "ai": {
-        "goal": "Identifier déclencheurs, facteurs améliorants et signes associés.",
-        "inputs": ["plainte_client","priorité","detail_1","detail_2","detail_3"],
-        "output_format": "Interprétation + science + question."
-      }
+      "meta": { "capture": "detail_4" }
     },
-
     "Q11": {
       "id": "Q11",
       "type": "open",
       "text": "Peux-tu me partager ton adresse e-mail pour t’envoyer le récapitulatif de tes résultats et recommandations ?",
       "next_on_valid": "RESULT",
       "next_on_skip": "RESULT",
-      "validation": {
-        "type": "email_regex",
-        "pattern": "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
-      },
+      "validation": { "type": "email_regex", "pattern": "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$" },
       "meta": { "capture": "email" }
     },
-
-    "RESULT": {
-      "id": "RESULT",
-      "type": "terminal",
-      "action": "generate_report"
-    }
+    "RESULT": { "id": "RESULT", "type": "terminal", "action": "generate_report" }
   },
-
   "engine_hints": {
-    "state_model": {
-      "current_id": "string",
-      "answers": "map",
-      "history": "array"
-    },
-    "advance_rule": "Toujours suivre nodes[current_id].next ou next_map.",
-    "branching": "Q4 utilise next_map selon la réponse.",
-    "restart_phrases": [
-      "on recommence le quiz",
-      "je veux refaire le test",
-      "on repart de zéro",
-      "recommencer le quiz"
-    ],
-    "placeholders": {
-      "first_name": "capitalized"
-    }
+    "state_model": { "current_id": "string", "answers": "map", "history": "array" },
+    "advance_rule": "Toujours suivre nodes[current_id].next ou next_map."
   }
 }
-
-RÉSULTATS :  
-Bloc 1)
-Résumé très court (2–3 phrases max) Exemple : « Merci Adrien. D’après tes réponses, tu présentes des signes compatibles avec une hypothyroïdie fonctionnelle légère : fatigue, énergie variable et sensibilité au froid. Rien d’alarmant, mais on peut optimiser ton confort et ton métabolisme. »
-
-Bloc 2 – Lecture des besoins (%)
-Ces pourcentages indiquent le degré de soutien dont ton corps a besoin sur chaque axe.
-Plus le pourcentage est élevé, plus le besoin est important (ce n’est pas un niveau “normal”).
-Exemples :
-Énergie : 78 % → besoin élevé de soutien énergétique  
-Humeur / stress : 65 % → besoin modéré à élevé d’équilibre nerveux  
-Sommeil : 82 % → priorité élevée de récupération  
-Confort digestif : 70 % → besoin important de soutien digestif  
-Équilibre hormonal / libido : 58 % → besoin modéré d’optimisation
-
-Bloc 3)
-Cure 1 – Essentielle
-FORMAT BLOC 3 — STRICT (OBLIGATOIRE)
-Quand tu présentes une cure (quiz OU question libre), tu dois respecter EXACTEMENT cette structure.
-Aucune section en plus. Aucun intitulé modifié.
-
-"NOM DE LA CURE" en TITRE : Compatibilité : XX %
-
-– À quoi sert la cure et comment :
-1 phrase simple (objectif). 1 phrase concrète (mécanisme).
-– Durée conseillée et quand prendre la cure  :
-3 à 6 mois, le matin à jeun.
-– Quand vais-je ressentir les effets ? :
-« Des effets peuvent se faire ressentir à partir du JJ/MM/AAAA si vous commandez aujourd’hui. »
-(calculer date du jour + 7 jours)
-– Composition :
-« 1× … / 1× … / 1× … »
-
-Puis TOUJOURS, chacun sur sa ligne :
-[Commander ma cure](checkout:{{variant_id}})
-[Ajouter au panier](addtocart:{{variant_id}})
-[En savoir plus]({{product_url}})
-
-INTERDICTIONS ABSOLUES :
-- Ne JAMAIS écrire “Preview”, “Titre”, “Prix”, “Image”.
-- Ne JAMAIS afficher d’URL brute (sauf images si demandées explicitement).
-- Ne JAMAIS fusionner deux sections.
-- Ne JAMAIS reformuler les intitulés.
-- Ne JAMAIS modifier la phrase des effets.
-
-Bloc 4 ) 
-Cure 2 – Optimisation
-Même structure bloc 3
-
-Bloc 5 ) 
-Cure 3 – Confort
-Même structure bloc 3
-
-Bloc 6 )
-Contre indication :
-Tu vérifies en backup qu’il n’existe aucune contre-indication ni allergie signalée par l’utilisateur.
-Si une cure serait appropriée mais contient un allergène : « Cette cure serait adaptée sur le plan fonctionnel, mais elle contient un ingrédient marin allergène. Je ne peux donc pas la recommander sans avis médical. »
-
-Bloc 7)
-Besoin de discuter avec une nutritionniste ? Nos nutritionnistes sont là pour vous écouter et connaissent parfaitement nos cures 😉
-C’est 100 % gratuit, par téléphone ou par vidéo : c’est vous qui choisissez.
-Réservez sur notre agenda en ligne, à votre convenance.
-Tu proposes un rendez-vous gratuit avec Françoise, nutritionniste SUPLEMINT®.
-Le lien DOIT TOUJOURS être écrit en Markdown strict :
-[Cliquez ici pour prendre RDV](https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252)
-RÈGLES :
-- Ne jamais afficher l’URL brute.
-- Ne jamais écrire [Cliquez ici pour prendre RDV] sans URL.
-- Ne jamais utiliser de HTML.
-
-Bloc 8)
-Discloser :
-Tu termines toujours par : « Ce test est un outil de bien-être et d’éducation à la santé. Il ne remplace pas un avis médical. En cas de doute ou de symptômes persistants, consultez un professionnel de santé.
-
-Bloc 9) Avez-vous d’autres questions en tête ?
