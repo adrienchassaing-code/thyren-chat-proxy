@@ -480,11 +480,14 @@ export default async function handler(req, res) {
       return;
     }
 
-    const DOCS_SYSTEM = `
+const DOCS_SYSTEM = `
 DOCS SUPLEMINT (à suivre strictement, ne rien inventer)
 
-${activeMode === "A" ? `[QUESTION_THYROIDE]\n${QUESTION_THYROIDE}\n` : ""}
-${activeMode === "C" ? `[QUESTION_ALL]\n${QUESTION_ALL}\n` : ""}
+[QUESTION_THYROIDE]
+${QUESTION_THYROIDE}
+
+[QUESTION_ALL]
+${QUESTION_ALL}
 
 [LES_CURES_ALL]
 ${LES_CURES_ALL}
@@ -498,8 +501,6 @@ ${SAV_FAQ}
 [RESIMONT]
 ${RESIMONT}
 `;
-
-
 
     const NOW_SYSTEM = `
 DATE ET HEURE SYSTÈME (FIABLE)
