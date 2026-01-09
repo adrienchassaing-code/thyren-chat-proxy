@@ -1,163 +1,183 @@
-QUIZ THYREN 0.8.4
-
 {
   "version": "THYREN_FLOW_QUIZ_1.0",
-  "flow_order": ["Q1","Q2","Q3","Q4","Q4b","Q5","Q6","Q7","Q8","Q9","Q10","Q11","RESULT"],
+  "flow_order": ["Q1","Q2","Q2_plus","Q3","Q4","Q4b","Q5","Q6","Q7","Q8","Q9","Q10","Q11","RESULT"],
   "nodes": {
     "Q1": {
       "id": "Q1",
       "type": "open",
-      "text": "C’est parti !
-Je vais te poser quelques questions ciblées (environ 2 minutes) afin d’analyser tes besoins et ton profil, et déterminer si nos cures sont adaptées pour toi.
-Pour commencer, quel est ton prénom ?",
+      "text": "C’est parti !\nJe vais te poser quelques questions ciblées (environ 2 minutes) afin d’analyser tes besoins et ton profil, et déterminer si nos cures sont adaptées pour toi.\nPour commencer, quel est ton prénom ?",
       "next": "Q2",
-      "meta": {"capture": "first_name"}
+      "meta": { "capture": "first_name" }
     },
+
     "Q2": {
-  "id": "Q2",
-  "type": "choices",
-  "text": "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente associé si possible à une très courte explication scientifique ou fait divers (1 phrase max) liée à la médecine fonctionelle" + "Enchanté {{first_name}}. Quel est ton sexe biologique ?",
-  "choices": ["Femme", "Homme"],
-  "next_map": {
-    "Femme": "Q2_plus",
-    "Homme": "Q3"
-  },
-  "meta": { "capture": "sex" }
-},
-"Q2_plus": {
-  "id": "Q2_plus",
-  "type": "choices",
-  "text": "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à la médecine fonctionelle" + "Es-tu enceinte ou allaitante ?",
-  "choices": ["oui", "non"],
-  "next": "Q3",
-  "meta": { "capture": "enceinte" }
+      "id": "Q2",
+      "type": "choices",
+      "text": "Interprétation personnalisée très courte de la réponse précédente + explication scientifique très courte liée à la médecine fonctionnelle.\n\nEnchanté {{first_name}}. Quel est ton sexe biologique ?",
+      "choices": ["Femme", "Homme"],
+      "next_map": {
+        "Femme": "Q2_plus",
+        "Homme": "Q3"
+      },
+      "meta": { "capture": "sex" }
     },
+
+    "Q2_plus": {
+      "id": "Q2_plus",
+      "type": "choices",
+      "text": "Interprétation personnalisée très courte de la réponse précédente + explication scientifique très courte liée à la médecine fonctionnelle.\n\nEs-tu enceinte ou allaitante ?",
+      "choices": ["Oui", "Non"],
+      "next": "Q3",
+      "meta": { "capture": "enceinte" }
+    },
+
     "Q3": {
       "id": "Q3",
       "type": "choices",
-      "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à la médecine fonctionelle" + “Quel est ton âge ?",
+      "text": "Interprétation personnalisée très courte de la réponse précédente + explication scientifique très courte liée à la médecine fonctionnelle.\n\nQuel est ton âge ?",
       "choices": ["Moins de 30 ans","30-45 ans","45-60 ans","Plus de 60 ans"],
       "next": "Q4",
-      "meta": {"capture": "age_band"}
+      "meta": { "capture": "age_band" }
     },
+
     "Q4": {
       "id": "Q4",
       "type": "choices",
-      "text":  "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à la médecine fonctionelle" + “As-tu une condition médicale ou une allergie à signaler ?",
+      "text": "Interprétation personnalisée très courte de la réponse précédente + explication scientifique très courte liée à la médecine fonctionnelle.\n\nAs-tu une condition médicale ou une allergie à signaler ?",
       "choices": ["Tout va bien","J’ai des allergies ou une condition médicale à signaler"],
       "next_map": {
         "Tout va bien": "Q5",
         "J’ai des allergies ou une condition médicale à signaler": "Q4b"
       },
-      "meta": {"capture": "safety_flag"}
+      "meta": { "capture": "safety_flag" }
     },
+
     "Q4b": {
       "id": "Q4b",
       "type": "open",
       "text": "Merci de préciser tes allergies ou ta condition médicale.",
       "next": "Q5",
-      "meta": {"capture": "safety_details"}
+      "meta": { "capture": "safety_details" }
     },
+
     "Q5": {
       "id": "Q5",
-      "type": "choices",
-      "text":  "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à la médecine fonctionelle" + “Le plus important, raconte-moi ce qui te gêne en ce moment, ce que tu ressens et ce que tu aimerais améliorer. Prends ton temps, et sois précis : tout peut m’aider. Et pas d’inquiétude, c’est confidentiel.",
+      "type": "open",
+      "text": "Interprétation personnalisée très courte de la réponse précédente + explication scientifique très courte liée à la médecine fonctionnelle.\n\nLe plus important, raconte-moi ce qui te gêne en ce moment, ce que tu ressens et ce que tu aimerais améliorer. Prends ton temps, sois précis : tout peut m’aider.",
       "next": "Q6",
-      "meta": {"capture": "plainte_client"}
+      "meta": { "capture": "plainte_client" }
     },
+
     "Q6": {
       "id": "Q6",
       "type": "choices",
-      "text": "une interprétation personnalisée de la réponse précédente” + “une explication scientifique liée à la médecine fonctionelle" + “Si tu devais te concentrer sur un seul problème, lequel serait-ce ?",
-      "choices": ["Plainte 1","Plainte 2","Plainte 3",etc, etc], max 10 plaintes
+      "text": "Interprétation personnalisée de la réponse précédente + explication scientifique liée à la médecine fonctionnelle.\n\nSi tu devais te concentrer sur un seul problème, lequel serait-ce ?",
+      "choices": [
+        "Fatigue / manque d’énergie",
+        "Stress / anxiété",
+        "Troubles du sommeil",
+        "Digestion inconfortable",
+        "Déséquilibres hormonaux"
+      ],
       "next": "Q7",
-      "meta": {"capture": "priorité"}
+      "meta": { "capture": "priorité" }
     },
+
     "Q7": {
-  "id": "Q7",
-  "type": "open",
-  "text": "{{AI_Q7_TEXT}}",
-  "next": "Q8",
-  "meta": { "capture": "detail_1" },
-  "ai": {
-    "goal": "Approfondir la plainte prioritaire sélectionnée en Q6 à partir du texte libre de Q5.",
-    "inputs": ["plainte_client", "priorité", "sex", "age_band", "enceinte", "safety_flag", "safety_details"],
-    "output_format": "1) Interprétation personnalisée (1 phrase max). 2) Explication scientifique médecine fonctionnelle (1 phrase max). 3) Question de relance (1 phrase, très ciblée).",
-    "question_strategy": "Poser une question sur le symptôme principal de {{priorité}} en reprenant les mots exacts de l’utilisateur dans plainte_client. Demander un exemple concret + contexte (quand, dans quelle situation).",
-    "examples_of_good_questions": [
-      "Quand tu dis « X », ça ressemble plutôt à Y ou Z ? Donne-moi un exemple précis de la dernière fois.",
-      "À quel moment de la journée c’est le plus marqué, et dans quel contexte ça apparaît ?"
-    ]
-  }
-},
+      "id": "Q7",
+      "type": "open",
+      "text": "{{AI_Q7_TEXT}}",
+      "next": "Q8",
+      "meta": { "capture": "detail_1" },
+      "ai": {
+        "goal": "Approfondir la plainte prioritaire sélectionnée en Q6 à partir du texte libre de Q5.",
+        "inputs": ["plainte_client","priorité","sex","age_band","enceinte","safety_flag","safety_details"],
+        "output_format": "Interprétation (1 phrase). Explication scientifique (1 phrase). Question ciblée (1 phrase).",
+        "question_strategy": "Reprendre les mots exacts de l’utilisateur et demander un exemple concret."
+      }
+    },
 
-"Q8": {
-  "id": "Q8",
-  "type": "open",
-  "text": "{{AI_Q8_TEXT}}",
-  "next": "Q9",
-  "meta": { "capture": "detail_2" },
-  "ai": {
-    "goal": "Clarifier intensité + impact réel sur la vie quotidienne, spécifique à la plainte.",
-    "inputs": ["plainte_client", "priorité", "detail_1"],
-    "output_format": "Interprétation (1 phrase) + science (1 phrase) + question (1 phrase).",
-    "question_strategy": "Demander intensité/impact avec ancrage concret (travail, sommeil, humeur, digestion, énergie, performances, etc.) + échelle chiffrée si pertinent.",
-    "must_include": "Une mesure (ex: échelle 1–10 OU 'combien de fois' OU 'combien de temps')."
-  }
-},
+    "Q8": {
+      "id": "Q8",
+      "type": "open",
+      "text": "{{AI_Q8_TEXT}}",
+      "next": "Q9",
+      "meta": { "capture": "detail_2" },
+      "ai": {
+        "goal": "Clarifier l’intensité et l’impact sur la vie quotidienne.",
+        "inputs": ["plainte_client","priorité","detail_1"],
+        "output_format": "Interprétation + science + question.",
+        "must_include": "Une mesure chiffrée (1–10, fréquence ou durée)."
+      }
+    },
 
-"Q9": {
-  "id": "Q9",
-  "type": "open",
-  "text": "{{AI_Q9_TEXT}}",
-  "next": "Q10",
-  "meta": { "capture": "detail_3" },
-  "ai": {
-    "goal": "Comprendre la chronologie et le pattern : depuis quand, fréquence, évolution.",
-    "inputs": ["plainte_client", "priorité", "detail_1", "detail_2"],
-    "output_format": "Interprétation (1 phrase) + science (1 phrase) + question (1 phrase).",
-    "question_strategy": "Demander: début (date/période), évolution (stable/pire/meilleur), fréquence (quotidien/hebdo), et si c’est continu ou par crises.",
-    "must_include": "Depuis quand + fréquence."
-  }
-},
+    "Q9": {
+      "id": "Q9",
+      "type": "open",
+      "text": "{{AI_Q9_TEXT}}",
+      "next": "Q10",
+      "meta": { "capture": "detail_3" },
+      "ai": {
+        "goal": "Comprendre la chronologie et l’évolution du symptôme.",
+        "inputs": ["plainte_client","priorité","detail_1","detail_2"],
+        "output_format": "Interprétation + science + question.",
+        "must_include": "Depuis quand + fréquence."
+      }
+    },
 
-"Q10": {
-  "id": "Q10",
-  "type": "open",
-  "text": "{{AI_Q10_TEXT}}",
-  "next": "Q11",
-  "meta": { "capture": "detail_4" },
-  "ai": {
-    "goal": "Identifier déclencheurs/reliefs + signaux associés pertinents pour trancher la cure.",
-    "inputs": ["plainte_client", "priorité", "detail_1", "detail_2", "detail_3"],
-    "output_format": "Interprétation (1 phrase) + science (1 phrase) + question (1 phrase).",
-    "question_strategy": "Demander les facteurs aggravants/améliorants les plus probables selon priorité (stress, sommeil, alimentation, cycle, sport, caféine, froid/chaud, etc.) + 1 signe associé clé (choisi par THYREN) pour orienter la cure.",
-    "must_include": "Un déclencheur OU un facteur améliorant + un symptôme associé."
-  }
-}
+    "Q10": {
+      "id": "Q10",
+      "type": "open",
+      "text": "{{AI_Q10_TEXT}}",
+      "next": "Q11",
+      "meta": { "capture": "detail_4" },
+      "ai": {
+        "goal": "Identifier déclencheurs, facteurs améliorants et signes associés.",
+        "inputs": ["plainte_client","priorité","detail_1","detail_2","detail_3"],
+        "output_format": "Interprétation + science + question."
+      }
+    },
+
     "Q11": {
-      "id": "Q17",
+      "id": "Q11",
       "type": "open",
       "text": "Peux-tu me partager ton adresse e-mail pour t’envoyer le récapitulatif de tes résultats et recommandations ?",
       "next_on_valid": "RESULT",
       "next_on_skip": "RESULT",
-      "validation": {"type": "email_regex","pattern": "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"},
-      "meta": {"capture": "email"}
+      "validation": {
+        "type": "email_regex",
+        "pattern": "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+      },
+      "meta": { "capture": "email" }
     },
+
     "RESULT": {
       "id": "RESULT",
       "type": "terminal",
       "action": "generate_report"
     }
   },
+
   "engine_hints": {
-    "state_model": {"current_id": "string","answers": "map","history": "array"},
-    "advance_rule": "Toujours suivre nodes[current_id].next ou next_map. Ne jamais relire le prompt d’origine pour deviner la prochaine question.",
+    "state_model": {
+      "current_id": "string",
+      "answers": "map",
+      "history": "array"
+    },
+    "advance_rule": "Toujours suivre nodes[current_id].next ou next_map.",
     "branching": "Q4 utilise next_map selon la réponse.",
-    "restart_phrases": ["on recommence le quiz","je veux refaire le test","on repart de zéro","recommencer le quiz"],
-    "placeholders": {"first_name": "capitalized"}
+    "restart_phrases": [
+      "on recommence le quiz",
+      "je veux refaire le test",
+      "on repart de zéro",
+      "recommencer le quiz"
+    ],
+    "placeholders": {
+      "first_name": "capitalized"
+    }
   }
 }
+
 RÉSULTATS :  
 Bloc 1)
 Résumé très court (2–3 phrases max) Exemple : « Merci Adrien. D’après tes réponses, tu présentes des signes compatibles avec une hypothyroïdie fonctionnelle légère : fatigue, énergie variable et sensibilité au froid. Rien d’alarmant, mais on peut optimiser ton confort et ton métabolisme. »
