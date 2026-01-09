@@ -11,6 +11,7 @@ const readDataFile = (filename) => {
     return "";
   }
 };
+
 // ====== Lecture de TOUS les fichiers d'un dossier (/data/<folder>) ======
 const readDataFolder = (folderName) => {
   try {
@@ -34,6 +35,7 @@ const readDataFolder = (folderName) => {
     return "";
   }
 };
+
 const QUESTION_THYROIDE = readDataFile("QUESTION_THYROIDE.txt");
 const LES_CURES_ALL = readDataFile("LES_CURES_ALL.txt");
 const COMPOSITIONS = readDataFile("COMPOSITIONS.txt");
@@ -345,7 +347,6 @@ function isValidResultPayload(obj){
   const parts = obj.text.split("===BLOCK===");
   if (parts.length !== 9) return false;
 
-  // interdit dans le visible (tu peux en ajouter)
   const forbidden = /\bBloc\s*\d+\b|Bloc fin|RÉSULTATS\b|Choisis une option|Recommencer le quiz|J[’']ai une question/i;
   if (forbidden.test(obj.text)) return false;
 
@@ -354,7 +355,6 @@ function isValidResultPayload(obj){
 
 function looksLikeFinalResultsText(t){
   t = String(t || "");
-  // Heuristique: si on voit clairement disclaimer + question finale + cures, c'est un "résultat"
   const hasDisclaimer = /Ce test est un outil de bien-être/i.test(t);
   const hasFinalQ = /Avez-vous d[’']autres questions/i.test(t);
   const hasCure = /\bCure\s*1\b|\bCure\s*2\b|\bCure\s*3\b|\bCompatibilit/i.test(t);
@@ -424,7 +424,6 @@ function getBrusselsNowString(){
   const map = {};
   parts.forEach(p => { map[p.type] = p.value; });
 
-  // Exemple: vendredi 02 janvier 2026, 14:07
   return `${map.weekday} ${map.day} ${map.month} ${map.year}, ${map.hour}:${map.minute}`;
 }
 
@@ -435,7 +434,6 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // ✅ Réponse au preflight CORS
   if (req.method === "OPTIONS") {
     res.status(204).end();
     return;
@@ -446,18 +444,16 @@ export default async function handler(req, res) {
     return;
   }
 
-  // 🟢 présence "en ligne" (TTL 60s) — placé tôt pour être toujours exécuté
+  // 🟢 présence "en ligne" (TTL 60s)
   try {
     const url = process.env.UPSTASH_REDIS_REST_URL;
     const token = process.env.UPSTASH_REDIS_REST_TOKEN;
     if (url && token) {
       const base = url.replace(/\/$/, "");
-
       const presenceId =
         (req.body?.conversationId && String(req.body.conversationId)) ||
         (req.headers["x-forwarded-for"]?.split(",")[0]?.trim()) ||
         `anon:${Math.random().toString(36).slice(2, 10)}`;
-
       const key = `online:${presenceId}`;
 
       fetch(`${base}/set/${encodeURIComponent(key)}/1?ex=60`, {
@@ -480,14 +476,47 @@ export default async function handler(req, res) {
       return;
     }
 
-const DOCS_SYSTEM = `
+    const NOW_SYSTEM = `
+DATE ET HEURE SYSTÈME (FIABLE)
+Nous sommes actuellement : ${getBrusselsNowString()} (timezone: Europe/Brussels).
+Règle: si l'utilisateur demande la date/le jour/l'heure, tu dois utiliser STRICTEMENT cette information. Ne devine jamais.
+`.trim();
+
+    // ==============================
+    // 🔥 ROUTER AMORCES + LOCK MODE (AVANT DOCS_SYSTEM)
+    // ==============================
+    const lastUserMsg = String(
+      [...messages].reverse().find(m => (m.role || "") === "user")?.content || ""
+    ).trim();
+
+    const triggerModeC = /trouver la cure dont j[’']ai besoin/i.test(lastUserMsg);
+    const triggerModeA = /est-ce que j[’']ai des sympt[oô]mes d[’']hypothyro/i.test(lastUserMsg);
+
+    const historyText = messages.map(m => String(m.content || "")).join("\n");
+    const startedModeC = /Je vais te poser quelques questions ciblées/i.test(historyText);
+    const startedModeA = /fonctionnement de ta thyroïde/i.test(historyText);
+
+    const activeMode =
+      triggerModeC || (startedModeC && !startedModeA) ? "C" :
+      triggerModeA || (startedModeA && !startedModeC) ? "A" :
+      null;
+
+    const ROUTER_SYSTEM = activeMode === "C"
+      ? `MODE C ACTIF (LOCK).
+Tu dois suivre EXCLUSIVEMENT le questionnaire QUESTION_ALL, dans l’ordre du flow_order, du Q1 jusqu’à RESULT.
+INTERDICTION ABSOLUE d’utiliser QUESTION_THYROIDE tant que RESULT n’est pas terminé.`
+      : activeMode === "A"
+      ? `MODE A ACTIF (LOCK).
+Tu dois suivre EXCLUSIVEMENT le questionnaire QUESTION_THYROIDE, dans l’ordre du flow_order, du Q1 jusqu’à RESULT.
+INTERDICTION ABSOLUE d’utiliser QUESTION_ALL tant que RESULT n’est pas terminé.`
+      : "";
+
+    // ✅ DOCS (mode-aware: ne pas injecter les 2 questionnaires)
+    const DOCS_SYSTEM = `
 DOCS SUPLEMINT (à suivre strictement, ne rien inventer)
 
-[QUESTION_THYROIDE]
-${QUESTION_THYROIDE}
-
-[QUESTION_ALL]
-${QUESTION_ALL}
+${activeMode === "A" ? `[QUESTION_THYROIDE]\n${QUESTION_THYROIDE}\n` : ""}
+${activeMode === "C" ? `[QUESTION_ALL]\n${QUESTION_ALL}\n` : ""}
 
 [LES_CURES_ALL]
 ${LES_CURES_ALL}
@@ -500,61 +529,18 @@ ${SAV_FAQ}
 
 [RESIMONT]
 ${RESIMONT}
-`;
-
-    const NOW_SYSTEM = `
-DATE ET HEURE SYSTÈME (FIABLE)
-Nous sommes actuellement : ${getBrusselsNowString()} (timezone: Europe/Brussels).
-Règle: si l'utilisateur demande la date/le jour/l'heure, tu dois utiliser STRICTEMENT cette information. Ne devine jamais.
 `.trim();
 
-// ==============================
-// 🔥 ROUTER AMORCES + LOCK MODE
-// ==============================
-const lastUserMsg = String(
-  [...messages].reverse().find(m => (m.role || "") === "user")?.content || ""
-).trim();
-
-// Détection des triggers (clics)
-const triggerModeC = /trouver la cure dont j[’']ai besoin/i.test(lastUserMsg);
-const triggerModeA = /est-ce que j[’']ai des sympt[oô]mes d[’']hypothyro/i.test(lastUserMsg);
-
-// LOCK par historique (si le quiz a déjà commencé, on garde le mode)
-const historyText = messages.map(m => String(m.content || "")).join("\n");
-const startedModeC = /Je vais te poser quelques questions ciblées/i.test(historyText);
-const startedModeA = /fonctionnement de ta thyroïde/i.test(historyText);
-
-// Mode actif final
-const activeMode = triggerModeC || (startedModeC && !startedModeA)
-  ? "C"
-  : triggerModeA || (startedModeA && !startedModeC)
-  ? "A"
-  : null;
-
-// System router (si mode locké, on force le questionnaire correspondant)
-const ROUTER_SYSTEM = activeMode === "C"
-  ? `MODE C ACTIF (LOCK).
-Tu dois suivre EXCLUSIVEMENT le questionnaire QUESTION_ALL, dans l’ordre du flow_order, du Q1 jusqu’à RESULT.
-INTERDICTION ABSOLUE d’utiliser QUESTION_THYROIDE tant que RESULT n’est pas terminé.
-Si tu hésites, tu reviens toujours à QUESTION_ALL.`
-  : activeMode === "A"
-  ? `MODE A ACTIF (LOCK).
-Tu dois suivre EXCLUSIVEMENT le questionnaire QUESTION_THYROIDE, dans l’ordre du flow_order, du Q1 jusqu’à RESULT.
-INTERDICTION ABSOLUE d’utiliser QUESTION_ALL tant que RESULT n’est pas terminé.
-Si tu hésites, tu reviens toujours à QUESTION_THYROIDE.`
-  : "";
-
-    
-const openAiMessages = [
-  { role: "system", content: SYSTEM_PROMPT },
-  { role: "system", content: NOW_SYSTEM },
-  ...(ROUTER_SYSTEM ? [{ role: "system", content: ROUTER_SYSTEM }] : []),
-  { role: "system", content: DOCS_SYSTEM },
-  ...messages.map((m) => ({
-    role: m.role === "assistant" ? "assistant" : "user",
-    content: String(m.content || ""),
-  })),
-];
+    const openAiMessages = [
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "system", content: NOW_SYSTEM },
+      ...(ROUTER_SYSTEM ? [{ role: "system", content: ROUTER_SYSTEM }] : []),
+      { role: "system", content: DOCS_SYSTEM },
+      ...messages.map((m) => ({
+        role: m.role === "assistant" ? "assistant" : "user",
+        content: String(m.content || ""),
+      })),
+    ];
 
     const oaRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -580,49 +566,14 @@ const openAiMessages = [
     const oaData = await oaRes.json();
     const reply = oaData.choices?.[0]?.message?.content || "";
 
-    // 📊 compteur réponses par jour (Upstash REST, safe)
-    try {
-      const url = process.env.UPSTASH_REDIS_REST_URL;
-      const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-      if (url && token) {
-        const today = new Date().toISOString().slice(0, 10);
-        const key = `chat:responses:${today}`;
-        const endpoint = `${url.replace(/\/$/, "")}/incr/${encodeURIComponent(key)}`;
-
-        fetch(endpoint, {
-          headers: { Authorization: `Bearer ${token}` },
-        }).catch(() => {});
-      }
-    } catch (_) {}
-
-    // 🟢 présence "en ligne" (TTL 60s)
-    try {
-      const url = process.env.UPSTASH_REDIS_REST_URL;
-      const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-      if (url && token) {
-        const presenceId =
-          (conversationId && String(conversationId)) ||
-          (req.headers["x-forwarded-for"]?.split(",")[0]?.trim()) ||
-          "unknown";
-
-        const key = `online:${presenceId}`;
-        const base = url.replace(/\/$/, "");
-
-        fetch(`${base}/set/${encodeURIComponent(key)}/1?ex=60`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }).catch(() => {});
-      }
-    } catch (_) {}
-
     // ==========================================
-    // ✅ ICI : Validation + Repair du payload final
+    // ✅ Validation + Repair du payload final
     // ==========================================
     let replyText = String(reply || "").trim();
 
     let parsed = null;
     try { parsed = JSON.parse(replyText); } catch (e) { parsed = null; }
 
-    // Si c'est déjà un "resultat", on vérifie la conformité stricte
     if (parsed && parsed.type === "resultat") {
       if (!isValidResultPayload(parsed)) {
         const repaired = await repairToStrictNineBlocks({
@@ -632,8 +583,6 @@ const openAiMessages = [
         if (repaired) replyText = repaired;
       }
     } else if (parsed && typeof parsed === "object") {
-      // Si le modèle a renvoyé "reponse" mais que ça ressemble à un résultat final,
-      // on force une conversion en "resultat" strict
       const maybeText = String(parsed.text || "");
       if (looksLikeFinalResultsText(maybeText)) {
         const repaired = await repairToStrictNineBlocks({
@@ -643,8 +592,6 @@ const openAiMessages = [
         if (repaired) replyText = repaired;
       }
     } else {
-      // Cas rarissime: pas du JSON alors qu'on demande json_object.
-      // On tente une réparation quand même.
       const repaired = await repairToStrictNineBlocks({
         apiKey: OPENAI_API_KEY,
         badText: replyText,
@@ -652,7 +599,6 @@ const openAiMessages = [
       if (repaired) replyText = repaired;
     }
 
-    // ✅ réponse finale
     res.status(200).json({
       reply: replyText,
       conversationId: conversationId || null,
