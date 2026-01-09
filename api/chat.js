@@ -512,18 +512,19 @@ Règle: si l'utilisateur demande la date/le jour/l'heure, tu dois utiliser STRIC
 // ==============================
 // 🔥 ROUTER AMORCES (force le démarrage des quiz)
 // ==============================
-const lastUserMsg = [...messages]
-  .reverse()
-  .find(m => (m.role || "") !== "assistant")?.content || "";
+const lastUserMsg = String(
+  [...messages].reverse().find(m => (m.role || "") === "user")?.content || ""
+).trim();
 
-const isModeC = /trouver la cure dont j[’']ai besoin/i.test(lastUserMsg);
+const isModeC = /trouver la cure dont j[’']ai besoin\.?\s*$/i.test(lastUserMsg);
 const isModeA = /sympt[oô]mes d[’']hypothyro/i.test(lastUserMsg);
 
 // Message système "hard force" pour démarrer au bon quiz
 const ROUTER_SYSTEM = isModeC
   ? `MODE C DÉCLENCHÉ.
 Tu dois DÉMARRER IMMÉDIATEMENT le quiz QUESTION_ALL au noeud Q1.
-Réponds UNIQUEMENT avec l'objet JSON de type "question" correspondant à Q1 (sans choices si open).`
+Tu dois renvoyer EXACTEMENT cet objet JSON (copie conforme, pas de reformulation, pas de phrase en plus):
+{"type":"question","text":"C’est parti !\\nJe vais te poser quelques questions ciblées (environ 2 minutes) afin d’analyser tes besoins et ton profil, et déterminer si nos cures sont adaptées pour toi.\\nPour commencer, quel est ton prénom ?"}`
   : isModeA
   ? `MODE A DÉCLENCHÉ.
 Tu dois DÉMARRER IMMÉDIATEMENT le quiz QUESTION_THYROIDE au noeud Q1.
@@ -552,7 +553,7 @@ const openAiMessages = [
         model: "gpt-4.1-mini",
         messages: openAiMessages,
         response_format: { type: "json_object" },
-        temperature: 0.2,
+        temperature: 0,
       }),
     });
 
