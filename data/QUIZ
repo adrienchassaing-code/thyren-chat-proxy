@@ -2,7 +2,7 @@ QUIZ THYREN 0.8.4
 
 {
   "version": "THYREN_FLOW_1.0",
-  "flow_order": ["Q1","Q2","Q3","Q4","Q4b","Q5","Q6","Q7","Q8","Q9","Q10","Q11","Q12","Q13","Q14","Q15","Q16","Q17","RESULT"],
+  "flow_order": ["Q1","Q2","Q3","Q4","Q4b","Q5","Q6","Q7","Q8","Q9","Q10","Q11","RESULT"],
   "nodes": {
     "Q1": {
       "id": "Q1",
