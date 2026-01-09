@@ -35,7 +35,7 @@ Pour commencer, quel est ton prénom ?",
     "Q3": {
       "id": "Q3",
       "type": "choices",
-      "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + “Quel est ton âge ?",
+      "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à la médecine fonctionelle" + “Quel est ton âge ?",
       "choices": ["Moins de 30 ans","30-45 ans","45-60 ans","Plus de 60 ans"],
       "next": "Q4",
       "meta": {"capture": "age_band"}
