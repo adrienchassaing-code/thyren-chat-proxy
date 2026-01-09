@@ -69,19 +69,26 @@
     },
 
     "Q6": {
-      "id": "Q6",
-      "type": "choices",
-      "text": "Interprétation personnalisée de la réponse précédente + explication scientifique liée à la médecine fonctionnelle.\n\nSi tu devais te concentrer sur un seul problème, lequel serait-ce ?",
-      "choices": [
-        "Fatigue / manque d’énergie",
-        "Stress / anxiété",
-        "Troubles du sommeil",
-        "Digestion inconfortable",
-        "Déséquilibres hormonaux"
-      ],
-      "next": "Q7",
-      "meta": { "capture": "priorité" }
-    },
+  "id": "Q6",
+  "type": "choices",
+  "text": "Interprétation personnalisée très courte de la réponse précédente + explication scientifique très courte liée à la médecine fonctionnelle.\n\nSi tu devais te concentrer sur un seul problème, lequel serait-ce ?",
+  "choices": [],
+  "next": "Q7",
+  "meta": { "capture": "priorité" },
+  "ai": {
+    "goal": "Générer des choices personnalisés (max 10) à partir du texte libre de Q5.",
+    "inputs": ["plainte_client", "sex", "age_band", "enceinte", "safety_flag", "safety_details"],
+    "rules": [
+      "Créer entre 5 et 10 choices maximum.",
+      "Chaque choice doit être court (2 à 6 mots), concret et compréhensible.",
+      "Les choices doivent reprendre les thèmes/symptômes réellement mentionnés dans plainte_client (pas de catégories génériques).",
+      "Éviter les doublons et regrouper les synonymes.",
+      "Si plainte_client est flou, proposer des choices de clarification basés sur les mots présents (ex: fatigue, sommeil, digestion, stress, douleurs, peau, poids, libido, etc.).",
+      "Ajouter en dernier: \"Autre (préciser)\" uniquement si c’est utile."
+    ],
+    "output_format": "Tu dois retourner une question JSON avec type=\"question\" et un champ choices (array) contenant les choices générés."
+  }
+}
 
     "Q7": {
       "id": "Q7",
