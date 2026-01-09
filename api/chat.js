@@ -509,9 +509,32 @@ Nous sommes actuellement : ${getBrusselsNowString()} (timezone: Europe/Brussels)
 Règle: si l'utilisateur demande la date/le jour/l'heure, tu dois utiliser STRICTEMENT cette information. Ne devine jamais.
 `.trim();
 
+// ==============================
+// 🔥 ROUTER AMORCES (force le démarrage des quiz)
+// ==============================
+const lastUserMsg = [...messages]
+  .reverse()
+  .find(m => (m.role || "") !== "assistant")?.content || "";
+
+const isModeC = /trouver la cure dont j[’']ai besoin/i.test(lastUserMsg);
+const isModeA = /sympt[oô]mes d[’']hypothyro/i.test(lastUserMsg);
+
+// Message système "hard force" pour démarrer au bon quiz
+const ROUTER_SYSTEM = isModeC
+  ? `MODE C DÉCLENCHÉ.
+Tu dois DÉMARRER IMMÉDIATEMENT le quiz QUESTION_ALL au noeud Q1.
+Réponds UNIQUEMENT avec l'objet JSON de type "question" correspondant à Q1 (sans choices si open).`
+  : isModeA
+  ? `MODE A DÉCLENCHÉ.
+Tu dois DÉMARRER IMMÉDIATEMENT le quiz QUESTION_THYROIDE au noeud Q1.
+Réponds UNIQUEMENT avec l'objet JSON de type "question" correspondant à Q1 (sans choices si open).`
+  : "";
+
+    
 const openAiMessages = [
   { role: "system", content: SYSTEM_PROMPT },
-  { role: "system", content: NOW_SYSTEM }, 
+  { role: "system", content: NOW_SYSTEM },
+  ...(ROUTER_SYSTEM ? [{ role: "system", content: ROUTER_SYSTEM }] : []),
   { role: "system", content: DOCS_SYSTEM },
   ...messages.map((m) => ({
     role: m.role === "assistant" ? "assistant" : "user",
