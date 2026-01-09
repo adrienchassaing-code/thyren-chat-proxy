@@ -34,11 +34,11 @@ const readDataFolder = (folderName) => {
     return "";
   }
 };
-const QUESTION_THYREN = readDataFile("QUESTION_THYREN.txt");
+const QUESTION_THYROIDE = readDataFile("QUESTION_THYROIDE.txt");
 const LES_CURES_ALL = readDataFile("LES_CURES_ALL.txt");
 const COMPOSITIONS = readDataFile("COMPOSITIONS.txt");
 const SAV_FAQ = readDataFile("SAV_FAQ.txt");
-const QUIZ = readDataFile("QUIZ.txt");
+const QUESTION_ALL = readDataFile("QUESTION_ALL.txt");
 const RESIMONT = readDataFolder("RESIMONT");
 
 // 🔐 Prompt système THYREN (TON TEXTE EXACT)
