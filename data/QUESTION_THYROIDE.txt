@@ -16,7 +16,7 @@ Pour commencer, quel est ton prénom ?",
     "Q2": {
   "id": "Q2",
   "type": "choices",
-  "text": "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente associé si possible à une très courte explication scientifique ou fait divers (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + "Enchanté {{first_name}}. Quel est ton sexe biologique ?",
+  "text": "{{AI_PREV_INTERPRETATION}}\n\n Enchanté {{first_name}}. Quel est ton sexe biologique ?",
   "choices": ["Femme", "Homme"],
   "next_map": {
     "Femme": "Q2_plus",
@@ -27,7 +27,7 @@ Pour commencer, quel est ton prénom ?",
 "Q2_plus": {
   "id": "Q2_plus",
   "type": "choices",
-  "text": "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + "Es-tu enceinte ou allaitante ?",
+  "text": "{{AI_PREV_INTERPRETATION}}\n\n Es-tu enceinte ou allaitante ?",
   "choices": ["oui", "non"],
   "next": "Q3",
   "meta": { "capture": "enceinte" }
@@ -35,7 +35,7 @@ Pour commencer, quel est ton prénom ?",
     "Q3": {
       "id": "Q3",
       "type": "choices",
-      "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + “Quel est ton âge ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n Quel est ton âge ?",
       "choices": ["Moins de 30 ans","30-45 ans","45-60 ans","Plus de 60 ans"],
       "next": "Q4",
       "meta": {"capture": "age_band"}
@@ -43,7 +43,7 @@ Pour commencer, quel est ton prénom ?",
     "Q4": {
       "id": "Q4",
       "type": "choices",
-      "text":  "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + “As-tu une condition médicale ou une allergie à signaler ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu une condition médicale ou une allergie à signaler ?",
       "choices": ["Tout va bien","J’ai des allergies ou une condition médicale à signaler"],
       "next_map": {
         "Tout va bien": "Q5",
@@ -61,7 +61,7 @@ Pour commencer, quel est ton prénom ?",
     "Q5": {
       "id": "Q5",
       "type": "choices",
-      "text":  "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + “As-tu déjà été diagnostiqué(e) avec une hypothyroïdie ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu déjà été diagnostiqué(e) avec une hypothyroïdie ?",
       "choices": ["Oui, j’ai une hypothyroïdie diagnostiquée.","Non, jamais de diagnostic médical."],
       "next": "Q6",
       "meta": {"capture": "dx_hypo"}
@@ -69,7 +69,7 @@ Pour commencer, quel est ton prénom ?",
     "Q6": {
       "id": "Q6",
       "type": "choices",
-      "text": "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + “As-tu déjà réalisé un bilan sanguin pour la thyroïde ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu déjà réalisé un bilan sanguin pour la thyroïde ?",
       "choices": ["Oui, mon bilan montre une hypothyroïdie.","Oui, mais mon bilan était normal.","Non, jamais fait de bilan."],
       "next": "Q7",
       "meta": {"capture": "lab_status"}
@@ -77,7 +77,7 @@ Pour commencer, quel est ton prénom ?",
     "Q7": {
       "id": "Q7",
       "type": "choices",
-      "text":  "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + “Comment décrirais-tu ton niveau d’énergie au quotidien ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n Comment décrirais-tu ton niveau d’énergie au quotidien ?",
       "choices": ["Bonne énergie tout au long de la journée.","Fatigue légère ou passagère.","Fatigue constante malgré le repos."],
       "next": "Q8",
       "meta": {"capture": "energy"}
@@ -85,7 +85,7 @@ Pour commencer, quel est ton prénom ?",
     "Q8": {
       "id": "Q8",
       "type": "choices",
-      "text":  "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + “As-tu pris du poids sans changer ton alimentation ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu pris du poids sans changer ton alimentation ?",
       "choices": ["Non, mon poids est stable.","Oui, une légère prise de poids.","Oui, une prise de poids importante ou inexpliquée malgré plusieurs régimes."],
       "next": "Q9",
       "meta": {"capture": "weight"}
@@ -93,7 +93,7 @@ Pour commencer, quel est ton prénom ?",
     "Q9": {
       "id": "Q9",
       "type": "choices",
-      "text":  "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + “Ressens-tu souvent le froid (mains/pieds froids) ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n Ressens-tu souvent le froid (mains/pieds froids) ?",
       "choices": ["Non, température normale.","Parfois, mains ou pieds froids.","Souvent froid, même quand il fait bon."],
       "next": "Q10",
       "meta": {"capture": "cold"}
@@ -101,7 +101,7 @@ Pour commencer, quel est ton prénom ?",
     "Q10": {
       "id": "Q10",
       "type": "choices",
-      "text":  "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + “Comment décrirais-tu ton humeur ces derniers temps ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n Comment décrirais-tu ton humeur ces derniers temps ?",
       "choices": ["Moral stable, bonne humeur.","Humeur fluctuante ou baisse légère.","Moral bas, tristesse ou perte de motivation."],
       "next": "Q11",
       "meta": {"capture": "mood"}
@@ -109,7 +109,7 @@ Pour commencer, quel est ton prénom ?",
     "Q11": {
       "id": "Q11",
       "type": "choices",
-      "text":  "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + “Ton sommeil est-il réparateur ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n Ton sommeil est-il réparateur ?",
       "choices": ["Oui, je dors bien et me réveille reposé(e).","Sommeil parfois léger ou agité.","Difficultés à dormir ou fatigue au réveil."],
       "next": "Q12",
       "meta": {"capture": "sleep"}
@@ -117,7 +117,7 @@ Pour commencer, quel est ton prénom ?",
     "Q12": {
       "id": "Q12",
       "type": "choices",
-      "text":  "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + “As-tu remarqué des changements (peau sèche, cheveux ternes/cassants, chute) ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu remarqué des changements (peau sèche, cheveux ternes/cassants, chute) ?",
       "choices": ["Non, tout est normal.","Peau un peu sèche ou cheveux ternes.","Peau très sèche, cheveux cassants ou perte importante."],
       "next": "Q13",
       "meta": {"capture": "skin_hair"}
@@ -125,7 +125,7 @@ Pour commencer, quel est ton prénom ?",
     "Q13": {
       "id": "Q13",
       "type": "choices",
-      "text":  "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + “Comment est ton transit intestinal ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n Comment est ton transit intestinal ?",
       "choices": ["Transit régulier.","Parfois un peu lent.","Constipation ou digestion difficile."],
       "next": "Q14",
       "meta": {"capture": "bowel"}
@@ -133,7 +133,7 @@ Pour commencer, quel est ton prénom ?",
     "Q14": {
       "id": "Q14",
       "type": "choices",
-      "text":  "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + “As-tu remarqué un gonflement du visage ou des mains le matin ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu remarqué un gonflement du visage ou des mains le matin ?",
       "choices": ["Non, jamais.","Parfois, gonflement léger.","Oui, gonflement visible chaque matin."],
       "next": "Q15",
       "meta": {"capture": "edema_am"}
@@ -141,7 +141,7 @@ Pour commencer, quel est ton prénom ?",
     "Q15": {
       "id": "Q15",
       "type": "choices",
-      "text":  "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + “As-tu parfois l’esprit confus ou du mal à te concentrer ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu parfois l’esprit confus ou du mal à te concentrer ?",
       "choices": ["Concentration normale.","Légère distraction, oublis occasionnels.","Brouillard mental, difficulté à se concentrer."],
       "next": "Q16",
       "meta": {"capture": "brain_fog"}
@@ -149,7 +149,7 @@ Pour commencer, quel est ton prénom ?",
     "Q16": {
       "id": "Q16",
       "type": "choices",
-      "text":  "une très courte (1 phrase max)interprétation personnalisée de la réponse précédente” + “une très courte explication scientifique (1 phrase max) liée à l’hypothyroïdie fonctionnelle" + “ As-tu remarqué un changement dans ta libido ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu remarqué un changement dans ta libido ?",
       "choices": ["Aucun changement notable.","Libido variable.","Libido très basse."],
       "next": "Q17",
       "meta": {"capture": "libido"}
