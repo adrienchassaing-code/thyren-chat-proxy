@@ -554,25 +554,6 @@ ${SAV_FAQ}
 ${RESIMONT}
 `.trim();
 
-    const DOCS_SYSTEM = `
-DOCS SUPLEMINT (à suivre strictement, ne rien inventer)
-
-${activeMode === "A" ? `[QUESTION_THYROIDE]\n${QUESTION_THYROIDE}\n` : ""}
-${activeMode === "C" ? `[QUESTION_ALL]\n${QUESTION_ALL}\n` : ""}
-
-[LES_CURES_ALL]
-${LES_CURES_ALL}
-
-[COMPOSITIONS]
-${COMPOSITIONS}
-
-[SAV_FAQ]
-${SAV_FAQ}
-
-[RESIMONT]
-${RESIMONT}
-`.trim();
-
     const openAiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "system", content: NOW_SYSTEM },
