@@ -482,36 +482,78 @@ Nous sommes actuellement : ${getBrusselsNowString()} (timezone: Europe/Brussels)
 Règle: si l'utilisateur demande la date/le jour/l'heure, tu dois utiliser STRICTEMENT cette information. Ne devine jamais.
 `.trim();
 
-    // ==============================
-    // 🔥 ROUTER AMORCES + LOCK MODE (AVANT DOCS_SYSTEM)
-    // ==============================
-    const lastUserMsg = String(
-      [...messages].reverse().find(m => (m.role || "") === "user")?.content || ""
-    ).trim();
+// ==============================
+// 🔥 ROUTER AMORCES + LOCK MODE (AVANT DOCS_SYSTEM)
+// ==============================
 
-    const triggerModeC = /trouver la cure dont j[’']ai besoin/i.test(lastUserMsg);
-    const triggerModeA = /est-ce que j[’']ai des sympt[oô]mes d[’']hypothyro/i.test(lastUserMsg);
+// 1) Dernier message user (robuste: apostrophes, NBSP, casse, etc.)
+const lastUserMsgRaw = String(
+  [...messages].reverse().find(m => (m.role || "") === "user")?.content || ""
+);
 
-    const historyText = messages.map(m => String(m.content || "")).join("\n");
-    const startedModeC = /Je vais te poser quelques questions ciblées/i.test(historyText);
-    const startedModeA = /fonctionnement de ta thyroïde/i.test(historyText);
+const lastUserMsg = lastUserMsgRaw
+  .normalize("NFKC")
+  .replace(/\u00A0/g, " ")   // NBSP -> space
+  .replace(/[’]/g, "'")     // apostrophe typographique -> '
+  .trim()
+  .toLowerCase();
 
-    const activeMode =
-      triggerModeC || (startedModeC && !startedModeA) ? "C" :
-      triggerModeA || (startedModeA && !startedModeC) ? "A" :
-      null;
+// 2) Déclencheurs (tolérants aux variations du bouton)
+const triggerModeC =
+  /trouver\s+(la\s+)?cure/.test(lastUserMsg) ||
+  /cure.*besoin/.test(lastUserMsg) ||
+  /trouver.*besoin/.test(lastUserMsg);
 
-    const ROUTER_SYSTEM = activeMode === "C"
-      ? `MODE C ACTIF (LOCK).
+const triggerModeA =
+  /sympt[oô]mes.*hypothyro/.test(lastUserMsg) ||
+  /est[-\s]*ce\s+que.*hypothyro/.test(lastUserMsg);
+
+// 3) Lock si le quiz a déjà commencé (détection plus stable)
+const historyText = messages.map(m => String(m.content || "")).join("\n");
+const startedModeC =
+  /analyser tes besoins/i.test(historyText) &&
+  /quel est ton pr[ée]nom/i.test(historyText);
+
+const startedModeA =
+  /fonctionnement de ta thyro/i.test(historyText) &&
+  /quel est ton pr[ée]nom/i.test(historyText);
+
+// 4) Mode actif
+const activeMode =
+  (triggerModeC || (startedModeC && !startedModeA)) ? "C" :
+  (triggerModeA || (startedModeA && !startedModeC)) ? "A" :
+  null;
+
+const ROUTER_SYSTEM = activeMode === "C"
+  ? `MODE C ACTIF (LOCK).
 Tu dois suivre EXCLUSIVEMENT le questionnaire QUESTION_ALL, dans l’ordre du flow_order, du Q1 jusqu’à RESULT.
 INTERDICTION ABSOLUE d’utiliser QUESTION_THYROIDE tant que RESULT n’est pas terminé.`
-      : activeMode === "A"
-      ? `MODE A ACTIF (LOCK).
+  : activeMode === "A"
+  ? `MODE A ACTIF (LOCK).
 Tu dois suivre EXCLUSIVEMENT le questionnaire QUESTION_THYROIDE, dans l’ordre du flow_order, du Q1 jusqu’à RESULT.
 INTERDICTION ABSOLUE d’utiliser QUESTION_ALL tant que RESULT n’est pas terminé.`
-      : "";
+  : "";
 
-    // ✅ DOCS (mode-aware: ne pas injecter les 2 questionnaires)
+// ✅ DOCS (mode-aware: ne pas injecter les 2 questionnaires)
+const DOCS_SYSTEM = `
+DOCS SUPLEMINT (à suivre strictement, ne rien inventer)
+
+${activeMode === "A" ? `[QUESTION_THYROIDE]\n${QUESTION_THYROIDE}\n` : ""}
+${activeMode === "C" ? `[QUESTION_ALL]\n${QUESTION_ALL}\n` : ""}
+
+[LES_CURES_ALL]
+${LES_CURES_ALL}
+
+[COMPOSITIONS]
+${COMPOSITIONS}
+
+[SAV_FAQ]
+${SAV_FAQ}
+
+[RESIMONT]
+${RESIMONT}
+`.trim();
+
     const DOCS_SYSTEM = `
 DOCS SUPLEMINT (à suivre strictement, ne rien inventer)
 
