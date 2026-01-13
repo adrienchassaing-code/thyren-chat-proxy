@@ -16,7 +16,7 @@ Pour commencer, quel est ton prénom ?",
     "Q2": {
   "id": "Q2",
   "type": "choices",
-  "text": "{{AI_PREV_INTERPRETATION}}\n\n Enchanté {{first_name}}. Quel est ton sexe biologique ?",
+  "text": "Enchanté {{first_name}}. Quel est ton sexe biologique ?",
   "choices": ["Femme", "Homme"],
   "next_map": {
     "Femme": "Q2_plus",
