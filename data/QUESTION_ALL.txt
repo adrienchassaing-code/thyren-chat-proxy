@@ -1,6 +1,6 @@
 {
-  "version": "THYREN_FLOW_QUIZ_1.0",
-  "flow_order": ["Q1","Q2","Q2_plus","Q3","Q4","Q4b","Q5","Q6","Q7","Q8","Q9","Q10","Q11","RESULT"],
+  "version": "THYREN_FLOW_QUIZ_1.1",
+  "flow_order": ["Q1","Q2","Q2_plus","Q3","Q4","Q4b","Q5","Q6","Q7","Q7b","Q8","Q8b","Q9","Q9b","Q10","Q10b","Q11","RESULT"],
   "nodes": {
     "Q1": {
       "id": "Q1",
@@ -71,38 +71,122 @@
           "Reprendre les thèmes/symptômes réellement mentionnés dans plainte_client (pas de catégories génériques).",
           "Éviter les doublons et regrouper les synonymes.",
           "Si plainte_client est flou, proposer des choices de clarification basés sur les mots présents.",
-          "Optionnel: ajouter en dernier \"Autre (préciser)\" si utile."
+          "Ajouter TOUJOURS en dernier \"Autre / préciser\"."
         ],
         "output_format": "Retourner une réponse JSON de type \"question\" contenant \"choices\" (array) rempli."
       }
     },
     "Q7": {
       "id": "Q7",
-      "type": "open",
+      "type": "choices",
       "text": "{{AI_Q7_TEXT}}",
+      "choices": [],
+      "next_map": { "Autre / préciser": "Q7b" },
       "next": "Q8",
-      "meta": { "capture": "detail_1" }
+      "meta": { "capture": "detail_1" },
+      "ai": {
+        "goal": "Générer des choices cliquables (max 8) qui répondent à la question personnalisée {{AI_Q7_TEXT}}.",
+        "inputs": ["plainte_client","priorité","sex","age_band","enceinte","safety_flag","safety_details"],
+        "rules": [
+          "Créer 4 à 8 choices maximum.",
+          "Chaque choice doit être court (2 à 6 mots), concret et compréhensible.",
+          "Les choices doivent correspondre à la question {{AI_Q7_TEXT}} et au contexte (plainte_client + priorité).",
+          "Éviter les doublons et regrouper les synonymes.",
+          "Ajouter TOUJOURS en dernier \"Autre / préciser\"."
+        ],
+        "output_format": "Retourner une réponse JSON de type \"question\" contenant \"choices\" (array) rempli."
+      }
+    },
+    "Q7b": {
+      "id": "Q7b",
+      "type": "open",
+      "text": "OK. Peux-tu préciser en une phrase ?",
+      "next": "Q8",
+      "meta": { "capture": "detail_1_free" }
     },
     "Q8": {
       "id": "Q8",
-      "type": "open",
+      "type": "choices",
       "text": "{{AI_Q8_TEXT}}",
+      "choices": [],
+      "next_map": { "Autre / préciser": "Q8b" },
       "next": "Q9",
-      "meta": { "capture": "detail_2" }
+      "meta": { "capture": "detail_2" },
+      "ai": {
+        "goal": "Générer des choices cliquables (max 8) qui répondent à la question personnalisée {{AI_Q8_TEXT}}.",
+        "inputs": ["plainte_client","priorité","detail_1","detail_1_free","sex","age_band","enceinte","safety_flag","safety_details"],
+        "rules": [
+          "Créer 4 à 8 choices maximum.",
+          "Chaque choice doit être court (2 à 6 mots), concret et compréhensible.",
+          "Les choices doivent correspondre à la question {{AI_Q8_TEXT}} et au contexte (plainte_client + priorité + réponses précédentes).",
+          "Éviter les doublons et regrouper les synonymes.",
+          "Ajouter TOUJOURS en dernier \"Autre / préciser\"."
+        ],
+        "output_format": "Retourner une réponse JSON de type \"question\" contenant \"choices\" (array) rempli."
+      }
+    },
+    "Q8b": {
+      "id": "Q8b",
+      "type": "open",
+      "text": "OK. Peux-tu préciser en une phrase ?",
+      "next": "Q9",
+      "meta": { "capture": "detail_2_free" }
     },
     "Q9": {
       "id": "Q9",
-      "type": "open",
+      "type": "choices",
       "text": "{{AI_Q9_TEXT}}",
+      "choices": [],
+      "next_map": { "Autre / préciser": "Q9b" },
       "next": "Q10",
-      "meta": { "capture": "detail_3" }
+      "meta": { "capture": "detail_3" },
+      "ai": {
+        "goal": "Générer des choices cliquables (max 8) qui répondent à la question personnalisée {{AI_Q9_TEXT}}.",
+        "inputs": ["plainte_client","priorité","detail_1","detail_1_free","detail_2","detail_2_free","sex","age_band","enceinte","safety_flag","safety_details"],
+        "rules": [
+          "Créer 4 à 8 choices maximum.",
+          "Chaque choice doit être court (2 à 6 mots), concret et compréhensible.",
+          "Les choices doivent correspondre à la question {{AI_Q9_TEXT}} et au contexte (plainte_client + priorité + réponses précédentes).",
+          "Éviter les doublons et regrouper les synonymes.",
+          "Ajouter TOUJOURS en dernier \"Autre / préciser\"."
+        ],
+        "output_format": "Retourner une réponse JSON de type \"question\" contenant \"choices\" (array) rempli."
+      }
+    },
+    "Q9b": {
+      "id": "Q9b",
+      "type": "open",
+      "text": "OK. Peux-tu préciser en une phrase ?",
+      "next": "Q10",
+      "meta": { "capture": "detail_3_free" }
     },
     "Q10": {
       "id": "Q10",
-      "type": "open",
+      "type": "choices",
       "text": "{{AI_Q10_TEXT}}",
+      "choices": [],
+      "next_map": { "Autre / préciser": "Q10b" },
       "next": "Q11",
-      "meta": { "capture": "detail_4" }
+      "meta": { "capture": "detail_4" },
+      "ai": {
+        "goal": "Générer des choices cliquables (max 8) qui répondent à la question personnalisée {{AI_Q10_TEXT}}.",
+        "inputs": ["plainte_client","priorité","detail_1","detail_1_free","detail_2","detail_2_free","detail_3","detail_3_free","sex","age_band","enceinte","safety_flag","safety_details"],
+        "rules": [
+          "Créer 4 à 8 choices maximum.",
+          "Chaque choice doit être court (2 à 6 mots), concret et compréhensible.",
+          "Les choices doivent correspondre à la question {{AI_Q10_TEXT}} et au contexte (plainte_client + priorité + réponses précédentes).",
+          "Éviter les doublons et regrouper les synonymes.",
+          "Ajouter TOUJOURS en dernier \"Autre / préciser\"."
+        ],
+        "output_format": "Retourner une réponse JSON de type \"question\" contenant \"choices\" (array) rempli."
+      }
+    },
+    "Q10b": {
+      "id": "Q10b",
+      "type": "open",
+      "text": "OK. Peux-tu préciser en une phrase ?",
+      "next": "Q11",
+      "meta": { "capture": "detail_4_free" }
     },
     "Q11": {
       "id": "Q11",
@@ -120,6 +204,7 @@
     "advance_rule": "Toujours suivre nodes[current_id].next ou next_map."
   }
 }
+
 
 }
 RÉSULTATS :  
