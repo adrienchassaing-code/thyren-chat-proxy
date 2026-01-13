@@ -12,7 +12,7 @@
     "Q2": {
       "id": "Q2",
       "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}} \n\nEnchanté {{first_name}}. Quel est ton sexe biologique ?",
+      "text": "Enchanté {{first_name}}. Quel est ton sexe biologique ?",
       "choices": ["Femme","Homme"],
       "next_map": { "Femme": "Q2_plus", "Homme": "Q3" },
       "meta": { "capture": "sex" }
