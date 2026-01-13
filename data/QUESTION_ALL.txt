@@ -12,7 +12,7 @@
     "Q2": {
       "id": "Q2",
       "type": "choices",
-      "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente associé si possible à une très courte explication scientifique ou fait divers (1 phrase max) liée à la médecine fonctionnelle.\n\nEnchanté {{first_name}}. Quel est ton sexe biologique ?",
+      "text": "{{AI_PREV_INTERPRETATION}} \n\nEnchanté {{first_name}}. Quel est ton sexe biologique ?",
       "choices": ["Femme","Homme"],
       "next_map": { "Femme": "Q2_plus", "Homme": "Q3" },
       "meta": { "capture": "sex" }
@@ -20,7 +20,7 @@
     "Q2_plus": {
       "id": "Q2_plus",
       "type": "choices",
-      "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente associé si possible à une très courte explication scientifique ou fait divers (1 phrase max) liée à la médecine fonctionnelle.\n\nEs-tu enceinte ou allaitante ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\nEs-tu enceinte ou allaitante ?",
       "choices": ["Oui","Non"],
       "next": "Q3",
       "meta": { "capture": "enceinte" }
@@ -28,7 +28,7 @@
     "Q3": {
       "id": "Q3",
       "type": "choices",
-      "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente associé si possible à une très courte explication scientifique ou fait divers (1 phrase max) liée à la médecine fonctionnelle.\n\nQuel est ton âge ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\nQuel est ton âge ?",
       "choices": ["Moins de 30 ans","30-45 ans","45-60 ans","Plus de 60 ans"],
       "next": "Q4",
       "meta": { "capture": "age_band" }
@@ -36,7 +36,7 @@
     "Q4": {
       "id": "Q4",
       "type": "choices",
-      "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente associé si possible à une très courte explication scientifique ou fait divers (1 phrase max) liée à la médecine fonctionnelle.\n\nAs-tu une condition médicale ou une allergie à signaler ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\nAs-tu une condition médicale ou une allergie à signaler ?",
       "choices": ["Tout va bien","J’ai des allergies ou une condition médicale à signaler"],
       "next_map": { "Tout va bien": "Q5", "J’ai des allergies ou une condition médicale à signaler": "Q4b" },
       "meta": { "capture": "safety_flag" }
@@ -51,14 +51,14 @@
     "Q5": {
       "id": "Q5",
       "type": "open",
-      "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente associé si possible à une très courte explication scientifique ou fait divers (1 phrase max) liée à la médecine fonctionnelle.\n\nLe plus important, raconte-moi ce qui te gêne en ce moment, ce que tu ressens et ce que tu aimerais améliorer. Prends ton temps, sois précis : tout peut m’aider.",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\nLe plus important, raconte-moi ce qui te gêne en ce moment, ce que tu ressens et ce que tu aimerais améliorer. Prends ton temps, sois précis : tout peut m’aider.",
       "next": "Q6",
       "meta": { "capture": "plainte_client" }
     },
     "Q6": {
       "id": "Q6",
       "type": "choices",
-      "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente associé si possible à une très courte explication scientifique ou fait divers (1 phrase max) liée à la médecine fonctionnelle.\n\n Si tu devais te concentrer sur un seul problème, lequel serait-ce ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n Si tu devais te concentrer sur un seul problème, lequel serait-ce ?",
       "choices": [],
       "next": "Q7",
       "meta": { "capture": "priorité" },
@@ -79,7 +79,7 @@
     "Q7": {
       "id": "Q7",
       "type": "choices",
-      "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente associé si possible à une très courte explication scientifique ou fait divers (1 phrase max) liée à la médecine fonctionnelle.\n\n {{AI_Q7_TEXT}}",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n {{AI_Q7_TEXT}}",
       "choices": [],
       "next_map": { "Autre / préciser": "Q7b" },
       "next": "Q8",
@@ -107,7 +107,7 @@
     "Q8": {
       "id": "Q8",
       "type": "choices",
-      "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente associé si possible à une très courte explication scientifique ou fait divers (1 phrase max) liée à la médecine fonctionnelle.\n\n {{AI_Q8_TEXT}}",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n {{AI_Q8_TEXT}}",
       "choices": [],
       "next_map": { "Autre / préciser": "Q8b" },
       "next": "Q9",
@@ -135,7 +135,7 @@
     "Q9": {
       "id": "Q9",
       "type": "choices",
-      "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente associé si possible à une très courte explication scientifique ou fait divers (1 phrase max) liée à la médecine fonctionnelle.\n\n {{AI_Q9_TEXT}}",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n {{AI_Q9_TEXT}}",
       "choices": [],
       "next_map": { "Autre / préciser": "Q9b" },
       "next": "Q10",
@@ -163,7 +163,7 @@
     "Q10": {
       "id": "Q10",
       "type": "choices",
-      "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente associé si possible à une très courte explication scientifique ou fait divers (1 phrase max) liée à la médecine fonctionnelle.\n\n {{AI_Q10_TEXT}}",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n {{AI_Q10_TEXT}}",
       "choices": [],
       "next_map": { "Autre / préciser": "Q10b" },
       "next": "Q11",
@@ -191,7 +191,7 @@
     "Q11": {
       "id": "Q11",
       "type": "open",
-      "text": "une très courte (1 phrase max) interprétation personnalisée de la réponse précédente associé si possible à une très courte explication scientifique ou fait divers (1 phrase max) liée à la médecine fonctionnelle.\n\n Peux-tu me partager ton adresse e-mail pour t’envoyer le récapitulatif de tes résultats et recommandations ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n Peux-tu me partager ton adresse e-mail pour t’envoyer le récapitulatif de tes résultats et recommandations ?",
       "next_on_valid": "RESULT",
       "next_on_skip": "RESULT",
       "validation": { "type": "email_regex", "pattern": "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$" },
