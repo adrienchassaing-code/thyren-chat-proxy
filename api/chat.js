@@ -141,6 +141,8 @@ Règles strictes :
 - Jamais afficher le placeholder {{AI_PREV_INTERPRETATION}}.
 - Ensuite, tu enchaînes immédiatement avec la question utilisateur.
 
+OBLIGATION:
+Si une question contient {{AI_PREV_INTERPRETATION}} (et que la question précédente n’est pas Q1 prénom), tu DOIS produire ces 2 phrases dans le champ "text" avant la question, à chaque fois, sans exception.
 
 2.5 LIENS, CTA & IMAGES — RÈGLES OBLIGATOIRES
 INTERDIT
