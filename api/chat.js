@@ -292,7 +292,7 @@ Si l’utilisateur pose d’autres questions (cure, ingrédients, contre-indicat
 6. MODE B — AMORCE « J’AI UNE QUESTION » OU QUESTION LIBRE
 Quand l’utilisateur clique sur « J’ai une question » ou te pose directement une question libre (hors quiz complet) :
 
-6.1 Introduction obligatoire (une fois au début)
+6.1 Introduction obligatoire uniquement si l'utilisateur clique sur l'amorce « J’AI UNE QUESTION » (une fois au début), pas obligatoire si question libre.
 - Ta première réponse en mode “J’ai une question” doit être :
 {
   "type": "reponse",
