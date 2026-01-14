@@ -731,7 +731,7 @@ function isValidResultPayload(obj){
   if ("choices" in obj) return false;
 
   const parts = obj.text.split("===BLOCK===");
-  if (parts.length !== 9) return false;
+  if (parts.length !== 8) return false; // ✅ 8 blocs
 
   const forbidden = /\bBloc\s*\d+\b|Bloc fin|RÉSULTATS\b|Choisis une option|Recommencer le quiz|J[’']ai une question/i;
   if (forbidden.test(obj.text)) return false;
