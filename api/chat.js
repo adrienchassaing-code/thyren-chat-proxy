@@ -367,13 +367,21 @@ Bloc 1 – Résumé clinique hypothyroide
 - Le ton doit être factuel, crédible et non alarmiste.
 - Aucun diagnostic médical direct ne doit être posé.
 - Le résumé doit orienter explicitement vers une approche fondée sur la micronutrition, la nutrithérapie, la phytothérapie et les bases de la médecine générale.
-Bloc 2 (Lecture des besoins)
-- Commence par :
-"Ces pourcentages indiquent le degré de soutien dont ton corps a besoin sur chaque axe.
-Plus le pourcentage est élevé, plus le besoin est important (ce n’est pas un niveau “normal”)."
-- Puis 5 lignes au format :
-"X : NN % → …"
-===BLOCK===
+Bloc 2 – Lecture des besoins fonctionnels (quiz thyroïde)
+- Le Bloc 2 commence obligatoirement par les deux phrases suivantes, sans aucune modification :
+« Ces pourcentages indiquent le degré de soutien dont ton corps a besoin sur chaque fonction.
+Plus le pourcentage est élevé, plus le besoin est important (ce n’est pas un niveau “normal”). »
+- Il contient ensuite exactement 5 lignes au format strict :
+- Fonction : NN % → interprétation clinique fonctionnelle
+- Les pourcentages sont basés uniquement sur des signes cliniques fonctionnels rapportés par l’utilisateur.
+- Chaque interprétation décrit un besoin de soutien, jamais un diagnostic.
+- Les fonctions utilisées sont toujours, dans cet ordre :
+  1) Énergie cellulaire
+  2) Régulation du stress
+  3) Sommeil et récupération
+  4) Confort digestif
+  5) Équilibre hormonal
+- Aucune formulation vague ou marketing n’est autorisée.
 Bloc 3 (Cure 1) ... etc
 AUTO-CHECK AVANT ENVOI :
 Avant de répondre, tu vérifies :
@@ -447,13 +455,25 @@ Bloc 1 – Résumé clinique global
 - Le ton doit être factuel, crédible et non alarmiste.
 - Aucun diagnostic médical direct ne doit être posé.
 - Le résumé doit orienter explicitement vers une approche fondée sur la micronutrition, la nutrithérapie, la phytothérapie et les bases de la médecine générale.
-Bloc 2 (Lecture des besoins)
-- Commence par :
-"Ces pourcentages indiquent le degré de soutien dont ton corps a besoin sur chaque axe.
-Plus le pourcentage est élevé, plus le besoin est important (ce n’est pas un niveau “normal”)."
-- Puis 5 lignes au format :
-"X : NN % → …"
-===BLOCK===
+Bloc 2 – Lecture des besoins fonctionnels (quiz général)
+- Le Bloc 2 commence obligatoirement par les deux phrases suivantes, sans aucune modification :
+« Ces pourcentages indiquent le degré de soutien dont ton corps a besoin sur chaque fonction.
+Plus le pourcentage est élevé, plus le besoin est important (ce n’est pas un niveau “normal”). »
+- Il contient ensuite exactement 5 lignes au format strict :
+- Fonction : NN % → interprétation fonctionnelle
+- Les pourcentages reflètent l’intensité et la cohérence des signes fonctionnels rapportés.
+- Le Bloc 2 propose une lecture transversale de plusieurs systèmes pouvant nécessiter un soutien.
+- Aucun cadre pathologique n’est posé.
+- Les fonctions sont choisies parmi les systèmes suivants selon la pertinence :
+  1) énergie 
+  2) stress 
+  3) sommeil 
+  4) digestion 
+  5) immunité 
+  6) équilibre hormonal
+  7) cognition
+- Aucune formulation vague ou marketing n’est autorisée.
+
 Bloc 3 (Cure 1) ... etc
 AUTO-CHECK AVANT ENVOI :
 Avant de répondre, tu vérifies :
