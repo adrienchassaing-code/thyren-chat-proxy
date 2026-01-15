@@ -747,16 +747,16 @@ function looksLikeFinalResultsText(t){
   return (hasDisclaimer && hasFinalQ) || (hasDisclaimer && hasCure) || (hasFinalQ && hasCure);
 }
 
-async function repairToStrictNineBlocks({ apiKey, badText }){
+async function repairToStrictEightBlocks({ apiKey, badText }){
   const repairSystem =
     "Tu sors uniquement un objet JSON valide. AUCUN texte hors JSON. Pas de backticks.";
   const repairUser = `
 Convertis le TEXTE ci-dessous en JSON STRICT exactement :
 {"type":"resultat","text":"..."}
 RÈGLES ABSOLUES:
-- Le champ text contient EXACTEMENT 9 blocs
+- Le champ text contient EXACTEMENT 8 blocs
 - Séparation UNIQUE et exacte entre blocs: ===BLOCK===
-- Il doit y avoir EXACTEMENT 8 séparateurs ===BLOCK===
+- Il doit y avoir EXACTEMENT 7 séparateurs ===BLOCK===
 - INTERDIT d’écrire "Bloc 1", "Bloc 2", "Bloc fin", "RÉSULTATS" dans le texte visible
 - INTERDIT d’ajouter "choices"
 - INTERDIT d’inclure "Choisis une option", "Recommencer le quiz", "J’ai une question ?"
@@ -985,7 +985,7 @@ ${RESIMONT}
 
     if (parsed && parsed.type === "resultat") {
       if (!isValidResultPayload(parsed)) {
-        const repaired = await repairToStrictNineBlocks({
+        const repaired = await repairToStrictEightBlocks({
           apiKey: OPENAI_API_KEY,
           badText: parsed.text || replyText,
         });
@@ -994,14 +994,14 @@ ${RESIMONT}
     } else if (parsed && typeof parsed === "object") {
       const maybeText = String(parsed.text || "");
       if (looksLikeFinalResultsText(maybeText)) {
-        const repaired = await repairToStrictNineBlocks({
+        const repaired = await repairToStrictEightBlocks({
           apiKey: OPENAI_API_KEY,
           badText: maybeText || replyText,
         });
         if (repaired) replyText = repaired;
       }
     } else {
-      const repaired = await repairToStrictNineBlocks({
+      const repaired = await repairToStrictEightBlocks({
         apiKey: OPENAI_API_KEY,
         badText: replyText,
       });
