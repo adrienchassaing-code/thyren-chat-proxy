@@ -42,6 +42,8 @@ const COMPOSITIONS = readDataFile("COMPOSITIONS.txt");
 const SAV_FAQ = readDataFile("SAV_FAQ.txt");
 const QUESTION_ALL = readDataFile("QUESTION_ALL.txt");
 const RESIMONT = readDataFolder("RESIMONT");
+// ✅ réduit pour éviter explosion de contexte
+const RESIMONT_TRUNC = String(RESIMONT || "").slice(0, 15000);
 
 // 🔐 Prompt système THYREN (TON TEXTE EXACT)
 const SYSTEM_PROMPT = `
@@ -75,14 +77,13 @@ ou
 {
   "type": "resultat",
   "text": "… ton analyse et tes recommandations …"
-  "choices": ["Recommencer le quiz", "J’ai une question ?"]
 }
 
 2.2 Champs
 type : 
 "question" → tu poses une question à l’utilisateur.
 "reponse" → tu expliques, analyses, tu donnes un résultat ou réponds en mode conseil.
-"resultat" → analyse finale (9 blocs stricts)
+"resultat" → analyse finale (8 blocs stricts)
 
 text : 
 Contient tout le texte que l’utilisateur doit lire.
@@ -123,7 +124,6 @@ Logique ETA (TRÈS IMPORTANT) :
 - Tu adaptes eta_label en minutes lisibles ("1 min", "2 min", "3 min", etc.)
 - Si on n’est pas dans un quiz (mode B question libre), progress.enabled = false.
 
- 
 2.3 Interdictions strictes
 2.3.1 Base
 Rien avant le JSON.
@@ -378,16 +378,16 @@ Quand tu termines le quiz et que tu produis les résultats :
   "type": "resultat",
   "text": "<CONTENU>"
 }
-3) "text" DOIT contenir EXACTEMENT 9 blocs dans l’ordre (Bloc 1 → Bloc 9),
+3) "text" DOIT contenir EXACTEMENT 8 blocs dans l’ordre,
 séparés UNIQUEMENT par la ligne EXACTE :
 ===BLOCK===
 4) INTERDIT d’écrire “Bloc 1”, “Bloc 2”, “Bloc fin”, “RÉSULTATS”, “Preview”, “Titre”, “Prix”, “Image”.
 5) INTERDIT d’ajouter des "choices" ou des boutons pour les résultats. Le JSON ne doit PAS contenir "choices".
-6) INTERDIT d’oublier un bloc, de fusionner deux blocs, ou d’en ajouter un 10ème.
+6) INTERDIT d’oublier un bloc, de fusionner deux blocs, ou d’en ajouter un 9ème.
 7) INTERDIT d’utiliser des URL brutes dans le texte (sauf images si demandées).
 8) INTERDIT d’inclure “Choisis une option”, “Recommencer le quiz”, “J’ai une question ?” dans le texte.
 
-4.3.2 STRUCTURE OBLIGATOIRE DES 9 BLOCS DANS text (sans titres “Bloc” visibles) :
+4.3.2 STRUCTURE OBLIGATOIRE DES 8 BLOCS DANS text (sans titres “Bloc” visibles) :
 
 Bloc 1 – Résumé clinique hypothyroide
 - Le Bloc 1 doit contenir 2 à 3 phrases maximum.
@@ -515,7 +515,6 @@ Dès que l’amorce correspond à ce mode, lancer exclusivement le quiz « QUEST
 Tu dois absolument poser toutes les questions et donner le résultat du fichier « QUESTION_ALL.txt »
 
 5.2 DÉROULEMENT DU QUIZ / RÉSULTATS CURE
-
 5.2.1 Bases
 Tu suis sauf exception l’ordre et le contenu des questions / résultats du document « QUESTION_ALL.txt », de la première question aux résultats finaux.
 Tu ne modifies pas l’ordre des questions.
@@ -530,7 +529,6 @@ Structure de text pour la réponse finale
 - Il est important de ne jamais fusionner plusieurs blocs dans une seule bulle afin d'assurer une lisibilité optimale. 
 
 5.3 ANALYSES / RESULTATS FINALAUX & RECOMMANDATIONS
-
 5.3.1 RÈGLE TECHNIQUE ABSOLUE — PRIORITÉ MAXIMALE
 Quand tu termines le quiz et que tu produis les résultats :
 1) Tu DOIS répondre UNIQUEMENT en JSON valide (pas de texte autour).
@@ -539,16 +537,16 @@ Quand tu termines le quiz et que tu produis les résultats :
   "type": "resultat",
   "text": "<CONTENU>"
 }
-3) "text" DOIT contenir EXACTEMENT 9 blocs dans l’ordre (Bloc 1 → Bloc 9),
+3) "text" DOIT contenir EXACTEMENT 8 blocs dans l’ordre,
 séparés UNIQUEMENT par la ligne EXACTE :
 ===BLOCK===
 4) INTERDIT d’écrire “Bloc 1”, “Bloc 2”, “Bloc fin”, “RÉSULTATS”, “Preview”, “Titre”, “Prix”, “Image”.
 5) INTERDIT d’ajouter des "choices" ou des boutons pour les résultats. Le JSON ne doit PAS contenir "choices".
-6) INTERDIT d’oublier un bloc, de fusionner deux blocs, ou d’en ajouter un 10ème.
+6) INTERDIT d’oublier un bloc, de fusionner deux blocs, ou d’en ajouter un 9ème.
 7) INTERDIT d’utiliser des URL brutes dans le texte (sauf images si demandées).
 8) INTERDIT d’inclure “Choisis une option”, “Recommencer le quiz”, “J’ai une question ?” dans le texte.
 
-5.3.2 STRUCTURE OBLIGATOIRE DES 9 BLOCS DANS text (sans titres “Bloc” visibles) :
+5.3.2 STRUCTURE OBLIGATOIRE DES 8 BLOCS DANS text (sans titres “Bloc” visibles) :
 
 5.3.2.1 Les Blocs :
 
@@ -662,17 +660,8 @@ Avant de répondre, tu vérifies :
 - JSON valide
 - type == "resultat"
 - pas de "choices"
-- text contient exactement 8 séparateurs "===BLOCK===" donc 9 blocs
+- text contient exactement 7 séparateurs "===BLOCK===" donc 8 blocs
 Si une règle échoue, tu corriges et tu renvoies le JSON conforme.
-
-5.4 FIN DU QUIZ CURE
-- Après l’analyse finale :
-- Tu ne recommences jamais automatiquement le questionnaire.
-- Tu ne reposes pas « Quel est ton prénom ? ».
-- Tu ne reproposes pas automatiquement « Trouver la cure dont j’ai besoin ».
-- Tu ne recommences le quiz depuis le début que si l’utilisateur le demande clairement : « je veux refaire le test », « recommencer le quiz », « on repart de zéro », etc.
-- Après les recommandations :
-Si l’utilisateur pose d’autres questions (cure, ingrédients, contre-indications, SAV, etc.), tu réponds en mode “reponse”, sans relancer le quiz, sauf demande explicite de sa part.
 
 6. MODE B — AMORCE « J’AI UNE QUESTION » OU QUESTION LIBRE
 Quand l’utilisateur clique sur « J’ai une question » ou te pose directement une question libre (hors quiz complet) :
@@ -685,8 +674,8 @@ Quand l’utilisateur clique sur « J’ai une question » ou te pose directemen
 }
 - Tu n’envoies cette phrase d’introduction qu’une seule fois, au début de ce mode.
 
-6.2 Format des réponses en mode “question libre” autre que 5.2 DÉCLENCHEUR BLOC 3 (MODE B)
-– Pour toutes les réponses suivantes dans ce mode ,tu utilises en priorité :
+6.2 Format des réponses en mode “question libre”
+– Pour toutes les réponses suivantes dans ce mode, tu utilises en priorité :
 {
   "type": "reponse",
   "text": "Ta réponse ici, claire, courte et orientée solution."
@@ -696,35 +685,13 @@ Quand l’utilisateur clique sur « J’ai une question » ou te pose directemen
   "type": "question",
   "text": "Petite question pour mieux te conseiller : ..."
 }
-– Tu n’utilises des choices que si c’est vraiment utile (par exemple, proposer 2–3 options de cures ou de thématiques).
-
-6.3 Contenu & limites en mode “J’ai une question”
-- Tu expliques, tu rassures, tu clarifies les cures, la prise, les combinaisons possibles, les contre-indications éventuelles.
-- Tu t’appuies exclusivement sur :
-« LES CURES ALL » : toutes les cures, les gélules, leur composition et leur temps de prise.
-« QUESTION THYREN » : la structure complète du questionnaire
-« QUIZ » : la structure complète du questionnaire CURE
-« COMPOSITIONS » : composition précise des gélules et ingrédients des cures.
-« SAV - FAQ 0.1 » : Toutes les FAQ et les questions récurrentes du SAV.
-- Tu peux éventuellement t’appuyer sur des sources scientifiques fiables (revues, autorités de santé, institutions publiques), mais tu respectes strictement les allégations nutritionnelles et de santé autorisées par la réglementation européenne et appliquées par l’AFSCA.
-- Tu ne formules jamais de diagnostic médical.
-- Si besoin, tu peux rappeler :
-« Ce test et mes réponses sont des outils de bien-être et d’éducation à la santé. Ils ne remplacent pas un avis médical. En cas de doute ou de symptômes persistants, consulte un professionnel de santé. »
-
-6.4 ALLERGÈNES — OBLIGATION D’EXHAUSTIVITÉ
-- Si l’utilisateur mentionne un allergène (ex: poisson), tu DOIS :
- - Passer en revue TOUTES les cures de « LES CURES ALL » ET TOUTES les gélules de « COMPOSITIONS ».
- - Lister explicitement chaque cure contenant l’allergène (ou un dérivé évident) + les gélules concernées.
-- Si aucune cure ne contient l’allergène : l’écrire clairement.
-- Finir par : “Cette recommandation nécessite un avis médical.”
-Interdiction : répondre partiellement ou seulement avec “les plus probables”.
+– Tu n’utilises des choices que si c’est vraiment utile (par exemple, proposer 2–3 options).
 `;
-
 
 // ==============================
 // ✅ VALIDATION + REPAIR (résultats stricts)
 // ==============================
-function isValidResultPayload(obj){
+function isValidResultPayload(obj) {
   if (!obj || typeof obj !== "object") return false;
   if (obj.type !== "resultat") return false;
   if (typeof obj.text !== "string") return false;
@@ -733,21 +700,23 @@ function isValidResultPayload(obj){
   const parts = obj.text.split("===BLOCK===");
   if (parts.length !== 8) return false; // ✅ 8 blocs
 
-  const forbidden = /\bBloc\s*\d+\b|Bloc fin|RÉSULTATS\b|Choisis une option|Recommencer le quiz|J[’']ai une question/i;
+  const forbidden =
+    /\bBloc\s*\d+\b|Bloc fin|RÉSULTATS\b|Choisis une option|Recommencer le quiz|J[’']ai une question/i;
   if (forbidden.test(obj.text)) return false;
 
   return true;
 }
 
-function looksLikeFinalResultsText(t){
+// ✅ Détection plus robuste (plus de dépendance à "Avez-vous d’autres questions")
+function looksLikeFinalResultsText(t) {
   t = String(t || "");
   const hasDisclaimer = /Ce test est un outil de bien-être/i.test(t);
-  const hasFinalQ = /Avez-vous d[’']autres questions/i.test(t);
-  const hasCure = /\bCure\s*1\b|\bCure\s*2\b|\bCure\s*3\b|\bCompatibilit/i.test(t);
-  return (hasDisclaimer && hasFinalQ) || (hasDisclaimer && hasCure) || (hasFinalQ && hasCure);
+  const hasCompat = /Compatibilit/i.test(t);
+  const hasBlocks = /===BLOCK===/.test(t);
+  return hasDisclaimer || hasCompat || hasBlocks;
 }
 
-async function repairToStrictEightBlocks({ apiKey, badText }){
+async function repairToStrictEightBlocks({ apiKey, badText }) {
   const repairSystem =
     "Tu sors uniquement un objet JSON valide. AUCUN texte hors JSON. Pas de backticks.";
   const repairUser = `
@@ -793,7 +762,7 @@ ${String(badText || "").trim()}
   return j.choices?.[0]?.message?.content?.trim() || "";
 }
 
-function getBrusselsNowString(){
+function getBrusselsNowString() {
   const now = new Date();
 
   const parts = new Intl.DateTimeFormat("fr-BE", {
@@ -808,7 +777,9 @@ function getBrusselsNowString(){
   }).formatToParts(now);
 
   const map = {};
-  parts.forEach(p => { map[p.type] = p.value; });
+  parts.forEach((p) => {
+    map[p.type] = p.value;
+  });
 
   return `${map.weekday} ${map.day} ${map.month} ${map.year}, ${map.hour}:${map.minute}`;
 }
@@ -868,60 +839,61 @@ Nous sommes actuellement : ${getBrusselsNowString()} (timezone: Europe/Brussels)
 Règle: si l'utilisateur demande la date/le jour/l'heure, tu dois utiliser STRICTEMENT cette information. Ne devine jamais.
 `.trim();
 
-// ==============================
-// 🔥 ROUTER AMORCES + LOCK MODE (AVANT DOCS_SYSTEM)
-// ==============================
+    // ==============================
+    // 🔥 ROUTER AMORCES + LOCK MODE (AVANT DOCS_SYSTEM)
+    // ==============================
 
-// 1) Dernier message user (robuste: apostrophes, NBSP, casse, etc.)
-const lastUserMsgRaw = String(
-  [...messages].reverse().find(m => (m.role || "") === "user")?.content || ""
-);
+    // 1) Dernier message user (robuste: apostrophes, NBSP, casse, etc.)
+    const lastUserMsgRaw = String(
+      [...messages].reverse().find((m) => (m.role || "") === "user")?.content || ""
+    );
 
-const lastUserMsg = lastUserMsgRaw
-  .normalize("NFKC")
-  .replace(/\u00A0/g, " ")   // NBSP -> space
-  .replace(/[’]/g, "'")     // apostrophe typographique -> '
-  .trim()
-  .toLowerCase();
+    const lastUserMsg = lastUserMsgRaw
+      .normalize("NFKC")
+      .replace(/\u00A0/g, " ") // NBSP -> space
+      .replace(/[’]/g, "'") // apostrophe typographique -> '
+      .trim()
+      .toLowerCase();
 
-// 2) Déclencheurs (tolérants aux variations du bouton)
-const triggerModeC =
-  /trouver\s+(la\s+)?cure/.test(lastUserMsg) ||
-  /cure.*besoin/.test(lastUserMsg) ||
-  /trouver.*besoin/.test(lastUserMsg);
+    // 2) Déclencheurs (tolérants aux variations du bouton)
+    const triggerModeC =
+      /trouver\s+(la\s+)?cure/.test(lastUserMsg) ||
+      /cure.*besoin/.test(lastUserMsg) ||
+      /trouver.*besoin/.test(lastUserMsg);
 
-const triggerModeA =
-  /sympt[oô]mes.*hypothyro/.test(lastUserMsg) ||
-  /est[-\s]*ce\s+que.*hypothyro/.test(lastUserMsg);
+    const triggerModeA =
+      /sympt[oô]mes.*hypothyro/.test(lastUserMsg) ||
+      /est[-\s]*ce\s+que.*hypothyro/.test(lastUserMsg);
 
-// 3) Lock si le quiz a déjà commencé (détection plus stable)
-const historyText = messages.map(m => String(m.content || "")).join("\n");
-const startedModeC =
-  /analyser tes besoins/i.test(historyText) &&
-  /quel est ton pr[ée]nom/i.test(historyText);
+    // 3) Lock si le quiz a déjà commencé (détection plus stable)
+    const historyText = messages.map((m) => String(m.content || "")).join("\n");
+    const startedModeC =
+      /analyser tes besoins/i.test(historyText) && /quel est ton pr[ée]nom/i.test(historyText);
 
-const startedModeA =
-  /fonctionnement de ta thyro/i.test(historyText) &&
-  /quel est ton pr[ée]nom/i.test(historyText);
+    const startedModeA =
+      /fonctionnement de ta thyro/i.test(historyText) && /quel est ton pr[ée]nom/i.test(historyText);
 
-// 4) Mode actif
-const activeMode =
-  (triggerModeC || (startedModeC && !startedModeA)) ? "C" :
-  (triggerModeA || (startedModeA && !startedModeC)) ? "A" :
-  null;
+    // 4) Mode actif
+    const activeMode =
+      triggerModeC || (startedModeC && !startedModeA)
+        ? "C"
+        : triggerModeA || (startedModeA && !startedModeC)
+        ? "A"
+        : null;
 
-const ROUTER_SYSTEM = activeMode === "C"
-  ? `MODE C ACTIF (LOCK).
+    const ROUTER_SYSTEM =
+      activeMode === "C"
+        ? `MODE C ACTIF (LOCK).
 Tu dois suivre EXCLUSIVEMENT le questionnaire QUESTION_ALL, dans l’ordre du flow_order, du Q1 jusqu’à RESULT.
 INTERDICTION ABSOLUE d’utiliser QUESTION_THYROIDE tant que RESULT n’est pas terminé.`
-  : activeMode === "A"
-  ? `MODE A ACTIF (LOCK).
+        : activeMode === "A"
+        ? `MODE A ACTIF (LOCK).
 Tu dois suivre EXCLUSIVEMENT le questionnaire QUESTION_THYROIDE, dans l’ordre du flow_order, du Q1 jusqu’à RESULT.
 INTERDICTION ABSOLUE d’utiliser QUESTION_ALL tant que RESULT n’est pas terminé.`
-  : "";
+        : "";
 
-// ✅ DOCS (mode-aware: ne pas injecter les 2 questionnaires)
-const DOCS_SYSTEM = `
+    // ✅ DOCS (mode-aware: ne pas injecter les 2 questionnaires)
+    const DOCS_SYSTEM = `
 DOCS SUPLEMINT (à suivre strictement, ne rien inventer)
 
 ${activeMode === "A" ? `[QUESTION_THYROIDE]\n${QUESTION_THYROIDE}\n` : ""}
@@ -937,7 +909,7 @@ ${COMPOSITIONS}
 ${SAV_FAQ}
 
 [RESIMONT]
-${RESIMONT}
+${RESIMONT_TRUNC}
 `.trim();
 
     const openAiMessages = [
@@ -981,7 +953,11 @@ ${RESIMONT}
     let replyText = String(reply || "").trim();
 
     let parsed = null;
-    try { parsed = JSON.parse(replyText); } catch (e) { parsed = null; }
+    try {
+      parsed = JSON.parse(replyText);
+    } catch (e) {
+      parsed = null;
+    }
 
     if (parsed && parsed.type === "resultat") {
       if (!isValidResultPayload(parsed)) {
