@@ -495,7 +495,7 @@ Avant de répondre, tu vérifies :
 - JSON valide
 - type == "resultat"
 - pas de "choices"
-- text contient exactement 8 séparateurs "===BLOCK===" donc 9 blocs
+- text contient exactement 7 séparateurs "===BLOCK===" donc 8 blocs
 Si une règle échoue, tu corriges et tu renvoies le JSON conforme.
 
 4.4 FIN DU QUIZ
