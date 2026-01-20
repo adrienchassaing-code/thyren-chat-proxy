@@ -959,30 +959,31 @@ ${RESIMONT_TRUNC}
       parsed = null;
     }
 
-    if (parsed && parsed.type === "resultat") {
-      if (!isValidResultPayload(parsed)) {
-        const repaired = await repairToStrictEightBlocks({
-          apiKey: OPENAI_API_KEY,
-          badText: parsed.text || replyText,
-        });
-        if (repaired) replyText = repaired;
-      }
-    } else if (parsed && typeof parsed === "object") {
-      const maybeText = String(parsed.text || "");
-      if (looksLikeFinalResultsText(maybeText)) {
-        const repaired = await repairToStrictEightBlocks({
-          apiKey: OPENAI_API_KEY,
-          badText: maybeText || replyText,
-        });
-        if (repaired) replyText = repaired;
-      }
-    } else {
-      const repaired = await repairToStrictEightBlocks({
-        apiKey: OPENAI_API_KEY,
-        badText: replyText,
-      });
-      if (repaired) replyText = repaired;
-    }
+    // ==========================================
+// ✅ Validation + Repair UNIQUEMENT pour resultat
+// ==========================================
+let replyText = String(reply || "").trim();
+
+let parsed = null;
+try {
+  parsed = JSON.parse(replyText);
+} catch (e) {
+  parsed = null;
+}
+
+// ⚠️ RÉPARATION AUTORISÉE UNIQUEMENT SI type === "resultat"
+if (parsed && parsed.type === "resultat") {
+  if (!isValidResultPayload(parsed)) {
+    const repaired = await repairToStrictEightBlocks({
+      apiKey: OPENAI_API_KEY,
+      badText: parsed.text || replyText,
+    });
+    if (repaired) replyText = repaired;
+  }
+}
+
+// ❌ AUCUNE réparation pour question / reponse
+
 
     res.status(200).json({
       reply: replyText,
