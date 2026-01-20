@@ -1063,6 +1063,7 @@ TOUJOURS proposer une porte de sortie constructive :
 // ==============================
 // ✅ VALIDATION + REPAIR (résultats stricts)
 // ==============================
+`;
 function isValidResultPayload(obj) {
   if (!obj || typeof obj !== "object") return false;
   if (obj.type !== "resultat") return false;
