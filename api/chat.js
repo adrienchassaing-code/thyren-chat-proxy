@@ -947,7 +947,7 @@ ${RESIMONT_TRUNC}
     const oaData = await oaRes.json();
     const reply = oaData.choices?.[0]?.message?.content || "";
 
-    // ==========================================
+// ==========================================
 // ✅ Validation + Repair UNIQUEMENT pour resultat
 // ==========================================
 let replyText = String(reply || "").trim();
@@ -968,9 +968,13 @@ if (parsed && parsed.type === "resultat") {
     if (repaired) replyText = repaired;
   }
 }
-      reply: replyText,
-      conversationId: conversationId || null,
-    });
+
+// ✅ Réponse HTTP (OBLIGATOIRE)
+res.status(200).json({
+  reply: replyText,
+  conversationId: conversationId || null,
+});
+
   } catch (err) {
     console.error("THYREN OpenAI proxy error:", err);
     res.status(500).json({ error: "THYREN OpenAI proxy error" });
