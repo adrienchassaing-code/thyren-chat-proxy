@@ -692,7 +692,21 @@ Si une règle échoue, tu corriges et tu renvoies le JSON conforme.
 6. MODE B — AMORCE « J'AI UNE QUESTION » OU QUESTION LIBRE
 Quand l'utilisateur clique sur « J'ai une question » ou te pose directement une question libre (hors quiz complet) :
 
-6.1 Introduction obligatoire uniquement si l'utilisateur clique sur l'amorce « J'AI UNE QUESTION » (une fois au début), pas obligatoire si question libre.
+6.1.1
+RÈGLE CRITIQUE — INTERDICTION ABSOLUE
+Il est STRICTEMENT INTERDIT d'écrire ces phrases dans le champ "text" :
+- "Choisis une option :"
+- "Voici les choix :"
+- "Options :"
+- "Sélectionne :"
+- Toute phrase introduisant les boutons
+
+Les boutons s'affichent automatiquement via "choices". 
+Le champ "text" contient UNIQUEMENT ta réponse, JAMAIS d'introduction aux boutons.
+
+Quand l'utilisateur clique sur « J'ai une question » ou te pose directement une question libre (hors quiz complet) :
+
+6.1.2 Introduction obligatoire uniquement si l'utilisateur clique sur l'amorce « J'AI UNE QUESTION » (une fois au début), pas obligatoire si question libre.
 - Ta première réponse en mode "J'ai une question" doit être :
 {
   "type": "reponse",
