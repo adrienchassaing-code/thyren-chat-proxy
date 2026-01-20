@@ -948,18 +948,6 @@ ${RESIMONT_TRUNC}
     const reply = oaData.choices?.[0]?.message?.content || "";
 
     // ==========================================
-    // ✅ Validation + Repair du payload final
-    // ==========================================
-    let replyText = String(reply || "").trim();
-
-    let parsed = null;
-    try {
-      parsed = JSON.parse(replyText);
-    } catch (e) {
-      parsed = null;
-    }
-
-    // ==========================================
 // ✅ Validation + Repair UNIQUEMENT pour resultat
 // ==========================================
 let replyText = String(reply || "").trim();
@@ -971,7 +959,6 @@ try {
   parsed = null;
 }
 
-// ⚠️ RÉPARATION AUTORISÉE UNIQUEMENT SI type === "resultat"
 if (parsed && parsed.type === "resultat") {
   if (!isValidResultPayload(parsed)) {
     const repaired = await repairToStrictEightBlocks({
@@ -981,11 +968,6 @@ if (parsed && parsed.type === "resultat") {
     if (repaired) replyText = repaired;
   }
 }
-
-// ❌ AUCUNE réparation pour question / reponse
-
-
-    res.status(200).json({
       reply: replyText,
       conversationId: conversationId || null,
     });
