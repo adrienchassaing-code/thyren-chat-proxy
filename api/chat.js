@@ -1364,29 +1364,9 @@ ${RESIMONT_TRUNC}
     const oaData = await oaRes.json();
     const reply = oaData.choices?.[0]?.message?.content || "";
 
-// ==========================================
-// ✅ Validation + Repair UNIQUEMENT pour resultat
-// ==========================================
-let replyText = String(reply || "").trim();
+// ⚡ ULTRA-RAPIDE - Zero validation/repair
+const replyText = String(reply || "").trim();
 
-let parsed = null;
-try {
-  parsed = JSON.parse(replyText);
-} catch (e) {
-  parsed = null;
-}
-
-if (parsed && parsed.type === "resultat") {
-  if (!isValidResultPayload(parsed)) {
-    const repaired = await repairToStrictEightBlocks({
-      apiKey: OPENAI_API_KEY,
-      badText: parsed.text || replyText,
-    });
-    if (repaired) replyText = repaired;
-  }
-}
-
-// ✅ Réponse HTTP (OBLIGATOIRE)
 res.status(200).json({
   reply: replyText,
   conversationId: conversationId || null,
