@@ -1,4 +1,4 @@
-{
+sy{
   "version": "THYREN_FLOW_QUIZ_2.0_DOCTEUR",
   "description": "Quiz simplifié - THYREN utilise son raisonnement clinique Docteur 2.0 pour poser les bonnes questions après les infos de base",
   "flow_order": ["Q1","Q2","Q2_plus","Q3","Q4","Q4b","Q5","CLINICAL_QUESTIONS","Q_EMAIL","RESULT"],
@@ -6,7 +6,7 @@
     "Q1": {
       "id": "Q1",
       "type": "open",
-      "text": "C'est parti !\nJe vais te poser quelques questions pour comprendre ta situation et te proposer la cure la plus adaptée à tes besoins.\nPour commencer, quel est ton prénom ?",
+      "text": "C'est parti !\nJe vais te poser quelques questions pour comprendre tes symptomes et te proposer la cure la plus adaptée à tes besoins.\nPour commencer, quel est ton prénom ?",
       "next": "Q2",
       "meta": { "capture": "first_name" }
     },
