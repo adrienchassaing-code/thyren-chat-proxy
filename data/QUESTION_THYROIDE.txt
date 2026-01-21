@@ -6,7 +6,7 @@
       "id": "Q1",
       "type": "open",
       "text": "On va vérifier ça ensemble.
-Je vais te poser quelques questions rapides ( environ 2 min de ton temp ) pour évaluer tes besoin et le fonctionnement de ta thyroïde pour déterminer si nos cures peuvent t’aider.
+Je vais te poser quelques questions rapides sur tes symptômes.
 Pour commencer, quel est ton prénom ?",
       "next": "Q2",
       "meta": {"capture": "first_name"}
