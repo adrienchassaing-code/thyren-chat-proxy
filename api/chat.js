@@ -1277,7 +1277,7 @@ ${RESIMONT_TRUNC}
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "gpt-4-turbo",
         messages: openAiMessages,
         response_format: { type: "json_object" },
         temperature: 0,
