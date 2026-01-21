@@ -1108,76 +1108,6 @@ TOUJOURS proposer une porte de sortie constructive :
 // ✅ VALIDATION + REPAIR (résultats stricts)
 // ==============================
 `;
-function isValidResultPayload(obj) {
-  if (!obj || typeof obj !== "object") return false;
-  if (obj.type !== "resultat") return false;
-  if (typeof obj.text !== "string") return false;
-  if ("choices" in obj) return false;
-
-  const parts = obj.text.split("===BLOCK===");
-  if (parts.length !== 8) return false; // ✅ 8 blocs
-
-  const forbidden =
-    /\bBloc\s*\d+\b|Bloc fin|RÉSULTATS\b|Choisis une option|Recommencer le quiz|J[’']ai une question/i;
-  if (forbidden.test(obj.text)) return false;
-
-  return true;
-}
-
-// ✅ Détection plus robuste (plus de dépendance à "Avez-vous d’autres questions")
-function looksLikeFinalResultsText(t) {
-  t = String(t || "");
-  const hasDisclaimer = /Ce test est un outil de bien-être/i.test(t);
-  const hasCompat = /Compatibilit/i.test(t);
-  const hasBlocks = /===BLOCK===/.test(t);
-  return hasDisclaimer || hasCompat || hasBlocks;
-}
-
-async function repairToStrictEightBlocks({ apiKey, badText }) {
-  const repairSystem =
-    "Tu sors uniquement un objet JSON valide. AUCUN texte hors JSON. Pas de backticks.";
-  const repairUser = `
-Convertis le TEXTE ci-dessous en JSON STRICT exactement :
-{"type":"resultat","text":"..."}
-RÈGLES ABSOLUES:
-- Le champ text contient EXACTEMENT 8 blocs
-- Séparation UNIQUE et exacte entre blocs: ===BLOCK===
-- Il doit y avoir EXACTEMENT 7 séparateurs ===BLOCK===
-- INTERDIT d’écrire "Bloc 1", "Bloc 2", "Bloc fin", "RÉSULTATS" dans le texte visible
-- INTERDIT d’ajouter "choices"
-- INTERDIT d’inclure "Choisis une option", "Recommencer le quiz", "J’ai une question ?"
-- Retourne UNIQUEMENT le JSON final.
-
-TEXTE:
-${String(badText || "").trim()}
-`.trim();
-
-  const r = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "gpt-4.1-mini",
-      messages: [
-        { role: "system", content: repairSystem },
-        { role: "user", content: repairUser },
-      ],
-      response_format: { type: "json_object" },
-      temperature: 0,
-    }),
-  });
-
-  if (!r.ok) {
-    const t = await r.text();
-    console.error("Repair OpenAI error:", r.status, t);
-    return "";
-  }
-
-  const j = await r.json();
-  return j.choices?.[0]?.message?.content?.trim() || "";
-}
 
 function getBrusselsNowString() {
   const now = new Date();
@@ -1347,7 +1277,7 @@ ${RESIMONT_TRUNC}
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4.1-mini",
+        model: "gpt-3.5-turbo",
         messages: openAiMessages,
         response_format: { type: "json_object" },
         temperature: 0,
