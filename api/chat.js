@@ -1419,40 +1419,59 @@ ${RESIMONT_TRUNC}
       })),
     ];
 
-    const oaRes = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gpt-4-turbo",
-        messages: openAiMessages,
-        response_format: { type: "json_object" },
-        temperature: 0,
-      }),
-    });
+    // ⏱️ Timeout controller (55 secondes pour rester sous la limite Vercel)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 55000);
 
-    if (!oaRes.ok) {
-      const errText = await oaRes.text();
-      console.error("OpenAI error:", oaRes.status, errText);
-      res.status(500).json({ error: "OpenAI API error", details: errText });
-      return;
+    try {
+      const oaRes = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-4-turbo",
+          messages: openAiMessages,
+          response_format: { type: "json_object" },
+          temperature: 0,
+          max_tokens: 4096, // ✅ Permet les résultats longs (8 blocs)
+        }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!oaRes.ok) {
+        const errText = await oaRes.text();
+        console.error("OpenAI error:", oaRes.status, errText);
+        res.status(500).json({ error: "OpenAI API error", details: errText });
+        return;
+      }
+
+      const oaData = await oaRes.json();
+      const reply = oaData.choices?.[0]?.message?.content || "";
+
+      // ⚡ Validation basique du JSON
+      const replyText = String(reply || "").trim();
+
+      res.status(200).json({
+        reply: replyText,
+        conversationId: conversationId || null,
+      });
+
+    } catch (fetchErr) {
+      clearTimeout(timeoutId);
+      if (fetchErr.name === "AbortError") {
+        console.error("OpenAI request timeout after 55s");
+        res.status(504).json({ error: "Request timeout - la génération a pris trop de temps" });
+      } else {
+        throw fetchErr;
+      }
     }
-
-    const oaData = await oaRes.json();
-    const reply = oaData.choices?.[0]?.message?.content || "";
-
-    // ⚡ ULTRA-RAPIDE - Zero validation/repair
-    const replyText = String(reply || "").trim();
-
-    res.status(200).json({
-      reply: replyText,
-      conversationId: conversationId || null,
-    });
 
   } catch (err) {
     console.error("THYREN OpenAI proxy error:", err);
-    res.status(500).json({ error: "THYREN OpenAI proxy error" });
+    res.status(500).json({ error: "THYREN OpenAI proxy error", details: String(err) });
   }
 }
