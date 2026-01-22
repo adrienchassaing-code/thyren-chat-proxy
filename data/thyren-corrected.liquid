@@ -1,0 +1,561 @@
+{% schema %}
+{
+  "name": "THYREN Chat (Section)",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Titre", "default": "THYREN" },
+    { "type": "text", "id": "endpoint", "label": "API Endpoint", "default": "https://thyren-chat-proxy.vercel.app/api/chat" },
+    { "type": "text", "id": "avatar_url", "label": "Avatar URL", "default": "https://cdn.shopify.com/s/files/1/0656/3240/3724/files/THYREN_PNG.png?v=1764149536" },
+    { "type": "number", "id": "total_quiz_questions", "label": "Nombre total de questions (quiz)", "default": 18 },
+    { "type": "color", "id": "bg_color", "label": "Couleur de fond", "default": "#073434" }
+  ],
+  "presets": [{ "name": "THYREN Chat (Section)" }]
+}
+{% endschema %}
+
+<section class="thyren-wrap" style="--thyren-bg: {{ section.settings.bg_color }};">
+  <div class="thyren-container">
+    <div class="thyren-chat" id="thyren-chat-{{ section.id }}">
+      <div class="thyren-header">
+        <img src="{{ section.settings.avatar_url }}" class="thyren-avatar" alt="Thyren" loading="lazy" />
+        <div class="thyren-title">{{ section.settings.title }}</div>
+
+        <div class="thyren-stats">
+          <span class="thyren-stat">
+            <span class="thyren-green-dot"></span>
+            <span id="thyren-online-{{ section.id }}">—</span> en ligne
+          </span>
+          <span class="thyren-stat">
+            <span id="thyren-qpd-{{ section.id }}">—</span> questions/jour
+          </span>
+        </div>
+
+        <div class="thyren-progress" id="thyren-progress-{{ section.id }}" style="display:none;">
+          Quiz : <span class="thyren-qcur">0</span>/<span class="thyren-qtot">{{ section.settings.total_quiz_questions }}</span>
+        </div>
+      </div>
+
+      <div class="thyren-body">
+        <div class="thyren-messages" id="thyren-messages-{{ section.id }}">
+          <div id="thyren-form-slot-{{ section.id }}"></div>
+          <div id="thyren-thread-{{ section.id }}"></div>
+        </div>
+
+        <div class="thyren-typing-line" id="thyren-typing-line-{{ section.id }}" style="display:none;"></div>
+
+        <form class="thyren-form" id="thyren-form-{{ section.id }}">
+          <input class="thyren-input" id="thyren-input-{{ section.id }}" type="text" placeholder="Posez votre question..." autocomplete="off" />
+          <button type="button" class="thyren-mic" id="thyren-mic-{{ section.id }}" aria-label="Dicter">🎙️</button>
+          <button type="submit" class="thyren-send">Envoyer</button>
+
+          <details class="thyren-menu">
+            <summary class="thyren-menu-btn" aria-label="Menu">⋮</summary>
+            <div class="thyren-menu-panel">
+              <button type="button" class="thyren-menu-item" data-action="restart">Recommencer le quiz</button>
+              <button type="button" class="thyren-menu-item" data-action="clear">Effacer la conversation</button>
+              <button type="button" class="thyren-menu-item" data-action="question">J'ai une question</button>
+            </div>
+          </details>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.thyren-wrap{ width:100%; background: var(--thyren-bg); color:#fff; padding: 34px 16px; }
+.thyren-container{ max-width: 1180px; margin: 0 auto; }
+.thyren-chat{
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  height: min(520px, 68vh);
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Poppins', sans-serif;
+  transition: height .55s cubic-bezier(.2,.9,.2,1);
+}
+.thyren-chat.thyren-started{ height: min(720px, 82vh); }
+.thyren-chat:not(.thyren-started){ justify-content: center; }
+.thyren-chat:not(.thyren-started) .thyren-body{ height: auto !important; flex: 0 0 auto; margin-bottom: auto; }
+.thyren-chat:not(.thyren-started) .thyren-header{ margin-top: auto; }
+.thyren-chat:not(.thyren-started) .thyren-messages{
+  flex: 0 0 auto; overflow: visible;
+  padding-top: 10px; padding-bottom: 6px;
+  -webkit-mask-image: none !important; mask-image: none !important;
+}
+.thyren-chat:not(.thyren-started) .thyren-form{ justify-content: center; }
+.thyren-header{
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap: 10px; padding: 10px 0 14px 0;
+  background: transparent; border: none; text-align:center;
+}
+.thyren-avatar{
+  width: 56px; height: 56px; border-radius: 999px;
+  object-fit: contain; background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.16);
+}
+.thyren-title{ font-size: 22px; font-weight: 800; letter-spacing: 0.6px; line-height: 1.1; color:#fff; }
+.thyren-stats{
+  display:flex; flex-direction: row; align-items:center; justify-content:center;
+  gap: 14px; font-size: 12px; opacity: 0.95; white-space: nowrap; flex-wrap: wrap;
+}
+.thyren-stat{ display:inline-flex; align-items:center; gap: 6px; }
+.thyren-green-dot{
+  display:inline-block; width:9px;height:9px;border-radius:50%;
+  background-color:#2cff91; box-shadow:0 0 6px #2cff91aa;
+}
+.thyren-progress{
+  font-size: 12px; opacity: 0.9;
+  padding: 6px 10px; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.10); white-space: nowrap;
+}
+.thyren-body{
+  display:flex; flex-direction:column; height:100%;
+  overflow: visible; will-change: transform, opacity;
+  transition: opacity .35s ease-out, transform .35s ease-out;
+}
+.thyren-chat.thyren-switching .thyren-body{
+  opacity: 0; transform: translateY(10px); pointer-events: none;
+}
+.thyren-messages{
+  flex:1 1 0; overflow-y:auto;
+  padding: 12px 18px 34px 18px;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.85) transparent;
+  max-width: 980px; margin: 0 auto; width: 100%; box-sizing: border-box;
+  overscroll-behavior: contain; position: relative;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0px, #000 28px, #000 calc(100% - 28px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0px, #000 28px, #000 calc(100% - 28px), transparent 100%);
+  -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+}
+.thyren-messages::-webkit-scrollbar { width: 6px; }
+.thyren-messages::-webkit-scrollbar-track { background: transparent; }
+.thyren-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.9); border-radius: 999px; }
+.thyren-form{
+  flex:0 0 auto; display:flex; align-items:center; gap: 10px;
+  padding: 12px 18px; border: none; background: transparent;
+  max-width: 980px; margin: 0 auto; width: 100%;
+  justify-content:flex-start; position: relative; overflow: visible;
+  box-sizing: border-box;
+}
+.thyren-input{
+  flex: 1; min-width: 0;
+  border-radius: 999px; border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.12);
+  color: #fff; padding: 12px 16px;
+  font-size: 14px; outline:none;
+}
+.thyren-input::placeholder{ color: rgba(255,255,255,0.75); }
+.thyren-send{
+  border-radius: 999px; border: 1px solid rgba(255,255,255,0.18);
+  padding: 12px 18px; background: rgba(255,255,255,0.16);
+  color:#fff; font-size:14px; cursor:pointer; flex: 0 0 auto;
+}
+.thyren-send:hover{ background: rgba(255,255,255,0.22); }
+.thyren-bubble a{
+  color: #fff; text-decoration: underline;
+  text-underline-offset: 3px; opacity: 0.95;
+  word-break: break-word;
+}
+.thyren-bubble img{
+  display:block; width:100%; max-height: 220px;
+  object-fit: cover; border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+}
+.thyren-menu { position: relative; flex: 0 0 auto; }
+.thyren-menu > summary{ list-style: none !important; -webkit-appearance: none !important; appearance: none !important; background-image: none !important; }
+.thyren-menu > summary::-webkit-details-marker{ display:none !important; }
+.thyren-menu > summary::marker{ content:"" !important; display:none !important; }
+.thyren-menu > summary::before, .thyren-menu > summary::after, .thyren-menu-btn::before, .thyren-menu-btn::after{ content: none !important; display: none !important; background: none !important; }
+.thyren-menu-btn{
+  cursor:pointer; user-select:none;
+  width: 44px; height: 44px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.10) !important;
+  color:#fff; font-weight:700; padding: 0 !important;
+}
+.thyren-menu[open] .thyren-menu-btn { background: rgba(255,255,255,0.16) !important; }
+.thyren-menu-panel{
+  position:absolute; right: 0; top: 52px;
+  min-width: 210px; border-radius: 14px; overflow:hidden;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 18px 34px rgba(0,0,0,0.30);
+  z-index: 9999;
+}
+.thyren-menu-item{
+  width:100%; text-align:left; padding: 12px 12px;
+  background: transparent; border: none; color: #fff;
+  cursor:pointer; font-size: 13px;
+}
+.thyren-menu-item:hover{ background: rgba(255,255,255,0.10); }
+.thyren-msg{ margin-bottom: 14px; display:flex; flex-direction:column; width:100%; gap: 10px; }
+.thyren-chat:not(.thyren-started) .thyren-msg{ align-items:center; }
+.thyren-chat:not(.thyren-started) .thyren-bubble{ text-align:center; }
+.thyren-chat.thyren-started .thyren-msg.bot{ align-items:flex-start; }
+.thyren-chat.thyren-started .thyren-msg.user{ align-items:flex-end; }
+.thyren-chat.thyren-started .thyren-bubble{ text-align:left; }
+.thyren-bubble{
+  display:inline-block;
+  padding: 12px 14px;
+  border-radius: 16px;
+  max-width: 92%;
+  font-size: 14px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap:anywhere;
+}
+.thyren-msg.bot .thyren-bubble.thyren-wide{ width: 100%; max-width: 100%; box-sizing: border-box; }
+.thyren-msg.user .thyren-bubble{ background: rgba(255,255,255,0.16); color:#fff; }
+.thyren-msg.bot .thyren-bubble{ background: rgba(0,0,0,0.28); color:#fff; border: 1px solid rgba(255,255,255,0.14); }
+.thyren-options{ display:flex; flex-wrap:wrap; gap: 10px; width: 100%; }
+.thyren-chat:not(.thyren-started) .thyren-options{ justify-content:center; }
+.thyren-chat.thyren-started .thyren-options{ justify-content:flex-start; }
+.thyren-option-btn{
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.14);
+  color:#fff;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 13px;
+  cursor:pointer;
+}
+.thyren-option-btn:hover:not(:disabled){ background: rgba(255,255,255,0.22); }
+.thyren-option-btn.selected{ opacity: 0.85; background: rgba(0,0,0,0.30); }
+.thyren-option-btn:disabled{ cursor:default; opacity: 0.65; }
+.thyren-toast{
+  position: absolute; left: 50%; bottom: 84px;
+  transform: translateX(-50%) translateY(10px);
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.18);
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease, transform .22s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 9999;
+}
+.thyren-toast.show{ opacity: 1; transform: translateX(-50%) translateY(0); }
+@media (max-width: 768px){
+  .thyren-chat{ height: min(520px, 70vh); }
+  .thyren-chat.thyren-started{ height: min(720px, 86vh); }
+  .thyren-messages{ padding: 12px 14px 34px 14px; }
+  .thyren-form{ padding: 12px 14px; }
+  .thyren-bubble{ max-width: 96%; }
+  .thyren-bubble img{ max-height: 190px; }
+}
+.thyren-mic{
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  width: 44px; height: 44px;
+  background: rgba(255,255,255,0.10);
+  color:#fff;
+  cursor:pointer;
+  flex: 0 0 auto;
+  display:flex; align-items:center; justify-content:center;
+  font-size: 16px;
+}
+.thyren-mic:hover{ background: rgba(255,255,255,0.16); }
+.thyren-mic.is-rec{ background: rgba(44,255,145,0.18); border-color: rgba(44,255,145,0.45); }
+</style>
+
+<script>
+(function () {
+  var SECTION_ID = "{{ section.id }}";
+  var API_ENDPOINT = "{{ section.settings.endpoint }}";
+  var TOTAL_QUESTIONS = Number("{{ section.settings.total_quiz_questions }}") || 18;
+
+  var rootEl = document.getElementById("thyren-chat-" + SECTION_ID);
+  var messagesEl = document.getElementById('thyren-messages-' + SECTION_ID);
+  var threadEl = document.getElementById('thyren-thread-' + SECTION_ID);
+  var slotEl = document.getElementById('thyren-form-slot-' + SECTION_ID);
+  var formEl = document.getElementById('thyren-form-' + SECTION_ID);
+  var inputEl = document.getElementById('thyren-input-' + SECTION_ID);
+  var typingLineEl = document.getElementById('thyren-typing-line-' + SECTION_ID);
+
+  var progressEl = document.getElementById('thyren-progress-' + SECTION_ID);
+  var qcurEl = progressEl ? progressEl.querySelector('.thyren-qcur') : null;
+  var qtotEl = progressEl ? progressEl.querySelector('.thyren-qtot') : null;
+
+  var menuEl = rootEl ? rootEl.querySelector('.thyren-menu') : null;
+  var menuItems = rootEl ? rootEl.querySelectorAll('.thyren-menu-item') : [];
+
+  if (!messagesEl || !threadEl || !slotEl || !formEl || !inputEl || !typingLineEl || !rootEl) return;
+
+  var conversationId = 'web-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+  var chatHistory = [];
+  var isWaiting = false;
+  var quizStarted = false;
+  var started = false;
+  var questionIndex = 0;
+
+  if (qtotEl) qtotEl.textContent = String(TOTAL_QUESTIONS);
+
+  function setProgress(cur){
+    if (!qcurEl || !progressEl) return;
+    qcurEl.textContent = String(Math.max(0, cur));
+  }
+  function showProgressIfQuiz(){
+    if (!progressEl) return;
+    progressEl.style.display = quizStarted ? "" : "none";
+  }
+  showProgressIfQuiz();
+  setProgress(0);
+
+  function placeFormTop(){ try { slotEl.appendChild(formEl); } catch(e){} }
+  function dockFormBottom(){
+    try {
+      var body = rootEl.querySelector(".thyren-body");
+      if (body) body.appendChild(formEl);
+    } catch(e){}
+  }
+
+  var LS_KEY_UI = "thyren_ui_" + SECTION_ID;
+  var LS_KEY_MODE = "thyren_mode_" + SECTION_ID;
+
+  function saveUiState(){
+    try{
+      var msgs = Array.prototype.slice.call(threadEl.querySelectorAll(".thyren-msg"));
+      var html = msgs.map(function(n){ return n.outerHTML; }).join("");
+      localStorage.setItem(LS_KEY_UI, html);
+      localStorage.setItem(LS_KEY_MODE, JSON.stringify({
+        started: !!started,
+        quizStarted: !!quizStarted,
+        questionIndex: Number(questionIndex||0)
+      }));
+    }catch(e){}
+  }
+
+  function restoreUiState(){
+    try{
+      var html = localStorage.getItem(LS_KEY_UI);
+      var mode = localStorage.getItem(LS_KEY_MODE);
+      threadEl.innerHTML = "";
+      if (html && html.indexOf("thyren-msg") !== -1){
+        threadEl.innerHTML = html;
+      } else {
+        return false;
+      }
+      if (mode){
+        var st = JSON.parse(mode);
+        started = !!st.started;
+        quizStarted = !!st.quizStarted;
+        questionIndex = Number(st.questionIndex||0);
+      }
+      if (started) {
+        rootEl.classList.add("thyren-started");
+        dockFormBottom();
+      } else {
+        rootEl.classList.remove("thyren-started");
+        placeFormTop();
+      }
+      setProgress(questionIndex);
+      showProgressIfQuiz();
+      return true;
+    }catch(e){}
+    return false;
+  }
+
+  function createMsgWrap(role){
+    var wrap = document.createElement('div');
+    wrap.className = 'thyren-msg ' + role;
+    return wrap;
+  }
+
+  function addUserMessage(text){
+    if (!text) return;
+    var wrap = createMsgWrap('user');
+    var bubble = document.createElement('div');
+    bubble.className = 'thyren-bubble';
+    bubble.textContent = text;
+    wrap.appendChild(bubble);
+    threadEl.appendChild(wrap);
+    saveUiState();
+  }
+
+  function addBotMessage(text){
+    if (!text) return;
+    var wrap = createMsgWrap('bot');
+    var bubble = document.createElement('div');
+    bubble.className = 'thyren-bubble';
+    bubble.textContent = text;
+    wrap.appendChild(bubble);
+    threadEl.appendChild(wrap);
+    saveUiState();
+  }
+
+  function addWelcomeButtons(){
+    var wrap = createMsgWrap('bot');
+    var options = document.createElement('div');
+    options.className = 'thyren-options';
+
+    var choices = [
+      { label: "Commencer le quiz", payload: "Commencer le quiz" },
+      { label: "J'ai une question", payload: "J'ai une question" }
+    ];
+
+    choices.forEach(function(choice){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'thyren-option-btn';
+      btn.textContent = choice.label;
+      btn.dataset.thyrenKind = "welcome";
+      btn.dataset.thyrenPayload = choice.payload;
+      options.appendChild(btn);
+    });
+
+    wrap.appendChild(options);
+    threadEl.appendChild(wrap);
+    saveUiState();
+  }
+
+  function addQuestionWithChoices(questionText, choices){
+    var cleanQ = (questionText || 'Choisis une option :').replace(/\*/g, "").trim();
+    var wrap = createMsgWrap('bot');
+    var bubble = document.createElement('div');
+    bubble.className = 'thyren-bubble';
+    bubble.textContent = cleanQ;
+    wrap.appendChild(bubble);
+
+    var options = document.createElement('div');
+    options.className = 'thyren-options';
+
+    (choices || []).forEach(function(choice){
+      var cleanLabel = String(choice || '').replace(/\*/g, "").trim();
+      if (!cleanLabel) return;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'thyren-option-btn';
+      btn.textContent = cleanLabel;
+      btn.dataset.thyrenKind = "choice";
+      btn.dataset.thyrenPayload = cleanLabel;
+      options.appendChild(btn);
+    });
+
+    wrap.appendChild(options);
+    threadEl.appendChild(wrap);
+    saveUiState();
+  }
+
+  messagesEl.addEventListener("click", async function(e){
+    var btn = e.target && e.target.closest ? e.target.closest(".thyren-option-btn") : null;
+    if (!btn || !messagesEl.contains(btn)) return;
+    e.preventDefault();
+
+    var kind = String(btn.dataset.thyrenKind || "").toLowerCase();
+    var payload = btn.dataset.thyrenPayload || btn.textContent || "";
+    var txt = String(payload || "").trim();
+    
+    if (!txt || isWaiting) return;
+    if (!started) { started = true; rootEl.classList.add("thyren-started"); dockFormBottom(); }
+    if (/commencer le quiz/i.test(txt)) { quizStarted = true; questionIndex = 0; setProgress(0); showProgressIfQuiz(); }
+
+    addUserMessage(txt);
+    sendToBot(txt);
+  }, { passive: false });
+
+  document.addEventListener("click", function(e){
+    if (!menuEl) return;
+    if (!menuEl.contains(e.target)) menuEl.removeAttribute("open");
+  });
+
+  Array.prototype.forEach.call(menuItems, function(btn){
+    btn.addEventListener("click", function(){
+      var action = btn.getAttribute("data-action");
+      if (menuEl) menuEl.removeAttribute("open");
+      if (action === "restart" || action === "clear") {
+        chatHistory = [];
+        threadEl.innerHTML = "";
+        try{ localStorage.removeItem(LS_KEY_UI); localStorage.removeItem(LS_KEY_MODE); }catch(e){}
+        quizStarted = (action === "restart");
+        started = false;
+        rootEl.classList.remove("thyren-started");
+        questionIndex = 0;
+        setProgress(0);
+        showProgressIfQuiz();
+        placeFormTop();
+        addWelcomeButtons();
+      }
+      if (action === "question") {
+        quizStarted = false;
+        questionIndex = 0;
+        setProgress(0);
+        showProgressIfQuiz();
+        if (!started) { started = true; rootEl.classList.add("thyren-started"); dockFormBottom(); }
+        addUserMessage("J'ai une question");
+        sendToBot("J'ai une question");
+      }
+    });
+  });
+
+  async function sendToBot(userText) {
+    if (!userText || isWaiting) return;
+    if (!started) { started = true; rootEl.classList.add("thyren-started"); dockFormBottom(); }
+    isWaiting = true;
+    chatHistory.push({ role: 'user', content: userText });
+    try {
+      var res = await fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: chatHistory, conversationId: conversationId })
+      });
+      var data = await res.json();
+      var replyText = (data && data.reply ? String(data.reply) : "").trim();
+      if (!replyText) {
+        addBotMessage("Je n'ai pas reçu de réponse exploitable, tu peux réessayer ?");
+        isWaiting = false;
+        return;
+      }
+      chatHistory.push({ role: 'assistant', content: replyText });
+      var parsed = null;
+      try { parsed = JSON.parse(replyText); } catch (e) { parsed = null; }
+      if (!parsed || typeof parsed !== 'object') {
+        addBotMessage(replyText);
+        isWaiting = false;
+        return;
+      }
+      var msgType = parsed.type;
+      var msgText = parsed.text || "";
+      var msgChoices = Array.isArray(parsed.choices) ? parsed.choices : [];
+      if (msgType === "question") {
+        if (quizStarted) { questionIndex += 1; setProgress(questionIndex); }
+        if (msgChoices.length > 0) addQuestionWithChoices(msgText, msgChoices);
+        else addBotMessage(msgText);
+      } else {
+        addBotMessage(msgText || replyText);
+      }
+      isWaiting = false;
+    } catch (err) {
+      addBotMessage("Erreur de communication avec THYREN. Tu peux réessayer dans un instant.");
+      isWaiting = false;
+    }
+  }
+
+  formEl.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var text = inputEl.value.trim();
+    if (!text || isWaiting) return;
+    addUserMessage(text);
+    inputEl.value = '';
+    sendToBot(text);
+  });
+
+  placeFormTop();
+  var restored = restoreUiState();
+  if (!restored) addWelcomeButtons();
+})();
+</script>
