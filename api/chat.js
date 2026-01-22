@@ -1992,7 +1992,8 @@ Règle: si l'utilisateur demande la date/le jour/l'heure, tu dois utiliser STRIC
       /analyser tes besoins/i.test(historyText) && /quel est ton pr[ée]nom/i.test(historyText);
 
     const startedModeA =
-      /fonctionnement de ta thyro/i.test(historyText) && /quel est ton pr[ée]nom/i.test(historyText);
+     /quiz\s*:?\s*ma\s+thyro[iï]de|quiz\s+thyro/i.test(historyText) &&
+     /quel est ton pr[ée]nom/i.test(historyText);
 
     const startedModeD =
       /je suis la m[ée]moire du dr.*r[ée]simont/i.test(historyText);
