@@ -1971,6 +1971,11 @@ Règle: si l'utilisateur demande la date/le jour/l'heure, tu dois utiliser STRIC
       /trouver.*besoin/.test(lastUserMsg);
 
     const triggerModeA =
+      // ✅ bouton exact (et variantes)
+      /quiz\s*:?\s*ma\s+thyro[iï]de\s+fonctionne[-\s]*t[-\s]*elle\s+normalement/.test(lastUserMsg) ||
+      /ma\s+thyro[iï]de/.test(lastUserMsg) ||
+      /thyro[iï]de\s+fonctionne/.test(lastUserMsg) ||
+      // ✅ autres formulations possibles
       /sympt[oô]mes.*hypothyro/.test(lastUserMsg) ||
       /est[-\s]*ce\s+que.*hypothyro/.test(lastUserMsg);
 
