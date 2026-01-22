@@ -1,7 +1,9 @@
 import fs from "fs";
 import path from "path";
 
-// ====== Lecture des fichiers DATA depuis /data ======
+// ==============================
+// ✅ Lecture fichiers DATA
+// ==============================
 const readDataFile = (filename) => {
   try {
     const filePath = path.join(process.cwd(), "data", filename);
@@ -34,15 +36,23 @@ const readDataFolder = (folderName) => {
   }
 };
 
+// ==============================
+// ✅ Base de connaissances
+// ==============================
 const QUESTION_THYROIDE = readDataFile("QUESTION_THYROIDE.txt");
 const LES_CURES_ALL = readDataFile("LES_CURES_ALL.txt");
 const COMPOSITIONS = readDataFile("COMPOSITIONS.txt");
 const SAV_FAQ = readDataFile("SAV_FAQ.txt");
 const QUESTION_ALL = readDataFile("QUESTION_ALL.txt");
 const RESIMONT = readDataFolder("RESIMONT");
-const RESIMONT_TRUNC = String(RESIMONT || "").slice(0, 15000);
 
-// ====== SYSTEM PROMPT ======
+// Limites (évite tokens/perf)
+const clamp = (s, n) => String(s || "").slice(0, n);
+const RESIMONT_TRUNC = clamp(RESIMONT, 15000);
+const LES_CURES_ALL_TRUNC = clamp(LES_CURES_ALL, 25000);
+const COMPOSITIONS_TRUNC = clamp(COMPOSITIONS, 25000);
+const SAV_FAQ_TRUNC = clamp(SAV_FAQ, 12000);
+
 const SYSTEM_PROMPT = `
 SCRIPT THYREN 2.1 — DOCTEUR FONCTIONNEL EXPERT (VERSION OPTIMISÉE)
 
@@ -1661,7 +1671,26 @@ FIN DU PROMPT THYREN 2.1 — VERSION OPTIMISÉE CONCISE
 ═══════════════════════════════════════════════════════════════════
 `;
 
-// ====== Fonction utilitaire ======
+// ==============================
+// ✅ Utilitaires texte / normalisation
+// ==============================
+function normalizeText(raw) {
+  return String(raw || "")
+    .normalize("NFKC")
+    .replace(/\u00A0/g, " ")
+    .trim();
+}
+
+// version “soft” (pour regex)
+function normalizeSoft(raw) {
+  return normalizeText(raw)
+    .replace(/[’]/g, "'")
+    .replace(/\s+/g, " ");
+}
+
+// ==============================
+// ✅ Date Bruxelles
+// ==============================
 function getBrusselsNowString() {
   const now = new Date();
   const parts = new Intl.DateTimeFormat("fr-BE", {
@@ -1683,21 +1712,29 @@ function getBrusselsNowString() {
   return `${map.weekday} ${map.day} ${map.month} ${map.year}, ${map.hour}:${map.minute}`;
 }
 
-// ====== VALIDATION MINIMUM DU JSON SORTANT ======
+// ==============================
+// ✅ Validation/normalisation réponse assistant
+// ==============================
 function normalizeAssistantJson(obj, fallbackMode) {
   const mode = fallbackMode || "B";
 
   if (!obj || typeof obj !== "object") {
-    return { type: "reponse", text: "Désolé, réponse invalide. Réessaie.", meta: { mode, progress: { enabled: false } } };
+    return {
+      type: "reponse",
+      text: "Désolé, réponse invalide. Réessaie.",
+      meta: { mode, progress: { enabled: false } },
+    };
   }
 
   if (!obj.type || typeof obj.type !== "string") {
-    return { type: "reponse", text: "Désolé, réponse invalide. Réessaie.", meta: { mode, progress: { enabled: false } } };
+    return {
+      type: "reponse",
+      text: "Désolé, réponse invalide. Réessaie.",
+      meta: { mode, progress: { enabled: false } },
+    };
   }
 
-  if (typeof obj.text !== "string") {
-    obj.text = String(obj.text || "");
-  }
+  if (typeof obj.text !== "string") obj.text = String(obj.text || "");
 
   // meta obligatoire sauf resultat
   if (obj.type !== "resultat") {
@@ -1705,11 +1742,15 @@ function normalizeAssistantJson(obj, fallbackMode) {
       obj.meta = { mode, progress: { enabled: false } };
     } else {
       if (!obj.meta.mode) obj.meta.mode = mode;
-      if (!obj.meta.progress) obj.meta.progress = { enabled: false };
-      if (typeof obj.meta.progress.enabled !== "boolean") obj.meta.progress.enabled = false;
+      if (!obj.meta.progress || typeof obj.meta.progress !== "object") {
+        obj.meta.progress = { enabled: false };
+      }
+      if (typeof obj.meta.progress.enabled !== "boolean") {
+        obj.meta.progress.enabled = false;
+      }
     }
   } else {
-    // en resultat: pas de meta
+    // en resultat: pas de meta, pas de choices
     if ("meta" in obj) delete obj.meta;
     if ("choices" in obj) delete obj.choices;
   }
@@ -1717,17 +1758,89 @@ function normalizeAssistantJson(obj, fallbackMode) {
   return obj;
 }
 
-// ====== HANDLER PRINCIPAL ======
+// ==============================
+// ✅ Détection MODE (OPTIMISÉE)
+// - Priorité 1 : payload exact (bouton)
+// - Priorité 2 : si le front renvoie meta.mode dans l'historique assistant (si dispo)
+// - Priorité 3 : intention (regex) sur le dernier message user
+// - Priorité 4 : fallback B
+// ==============================
+const STARTERS = {
+  A: "Quiz : Ma thyroïde fonctionne-t-elle normalement ?",
+  C: "Quiz : Quelle cure est faite pour moi ?",
+  B: "J'ai une question - SAV",
+  D: "Qu'en pense le Dr Résimont ?",
+};
+
+function detectStarterMode(raw) {
+  const msg = normalizeText(raw);
+  if (msg === STARTERS.A) return "A";
+  if (msg === STARTERS.C) return "C";
+  if (msg === STARTERS.B) return "B";
+  if (msg === STARTERS.D) return "D";
+  return null;
+}
+
+// Tente de récupérer un mode “déjà en cours” via meta.mode si ton front renvoie les objets assistant complets.
+// Si ton front ne renvoie que {role, content}, ça restera null (pas grave).
+function detectModeFromHistoryMeta(messages) {
+  try {
+    const lastAssistant = [...messages].reverse().find((m) => (m.role || "") === "assistant");
+    const metaMode = lastAssistant?.meta?.mode;
+    return metaMode === "A" || metaMode === "B" || metaMode === "C" || metaMode === "D"
+      ? metaMode
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+// intention fallback (si l’utilisateur tape à la main)
+function detectIntentMode(lastUserMsgRaw, historyText) {
+  const last = normalizeSoft(lastUserMsgRaw);
+  const lastLower = last.toLowerCase();
+
+  // D : dès qu’on voit “Résimont” (avec/ sans Dr, avec point, etc.)
+  const triggerModeD = /\br[ée]simont\b/i.test(lastUserMsgRaw);
+
+  // C : “quelle cure”, “trouver la cure”, “cure faite pour moi”
+  const triggerModeC =
+    /quiz\s*:?\s*quelle\s+cure/.test(lastLower) ||
+    /quelle\s+cure\s+est\s+faite\s+pour\s+moi/.test(lastLower) ||
+    /trouver\s+(la\s+)?cure/.test(lastLower) ||
+    /\bcure\b.*\bmoi\b/.test(lastLower);
+
+  // A : “thyroïde fonctionne”, “test thyroïde”, “quiz thyroïde”
+  const triggerModeA =
+    /quiz\s*:?\s*ma\s+thyro[iï]de/.test(lastLower) ||
+    /thyro[iï]de\s+fonctionne/.test(lastLower) ||
+    /\btest\b.*\bthyro/i.test(lastLower);
+
+  // “déjà lancé” via historique texte (fallback si pas de meta)
+  const hist = String(historyText || "");
+  const startedModeD = /je suis la m[ée]moire du dr.*r[ée]simont/i.test(hist);
+  const startedModeC =
+    /quelle cure est faite pour moi/i.test(hist) && /quel est ton pr[ée]nom/i.test(hist);
+  const startedModeA =
+    /ma thyro[iï]de fonctionne-t-elle normalement/i.test(hist) && /quel est ton pr[ée]nom/i.test(hist);
+
+  // Priorité : D (si on cite Résimont) > C > A
+  if (startedModeD || triggerModeD) return "D";
+  if (startedModeC || triggerModeC) return "C";
+  if (startedModeA || triggerModeA) return "A";
+  return "B";
+}
+
+// ==============================
+// ✅ Handler principal
+// ==============================
 export default async function handler(req, res) {
-  // CORS
+  // -------- CORS --------
   const origin = req.headers.origin || "*";
   res.setHeader("Access-Control-Allow-Origin", origin);
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    req.headers["access-control-request-headers"] || "Content-Type"
-  );
+  res.setHeader("Access-Control-Allow-Headers", req.headers["access-control-request-headers"] || "Content-Type");
 
   if (req.method === "OPTIONS") {
     res.status(204).end();
@@ -1753,87 +1866,32 @@ export default async function handler(req, res) {
       return;
     }
 
+    // -------- Dernier message user --------
+    const lastUserMsgRaw =
+      String([...messages].reverse().find((m) => (m.role || "") === "user")?.content || "");
+
+    // -------- Mode detection --------
+    const starterMode = detectStarterMode(lastUserMsgRaw); // priorité absolue
+    const historyMetaMode = detectModeFromHistoryMeta(messages); // si dispo
+    const historyText = messages.map((m) => String(m.content || "")).join("\n");
+    const intentMode = detectIntentMode(lastUserMsgRaw, historyText);
+
+    // ✅ décision finale (ordre strict)
+    // 1) bouton/payload exact
+    // 2) mode meta (si ton front le renvoie)
+    // 3) intention + historique text fallback
+    const activeMode = starterMode || historyMetaMode || intentMode || "B";
+
+    // -------- Systems --------
     const NOW_SYSTEM = `DATE ET HEURE SYSTÈME: ${getBrusselsNowString()} (Europe/Brussels)`;
 
-    // ====== DÉTECTION DU MODE (AMORCES + FALLBACK) ======
-const STARTERS = {
-  A: "Quiz : Ma thyroïde fonctionne-t-elle normalement ?",
-  C: "Quiz : Quelle cure est faite pour moi ?",
-  B: "J'ai une question - SAV",
-  D: "Qu'en pense le Dr Résimont ?",
-};
-
-function detectStarterMode(raw) {
-  const msg = String(raw || "")
-    .normalize("NFKC")
-    .replace(/\u00A0/g, " ")
-    .trim();
-  if (msg === STARTERS.A) return "A";
-  if (msg === STARTERS.C) return "C";
-  if (msg === STARTERS.B) return "B";
-  if (msg === STARTERS.D) return "D";
-  return null;
-}
-
-const lastUserMsgRaw = String(
-  [...messages].reverse().find((m) => (m.role || "") === "user")?.content || ""
-);
-
-// 1️⃣ priorité absolue : bouton / payload exact
-const starterMode = detectStarterMode(lastUserMsgRaw);
-
-// 2️⃣ fallback intention (si l’utilisateur tape à la main)
-const lastUserMsg = lastUserMsgRaw
-  .normalize("NFKC")
-  .replace(/\u00A0/g, " ")
-  .replace(/[']/g, "'")
-  .trim()
-  .toLowerCase();
-
-const triggerModeD = /dr\s+r[ée]simont/.test(lastUserMsg);
-const triggerModeC =
-  /quiz\s*:?\s*quelle\s+cure|quelle\s+cure\s+est\s+faite\s+pour\s+moi|trouver\s+(la\s+)?cure/.test(
-    lastUserMsg
-  );
-const triggerModeA =
-  /quiz\s*:?\s*ma\s+thyro[iï]de|ma\s+thyro[iï]de\s+fonctionne-t-elle/.test(
-    lastUserMsg
-  );
-
-// 3️⃣ historique (mode déjà lancé)
-const historyText = messages.map((m) => String(m.content || "")).join("\n");
-const startedModeC =
-  /quelle cure est faite pour moi/i.test(historyText) &&
-  /quel est ton pr[ée]nom/i.test(historyText);
-const startedModeA =
-  /ma thyro[iï]de fonctionne-t-elle normalement/i.test(historyText) &&
-  /quel est ton pr[ée]nom/i.test(historyText);
-const startedModeD = /je suis la m[ée]moire du dr.*r[ée]simont/i.test(historyText);
-
-// ✅ décision finale
-const activeMode = starterMode
-  ? starterMode
-  : startedModeD || triggerModeD
-  ? "D"
-  : startedModeC || triggerModeC
-  ? "C"
-  : startedModeA || triggerModeA
-  ? "A"
-  : "B";
-
     const ROUTER_SYSTEM =
-      activeMode === "D"
-        ? "MODE D ACTIF"
-        : activeMode === "A"
-        ? "MODE A ACTIF"
-        : activeMode === "C"
-        ? "MODE C ACTIF"
-        : "MODE B ACTIF";
+      activeMode === "D" ? "MODE D ACTIF"
+      : activeMode === "A" ? "MODE A ACTIF"
+      : activeMode === "C" ? "MODE C ACTIF"
+      : "MODE B ACTIF";
 
-    const LES_CURES_ALL_TRUNC = String(LES_CURES_ALL || "").slice(0, 25000);
-    const COMPOSITIONS_TRUNC = String(COMPOSITIONS || "").slice(0, 25000);
-    const SAV_FAQ_TRUNC = String(SAV_FAQ || "").slice(0, 12000);
-
+    // -------- DOCS système (scopé par mode) --------
     const DOCS_SYSTEM = `
 DOCS SUPLEMINT
 ${activeMode === "A" ? `[QUESTION_THYROIDE]\n${QUESTION_THYROIDE}\n` : ""}
@@ -1843,17 +1901,22 @@ ${activeMode === "B" ? `[SAV_FAQ]\n${SAV_FAQ_TRUNC}\n` : ""}
 ${activeMode === "D" ? `[RESIMONT]\n${RESIMONT_TRUNC}\n` : ""}
 `.trim();
 
+    // -------- Messages OpenAI --------
     const openAiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "system", content: NOW_SYSTEM },
       { role: "system", content: ROUTER_SYSTEM },
       { role: "system", content: DOCS_SYSTEM },
+
+      // On ne passe que content (string) à OpenAI, comme tu fais déjà.
+      // (Si tu veux exploiter meta côté modèle, il faut l'inclure dans content, mais c’est un autre chantier.)
       ...messages.map((m) => ({
         role: m.role === "assistant" ? "assistant" : "user",
         content: String(m.content || ""),
       })),
     ];
 
+    // -------- Timeout fetch --------
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 55000);
 
@@ -1884,10 +1947,9 @@ ${activeMode === "D" ? `[RESIMONT]\n${RESIMONT_TRUNC}\n` : ""}
 
     const oaData = await oaRes.json();
 
-    // ✅ LA VRAIE RÉPONSE EST ICI
     const replyText = String(oaData?.choices?.[0]?.message?.content || "").trim();
 
-    // ✅ Parse JSON assistant
+    // -------- Parse JSON assistant --------
     let parsedReply;
     try {
       parsedReply = JSON.parse(replyText);
@@ -1900,10 +1962,10 @@ ${activeMode === "D" ? `[RESIMONT]\n${RESIMONT_TRUNC}\n` : ""}
       };
     }
 
-    // ✅ Normalisation minimale (meta obligatoire sauf resultat)
+    // -------- Normalisation minimale --------
     parsedReply = normalizeAssistantJson(parsedReply, activeMode);
 
-    // ✅ On renvoie l’objet prêt pour le front
+    // ✅ Réponse front
     res.status(200).json({
       reply: parsedReply,
       conversationId: conversationId || null,
