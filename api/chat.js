@@ -1795,9 +1795,7 @@ ${activeMode === "D" ? `[RESIMONT]\n${RESIMONT_TRUNC}\n` : ""}
     }
 
     const oaData = await oaRes.json();
-    const reply = oaData.choices?.[0]?.message?.content || "";
-
-    let parsedReply = null;
+    let parsedReply;
 try {
   parsedReply = JSON.parse(String(reply).trim());
 } catch (e) {
@@ -1807,12 +1805,6 @@ try {
     meta: { mode: activeMode || "B", progress: { enabled: false } },
   };
 }
-
-res.status(200).json({
-  reply: parsedReply,
-  conversationId: conversationId || null,
-});
-
     
     res.status(200).json({
       reply: String(reply).trim(),
