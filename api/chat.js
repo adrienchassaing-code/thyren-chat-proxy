@@ -1998,15 +1998,14 @@ Règle: si l'utilisateur demande la date/le jour/l'heure, tu dois utiliser STRIC
     const startedModeD =
       /je suis la m[ée]moire du dr.*r[ée]simont/i.test(historyText);
 
-    // 4) Mode actif (priorité : D > A > C > B)
     const activeMode =
-      triggerModeD || startedModeD
-        ? "D"
-        : triggerModeC || (startedModeC && !startedModeA && !startedModeD)
-        ? "C"
-        : triggerModeA || (startedModeA && !startedModeC && !startedModeD)
-        ? "A"
-        : null;
+  triggerModeD || startedModeD
+    ? "D"
+    : triggerModeA || (startedModeA && !startedModeD)
+    ? "A"
+    : triggerModeC || (startedModeC && !startedModeD)
+    ? "C"
+    : null;
 
     const ROUTER_SYSTEM =
       activeMode === "D"
@@ -2026,25 +2025,44 @@ Tu dois suivre EXCLUSIVEMENT le questionnaire QUESTION_THYROIDE, dans l'ordre du
 INTERDICTION ABSOLUE d'utiliser QUESTION_ALL tant que RESULT n'est pas terminé.`
         : "";
 
-    // ✅ DOCS (mode-aware: ne pas injecter les 2 questionnaires)
-    const DOCS_SYSTEM = `
+    // 🔧 réduire drastiquement le contexte selon le mode
+const LES_CURES_ALL_TRUNC = String(LES_CURES_ALL || "").slice(0, 25000);
+const COMPOSITIONS_TRUNC = String(COMPOSITIONS || "").slice(0, 25000);
+const SAV_FAQ_TRUNC = String(SAV_FAQ || "").slice(0, 12000); // utile seulement en B
+
+const DOCS_SYSTEM = `
 DOCS SUPLEMINT (à suivre strictement, ne rien inventer)
 
-${activeMode === "A" ? `[QUESTION_THYROIDE]\n${QUESTION_THYROIDE}\n` : ""}
-${activeMode === "C" ? `[QUESTION_ALL]\n${QUESTION_ALL}\n` : ""}
+${
+  activeMode === "A"
+    ? `[QUESTION_THYROIDE]\n${QUESTION_THYROIDE}\n`
+    : activeMode === "C"
+    ? `[QUESTION_ALL]\n${QUESTION_ALL}\n`
+    : ""
+}
 
-[LES_CURES_ALL]
-${LES_CURES_ALL}
+${
+  // ✅ A et C : besoin des cures + compositions, pas du SAV, pas de Résimont
+  activeMode === "A" || activeMode === "C" || !activeMode
+    ? `[LES_CURES_ALL]\n${LES_CURES_ALL_TRUNC}\n\n[COMPOSITIONS]\n${COMPOSITIONS_TRUNC}\n`
+    : ""
+}
 
-[COMPOSITIONS]
-${COMPOSITIONS}
+${
+  // ✅ B : SAV utile
+  activeMode === "B" || activeMode === null
+    ? `\n[SAV_FAQ]\n${SAV_FAQ_TRUNC}\n`
+    : ""
+}
 
-[SAV_FAQ]
-${SAV_FAQ}
-
-[RESIMONT]
-${RESIMONT_TRUNC}
+${
+  // ✅ D : uniquement Résimont (et rien d'autre si tu veux garder la pureté du mode D)
+  activeMode === "D"
+    ? `\n[RESIMONT]\n${RESIMONT_TRUNC}\n`
+    : ""
+}
 `.trim();
+
 
     const openAiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
@@ -2073,7 +2091,7 @@ ${RESIMONT_TRUNC}
           messages: openAiMessages,
           response_format: { type: "json_object" },
           temperature: 0,
-          max_tokens: 4096, // ✅ Permet les résultats longs (8 blocs)
+          max_tokens: 3000, // ✅ Permet les résultats longs (8 blocs)
         }),
         signal: controller.signal,
       });
