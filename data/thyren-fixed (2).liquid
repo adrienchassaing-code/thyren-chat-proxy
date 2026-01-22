@@ -1,0 +1,1953 @@
+{% schema %}
+{
+  "name": "THYREN Chat (Section)",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Titre", "default": "THYREN" },
+    { "type": "text", "id": "endpoint", "label": "API Endpoint", "default": "https://thyren-chat-proxy.vercel.app/api/chat" },
+    { "type": "text", "id": "avatar_url", "label": "Avatar URL", "default": "https://cdn.shopify.com/s/files/1/0656/3240/3724/files/THYREN_PNG.png?v=1764149536" },
+    { "type": "number", "id": "total_quiz_questions", "label": "Nombre total de questions (quiz)", "default": 16 },
+    { "type": "color", "id": "bg_color", "label": "Couleur de fond", "default": "#073434" }
+  ],
+  "presets": [{ "name": "THYREN Chat (Section)" }]
+}
+{% endschema %}
+
+<section class="thyren-wrap" style="--thyren-bg: {{ section.settings.bg_color }};">
+  <div class="thyren-container">
+    <div class="thyren-chat" id="thyren-chat-{{ section.id }}">
+
+      <div class="thyren-header">
+        <img src="{{ section.settings.avatar_url }}" class="thyren-avatar" alt="Thyren" loading="lazy" />
+        <div class="thyren-title">{{ section.settings.title }}</div>
+
+        <div class="thyren-stats">
+          <span class="thyren-stat">
+            <span class="thyren-green-dot"></span>
+            <span id="thyren-online-{{ section.id }}">—</span> en ligne
+          </span>
+          <span class="thyren-stat">
+            <span id="thyren-qpd-{{ section.id }}">—</span> questions/jour
+          </span>
+        </div>
+
+        <div class="thyren-progress" id="thyren-progress-{{ section.id }}" style="display:none;">
+          <span class="thyren-progress-left">
+            questions de <span class="thyren-qcur">0</span>/<span class="thyren-qtot">{{ section.settings.total_quiz_questions }}</span>
+          </span>
+          <span class="thyren-eta">—</span>
+        </div>
+      </div>
+
+      <div class="thyren-body">
+        <div class="thyren-messages" id="thyren-messages-{{ section.id }}">
+          <div id="thyren-form-slot-{{ section.id }}"></div>
+          <div id="thyren-thread-{{ section.id }}"></div>
+        </div>
+
+        <div class="thyren-typing-line" id="thyren-typing-line-{{ section.id }}" style="display:none;"></div>
+
+        <form class="thyren-form" id="thyren-form-{{ section.id }}">
+          <input class="thyren-input" id="thyren-input-{{ section.id }}" type="text" placeholder="Posez votre question..." autocomplete="off" />
+          <button type="button" class="thyren-mic" id="thyren-mic-{{ section.id }}" aria-label="Dicter">
+          <img
+          src="https://cdn.shopify.com/s/files/1/0656/3240/3724/files/microphone_blanc.png?v=1769002712"
+          alt=""
+          loading="lazy"
+          class="thyren-mic-icon"
+             />
+          </button>
+
+          <button type="submit" class="thyren-send">Envoyer</button>
+
+          <details class="thyren-menu">
+            <summary class="thyren-menu-btn" aria-label="Menu">⋮</summary>
+            <div class="thyren-menu-panel">
+              <button type="button" class="thyren-menu-item" data-action="reset">Effacer la discussion</button>
+              <button type="button" class="thyren-menu-item" data-action="download">Enregistrer ma discussion</button>
+              <button type="button" class="thyren-menu-item" data-action="sav">J'ai une question - SAV</button>
+            </div>
+          </details>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .thyren-wrap{
+    position: relative;
+    width: 100%;
+    color:#fff;
+    padding: 34px 16px;
+    background: transparent;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+    overflow: hidden;
+  }
+
+  .thyren-wrap::before{
+    content:"";
+    position:absolute;
+    top: -40px;
+    left: -40px;
+    right: -40px;
+    bottom: -40px;
+    background-image: url("https://cdn.shopify.com/s/files/1/0656/3240/3724/files/ENERGY_2.jpg?v=1767954382");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(14px) saturate(1.1) contrast(1.05);
+    transform: scale(1.02);
+    z-index: 0;
+  }
+
+  .thyren-wrap::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: rgba(7, 52, 52, 0.46);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    z-index: 0;
+  }
+
+  .thyren-wrap > *{
+    position: relative;
+    z-index: 1;
+  }
+
+  .thyren-container{
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  .thyren-chat{
+    width: 100%;
+    max-width: 980px;
+    margin: 0 auto;
+    height: min(520px, 68vh);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Poppins', sans-serif;
+    transition: height .55s cubic-bezier(.2,.9,.2,1);
+  }
+
+  .thyren-chat.thyren-started{ height: min(720px, 82vh); }
+  .thyren-chat:not(.thyren-started){ justify-content: center; }
+  .thyren-chat:not(.thyren-started) .thyren-body{ height: auto !important; flex: 0 0 auto; margin-bottom: auto; }
+  .thyren-chat:not(.thyren-started) .thyren-header{ margin-top: auto; }
+  .thyren-chat:not(.thyren-started) .thyren-messages{
+    flex: 0 0 auto; overflow: visible;
+    padding-top: 10px; padding-bottom: 6px;
+    -webkit-mask-image: none !important; mask-image: none !important;
+  }
+  .thyren-chat:not(.thyren-started) .thyren-form{ justify-content: center; }
+
+  .thyren-header{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap: 10px; padding: 10px 0 14px 0;
+    background: transparent; border: none; text-align:center;
+  }
+
+  .thyren-avatar{
+    width: 56px; height: 56px; border-radius: 999px;
+    object-fit: contain; background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.16);
+  }
+
+  .thyren-title{ font-size: 22px; font-weight: 800; letter-spacing: 0.6px; line-height: 1.1; color:#fff; }
+
+  .thyren-stats{
+    display:flex; flex-direction: row; align-items:center; justify-content:center;
+    gap: 14px; font-size: 12px; opacity: 0.95; white-space: nowrap; flex-wrap: wrap;
+  }
+  .thyren-stat{ display:inline-flex; align-items:center; gap: 6px; }
+  .thyren-green-dot{
+    display:inline-block; width:9px;height:9px;border-radius:50%;
+    background-color:#2cff91; box-shadow:0 0 6px #2cff91aa;
+  }
+
+  .thyren-progress{
+    font-size: 12px; opacity: 0.9;
+    padding: 6px 10px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.10);
+    white-space: nowrap;
+    display:inline-flex;
+    align-items:center;
+    gap: 8px;
+  }
+
+  .thyren-eta{ opacity: 0.85; }
+  .thyren-eta::before{ content: "-"; opacity: 0.6; margin-left: 0px; margin-right: 8px; }
+
+  .thyren-body{
+    display:flex; flex-direction:column; height:100%;
+    overflow: visible; will-change: transform, opacity;
+    transition: opacity .35s ease-out, transform .35s ease-out;
+  }
+
+  .thyren-chat.thyren-switching .thyren-body{
+    opacity: 0; transform: translateY(10px); pointer-events: none;
+  }
+
+  .thyren-messages{
+    flex:1 1 0; overflow-y:auto;
+    padding: 12px 18px 34px 18px;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.85) transparent;
+    max-width: 980px; margin: 0 auto; width: 100%; box-sizing: border-box;
+    overscroll-behavior: contain; position: relative;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0px, #000 28px, #000 calc(100% - 28px), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0px, #000 28px, #000 calc(100% - 28px), transparent 100%);
+    -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  }
+
+  .thyren-messages::-webkit-scrollbar { width: 6px; }
+  .thyren-messages::-webkit-scrollbar-track { background: transparent; }
+  .thyren-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.9); border-radius: 999px; }
+
+  .thyren-form{
+    flex:0 0 auto; display:flex; align-items:center; gap: 10px;
+    padding: 12px 18px; border: none; background: transparent;
+    max-width: 980px; margin: 0 auto; width: 100%;
+    justify-content:flex-start; position: relative; overflow: visible;
+    box-sizing: border-box;
+  }
+
+  .thyren-input{
+    flex: 1; min-width: 0;
+    border-radius: 999px; border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.12);
+    color: #fff; padding: 12px 16px;
+    font-size: 14px; outline:none;
+  }
+
+  .thyren-input::placeholder{ color: rgba(255,255,255,0.75); }
+
+  .thyren-send{
+    border-radius: 999px; border: 1px solid rgba(255,255,255,0.18);
+    padding: 12px 18px; background: rgba(255,255,255,0.16);
+    color:#fff; font-size:14px; cursor:pointer; flex: 0 0 auto;
+  }
+  .thyren-send:hover{ background: rgba(255,255,255,0.22); }
+
+  .thyren-bubble a{
+    color: #fff; text-decoration: underline;
+    text-underline-offset: 3px; opacity: 0.95;
+    word-break: break-word;
+  }
+
+  .thyren-bubble img{
+    display:block; width:100%; max-height: 220px;
+    object-fit: cover; border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.06);
+  }
+
+  .thyren-bubble.thyren-bubble-plain{
+    background: transparent !important; border: none !important; padding: 0 !important;
+  }
+
+  .thyren-product-card{
+    display:flex; gap: 12px; padding: 10px;
+    border-radius: 14px; border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(0,0,0,0.22);
+    text-decoration: none !important; color: #fff; overflow: hidden;
+  }
+  .thyren-product-card:hover{ background: rgba(0,0,0,0.28); }
+
+  .thyren-product-card__img{
+    width: 76px; height: 76px; flex: 0 0 auto;
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.06);
+  }
+
+  .thyren-product-card__img img{
+    width: 100% !important; height: 100% !important; max-height: none !important;
+    object-fit: cover !important; border: none !important; border-radius: 0 !important;
+    background: transparent !important;
+  }
+
+  .thyren-product-card__meta{ min-width: 0; display:flex; flex-direction:column; gap: 6px; }
+  .thyren-product-card__title{
+    font-weight: 800; font-size: 13px; line-height: 1.2;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .thyren-product-card__price{ font-size: 12px; opacity: 0.92; }
+
+  .thyren-combo{
+    display:flex; align-items:center; justify-content:flex-start;
+    gap: 10px; width: 100%; flex-wrap: wrap;
+  }
+  .thyren-combo .thyren-product-card{ flex: 1 1 240px; min-width: 220px; }
+
+  .thyren-combo-plus{
+    flex: 0 0 auto; width: 32px; height: 32px; border-radius: 999px;
+    display:flex; align-items:center; justify-content:center;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.08);
+    font-weight: 800; opacity: 0.95;
+  }
+
+  .thyren-menu { position: relative; flex: 0 0 auto; }
+  .thyren-menu > summary{ list-style: none !important; -webkit-appearance: none !important; appearance: none !important; background-image: none !important; }
+  .thyren-menu > summary::-webkit-details-marker{ display:none !important; }
+  .thyren-menu > summary::marker{ content:"" !important; display:none !important; }
+  .thyren-menu > summary::before,
+  .thyren-menu > summary::after,
+  .thyren-menu-btn::before,
+  .thyren-menu-btn::after{ content: none !important; display: none !important; background: none !important; }
+
+  .thyren-menu-btn{
+    cursor:pointer; user-select:none;
+    width: 44px; height: 44px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.10) !important;
+    color:#fff; font-weight:700; padding: 0 !important;
+  }
+  .thyren-menu[open] .thyren-menu-btn { background: rgba(255,255,255,0.16) !important; }
+
+  .thyren-menu-panel{
+    position:absolute; right: 0; top: 52px;
+    min-width: 210px; border-radius: 14px; overflow:hidden;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 18px 34px rgba(0,0,0,0.30);
+    z-index: 9999;
+  }
+
+  .thyren-menu-item{
+    width:100%; text-align:left; padding: 12px 12px;
+    background: transparent; border: none; color: #fff;
+    cursor:pointer; font-size: 13px;
+  }
+  .thyren-menu-item:hover{ background: rgba(255,255,255,0.10); }
+
+  #thyren-typing-line-{{ section.id }}{
+    width: 100%; max-width: 980px; margin: 0 auto !important;
+    padding: 0 18px 8px 18px !important;
+    box-sizing: border-box !important;
+    text-align: left !important;
+    font-size: 12px !important;
+    color: rgba(255,255,255,0.88) !important;
+    opacity: 0.9 !important;
+  }
+
+  #thyren-typing-line-{{ section.id }} .dots{ display:inline-flex; gap:3px; margin-left: 6px; }
+  #thyren-typing-line-{{ section.id }} .dots span{
+    width:4px;height:4px;border-radius:50%;
+    background: rgba(255,255,255,0.9);
+    display:inline-block;
+    animation: thyrenTypingDots 1.2s infinite;
+  }
+  #thyren-typing-line-{{ section.id }} .dots span:nth-child(2){ animation-delay: 0.2s; }
+  #thyren-typing-line-{{ section.id }} .dots span:nth-child(3){ animation-delay: 0.4s; }
+
+  @keyframes thyrenTypingDots{
+    0%,60%,100%{ transform:translateY(0); opacity:0.35; }
+    30%{ transform:translateY(-2px); opacity:1; }
+  }
+
+  .thyren-msg{ margin-bottom: 14px; display:flex; flex-direction:column; width:100%; gap: 10px; }
+  .thyren-chat:not(.thyren-started) .thyren-msg{ align-items:center; }
+  .thyren-chat:not(.thyren-started) .thyren-bubble{ text-align:center; }
+  .thyren-chat.thyren-started .thyren-msg.bot{ align-items:flex-start; }
+  .thyren-chat.thyren-started .thyren-msg.user{ align-items:flex-end; }
+  .thyren-chat.thyren-started .thyren-bubble{ text-align:left; }
+
+  .thyren-bubble{
+    display:inline-block;
+    padding: 12px 14px;
+    border-radius: 16px;
+    max-width: 92%;
+    font-size: 14px;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap:anywhere;
+  }
+
+  .thyren-msg.bot .thyren-bubble.thyren-wide{ width: 100%; max-width: 100%; box-sizing: border-box; }
+  .thyren-msg.user .thyren-bubble{ background: rgba(255,255,255,0.16); color:#fff; }
+  .thyren-msg.bot .thyren-bubble{ background: rgba(0,0,0,0.28); color:#fff; border: 1px solid rgba(255,255,255,0.14); }
+  .thyren-options{
+  display:flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  width: 100%;
+  justify-content: flex-start;
+  }
+  .thyren-option-btn{ white-space: nowrap; }
+
+  .thyren-chat:not(.thyren-started) .thyren-options{ justify-content:center; }
+  .thyren-chat.thyren-started .thyren-options{ justify-content:flex-start; }
+
+  .thyren-option-btn{
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.14);
+    color:#fff;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-size: 13px;
+    cursor:pointer;
+  }
+
+  .thyren-option-btn:hover:not(:disabled){ background: rgba(255,255,255,0.22); }
+  .thyren-option-btn.selected{ opacity: 0.85; background: rgba(0,0,0,0.30); }
+  .thyren-option-btn:disabled{ cursor:default; opacity: 0.65; }
+
+  .thyren-toast{
+    position: absolute; left: 50%; bottom: 84px;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .22s ease, transform .22s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 9999;
+  }
+  .thyren-toast.show{ opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 768px){
+    .thyren-chat{ height: min(520px, 70vh); }
+    .thyren-chat.thyren-started{ height: min(720px, 86vh); }
+    .thyren-messages{ padding: 12px 14px 34px 14px; }
+    .thyren-form{ padding: 12px 14px; }
+    .thyren-bubble{ max-width: 96%; }
+    .thyren-bubble img{ max-height: 190px; }
+    .thyren-combo-plus{ width: 30px; height: 30px; }
+  }
+
+  .thyren-mic{
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.18);
+    width: 44px; height: 44px;
+    background: rgba(255,255,255,0.10);
+    color:#fff;
+    cursor:pointer;
+    flex: 0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+    font-size: 16px;
+  }
+  .thyren-mic:hover{ background: rgba(255,255,255,0.16); }
+  .thyren-mic.is-rec{ background: rgba(44,255,145,0.18); border-color: rgba(44,255,145,0.45); }
+
+  /* ======================================================
+     CURE CARD - intégrée dans la bulle (sans bulle interne)
+     ====================================================== */
+  .thyren-bubble.thyren-has-cure{
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .thyren-cure-card{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 14px;
+    align-items: stretch; /* clé: media suit la hauteur de la colonne droite */
+  }
+
+  .thyren-cure-media{
+    border-radius: 14px;
+    overflow: hidden;
+    height: 100%;
+  }
+
+  .thyren-cure-media img{
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    display: block;
+    border: none !important;
+    border-radius: 0 !important;
+    max-height: none !important;
+    background: transparent !important;
+  }
+
+  .thyren-cure-body{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: left;
+    height: 100%;
+  }
+
+  .thyren-cure-title{
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .thyren-cure-compat{
+    font-size: 13px;
+    opacity: 0.85;
+    margin: 0;
+  }
+
+  .thyren-cure-section{
+    font-size: 14px;
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  .thyren-cure-posology{
+    font-size: 13px;
+    opacity: 0.9;
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  /* Boutons CTA sous le texte, collés en bas de la colonne droite */
+  .thyren-cure-body .thyren-options{
+    margin-top: auto;
+    padding-top: 10px;
+  }
+
+  @media (max-width: 640px){
+    .thyren-cure-card{ grid-template-columns: 1fr; }
+    .thyren-cure-media img{ min-height: 220px; height: auto; }
+  }
+
+  .thyren-cure-label{
+  font-weight: 800;
+  font-size: 14px;
+  margin-top: 6px;
+  opacity: 0.95;
+  }
+
+  .thyren-cure-text{
+  font-size: 14px;
+  line-height: 1.45;
+  opacity: 0.95;
+  white-space: pre-wrap;
+  }
+  .thyren-mic-icon{
+  width: 22px;
+  height: 22px;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  }
+</style>
+
+<script>
+(function () {
+  var SECTION_ID = "{{ section.id }}";
+  var API_ENDPOINT = "{{ section.settings.endpoint }}";
+  var TOTAL_QUESTIONS = Number("{{ section.settings.total_quiz_questions }}") || 16;
+
+  var rootEl = document.getElementById("thyren-chat-" + SECTION_ID);
+  var messagesEl = document.getElementById('thyren-messages-' + SECTION_ID);
+  var threadEl = document.getElementById('thyren-thread-' + SECTION_ID);
+  var slotEl = document.getElementById('thyren-form-slot-' + SECTION_ID);
+  var formEl = document.getElementById('thyren-form-' + SECTION_ID);
+  var inputEl = document.getElementById('thyren-input-' + SECTION_ID);
+  var typingLineEl = document.getElementById('thyren-typing-line-' + SECTION_ID);
+  var micBtn = document.getElementById('thyren-mic-' + SECTION_ID);
+
+  var _recog = null;
+  var isRec = false;
+  var _liveFinal = "";
+  var _liveInterim = "";
+  var _lastSent = "";
+
+  function canSpeechRec(){
+    return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+  }
+
+  function startSpeechRec(){
+    if (!canSpeechRec()){
+      try { thyrenToast("Dictée non supportée"); } catch(e) {}
+      return;
+    }
+
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    _recog = new SR();
+    _recog.lang = "fr-FR";
+    _recog.continuous = true;
+    _recog.interimResults = true;
+
+    _liveFinal = "";
+    _liveInterim = "";
+
+    isRec = true;
+    micBtn.classList.add("is-rec");
+    var micImg = micBtn ? micBtn.querySelector(".thyren-mic-icon") : null;
+if (micImg) micImg.src = "https://cdn.shopify.com/s/files/1/0656/3240/3724/files/microphone_blanc.png?v=1769002712";
+
+    try { thyrenToast("Parlez…"); } catch(e) {}
+
+    _recog.onresult = function(e){
+      var interim = "";
+      for (var i = e.resultIndex; i < e.results.length; i++){
+        var txt = e.results[i][0] && e.results[i][0].transcript ? e.results[i][0].transcript : "";
+        if (e.results[i].isFinal) _liveFinal += txt;
+        else interim += txt;
+      }
+      _liveInterim = interim;
+      inputEl.value = (_liveFinal + " " + _liveInterim).replace(/\s+/g, " ").trim();
+    };
+
+    _recog.onerror = function(){};
+
+    _recog.onend = function(){
+      if (!isRec) return;
+
+      isRec = false;
+      micBtn.classList.remove("is-rec");
+      var micImg = micBtn ? micBtn.querySelector(".thyren-mic-icon") : null;
+if (micImg) micImg.src = "https://cdn.shopify.com/s/files/1/0656/3240/3724/files/microphone_blanc.png?v=1769002712";
+
+
+      var finalText = String(inputEl.value || "").replace(/\s+/g, " ").trim();
+      if (!finalText) return;
+      if (finalText === _lastSent) return;
+
+      _lastSent = finalText;
+
+      addUserMessage(finalText);
+      inputEl.value = "";
+      sendToBot(finalText);
+    };
+
+    try { _recog.start(); } catch(e) {}
+  }
+
+  function stopSpeechRec(){
+    try { if (_recog) _recog.stop(); } catch(e) {}
+  }
+
+  if (micBtn){
+    micBtn.addEventListener("click", function(){
+      if (isRec) stopSpeechRec();
+      else startSpeechRec();
+    });
+  }
+
+  var progressEl = document.getElementById('thyren-progress-' + SECTION_ID);
+  var qcurEl = progressEl ? progressEl.querySelector('.thyren-qcur') : null;
+  var qtotEl = progressEl ? progressEl.querySelector('.thyren-qtot') : null;
+  var etaEl = progressEl ? progressEl.querySelector('.thyren-eta') : null;
+
+  var USE_META_PROGRESS = true;
+  var SECONDS_PER_QUESTION = 10;
+
+  var menuEl = rootEl ? rootEl.querySelector('.thyren-menu') : null;
+  var menuItems = rootEl ? rootEl.querySelectorAll('.thyren-menu-item') : [];
+
+  if (!messagesEl || !threadEl || !slotEl || !formEl || !inputEl || !typingLineEl || !rootEl) return;
+
+  var conversationId = 'web-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+
+  var THYREN_VARIANTS = {
+    "cure-thyroide": { simple: 44717496631564, sub: 44717496697100 }
+  };
+
+  function enterChatMode(){
+    if (rootEl.classList.contains("thyren-started")) return;
+    rootEl.classList.add("thyren-switching");
+    setTimeout(function(){
+      rootEl.classList.add("thyren-started");
+      dockFormBottom();
+      setTimeout(function(){ rootEl.classList.remove("thyren-switching"); }, 40);
+    }, 180);
+  }
+
+  var autoScrollEnabled = true;
+  function enableAutoScroll(){ autoScrollEnabled = true; }
+  function isNearBottom(){
+    var threshold = 60;
+    return (messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight) < threshold;
+  }
+  function scrollBottomOnce(){
+    if (!autoScrollEnabled) return;
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){ messagesEl.scrollTop = messagesEl.scrollHeight; });
+    });
+  }
+  messagesEl.addEventListener("scroll", function(){ autoScrollEnabled = isNearBottom(); }, { passive: true });
+
+  (function(){
+    var KEY="thyren_sid";
+    var sid=localStorage.getItem(KEY);
+    if(!sid){
+      sid="sid_"+Math.random().toString(16).slice(2)+"_"+Date.now();
+      localStorage.setItem(KEY,sid);
+    }
+    function beat(){
+      var img=new Image();
+      img.src="https://thyren-chat-proxy.vercel.app/api/beacon?type=online&sid="+encodeURIComponent(sid)+"&t="+Date.now();
+    }
+    beat();
+    setInterval(beat, 15000);
+  })();
+
+  (function(){
+    var STATS_ENDPOINT = "https://thyren-chat-proxy.vercel.app/api/stats";
+    function refreshStats(){
+      try {
+        fetch(STATS_ENDPOINT)
+          .then(function(r){ return r.json(); })
+          .then(function(j){
+            if (!j || !j.ok) return;
+            var onlineEl = rootEl.querySelector("#thyren-online-" + SECTION_ID);
+            var qpdEl = rootEl.querySelector("#thyren-qpd-" + SECTION_ID);
+            if (onlineEl) onlineEl.textContent = String(j.online);
+            if (qpdEl) qpdEl.textContent = String(j.qpd);
+          })
+          .catch(function(){});
+      } catch(e){}
+    }
+    refreshStats();
+    setInterval(refreshStats, 10000);
+  })();
+
+  var chatHistory = [];
+  var isWaiting = false;
+  var quizStarted = false;
+  var started = false;
+  var questionIndex = -1;
+
+  if (qtotEl) qtotEl.textContent = String(TOTAL_QUESTIONS);
+
+  function showProgressUi(){ if (progressEl) progressEl.style.display = ""; }
+  function hideProgressUi(){ if (progressEl) progressEl.style.display = "none"; }
+
+  var LS_KEY_PROGRESS = "thyren_progress_" + SECTION_ID;
+
+  function applyMetaProgress(meta){
+    if (!progressEl) return;
+
+    if (!USE_META_PROGRESS) return;
+
+    var p = meta && meta.progress ? meta.progress : null;
+
+    if (!p || p.enabled === false) {
+      hideProgressUi();
+      if (etaEl) etaEl.textContent = "—";
+      if (qcurEl) qcurEl.textContent = "0";
+      if (qtotEl) qtotEl.textContent = String(TOTAL_QUESTIONS || 0);
+      try { localStorage.removeItem(LS_KEY_PROGRESS); } catch(e){}
+      return;
+    }
+
+    showProgressUi();
+
+    var total = Number(p.total);
+    if (!total || isNaN(total)) total = Number(TOTAL_QUESTIONS || 0);
+
+    var current = Number(p.current);
+    if (isNaN(current) || current < 0) current = 0;
+
+    if (qtotEl) qtotEl.textContent = String(total);
+    if (qcurEl) qcurEl.textContent = String(Math.min(total, current));
+
+    var label = (p.eta_label && String(p.eta_label).trim()) ? String(p.eta_label).trim() : "—";
+    if (etaEl) etaEl.textContent = label;
+
+    quizStarted = true;
+    questionIndex = Math.max(0, current - 1);
+
+    try {
+      localStorage.setItem(LS_KEY_PROGRESS, JSON.stringify({ local:false, meta: meta }));
+    } catch(e){}
+  }
+
+  var localQuizActive = false;
+  var localQuizType = "";
+  var localCur = 0;
+  var localTot = Number(TOTAL_QUESTIONS || 0);
+
+  function computeEtaLabel(cur, tot){
+    var remaining = Math.max(0, tot - cur);
+    var remainingSeconds = remaining * Number(SECONDS_PER_QUESTION || 10);
+    var minutes = Math.max(1, Math.ceil(remainingSeconds / 60));
+    return minutes + " min";
+  }
+
+  function startLocalQuiz(type){
+    localQuizActive = true;
+    localQuizType = type || "";
+    localCur = 0;
+    localTot = Number(TOTAL_QUESTIONS || 0);
+
+    if (qtotEl) qtotEl.textContent = String(localTot);
+    if (qcurEl) qcurEl.textContent = String(localCur);
+    if (etaEl) etaEl.textContent = computeEtaLabel(localCur, localTot);
+
+    showProgressUi();
+
+    try {
+      localStorage.setItem(LS_KEY_PROGRESS, JSON.stringify({
+        local: true,
+        localQuizActive: true,
+        localQuizType: localQuizType,
+        current: localCur,
+        total: localTot,
+        eta_label: (etaEl ? etaEl.textContent : "—")
+      }));
+    } catch(e){}
+  }
+
+  function stopLocalQuiz(){
+    localQuizActive = false;
+    localQuizType = "";
+  }
+
+  function placeFormTop(){ try { slotEl.appendChild(formEl); } catch(e){} }
+  function dockFormBottom(){
+    try {
+      var body = rootEl.querySelector(".thyren-body");
+      if (body) body.appendChild(formEl);
+    } catch(e){}
+  }
+
+  var LS_KEY_UI = "thyren_ui_" + SECTION_ID;
+  var LS_KEY_MODE = "thyren_mode_" + SECTION_ID;
+
+  function saveUiState(){
+    try{
+      var msgs = Array.prototype.slice.call(threadEl.querySelectorAll(".thyren-msg"));
+      var html = msgs.map(function(n){ return n.outerHTML; }).join("");
+      localStorage.setItem(LS_KEY_UI, html);
+      localStorage.setItem(LS_KEY_MODE, JSON.stringify({
+        started: !!started,
+        quizStarted: !!quizStarted,
+        questionIndex: Number(questionIndex||0)
+      }));
+    }catch(e){}
+  }
+
+  function restoreUiState(){
+    try{
+      var html = localStorage.getItem(LS_KEY_UI);
+      var mode = localStorage.getItem(LS_KEY_MODE);
+
+      threadEl.innerHTML = "";
+
+      // 1) Restore messages HTML si présent
+      if (html && html.indexOf("thyren-msg") !== -1) {
+        threadEl.innerHTML = html;
+
+        // sécurité: si rien n'a été restauré, on abandonne
+        if (!threadEl.querySelector(".thyren-msg")) {
+          threadEl.innerHTML = "";
+          return false;
+        }
+      } else {
+        return false;
+      }
+
+      // 2) Restore mode (started / quiz / index)
+      if (mode){
+        var st = JSON.parse(mode);
+        started = !!st.started;
+        quizStarted = !!st.quizStarted;
+        questionIndex = Number(st.questionIndex||0);
+      }
+
+      // 3) Applique l'état UI (started ou non)
+      if (started) {
+        rootEl.classList.add("thyren-started");
+        dockFormBottom();
+      } else {
+        rootEl.classList.remove("thyren-started");
+        placeFormTop();
+      }
+
+      // ✅ 4) FIX AMORCES : si pas started et pas d'amorces => on les recrée
+      if (!started && !threadEl.querySelector('[data-thyren-kind="welcome"]')) {
+        addWelcomeButtons();
+      }
+
+      enableAutoScroll();
+      scrollBottomOnce();
+      return true;
+    }catch(e){
+      // si JSON cassé / localstorage corrompu
+      threadEl.innerHTML = "";
+      return false;
+    }
+  }
+
+  (function restoreMetaProgress(){
+    try{
+      var raw = localStorage.getItem(LS_KEY_PROGRESS);
+      if (!raw) return;
+      var obj = JSON.parse(raw);
+
+      if (obj && obj.local && obj.localQuizActive){
+        localQuizActive = true;
+        localQuizType = obj.localQuizType || "";
+        localCur = Number(obj.current || 0);
+        localTot = Number(obj.total || TOTAL_QUESTIONS || 0);
+
+        if (qtotEl) qtotEl.textContent = String(localTot);
+        if (qcurEl) qcurEl.textContent = String(localCur);
+        if (etaEl) etaEl.textContent = String(obj.eta_label || computeEtaLabel(localCur, localTot));
+
+        showProgressUi();
+        return;
+      }
+
+      if (obj && obj.meta) applyMetaProgress(obj.meta);
+    }catch(e){}
+  })();
+
+  function showTyping() {
+    typingLineEl.innerHTML = 'THYREN réfléchit<span class="dots"><span></span><span></span><span></span></span>';
+    typingLineEl.style.display = 'block';
+    scrollBottomOnce();
+  }
+
+  function hideTyping() {
+    typingLineEl.style.display = 'none';
+    typingLineEl.innerHTML = '';
+  }
+
+  function typeWriterOnElement(el, text, speed, done) {
+    if (!el) { if (done) done(); return; }
+    text = String(text || "");
+    if (!text) { if (done) done(); return; }
+    var i = 0, len = text.length;
+    function tick() {
+      el.textContent = text.slice(0, i);
+      if (i < len) { i++; setTimeout(tick, speed); }
+      else { if (done) done(); }
+    }
+    tick();
+  }
+
+  function escapeHTML(str){
+    return String(str || "")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#039;");
+  }
+
+  function linkifyMarkdownHttpsOnly(html){
+    return String(html || "").replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function(_, label, url){
+      return '<a href="'+url+'" target="_blank" rel="noopener noreferrer">'+label+'</a>';
+    });
+  }
+
+  function extractImageUrls(text){
+    var t = String(text || "");
+    // ✅ accepte https://... et //... + paramètres
+    var re = /((?:https?:)?\/\/[^\s)]+?\.(?:png|jpg|jpeg|webp|gif))(?:\?[^\s)]*)?/ig;
+    var urls = [];
+    var m;
+    while ((m = re.exec(t)) !== null) {
+      var u = m[0];
+      // si URL protocole-relative "//", force https:
+      if (u.indexOf("//") === 0) u = "https:" + u;
+      urls.push(u);
+    }
+    return urls;
+  }
+
+  function stripProductMarkdownLinks(text){
+    return String(text || "")
+      .replace(/\[[^\]]+\]\((https?:\/\/[^\s)]+\/products\/[^\s)]+)\)\s*[.,!?:]*/ig, "")
+      .trim();
+  }
+
+  function stripPlainProductUrlsAndIds(text){
+    text = String(text || "");
+    text = text.replace(/https?:\/\/[^\s)]+\/products\/[^\s)\n]+/ig, "");
+    text = text.replace(/(^|\n)\s*\d{8,}\s*(?=\n|$)/g, "$1");
+    return text
+      .replace(/[ \t]+\n/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .replace(/[ \t]{2,}/g, " ")
+      .trim();
+  }
+
+  function extractCtasAnywhere(text){
+    text = String(text || "");
+    var CTA_LABEL_RE = /^(Commander ma cure|Ajouter au panier|En savoir plus)$/i;
+    var mdRe = /\[([^\]]+)\]\(([^)]+)\)/g;
+    var ctas = [];
+
+    var cleaned = text.replace(mdRe, function(full, label, url){
+      label = (label || "").trim();
+      url = (url || "").trim();
+      if (CTA_LABEL_RE.test(label)){
+        ctas.push({ label: label, url: url });
+        return "";
+      }
+      return full;
+    });
+
+    var lines = cleaned.split(/\n/);
+    var kept = [];
+    lines.forEach(function(line){
+      var ln = String(line || "").trim();
+      var m = ln.match(/^(?:[-–•]\s*)?(Commander ma cure|Ajouter au panier|En savoir plus)\s*[.,!?:]*\s*$/i);
+      if (m){
+        ctas.push({ label: m[1], url: "" });
+        return;
+      }
+      kept.push(line);
+    });
+
+    cleaned = kept.join("\n")
+      .replace(/[ \t]{2,}/g, " ")
+      .replace(/[ \t]+\n/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .replace(/[ \t]+([.,!?:])/g, "$1")
+      .trim();
+
+    var seen = {};
+    ctas = ctas.filter(function(x){
+      var k = String(x.label || "").toLowerCase();
+      if (!k) return false;
+      if (seen[k]) return false;
+      seen[k] = true;
+      return true;
+    });
+
+    return { text: cleaned, ctas: ctas };
+  }
+
+  function getFirstProductUrlFromText(t){
+    t = String(t || "");
+    var re = /((?:https?:\/\/[^\s)]+)?\/products\/[a-z0-9\-]+)(?:[^\s)]*)?/i;
+    var m = t.match(re);
+    if (!m) return null;
+    var u = m[1];
+    if (u.indexOf("http") !== 0) u = window.location.origin + u;
+    return u;
+  }
+
+  function getProductUrlFromCtas(ctas){
+    var out = null;
+    (ctas || []).forEach(function(x){
+      if (!x || !x.label) return;
+      if (/^en savoir plus$/i.test(String(x.label)) && x.url && /^https?:\/\//i.test(String(x.url)) && String(x.url).indexOf("/products/") !== -1){
+        out = String(x.url).trim();
+      }
+    });
+    return out;
+  }
+
+  function isCtaLabel(label){
+    label = String(label||"").trim().toLowerCase();
+    return (label === "commander ma cure" || label === "ajouter au panier" || label === "en savoir plus");
+  }
+
+  function thyrenToast(msg){
+    var id = "thyren-toast-" + SECTION_ID;
+    var el = document.getElementById(id);
+    if (!el){
+      el = document.createElement("div");
+      el.id = id;
+      el.className = "thyren-toast";
+      rootEl.appendChild(el);
+    }
+    el.textContent = msg;
+    el.classList.remove("show");
+    void el.offsetWidth;
+    el.classList.add("show");
+    clearTimeout(el.__t);
+    el.__t = setTimeout(function(){ el.classList.remove("show"); }, 1600);
+  }
+
+  function tryOpenCartDrawer(){
+    try{
+      var cd = document.querySelector('cart-drawer');
+      if (cd && typeof cd.open === "function") { cd.open(); return true; }
+
+      var byId = document.getElementById("CartDrawer") || document.getElementById("cart-drawer");
+      if (byId){
+        byId.classList.add("active","is-open","open");
+        byId.setAttribute("open","true");
+        return true;
+      }
+
+      var btn =
+        document.querySelector('[aria-controls="CartDrawer"]') ||
+        document.querySelector('[data-cart-drawer-open]') ||
+        document.querySelector('[data-drawer-open*="cart"]') ||
+        document.querySelector('button[name="open_cart"]') ||
+        document.querySelector('a[href="/cart"].header__icon');
+
+      if (btn){ btn.click(); return true; }
+    }catch(e){}
+    return false;
+  }
+
+  async function refreshCartUiHard(){
+    try{
+      document.documentElement.dispatchEvent(new CustomEvent("cart:refresh", { bubbles:true }));
+      window.dispatchEvent(new CustomEvent("cart:refresh"));
+    }catch(e){}
+
+    try{
+      var cd = document.querySelector('cart-drawer');
+      if (cd && typeof cd.renderContents === "function"){
+        var cart = await fetch("/cart.js", { headers: { "Accept": "application/json" } }).then(function(r){ return r.json(); });
+        cd.renderContents(cart);
+        return true;
+      }
+    }catch(e){}
+
+    try{
+      var url = "/?sections=cart-drawer,cart-icon-bubble";
+      var sections = await fetch(url, { headers: { "Accept": "application/json" } }).then(function(r){ return r.json(); });
+      if (!sections) return false;
+
+      if (sections["cart-drawer"]){
+        var doc1 = new DOMParser().parseFromString(sections["cart-drawer"], "text/html");
+        var newDrawer = doc1.querySelector("cart-drawer") || doc1.getElementById("CartDrawer") || doc1.getElementById("cart-drawer");
+        var curDrawer = document.querySelector("cart-drawer") || document.getElementById("CartDrawer") || document.getElementById("cart-drawer");
+        if (newDrawer && curDrawer){ curDrawer.innerHTML = newDrawer.innerHTML; }
+      }
+
+      if (sections["cart-icon-bubble"]){
+        var doc2 = new DOMParser().parseFromString(sections["cart-icon-bubble"], "text/html");
+        var newBubble = doc2.getElementById("cart-icon-bubble") || doc2.querySelector("#cart-icon-bubble") || doc2.querySelector("cart-icon-bubble");
+        var curBubble = document.getElementById("cart-icon-bubble") || document.querySelector("#cart-icon-bubble") || document.querySelector("cart-icon-bubble");
+        if (newBubble && curBubble){ curBubble.innerHTML = newBubble.innerHTML; }
+      }
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+
+  function getHandleFromProductUrl(productUrl){
+    try{
+      var u = new URL(productUrl, window.location.origin);
+      var m = u.pathname.match(/\/products\/([^\/\?#]+)/i);
+      if (!m) return null;
+      var handle = m[1];
+      handle = handle.replace(/\.(jpg|jpeg|png|webp)$/i, "");
+      return handle || null;
+    }catch(e){ return null; }
+  }
+
+  function getVariantFromUrl(productUrl){
+    try{
+      var u = new URL(productUrl, window.location.origin);
+      var v = u.searchParams.get("variant");
+      return v ? Number(v) : null;
+    }catch(e){ return null; }
+  }
+
+  async function resolveVariantId(productUrl, mode){
+    var handle = getHandleFromProductUrl(productUrl);
+    if (!handle) return null;
+
+    var fromUrl = getVariantFromUrl(productUrl);
+    if (fromUrl) return fromUrl;
+
+    if (THYREN_VARIANTS[handle]){
+      var pick = (mode === "sub") ? THYREN_VARIANTS[handle].sub : THYREN_VARIANTS[handle].simple;
+      if (pick) return Number(pick);
+    }
+
+    try{
+      var p = await fetch("/products/" + encodeURIComponent(handle) + ".js").then(function(r){ return r.json(); });
+      if (!p || !Array.isArray(p.variants) || !p.variants.length) return null;
+      var v = p.variants.find(function(x){ return x && x.available; }) || p.variants[0];
+      return v ? Number(v.id) : null;
+    }catch(e){
+      return null;
+    }
+  }
+
+  async function addToCartByVariant(variantId){
+    variantId = Number(variantId);
+    if (!variantId || isNaN(variantId)) { thyrenToast("Variante introuvable"); return false; }
+
+    try {
+      var res = await fetch("/cart/add.js", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ id: variantId, quantity: 1 })
+      });
+      if (!res.ok) throw new Error("add_to_cart_failed");
+
+      await refreshCartUiHard();
+      thyrenToast("Ajouté au panier ✓");
+
+      var opened = tryOpenCartDrawer();
+      if (!opened) window.location.href = "/cart";
+      return true;
+    } catch(e){
+      thyrenToast("Impossible d'ajouter au panier");
+      return false;
+    }
+  }
+
+  async function goCheckoutWithVariant(variantId, fallbackProductUrl){
+    variantId = Number(variantId);
+    if (!variantId || isNaN(variantId)){
+      if (fallbackProductUrl) window.location.href = fallbackProductUrl;
+      else thyrenToast("Variante introuvable");
+      return false;
+    }
+    window.location.href = "/cart/" + variantId + ":1?checkout";
+    return true;
+  }
+
+  async function handleCtaUrl(url, contextProductUrl, label){
+    url = String(url || "").trim();
+    label = String(label || "").trim().toLowerCase();
+
+    var productUrl = contextProductUrl || (url.indexOf("/products/") !== -1 ? url : "");
+
+    if (label === "en savoir plus"){
+      if (productUrl) { window.open(productUrl, "_blank", "noopener,noreferrer"); return true; }
+      if (/^https?:\/\//i.test(url)) { window.open(url, "_blank", "noopener,noreferrer"); return true; }
+      return false;
+    }
+
+    if (label === "commander ma cure"){
+      if (!productUrl) return false;
+      var vid = await resolveVariantId(productUrl, "simple");
+      if (!vid){ window.location.href = productUrl; return true; }
+      return goCheckoutWithVariant(vid, productUrl);
+    }
+
+    if (label === "ajouter au panier"){
+      if (!productUrl) return false;
+      var vid2 = await resolveVariantId(productUrl, "simple");
+      if (!vid2){ window.location.href = productUrl; return true; }
+      return addToCartByVariant(vid2);
+    }
+
+    if (/^https?:\/\//i.test(url)){
+      window.location.href = url;
+      return true;
+    }
+    return false;
+  }
+
+  var __productCache = {};
+  function formatMoneyFromCents(cents){
+    cents = Number(cents);
+    if (isNaN(cents)) return "";
+    try {
+      return (cents/100).toLocaleString(undefined, {
+        style:"currency",
+        currency: (window.Shopify && Shopify.currency && Shopify.currency.active) ? Shopify.currency.active : "EUR"
+      });
+    } catch(e){
+      return (cents/100).toFixed(2) + " €";
+    }
+  }
+
+  async function fetchProductPreview(handle){
+    if (!handle) return null;
+    if (__productCache[handle] && typeof __productCache[handle].then !== "function") return __productCache[handle];
+    if (__productCache[handle] && typeof __productCache[handle].then === "function") return __productCache[handle];
+
+    function stripHtml(s){ return String(s || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim(); }
+    function truncate(s, n){
+      s = String(s || "");
+      if (s.length <= n) return s;
+      return s.slice(0, n).replace(/\s+\S*$/, "") + "…";
+    }
+
+    __productCache[handle] = fetch("/products/" + encodeURIComponent(handle) + ".js")
+      .then(function(r){ return r.json(); })
+      .then(function(p){
+        if (!p) return null;
+
+        var img = (p.featured_image || (p.images && p.images[0]) || "");
+        var price = (p.price != null) ? formatMoneyFromCents(p.price) : "";
+        var available = !!p.available;
+        var rawDesc = stripHtml(p.description || "");
+        var excerpt = truncate(rawDesc, 140);
+
+        return {
+          title: p.title || "",
+          image: img || "",
+          price: price || "",
+          url: "/products/" + handle,
+          available: available,
+          excerpt: excerpt
+        };
+      })
+      .catch(function(){ return null; });
+
+    var out = await __productCache[handle];
+    __productCache[handle] = out;
+    return out;
+  }
+
+  function normalizeToEightBlocks(raw){
+    raw = String(raw || "").replace(/\r/g, "").trim();
+    if (!raw) return "";
+
+    raw = raw
+      .replace(/(^|\n)\s*Choisis une option\s*:\s*(\n|$)/ig, "$1")
+      .replace(/(^|\n)\s*Recommencer le quiz\s*(\n|$)/ig, "$1")
+      .replace(/(^|\n)\s*J['']ai une question\s*\??\s*(\n|$)/ig, "$1")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+
+    if (raw.indexOf("===BLOCK===") !== -1){
+      return raw
+        .split("===BLOCK===")
+        .map(function(b){ return b.trim(); })
+        .filter(Boolean)
+        .join("\n\n===BLOCK===\n\n");
+    }
+
+    return raw;
+  }
+
+  async function renderRichBubble(bubbleEl, rawText){
+    if (!bubbleEl) return;
+    rawText = String(rawText || "");
+
+    // 1) images directes
+    var imgs = extractImageUrls(rawText);
+    var textNoImg = rawText;
+    imgs.forEach(function(u){ textNoImg = textNoImg.replace(u, ""); });
+    textNoImg = textNoImg.trim();
+
+    // 2) CTA
+    var ctaParsed = extractCtasAnywhere(textNoImg);
+
+    // 3) URL produit
+    var productUrl = getProductUrlFromCtas(ctaParsed.ctas) || getFirstProductUrlFromText(rawText);
+
+    // Fallback CTA
+    if ((!ctaParsed.ctas || !ctaParsed.ctas.length) && productUrl) {
+      ctaParsed.ctas = [
+        { label: "Commander ma cure", url: productUrl },
+        { label: "Ajouter au panier", url: productUrl },
+        { label: "En savoir plus", url: productUrl }
+      ];
+    }
+
+    // 4) Nettoyage texte
+    var text = String(ctaParsed.text || "");
+    text = stripProductMarkdownLinks(text);
+    text = stripPlainProductUrlsAndIds(text);
+    text = text.replace(/===BLOCK===/g, "").trim();
+
+    // 5) Détection cure
+    var hasCompat = /compatibilit/i.test(text);
+    var hasCtaCure = (ctaParsed.ctas || []).some(function(x){
+      return x && x.label && /commander ma cure|ajouter au panier|en savoir plus/i.test(x.label);
+    });
+
+    var isCure = (hasCompat || hasCtaCure) && (productUrl || (imgs && imgs.length > 0));
+
+    if (!isCure){
+      var safe0 = escapeHTML(text).replace(/\n/g, "<br>");
+      bubbleEl.innerHTML = linkifyMarkdownHttpsOnly(safe0);
+      return;
+    }
+
+    bubbleEl.classList.add("thyren-has-cure");
+
+    // 6) Image
+    var imgUrl = (imgs && imgs.length) ? imgs[0] : "";
+    var productData = null;
+
+    if (!imgUrl && productUrl){
+      var handle = getHandleFromProductUrl(productUrl);
+      if (handle){
+        productData = await fetchProductPreview(handle);
+        if (productData && productData.image) imgUrl = productData.image;
+      }
+    }
+
+    bubbleEl.innerHTML = "";
+
+    var card = document.createElement("div");
+    card.className = "thyren-cure-card";
+
+    var media = document.createElement("div");
+    media.className = "thyren-cure-media";
+
+    if (imgUrl){
+      var img = document.createElement("img");
+      img.src = imgUrl;
+      img.loading = "lazy";
+      img.alt = "Cure";
+      media.appendChild(img);
+    } else {
+      media.style.display = "none";
+      card.style.gridTemplateColumns = "1fr";
+    }
+
+    var body = document.createElement("div");
+    body.className = "thyren-cure-body";
+
+    var lines = text.split("\n").map(function(l){ return String(l||"").trim(); }).filter(function(x){ return x.length; });
+
+    var title = (productData && productData.title) ? productData.title : (lines[0] || "Cure");
+
+    var compat = "";
+    for (var i=0;i<lines.length;i++){
+      if (/^compatibilit/i.test(lines[i])) { compat = lines[i]; break; }
+    }
+
+    function findIndex(re){
+      for (var k=0;k<lines.length;k++) if (re.test(lines[k])) return k;
+      return -1;
+    }
+
+    var idxWhyTitle = findIndex(/^(?:[-–•]\s*)?pourquoi cette cure est propos/i);
+    var idxEffectsTitle = findIndex(/^(?:[-–•]\s*)?(b[ée]n[ée]fices fonctionnels attendus|b[ée]n[ée]fices|a quoi elle va servir)/i);
+    var idxPosoTitle = findIndex(/^(?:[-–•]\s*)?(conseils de prise|comment bien prendre|posologie)/i);
+
+    function collectBetween(startIdx, endIdx){
+      if (startIdx < 0) return "";
+      var from = startIdx + 1;
+      var to = (endIdx >= 0 ? endIdx : lines.length);
+      return lines.slice(from, to).join(" ").trim();
+    }
+
+    var why = collectBetween(idxWhyTitle, idxEffectsTitle);
+    var effects = collectBetween(idxEffectsTitle, idxPosoTitle);
+
+    var posoLines = [];
+    if (idxPosoTitle >= 0){
+      for (var p = idxPosoTitle + 1; p < lines.length; p++){
+        var ln = lines[p];
+        if (/^\[?commander ma cure\]?/i.test(ln)) break;
+        if (/^(–|-)\s*/.test(ln) || /dur[ée]e recommand[ée]e|moment de prise|composition/i.test(ln)){
+          posoLines.push(ln.replace(/^\s*[–-]\s*/,"").trim());
+        }
+      }
+    }
+
+    var titleEl = document.createElement("div");
+    titleEl.className = "thyren-cure-title";
+    titleEl.textContent = title;
+
+    body.appendChild(titleEl);
+
+    if (compat){
+      var compatEl = document.createElement("div");
+      compatEl.className = "thyren-cure-compat";
+      compatEl.textContent = compat;
+      body.appendChild(compatEl);
+    }
+
+    function addLabel(text){
+      var l = document.createElement("div");
+      l.className = "thyren-cure-label";
+      l.textContent = text;
+      body.appendChild(l);
+    }
+
+    function addText(text){
+      var t = document.createElement("div");
+      t.className = "thyren-cure-text";
+      t.textContent = String(text || "").trim();
+      body.appendChild(t);
+    }
+
+    if (why){
+      addLabel("Pourquoi cette cure est proposée :");
+      addText(why);
+    }
+
+    if (effects){
+      addLabel("Bénéfices fonctionnels attendus :");
+      addText(effects);
+    }
+
+    if (posoLines && posoLines.length){
+      addLabel("Conseils de prise (posologie) :");
+      addText(posoLines.map(function(x){ return "– " + String(x||"").trim(); }).join("\n"));
+    }
+
+    if (ctaParsed.ctas && ctaParsed.ctas.length){
+      var ctaWrap = document.createElement("div");
+      ctaWrap.className = "thyren-options";
+
+      ctaParsed.ctas.forEach(function(cta){
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "thyren-option-btn";
+        btn.textContent = cta.label;
+
+        btn.dataset.thyrenKind = "cta";
+        btn.dataset.thyrenLabel = cta.label;
+        btn.dataset.thyrenUrl = cta.url;
+        btn.dataset.thyrenProductUrl = productUrl || cta.url;
+
+        ctaWrap.appendChild(btn);
+      });
+
+      body.appendChild(ctaWrap);
+    }
+
+    card.appendChild(media);
+    card.appendChild(body);
+    bubbleEl.appendChild(card);
+  }
+
+  function shouldWideBot(text){
+    text = String(text || "");
+    if (text.length >= 120) return true;
+    if (text.indexOf("\n") !== -1) return true;
+    return false;
+  }
+
+  function createMsgWrap(role){
+    var wrap = document.createElement('div');
+    wrap.className = 'thyren-msg ' + role;
+    return wrap;
+  }
+
+  function typeWriterAddBotMessage(text, done){
+    if (!text) { if (done) done(); return null; }
+    text = String(text).replace(/\*/g, "");
+
+    var wrap = createMsgWrap('bot');
+    var bubble = document.createElement('div');
+    bubble.className = 'thyren-bubble' + (shouldWideBot(text) ? ' thyren-wide' : '');
+    wrap.appendChild(bubble);
+
+    threadEl.appendChild(wrap);
+    scrollBottomOnce();
+
+    typeWriterOnElement(bubble, text, 12, function(){
+      renderRichBubble(bubble, text).catch(function(){});
+      saveUiState();
+      if (typeof done === "function") done();
+    });
+    return wrap;
+  }
+
+  function addUserMessage(text){
+    if (!text) return;
+    var wrap = createMsgWrap('user');
+    var bubble = document.createElement('div');
+    bubble.className = 'thyren-bubble';
+    bubble.textContent = text;
+    wrap.appendChild(bubble);
+    threadEl.appendChild(wrap);
+    scrollBottomOnce();
+    saveUiState();
+  }
+
+  function displayTextAsBlockBubbles(text){
+    text = String(text || "").trim();
+    if (!text) return;
+
+    var blocks = text
+      .split("===BLOCK===")
+      .map(function(b){ return b.trim(); })
+      .filter(Boolean);
+
+    if (!blocks.length){
+      typeWriterAddBotMessage(text);
+      return;
+    }
+
+    function showNext(i){
+      if (i >= blocks.length) return;
+      typeWriterAddBotMessage(blocks[i], function(){ showNext(i + 1); });
+    }
+    showNext(0);
+  }
+
+  function addWelcomeButtons(){
+    var wrap = createMsgWrap('bot');
+    var options = document.createElement('div');
+    options.className = 'thyren-options';
+
+    var choices = [
+      { label: "Ma thyroïde fonctionne-t-elle normalement ?", payload: "Est-ce que j'ai des symptômes d'hypothyroïdie ?" },
+      { label: "Trouver la cure dont j'ai besoin", payload: "Trouver la cure dont j'ai besoin" },
+      { label: "J'ai une question - SAV", payload: "J'ai une question - SAV" },
+      { label: "Qu'en pense le Dr Résimont", payload: "Qu'en pense le Dr Résimont" }
+    ];
+
+    choices.forEach(function(choice){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'thyren-option-btn';
+      btn.textContent = choice.label;
+      btn.dataset.thyrenKind = "welcome";
+      btn.dataset.thyrenPayload = choice.payload;
+      options.appendChild(btn);
+    });
+
+    wrap.appendChild(options);
+    threadEl.appendChild(wrap);
+    scrollBottomOnce();
+    saveUiState();
+  }
+
+  function addQuestionWithChoices(questionText, choices, contextProductUrl){
+    var cleanQ = (questionText || '')
+      .replace(/\*/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    var wrap = createMsgWrap('bot');
+
+    var bubble = document.createElement('div');
+    bubble.className = 'thyren-bubble' + (shouldWideBot(cleanQ) ? ' thyren-wide' : '');
+    wrap.appendChild(bubble);
+
+    var options = document.createElement('div');
+    options.className = 'thyren-options';
+    options.style.opacity = '0';
+    options.style.pointerEvents = 'none';
+
+    var buttons = [];
+
+    (choices || []).forEach(function(choice){
+      var cleanLabel = String(choice || '').replace(/\*/g, "").replace(/\s+/g, ' ').trim();
+      if (!cleanLabel) return;
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'thyren-option-btn';
+      btn.textContent = '';
+
+      if (isCtaLabel(cleanLabel) && contextProductUrl){
+        btn.textContent = cleanLabel;
+        btn.dataset.thyrenKind = "cta";
+        btn.dataset.thyrenLabel = cleanLabel;
+        btn.dataset.thyrenProductUrl = String(contextProductUrl || "");
+        btn.dataset.thyrenUrl = String(contextProductUrl || "");
+      } else {
+        btn.dataset.thyrenKind = "choice";
+        btn.dataset.thyrenPayload = cleanLabel;
+        btn.dataset.thyrenLabel = cleanLabel;
+      }
+
+      buttons.push(btn);
+      options.appendChild(btn);
+    });
+
+    wrap.appendChild(options);
+    threadEl.appendChild(wrap);
+    scrollBottomOnce();
+
+    typeWriterOnElement(bubble, cleanQ, 12, function(){
+      options.style.opacity = '1';
+      options.style.pointerEvents = 'auto';
+
+      (function typeButtonsSequentially(idx){
+        idx = idx || 0;
+        if (idx >= buttons.length) return;
+        var b = buttons[idx];
+        var label = (b.dataset.thyrenLabel || b.textContent || "").replace(/\*/g, "");
+        if (b.textContent) { typeButtonsSequentially(idx+1); return; }
+        typeWriterOnElement(b, label, 10, function(){ typeButtonsSequentially(idx + 1); });
+      })(0);
+
+      scrollBottomOnce();
+      saveUiState();
+    });
+  }
+
+  messagesEl.addEventListener("click", async function(e){
+    var btn = e.target && e.target.closest ? e.target.closest(".thyren-option-btn") : null;
+    if (!btn || !messagesEl.contains(btn)) return;
+
+    e.preventDefault();
+
+    var kind = String(btn.dataset.thyrenKind || "").toLowerCase();
+    var label = btn.dataset.thyrenLabel || btn.textContent || "";
+    var url = btn.dataset.thyrenUrl || "";
+    var productUrl = btn.dataset.thyrenProductUrl || "";
+    var payload = btn.dataset.thyrenPayload || btn.dataset.thyrenLabel || btn.textContent || "";
+
+    enableAutoScroll();
+    scrollBottomOnce();
+
+    if (kind === "cta" || isCtaLabel(label)){
+      var effectiveProductUrl = productUrl || url || "";
+      await handleCtaUrl(url || effectiveProductUrl, effectiveProductUrl, label);
+      return;
+    }
+
+    if (kind === "choice" || kind === "welcome"){
+      if (isWaiting) return;
+      var txt = String(payload || "").trim();
+      if (!txt) return;
+
+      if (!started) { started = true; enterChatMode(); }
+
+      var lower = txt.toLowerCase();
+      if (lower.indexOf("trouver la cure") !== -1) startLocalQuiz("cure");
+      if (lower.indexOf("sympt") !== -1 && lower.indexOf("hypothy") !== -1) startLocalQuiz("thyroide");
+
+      addUserMessage(txt);
+      sendToBot(txt);
+      return;
+    }
+  }, { passive: false });
+
+  document.addEventListener("click", function(e){
+    if (!menuEl) return;
+    if (!menuEl.contains(e.target)) menuEl.removeAttribute("open");
+  });
+
+  function getConversationPlainText(){
+    var lines = [];
+    var msgs = threadEl.querySelectorAll(".thyren-msg");
+    msgs.forEach(function(msg){
+      var isUser = msg.classList.contains("user");
+      var who = isUser ? "Vous" : "THYREN";
+      var bubble = msg.querySelector(".thyren-bubble");
+      if (!bubble) return;
+
+      var txt = (bubble.innerText || bubble.textContent || "").trim();
+      if (!txt) return;
+
+      lines.push(who + " : " + txt);
+      lines.push("");
+    });
+    return lines.join("\n");
+  }
+
+  function downloadConversationAsWord(){
+    try{
+      var title = "Transcription THYREN";
+      var content = getConversationPlainText().replace(/\n/g, "<br>");
+
+      var html =
+        '<html><head><meta charset="utf-8"></head><body>' +
+        '<h2 style="font-family:Arial">' + title + '</h2>' +
+        '<div style="font-family:Arial; font-size:12pt; line-height:1.5">' + content + '</div>' +
+        '</body></html>';
+
+      var blob = new Blob([html], { type: "application/msword;charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "thyren-discussion.doc";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+
+      thyrenToast("Téléchargement lancé ✓");
+    } catch(e){
+      console.error(e);
+      thyrenToast("Impossible d'enregistrer");
+    }
+  }
+
+  Array.prototype.forEach.call(menuItems, function(btn){
+    btn.addEventListener("click", function(){
+      var action = btn.getAttribute("data-action");
+      if (menuEl) menuEl.removeAttribute("open");
+
+      if (action === "reset") {
+        enableAutoScroll();
+        chatHistory = [];
+        threadEl.innerHTML = "";
+
+        try{
+          localStorage.removeItem(LS_KEY_UI);
+          localStorage.removeItem(LS_KEY_MODE);
+          localStorage.removeItem(LS_KEY_PROGRESS);
+        }catch(e){}
+
+        hideProgressUi();
+        stopLocalQuiz();
+
+        quizStarted = false;
+        started = false;
+        rootEl.classList.remove("thyren-started");
+        questionIndex = 0;
+
+        placeFormTop();
+        addWelcomeButtons();
+        thyrenToast("Discussion effacée ✓");
+        return;
+      }
+
+      if (action === "download") {
+        downloadConversationAsWord();
+        return;
+      }
+
+      if (action === "sav") {
+        enableAutoScroll();
+
+        try{ localStorage.removeItem(LS_KEY_PROGRESS); }catch(e){}
+        hideProgressUi();
+        stopLocalQuiz();
+
+        quizStarted = false;
+        questionIndex = 0;
+
+        if (!started) { started = true; enterChatMode(); }
+        addUserMessage("J'ai une question - SAV");
+        sendToBot("J'ai une question - SAV");
+        return;
+      }
+    });
+  });
+
+  async function sendToBot(userText) {
+    try {
+      var sid = localStorage.getItem("thyren_sid") || conversationId;
+      var imgQ = new Image();
+      imgQ.src = "https://thyren-chat-proxy.vercel.app/api/beacon?type=qpd&sid=" + encodeURIComponent(sid) + "&t=" + Date.now();
+    } catch(e) {}
+
+    if (!userText || isWaiting) return;
+
+    if (!started) { started = true; enterChatMode(); }
+
+    isWaiting = true;
+    showTyping();
+
+    chatHistory.push({ role: 'user', content: userText });
+
+    try {
+      var res = await fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: chatHistory, conversationId: conversationId })
+      });
+
+      var raw = await res.text();
+      var data = null;
+      try { data = JSON.parse(raw); } catch(e){ data = null; }
+
+      if (!res.ok) {
+        console.error("THYREN API error:", res.status, raw);
+        hideTyping();
+        typeWriterAddBotMessage("Erreur serveur ("+res.status+"). Ouvre la console pour voir le détail.");
+        return;
+      }
+
+      if (!data || typeof data !== "object") {
+        console.error("THYREN invalid JSON:", raw);
+        hideTyping();
+        typeWriterAddBotMessage("Réponse invalide du serveur. Ouvre la console pour voir le détail.");
+        return;
+      }
+
+      var replyText = (data.reply ? String(data.reply) : "").trim();
+
+      hideTyping();
+
+      if (!replyText) {
+        typeWriterAddBotMessage("Je n'ai pas reçu de réponse exploitable, tu peux réessayer ?");
+        return;
+      }
+
+      chatHistory.push({ role: 'assistant', content: replyText });
+
+      var parsed = null;
+      try { parsed = JSON.parse(replyText); } catch (e) { parsed = null; }
+
+      if (!parsed || typeof parsed !== 'object') {
+        typeWriterAddBotMessage(replyText);
+        scrollBottomOnce();
+        saveUiState();
+        return;
+      }
+
+      var msgType = parsed.type;
+      var msgText = parsed.text || "";
+      var msgChoices = Array.isArray(parsed.choices) ? parsed.choices : [];
+      var meta = (parsed && parsed.meta && typeof parsed.meta === "object") ? parsed.meta : null;
+
+      if (meta && meta.progress){
+        applyMetaProgress(meta);
+        if (meta.progress.enabled) stopLocalQuiz();
+      } else {
+        if (localQuizActive && msgType === "question"){
+          localCur = Math.min(localTot, localCur + 1);
+          if (qcurEl) qcurEl.textContent = String(localCur);
+          if (etaEl) etaEl.textContent = computeEtaLabel(localCur, localTot);
+          showProgressUi();
+
+          try {
+            localStorage.setItem(LS_KEY_PROGRESS, JSON.stringify({
+              local: true,
+              localQuizActive: true,
+              localQuizType: localQuizType,
+              current: localCur,
+              total: localTot,
+              eta_label: (etaEl ? etaEl.textContent : "—")
+            }));
+          } catch(e){}
+        }
+      }
+
+      if (msgType === 'question') {
+        if (msgChoices.length > 0) addQuestionWithChoices(msgText, msgChoices, null);
+        else typeWriterAddBotMessage(msgText);
+      } else if (msgType === 'reponse' || msgType === 'resultat') {
+        var normalized = normalizeToEightBlocks(msgText);
+        displayTextAsBlockBubbles(normalized);
+        if (msgChoices.length > 0) addQuestionWithChoices("", msgChoices, null);
+      } else {
+        typeWriterAddBotMessage(msgText || replyText);
+      }
+
+      saveUiState();
+
+    } catch (err) {
+      console.error("THYREN fetch error:", err);
+      hideTyping();
+      var msg = "Erreur de communication avec THYREN.";
+      if (err && err.message) msg += " (" + err.message + ")";
+      typeWriterAddBotMessage(msg);
+    } finally {
+      isWaiting = false;
+    }
+  }
+
+  formEl.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var text = inputEl.value.trim();
+    if (!text || isWaiting) return;
+
+    enableAutoScroll();
+    scrollBottomOnce();
+
+    addUserMessage(text);
+    inputEl.value = '';
+    sendToBot(text);
+  });
+
+  placeFormTop();
+  var restored = restoreUiState();
+  if (!restored) addWelcomeButtons();
+
+  if (!localQuizActive) {
+    try{
+      var raw = localStorage.getItem(LS_KEY_PROGRESS);
+      if (!raw) hideProgressUi();
+    }catch(e){ hideProgressUi(); }
+  }
+})();
+</script>
