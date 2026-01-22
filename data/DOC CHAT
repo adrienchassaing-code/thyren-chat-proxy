@@ -1,3 +1,5 @@
+kgdhgsqfdjhgdsqkhfgdsq
+
 import fs from "fs";
 import path from "path";
 
@@ -1664,4 +1666,4 @@ ${activeMode === "D" ? `[RESIMONT]\n${RESIMONT_TRUNC}\n` : ""}
     console.error("THYREN error:", err);
     res.status(500).json({ error: "THYREN error", details: String(err) });
   }
-}
+qsdfqsfdqsdfdqsfdq
