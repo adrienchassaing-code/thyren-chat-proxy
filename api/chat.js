@@ -12,17 +12,14 @@ const readDataFile = (filename) => {
   }
 };
 
-// ====== Lecture de TOUS les fichiers d'un dossier (/data/<folder>) ======
 const readDataFolder = (folderName) => {
   try {
     const folderPath = path.join(process.cwd(), "data", folderName);
-
     const files = fs
       .readdirSync(folderPath)
       .filter((f) => !f.startsWith("."))
       .filter((f) => fs.statSync(path.join(folderPath, f)).isFile())
       .sort((a, b) => a.localeCompare(b, "fr"));
-
     return files
       .map((filename) => {
         const content = fs.readFileSync(path.join(folderPath, filename), "utf8");
@@ -42,10 +39,9 @@ const COMPOSITIONS = readDataFile("COMPOSITIONS.txt");
 const SAV_FAQ = readDataFile("SAV_FAQ.txt");
 const QUESTION_ALL = readDataFile("QUESTION_ALL.txt");
 const RESIMONT = readDataFolder("RESIMONT");
-// ✅ réduit pour éviter explosion de contexte
 const RESIMONT_TRUNC = String(RESIMONT || "").slice(0, 15000);
 
-// ====== THYREN SYSTEM PROMPT V2.1 — DOCTEUR FONCTIONNEL EXPERT ======
+// ====== SYSTEM PROMPT ======
 const SYSTEM_PROMPT = `
 SCRIPT THYREN 2.1 — DOCTEUR FONCTIONNEL EXPERT
 
@@ -1869,11 +1865,9 @@ FIN DU PROMPT THYREN 2.1 — DOCTEUR FONCTIONNEL EXPERT + MÉMOIRE DR RÉSIMONT
 ═══════════════════════════════════════════════════════════════════
 `;
 
-// ====== FONCTIONS UTILITAIRES ======
-
+// ====== Fonction utilitaire ======
 function getBrusselsNowString() {
   const now = new Date();
-
   const parts = new Intl.DateTimeFormat("fr-BE", {
     timeZone: "Europe/Brussels",
     weekday: "long",
@@ -1893,45 +1887,27 @@ function getBrusselsNowString() {
   return `${map.weekday} ${map.day} ${map.month} ${map.year}, ${map.hour}:${map.minute}`;
 }
 
-/// ✅ CORS robuste (préflight friendly)
-const origin = req.headers.origin || "*";
-res.setHeader("Access-Control-Allow-Origin", origin);
-res.setHeader("Vary", "Origin");
-res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+// ====== HANDLER PRINCIPAL ======
+export default async function handler(req, res) {
+  // CORS
+  const origin = req.headers.origin || "*";
+  res.setHeader("Access-Control-Allow-Origin", origin);
+  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    req.headers["access-control-request-headers"] || "Content-Type"
+  );
 
-// Autorise ce que le navigateur demande (sinon preflight KO)
-res.setHeader(
-  "Access-Control-Allow-Headers",
-  req.headers["access-control-request-headers"] || "Content-Type"
-);
-
-if (req.method === "OPTIONS") {
-  res.status(204).end();
-  return;
-}
+  if (req.method === "OPTIONS") {
+    res.status(204).end();
+    return;
+  }
 
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method Not Allowed" });
     return;
   }
-
-  // 🟢 présence "en ligne" (TTL 60s)
-  try {
-    const url = process.env.UPSTASH_REDIS_REST_URL;
-    const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-    if (url && token) {
-      const base = url.replace(/\/$/, "");
-      const presenceId =
-        (req.body?.conversationId && String(req.body.conversationId)) ||
-        (req.headers["x-forwarded-for"]?.split(",")[0]?.trim()) ||
-        `anon:${Math.random().toString(36).slice(2, 10)}`;
-      const key = `online:${presenceId}`;
-
-      fetch(`${base}/set/${encodeURIComponent(key)}/1?ex=60`, {
-        headers: { Authorization: `Bearer ${token}` },
-      }).catch(() => {});
-    }
-  } catch (_) {}
 
   try {
     const { messages, conversationId } = req.body || {};
@@ -1947,127 +1923,42 @@ if (req.method === "OPTIONS") {
       return;
     }
 
-    const NOW_SYSTEM = `
-DATE ET HEURE SYSTÈME (FIABLE)
-Nous sommes actuellement : ${getBrusselsNowString()} (timezone: Europe/Brussels).
-Règle: si l'utilisateur demande la date/le jour/l'heure, tu dois utiliser STRICTEMENT cette information. Ne devine jamais.
-`.trim();
+    const NOW_SYSTEM = `DATE ET HEURE SYSTÈME: ${getBrusselsNowString()} (Europe/Brussels)`;
 
-    // ==============================
-    // 🔥 ROUTER AMORCES + LOCK MODE (AVANT DOCS_SYSTEM)
-    // ==============================
-
-    // 1) Dernier message user (robuste: apostrophes, NBSP, casse, etc.)
+    // Détection du mode
     const lastUserMsgRaw = String(
       [...messages].reverse().find((m) => (m.role || "") === "user")?.content || ""
     );
+    const lastUserMsg = lastUserMsgRaw.normalize("NFKC").replace(/\u00A0/g, " ").replace(/[']/g, "'").trim().toLowerCase();
 
-    const lastUserMsg = lastUserMsgRaw
-      .normalize("NFKC")
-      .replace(/\u00A0/g, " ") // NBSP -> space
-      .replace(/[']/g, "'") // apostrophe typographique -> '
-      .trim()
-      .toLowerCase();
+    const triggerModeC = /trouver\s+(la\s+)?cure/.test(lastUserMsg);
+    const triggerModeA = /thyro[iï]de/.test(lastUserMsg);
+    const triggerModeD = /dr\s+r[ée]simont/.test(lastUserMsg);
 
-    // 2) Déclencheurs (tolérants aux variations du bouton)
-    const triggerModeC =
-      /trouver\s+(la\s+)?cure/.test(lastUserMsg) ||
-      /cure.*besoin/.test(lastUserMsg) ||
-      /trouver.*besoin/.test(lastUserMsg);
-
-    const triggerModeA =
-      // ✅ bouton exact (et variantes)
-      /quiz\s*:?\s*ma\s+thyro[iï]de\s+fonctionne[-\s]*t[-\s]*elle\s+normalement/.test(lastUserMsg) ||
-      /ma\s+thyro[iï]de/.test(lastUserMsg) ||
-      /thyro[iï]de\s+fonctionne/.test(lastUserMsg) ||
-      // ✅ autres formulations possibles
-      /sympt[oô]mes.*hypothyro/.test(lastUserMsg) ||
-      /est[-\s]*ce\s+que.*hypothyro/.test(lastUserMsg);
-
-    const triggerModeD =
-      /qu['']?en\s+pense\s+(le\s+)?dr\s+r[ée]simont/.test(lastUserMsg) ||
-      /avis\s+(du\s+)?dr\s+r[ée]simont/.test(lastUserMsg) ||
-      /que\s+dit\s+(le\s+)?dr\s+r[ée]simont/.test(lastUserMsg) ||
-      /pens[ée]e\s+(du\s+)?dr\s+r[ée]simont/.test(lastUserMsg) ||
-      /dr\s+r[ée]simont/.test(lastUserMsg);
-
-    // 3) Lock si le quiz a déjà commencé (détection plus stable)
     const historyText = messages.map((m) => String(m.content || "")).join("\n");
-    const startedModeC =
-      /analyser tes besoins/i.test(historyText) && /quel est ton pr[ée]nom/i.test(historyText);
+    const startedModeC = /analyser tes besoins/i.test(historyText) && /quel est ton pr[ée]nom/i.test(historyText);
+    const startedModeA = /quiz\s*:?\s*ma\s+thyro[iï]de/i.test(historyText) && /quel est ton pr[ée]nom/i.test(historyText);
+    const startedModeD = /je suis la m[ée]moire du dr.*r[ée]simont/i.test(historyText);
 
-    const startedModeA =
-     /quiz\s*:?\s*ma\s+thyro[iï]de|quiz\s+thyro/i.test(historyText) &&
-     /quel est ton pr[ée]nom/i.test(historyText);
+    const activeMode = triggerModeD || startedModeD ? "D"
+      : triggerModeA || startedModeA ? "A"
+      : triggerModeC || startedModeC ? "C"
+      : null;
 
-    const startedModeD =
-      /je suis la m[ée]moire du dr.*r[ée]simont/i.test(historyText);
+    const ROUTER_SYSTEM = activeMode === "D" ? "MODE D ACTIF" : activeMode === "A" ? "MODE A ACTIF" : activeMode === "C" ? "MODE C ACTIF" : "";
 
-    const activeMode =
-  triggerModeD || startedModeD
-    ? "D"
-    : triggerModeA || (startedModeA && !startedModeD)
-    ? "A"
-    : triggerModeC || (startedModeC && !startedModeD)
-    ? "C"
-    : null;
+    const LES_CURES_ALL_TRUNC = String(LES_CURES_ALL || "").slice(0, 25000);
+    const COMPOSITIONS_TRUNC = String(COMPOSITIONS || "").slice(0, 25000);
+    const SAV_FAQ_TRUNC = String(SAV_FAQ || "").slice(0, 12000);
 
-    const ROUTER_SYSTEM =
-      activeMode === "D"
-        ? `MODE D ACTIF (MÉMOIRE DR RÉSIMONT).
-Tu es maintenant la mémoire du Dr Stéphane Résimont.
-Tu dois répondre UNIQUEMENT en te basant sur les documents RESIMONT.
-Cite textuellement avec guillemets "" quand tu reprends ses écrits.
-Utilise "probablement" SANS guillemets quand tu interprètes.
-Ne JAMAIS promouvoir les cures SUPLEMINT en MODE D.`
-        : activeMode === "C"
-        ? `MODE C ACTIF (LOCK).
-Tu dois suivre EXCLUSIVEMENT le questionnaire QUESTION_ALL, dans l'ordre du flow_order, du Q1 jusqu'à RESULT.
-INTERDICTION ABSOLUE d'utiliser QUESTION_THYROIDE tant que RESULT n'est pas terminé.`
-        : activeMode === "A"
-        ? `MODE A ACTIF (LOCK).
-Tu dois suivre EXCLUSIVEMENT le questionnaire QUESTION_THYROIDE, dans l'ordre du flow_order, du Q1 jusqu'à RESULT.
-INTERDICTION ABSOLUE d'utiliser QUESTION_ALL tant que RESULT n'est pas terminé.`
-        : "";
-
-    // 🔧 réduire drastiquement le contexte selon le mode
-const LES_CURES_ALL_TRUNC = String(LES_CURES_ALL || "").slice(0, 25000);
-const COMPOSITIONS_TRUNC = String(COMPOSITIONS || "").slice(0, 25000);
-const SAV_FAQ_TRUNC = String(SAV_FAQ || "").slice(0, 12000); // utile seulement en B
-
-const DOCS_SYSTEM = `
-DOCS SUPLEMINT (à suivre strictement, ne rien inventer)
-
-${
-  activeMode === "A"
-    ? `[QUESTION_THYROIDE]\n${QUESTION_THYROIDE}\n`
-    : activeMode === "C"
-    ? `[QUESTION_ALL]\n${QUESTION_ALL}\n`
-    : ""
-}
-
-${
-  // ✅ A et C : besoin des cures + compositions, pas du SAV, pas de Résimont
-  activeMode === "A" || activeMode === "C" || !activeMode
-    ? `[LES_CURES_ALL]\n${LES_CURES_ALL_TRUNC}\n\n[COMPOSITIONS]\n${COMPOSITIONS_TRUNC}\n`
-    : ""
-}
-
-${
-  // ✅ B : SAV utile
-  activeMode === "B" || activeMode === null
-    ? `\n[SAV_FAQ]\n${SAV_FAQ_TRUNC}\n`
-    : ""
-}
-
-${
-  // ✅ D : uniquement Résimont (et rien d'autre si tu veux garder la pureté du mode D)
-  activeMode === "D"
-    ? `\n[RESIMONT]\n${RESIMONT_TRUNC}\n`
-    : ""
-}
+    const DOCS_SYSTEM = `
+DOCS SUPLEMINT
+${activeMode === "A" ? `[QUESTION_THYROIDE]\n${QUESTION_THYROIDE}\n` : ""}
+${activeMode === "C" ? `[QUESTION_ALL]\n${QUESTION_ALL}\n` : ""}
+${activeMode !== "D" ? `[LES_CURES_ALL]\n${LES_CURES_ALL_TRUNC}\n[COMPOSITIONS]\n${COMPOSITIONS_TRUNC}\n` : ""}
+${!activeMode || activeMode === "B" ? `[SAV_FAQ]\n${SAV_FAQ_TRUNC}\n` : ""}
+${activeMode === "D" ? `[RESIMONT]\n${RESIMONT_TRUNC}\n` : ""}
 `.trim();
-
 
     const openAiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
@@ -2080,59 +1971,44 @@ ${
       })),
     ];
 
-    // ⏱️ Timeout controller (55 secondes pour rester sous la limite Vercel)
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 55000);
 
-    try {
-      const oaRes = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4.1-mini",
-          messages: openAiMessages,
-          response_format: { type: "json_object" },
-          temperature: 0,
-          max_tokens: 3000, // ✅ Permet les résultats longs (8 blocs)
-        }),
-        signal: controller.signal,
-      });
+    const oaRes = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4.1-mini",
+        messages: openAiMessages,
+        response_format: { type: "json_object" },
+        temperature: 0,
+        max_tokens: 3000,
+      }),
+      signal: controller.signal,
+    });
 
-      clearTimeout(timeoutId);
+    clearTimeout(timeoutId);
 
-      if (!oaRes.ok) {
-        const errText = await oaRes.text();
-        console.error("OpenAI error:", oaRes.status, errText);
-        res.status(500).json({ error: "OpenAI API error", details: errText });
-        return;
-      }
-
-      const oaData = await oaRes.json();
-      const reply = oaData.choices?.[0]?.message?.content || "";
-
-      // ⚡ Validation basique du JSON
-      const replyText = String(reply || "").trim();
-
-      res.status(200).json({
-        reply: replyText,
-        conversationId: conversationId || null,
-      });
-
-    } catch (fetchErr) {
-      clearTimeout(timeoutId);
-      if (fetchErr.name === "AbortError") {
-        console.error("OpenAI request timeout after 55s");
-        res.status(504).json({ error: "Request timeout - la génération a pris trop de temps" });
-      } else {
-        throw fetchErr;
-      }
+    if (!oaRes.ok) {
+      const errText = await oaRes.text();
+      console.error("OpenAI error:", oaRes.status, errText);
+      res.status(500).json({ error: "OpenAI API error", details: errText });
+      return;
     }
 
+    const oaData = await oaRes.json();
+    const reply = oaData.choices?.[0]?.message?.content || "";
+
+    res.status(200).json({
+      reply: String(reply).trim(),
+      conversationId: conversationId || null,
+    });
+
   } catch (err) {
-    console.error("THYREN OpenAI proxy error:", err);
-    res.status(500).json({ error: "THYREN OpenAI proxy error", details: String(err) });
+    console.error("THYREN error:", err);
+    res.status(500).json({ error: "THYREN error", details: String(err) });
   }
 }
