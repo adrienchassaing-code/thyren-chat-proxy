@@ -1893,17 +1893,22 @@ function getBrusselsNowString() {
   return `${map.weekday} ${map.day} ${map.month} ${map.year}, ${map.hour}:${map.minute}`;
 }
 
-// 🔧 Handler Vercel pour /api/chat
-export default async function handler(req, res) {
-  // ✅ CORS
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+/// ✅ CORS robuste (préflight friendly)
+const origin = req.headers.origin || "*";
+res.setHeader("Access-Control-Allow-Origin", origin);
+res.setHeader("Vary", "Origin");
+res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
 
-  if (req.method === "OPTIONS") {
-    res.status(204).end();
-    return;
-  }
+// Autorise ce que le navigateur demande (sinon preflight KO)
+res.setHeader(
+  "Access-Control-Allow-Headers",
+  req.headers["access-control-request-headers"] || "Content-Type"
+);
+
+if (req.method === "OPTIONS") {
+  res.status(204).end();
+  return;
+}
 
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method Not Allowed" });
