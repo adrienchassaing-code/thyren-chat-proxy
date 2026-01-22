@@ -1797,6 +1797,23 @@ ${activeMode === "D" ? `[RESIMONT]\n${RESIMONT_TRUNC}\n` : ""}
     const oaData = await oaRes.json();
     const reply = oaData.choices?.[0]?.message?.content || "";
 
+    let parsedReply = null;
+try {
+  parsedReply = JSON.parse(String(reply).trim());
+} catch (e) {
+  parsedReply = {
+    type: "reponse",
+    text: "Désolé, je n’ai pas pu générer une réponse valide. Peux-tu réessayer ?",
+    meta: { mode: activeMode || "B", progress: { enabled: false } },
+  };
+}
+
+res.status(200).json({
+  reply: parsedReply,
+  conversationId: conversationId || null,
+});
+
+    
     res.status(200).json({
       reply: String(reply).trim(),
       conversationId: conversationId || null,
