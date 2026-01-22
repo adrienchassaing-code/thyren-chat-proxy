@@ -20,6 +20,7 @@ const readDataFolder = (folderName) => {
       .filter((f) => !f.startsWith("."))
       .filter((f) => fs.statSync(path.join(folderPath, f)).isFile())
       .sort((a, b) => a.localeCompare(b, "fr"));
+
     return files
       .map((filename) => {
         const content = fs.readFileSync(path.join(folderPath, filename), "utf8");
@@ -1682,6 +1683,40 @@ function getBrusselsNowString() {
   return `${map.weekday} ${map.day} ${map.month} ${map.year}, ${map.hour}:${map.minute}`;
 }
 
+// ====== VALIDATION MINIMUM DU JSON SORTANT ======
+function normalizeAssistantJson(obj, fallbackMode) {
+  const mode = fallbackMode || "B";
+
+  if (!obj || typeof obj !== "object") {
+    return { type: "reponse", text: "Désolé, réponse invalide. Réessaie.", meta: { mode, progress: { enabled: false } } };
+  }
+
+  if (!obj.type || typeof obj.type !== "string") {
+    return { type: "reponse", text: "Désolé, réponse invalide. Réessaie.", meta: { mode, progress: { enabled: false } } };
+  }
+
+  if (typeof obj.text !== "string") {
+    obj.text = String(obj.text || "");
+  }
+
+  // meta obligatoire sauf resultat
+  if (obj.type !== "resultat") {
+    if (!obj.meta || typeof obj.meta !== "object") {
+      obj.meta = { mode, progress: { enabled: false } };
+    } else {
+      if (!obj.meta.mode) obj.meta.mode = mode;
+      if (!obj.meta.progress) obj.meta.progress = { enabled: false };
+      if (typeof obj.meta.progress.enabled !== "boolean") obj.meta.progress.enabled = false;
+    }
+  } else {
+    // en resultat: pas de meta
+    if ("meta" in obj) delete obj.meta;
+    if ("choices" in obj) delete obj.choices;
+  }
+
+  return obj;
+}
+
 // ====== HANDLER PRINCIPAL ======
 export default async function handler(req, res) {
   // CORS
@@ -1724,23 +1759,43 @@ export default async function handler(req, res) {
     const lastUserMsgRaw = String(
       [...messages].reverse().find((m) => (m.role || "") === "user")?.content || ""
     );
-    const lastUserMsg = lastUserMsgRaw.normalize("NFKC").replace(/\u00A0/g, " ").replace(/[']/g, "'").trim().toLowerCase();
+    const lastUserMsg = lastUserMsgRaw
+      .normalize("NFKC")
+      .replace(/\u00A0/g, " ")
+      .replace(/[']/g, "'")
+      .trim()
+      .toLowerCase();
 
     const triggerModeC = /trouver\s+(la\s+)?cure/.test(lastUserMsg);
     const triggerModeA = /thyro[iï]de/.test(lastUserMsg);
     const triggerModeD = /dr\s+r[ée]simont/.test(lastUserMsg);
 
     const historyText = messages.map((m) => String(m.content || "")).join("\n");
-    const startedModeC = /analyser tes besoins/i.test(historyText) && /quel est ton pr[ée]nom/i.test(historyText);
-    const startedModeA = /quiz\s*:?\s*ma\s+thyro[iï]de/i.test(historyText) && /quel est ton pr[ée]nom/i.test(historyText);
+    const startedModeC =
+      /je vais te poser quelques questions/i.test(historyText) &&
+      /quel est ton pr[ée]nom/i.test(historyText);
+    const startedModeA =
+      /quiz\s*:?\s*ma\s+thyro[iï]de/i.test(historyText) &&
+      /quel est ton pr[ée]nom/i.test(historyText);
     const startedModeD = /je suis la m[ée]moire du dr.*r[ée]simont/i.test(historyText);
 
-    const activeMode = triggerModeD || startedModeD ? "D"
-      : triggerModeA || startedModeA ? "A"
-      : triggerModeC || startedModeC ? "C"
-      : null;
+    const activeMode =
+      triggerModeD || startedModeD
+        ? "D"
+        : triggerModeA || startedModeA
+        ? "A"
+        : triggerModeC || startedModeC
+        ? "C"
+        : "B";
 
-    const ROUTER_SYSTEM = activeMode === "D" ? "MODE D ACTIF" : activeMode === "A" ? "MODE A ACTIF" : activeMode === "C" ? "MODE C ACTIF" : "";
+    const ROUTER_SYSTEM =
+      activeMode === "D"
+        ? "MODE D ACTIF"
+        : activeMode === "A"
+        ? "MODE A ACTIF"
+        : activeMode === "C"
+        ? "MODE C ACTIF"
+        : "MODE B ACTIF";
 
     const LES_CURES_ALL_TRUNC = String(LES_CURES_ALL || "").slice(0, 25000);
     const COMPOSITIONS_TRUNC = String(COMPOSITIONS || "").slice(0, 25000);
@@ -1751,14 +1806,14 @@ DOCS SUPLEMINT
 ${activeMode === "A" ? `[QUESTION_THYROIDE]\n${QUESTION_THYROIDE}\n` : ""}
 ${activeMode === "C" ? `[QUESTION_ALL]\n${QUESTION_ALL}\n` : ""}
 ${activeMode !== "D" ? `[LES_CURES_ALL]\n${LES_CURES_ALL_TRUNC}\n[COMPOSITIONS]\n${COMPOSITIONS_TRUNC}\n` : ""}
-${!activeMode || activeMode === "B" ? `[SAV_FAQ]\n${SAV_FAQ_TRUNC}\n` : ""}
+${activeMode === "B" ? `[SAV_FAQ]\n${SAV_FAQ_TRUNC}\n` : ""}
 ${activeMode === "D" ? `[RESIMONT]\n${RESIMONT_TRUNC}\n` : ""}
 `.trim();
 
     const openAiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "system", content: NOW_SYSTEM },
-      ...(ROUTER_SYSTEM ? [{ role: "system", content: ROUTER_SYSTEM }] : []),
+      { role: "system", content: ROUTER_SYSTEM },
       { role: "system", content: DOCS_SYSTEM },
       ...messages.map((m) => ({
         role: m.role === "assistant" ? "assistant" : "user",
@@ -1795,22 +1850,32 @@ ${activeMode === "D" ? `[RESIMONT]\n${RESIMONT_TRUNC}\n` : ""}
     }
 
     const oaData = await oaRes.json();
-    let parsedReply;
-try {
-  parsedReply = JSON.parse(String(reply).trim());
-} catch (e) {
-  parsedReply = {
-    type: "reponse",
-    text: "Désolé, je n’ai pas pu générer une réponse valide. Peux-tu réessayer ?",
-    meta: { mode: activeMode || "B", progress: { enabled: false } },
-  };
-}
-    
-    res.status(200).json({
-      reply: String(reply).trim(),
-      conversationId: conversationId || null,
-    });
 
+    // ✅ LA VRAIE RÉPONSE EST ICI
+    const replyText = String(oaData?.choices?.[0]?.message?.content || "").trim();
+
+    // ✅ Parse JSON assistant
+    let parsedReply;
+    try {
+      parsedReply = JSON.parse(replyText);
+    } catch (e) {
+      console.error("JSON parse assistant failed:", e, "RAW:", replyText);
+      parsedReply = {
+        type: "reponse",
+        text: "Désolé, je n’ai pas pu générer une réponse valide. Peux-tu réessayer ?",
+        meta: { mode: activeMode, progress: { enabled: false } },
+      };
+    }
+
+    // ✅ Normalisation minimale (meta obligatoire sauf resultat)
+    parsedReply = normalizeAssistantJson(parsedReply, activeMode);
+
+    // ✅ On renvoie l’objet prêt pour le front
+    res.status(200).json({
+      reply: parsedReply,
+      conversationId: conversationId || null,
+      mode: activeMode,
+    });
   } catch (err) {
     console.error("THYREN error:", err);
     res.status(500).json({ error: "THYREN error", details: String(err) });
