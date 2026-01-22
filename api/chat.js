@@ -1755,38 +1755,71 @@ export default async function handler(req, res) {
 
     const NOW_SYSTEM = `DATE ET HEURE SYSTÈME: ${getBrusselsNowString()} (Europe/Brussels)`;
 
-    // Détection du mode
-    const lastUserMsgRaw = String(
-      [...messages].reverse().find((m) => (m.role || "") === "user")?.content || ""
-    );
-    const lastUserMsg = lastUserMsgRaw
-      .normalize("NFKC")
-      .replace(/\u00A0/g, " ")
-      .replace(/[']/g, "'")
-      .trim()
-      .toLowerCase();
+    // ====== DÉTECTION DU MODE (AMORCES + FALLBACK) ======
+const STARTERS = {
+  A: "Quiz : Ma thyroïde fonctionne-t-elle normalement ?",
+  C: "Quiz : Quelle cure est faite pour moi ?",
+  B: "J'ai une question - SAV",
+  D: "Qu'en pense le Dr Résimont ?",
+};
 
-    const triggerModeC = /trouver\s+(la\s+)?cure/.test(lastUserMsg);
-    const triggerModeA = /thyro[iï]de/.test(lastUserMsg);
-    const triggerModeD = /dr\s+r[ée]simont/.test(lastUserMsg);
+function detectStarterMode(raw) {
+  const msg = String(raw || "")
+    .normalize("NFKC")
+    .replace(/\u00A0/g, " ")
+    .trim();
+  if (msg === STARTERS.A) return "A";
+  if (msg === STARTERS.C) return "C";
+  if (msg === STARTERS.B) return "B";
+  if (msg === STARTERS.D) return "D";
+  return null;
+}
 
-    const historyText = messages.map((m) => String(m.content || "")).join("\n");
-    const startedModeC =
-      /je vais te poser quelques questions/i.test(historyText) &&
-      /quel est ton pr[ée]nom/i.test(historyText);
-    const startedModeA =
-      /quiz\s*:?\s*ma\s+thyro[iï]de/i.test(historyText) &&
-      /quel est ton pr[ée]nom/i.test(historyText);
-    const startedModeD = /je suis la m[ée]moire du dr.*r[ée]simont/i.test(historyText);
+const lastUserMsgRaw = String(
+  [...messages].reverse().find((m) => (m.role || "") === "user")?.content || ""
+);
 
-    const activeMode =
-      triggerModeD || startedModeD
-        ? "D"
-        : triggerModeA || startedModeA
-        ? "A"
-        : triggerModeC || startedModeC
-        ? "C"
-        : "B";
+// 1️⃣ priorité absolue : bouton / payload exact
+const starterMode = detectStarterMode(lastUserMsgRaw);
+
+// 2️⃣ fallback intention (si l’utilisateur tape à la main)
+const lastUserMsg = lastUserMsgRaw
+  .normalize("NFKC")
+  .replace(/\u00A0/g, " ")
+  .replace(/[']/g, "'")
+  .trim()
+  .toLowerCase();
+
+const triggerModeD = /dr\s+r[ée]simont/.test(lastUserMsg);
+const triggerModeC =
+  /quiz\s*:?\s*quelle\s+cure|quelle\s+cure\s+est\s+faite\s+pour\s+moi|trouver\s+(la\s+)?cure/.test(
+    lastUserMsg
+  );
+const triggerModeA =
+  /quiz\s*:?\s*ma\s+thyro[iï]de|ma\s+thyro[iï]de\s+fonctionne-t-elle/.test(
+    lastUserMsg
+  );
+
+// 3️⃣ historique (mode déjà lancé)
+const historyText = messages.map((m) => String(m.content || "")).join("\n");
+const startedModeC =
+  /quelle cure est faite pour moi/i.test(historyText) &&
+  /quel est ton pr[ée]nom/i.test(historyText);
+const startedModeA =
+  /ma thyro[iï]de fonctionne-t-elle normalement/i.test(historyText) &&
+  /quel est ton pr[ée]nom/i.test(historyText);
+const startedModeD = /je suis la m[ée]moire du dr.*r[ée]simont/i.test(historyText);
+
+// ✅ décision finale
+const activeMode = starterMode
+  ? starterMode
+  : startedModeD || triggerModeD
+  ? "D"
+  : startedModeC || triggerModeC
+  ? "C"
+  : startedModeA || triggerModeA
+  ? "A"
+  : "B";
 
     const ROUTER_SYSTEM =
       activeMode === "D"
