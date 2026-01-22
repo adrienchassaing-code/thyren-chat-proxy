@@ -1771,7 +1771,7 @@ ${activeMode === "D" ? `[RESIMONT]\n${RESIMONT_TRUNC}\n` : ""}
         messages: openAiMessages,
         response_format: { type: "json_object" },
         temperature: 0,
-        max_tokens: 3000,
+        max_tokens: 5000,
       }),
       signal: controller.signal,
     });
