@@ -1659,6 +1659,7 @@ MODE D SPÉCIFIQUE (MÉMOIRE DR RÉSIMONT) :
 FIN DU PROMPT THYREN 2.1 — VERSION OPTIMISÉE CONCISE
 ═══════════════════════════════════════════════════════════════════
 `;
+
 // ====== Fonction utilitaire ======
 function getBrusselsNowString() {
   const now = new Date();
