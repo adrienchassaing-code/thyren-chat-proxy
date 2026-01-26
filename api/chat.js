@@ -1562,16 +1562,32 @@ function assistantContentToText(content) {
 // Convertit content user en texte (robuste UI)
 // ==============================
 function contentToText(content) {
-  if (content && typeof content === "object") {
-    if (typeof content.text === "string") return content.text;
-    if (typeof content.label === "string") return content.label;
-    if (typeof content.value === "string") return content.value;
-    if (typeof content.message === "string") return content.message;
-    return JSON.stringify(content);
-  }
-  return String(content || "");
-}
+  if (content == null) return "";
 
+  // string/number/bool
+  if (typeof content !== "object") return String(content);
+
+  // ✅ cas fréquents (direct)
+  if (typeof content.text === "string") return content.text;
+  if (typeof content.label === "string") return content.label;
+  if (typeof content.value === "string") return content.value;
+  if (typeof content.message === "string") return content.message;
+  if (typeof content.title === "string") return content.title;
+  if (typeof content.choice === "string") return content.choice;
+  if (typeof content.name === "string") return content.name;
+
+  // ✅ cas fréquents (nested)
+  if (content.payload) return contentToText(content.payload);
+  if (content.data) return contentToText(content.data);
+  if (content.action) return String(content.action); // utile si bouton envoie une action
+
+  // fallback
+  try {
+    return JSON.stringify(content);
+  } catch {
+    return "[Unserializable object]";
+  }
+}
 // ==============================
 // Date Bruxelles
 // ==============================
@@ -1652,17 +1668,26 @@ const STARTERS = {
 };
 
 function detectStarterMode(raw) {
-  const msg = normalizeText(raw);
-  if (msg === STARTERS.A) return "A";
-  if (msg === STARTERS.C) return "C";
-  if (msg === STARTERS.B) return "B";
+  const msg = normalizeSoft(raw).toLowerCase();
+
+  // match exact OU contenu dans un objet stringifié OU variations
+  if (msg.includes("quiz") && msg.includes("thyro")) return "A";
+  if (msg.includes("quiz") && msg.includes("quelle cure")) return "C";
+  if (msg.includes("sav") || msg.includes("j'ai une question")) return "B";
+
+  // fallback exact si jamais
+  if (normalizeText(raw) === STARTERS.A) return "A";
+  if (normalizeText(raw) === STARTERS.C) return "C";
+  if (normalizeText(raw) === STARTERS.B) return "B";
+
   return null;
 }
+
 
 function detectModeFromHistoryMeta(messages) {
   try {
     const lastAssistant = [...messages].reverse().find((m) => (m.role || "") === "assistant");
-    const metaMode = lastAssistant?.meta?.mode;
+    const metaMode = lastAssistant?.content?.meta?.mode;
     return metaMode === "A" || metaMode === "B" || metaMode === "C" ? metaMode : null;
   } catch {
     return null;
@@ -1740,7 +1765,7 @@ export default async function handler(req, res) {
     // -------- Mode detection --------
     const starterMode = detectStarterMode(lastUserMsgRaw);
     const historyMetaMode = detectModeFromHistoryMeta(messages);
-    const historyText = messages.map((m) => String(m.content || "")).join("\n");
+    const historyText = messages.map((m) => contentToText(m.content)).join("\n");
     const intentMode = detectIntentMode(lastUserMsgRaw, historyText);
 
     const activeMode = starterMode || historyMetaMode || intentMode || "B";
