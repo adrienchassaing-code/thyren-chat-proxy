@@ -1671,10 +1671,29 @@ const STARTERS = {
 function detectStarterMode(raw) {
   const msg = normalizeSoft(raw).toLowerCase();
 
-  // match exact OU contenu dans un objet stringifié OU variations
-  if (msg.includes("quiz") && msg.includes("thyro")) return "A";
-  if (msg.includes("quiz") && msg.includes("quelle cure")) return "C";
-  if (msg.includes("sav") || msg.includes("j'ai une question")) return "B";
+  // MODE A - Plusieurs patterns pour thyroïde
+  if (msg.includes("quiz") && (
+    msg.includes("thyro") || 
+    msg.includes("thyroi") || 
+    msg.includes("thyroï") ||
+    /ma\s+thyro[iï]de/i.test(msg) ||
+    msg.includes("fonctionne-t-elle normalement")
+  )) {
+    return "A";
+  }
+
+  // MODE C - Quiz cure
+  if (msg.includes("quiz") && (
+    msg.includes("quelle cure") ||
+    msg.includes("cure est faite")
+  )) {
+    return "C";
+  }
+
+  // MODE B - SAV
+  if (msg.includes("sav") || msg.includes("j'ai une question")) {
+    return "B";
+  }
 
   // fallback exact si jamais
   if (normalizeText(raw) === STARTERS.A) return "A";
