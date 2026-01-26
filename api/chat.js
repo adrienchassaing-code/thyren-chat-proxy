@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 // ==============================
-// ✅ Lecture fichiers DATA (texte)
+// Lecture fichiers DATA (texte)
 // ==============================
 const readDataFile = (filename) => {
   try {
@@ -15,7 +15,7 @@ const readDataFile = (filename) => {
 };
 
 // ==============================
-// ✅ Lecture fichiers DATA (JSON)
+// Lecture fichiers DATA (JSON)
 // ==============================
 const readJsonFile = (filename) => {
   const raw = readDataFile(filename);
@@ -29,7 +29,7 @@ const readJsonFile = (filename) => {
 };
 
 // ==============================
-// ✅ Clamp texte (uniquement TEXTE)
+// Clamp texte (uniquement TEXTE)
 // ==============================
 function clampText(str, maxLen) {
   const s = String(str || "");
@@ -38,7 +38,7 @@ function clampText(str, maxLen) {
 }
 
 // ==============================
-// ✅ Résumé JSON "safe" (PAS de slice() sur JSON)
+// Résumé JSON "safe" (PAS de slice() sur JSON)
 // ==============================
 function summarizeJsonForPrompt(input, opts = {}) {
   const {
@@ -129,18 +129,16 @@ function safeJsonStringifyForPrompt(obj, maxChars = 25000) {
 }
 
 // ==============================
-// ✅ Base de connaissances (tout en JSON + SAV en texte)
+// Base de connaissances (tout en JSON + SAV en texte)
 // ==============================
-// ✅ Tu m'as dit : QUESTION_THYROIDE et QUESTION_ALL sont en JSON
 const QUESTION_THYROIDE_JSON = readJsonFile("QUESTION_THYROIDE.json");
 const QUESTION_ALL_JSON = readJsonFile("QUESTION_ALL.json");
-
 const LES_CURES_ALL_JSON = readJsonFile("LES_CURES_ALL.json");
 const COMPOSITIONS_JSON = readJsonFile("COMPOSITIONS.json");
 
 const SAV_FAQ = readDataFile("SAV_FAQ.json");
 
-// ✅ versions injectées dans le prompt (safe)
+// versions injectées dans le prompt (safe)
 const QUESTION_THYROIDE_TRUNC = safeJsonStringifyForPrompt(QUESTION_THYROIDE_JSON, 25000);
 const QUESTION_ALL_TRUNC = safeJsonStringifyForPrompt(QUESTION_ALL_JSON, 25000);
 const LES_CURES_ALL_TRUNC = safeJsonStringifyForPrompt(LES_CURES_ALL_JSON, 25000);
@@ -1417,7 +1415,7 @@ Pour des questions SAV, informations générales, etc., proposer des choices pou
 
 8.5.4 Questions de clarification AVANT recommandation (VERSION CONCISE)
 Si tu as besoin de précisions avant de recommander, pose des questions qui ont un OBJECTIF DIAGNOSTIQUE.
-**RÈGLE : Maximum 2-3 phrases par question de clarification.**
+RÈGLE : Maximum 2-3 phrases par question de clarification.
 
 8.6 RÈGLES DE FORMULATION DES BOUTONS
 - Court : 3 à 8 mots maximum par bouton
@@ -1445,17 +1443,17 @@ TOUS MODES :
 - JAMAIS redemander une info déjà donnée (prénom, âge, sexe, allergies)
 - JAMAIS poser une question sans lien avec la réponse précédente
 - JAMAIS dire "Merci pour cette précision" sans reformuler ce qui a été dit
-- **JAMAIS reformuler des infos purement factuelles : "tu es un homme", "tu t'appelles Paul", "tu as 35 ans"**
-- **JAMAIS lister les choix dans le texte : "As-tu A, B, C, ou D ?" → juste "Quel est ton âge ?"**
-- **JAMAIS écrire "Oui ou Non" dans une question quand ces choix sont dans les boutons**
+- JAMAIS reformuler des infos purement factuelles : "tu es un homme", "tu t'appelles Paul", "tu as 35 ans"
+- JAMAIS lister les choix dans le texte : "As-tu A, B, C, ou D ?" → juste "Quel est ton âge ?"
+- JAMAIS écrire "Oui ou Non" dans une question quand ces choix sont dans les boutons
 - JAMAIS proposer 3 cures sans hiérarchie claire (essentielle > soutien > confort)
-- **JAMAIS mentionner une cure par son nom sans la présenter selon le format 4.6 complet (14 lignes) ⚠️ ERREUR CRITIQUE**
-- **JAMAIS dire "La cure X contient..." ou "Je te recommande la cure Y" sans appliquer immédiatement le format 4.6 complet**
-- **JAMAIS sauter la réponse à une question SPÉCIFIQUE (composition, posologie, effets) pour aller direct au format 4.6 - RÉPONDRE D'ABORD ⚠️**
+- JAMAIS mentionner une cure par son nom sans la présenter selon le format 4.6 complet (14 lignes) ERREUR CRITIQUE
+- JAMAIS dire "La cure X contient..." ou "Je te recommande la cure Y" sans appliquer immédiatement le format 4.6 complet
+- JAMAIS sauter la réponse à une question SPÉCIFIQUE (composition, posologie, effets) pour aller direct au format 4.6 - RÉPONDRE D'ABORD
 - JAMAIS mentionner une cure sans expliquer ses ingrédients actifs et leur mécanisme
 - JAMAIS donner une explication générique ("peut aider", "est bon pour") sans préciser COMMENT
 - JAMAIS présenter moins de 3 ingrédients en détail dans une cure
-- JAMAIS oublier les lignes 5 et 6 du format 4.6 ⚠️ ERREUR CRITIQUE
+- JAMAIS oublier les lignes 5 et 6 du format 4.6 ERREUR CRITIQUE
 - JAMAIS oublier la date JJ/MM/AAAA dans la timeline
 - JAMAIS être froid ou distant dans le ton
 - JAMAIS ignorer un symptôme mentionné par l'utilisateur
@@ -1464,10 +1462,10 @@ TOUS MODES :
 - JAMAIS laisser {{AI_PREV_INTERPRETATION}} vide ou générique
 - JAMAIS poser un diagnostic médical
 - JAMAIS promettre de guérison
-- JAMAIS recommander une cure en MODE C avant d'avoir posé MINIMUM 5 questions cliniques ⚠️
+- JAMAIS recommander une cure en MODE C avant d'avoir posé MINIMUM 5 questions cliniques
 - JAMAIS oublier d'ajouter un micro-tip éducatif sur les ingrédients (MODES A, B, C)
-- **JAMAIS écrire plus de 3 phrases entre deux questions du quiz (sauf présentation de cure)**
-- **JAMAIS écrire des pavés de texte : rester CONCIS**
+- JAMAIS écrire plus de 3 phrases entre deux questions du quiz (sauf présentation de cure)
+- JAMAIS écrire des pavés de texte : rester CONCIS
 
 ═══════════════════════════════════════════════════════════════════
 11. CHECKLIST AVANT CHAQUE RÉPONSE
@@ -1479,9 +1477,9 @@ CONCISION (NOUVEAU - PRIORITÉ ABSOLUE) :
 - Ma réponse fait-elle moins de 3 phrases entre deux questions du quiz ?
 - Ai-je éliminé tout texte superflu ?
 - Chaque phrase a-t-elle une fonction précise (écoute/mécanisme/tip/question) ?
-- **Ai-je évité de reformuler des infos factuelles (prénom, sexe, âge) ?**
-- **Ai-je évité de lister les choix dans le texte (ils sont dans les boutons) ?**
-- **Ma question est-elle directe sans énumérer les options ?**
+- Ai-je évité de reformuler des infos factuelles (prénom, sexe, âge) ?
+- Ai-je évité de lister les choix dans le texte (ils sont dans les boutons) ?
+- Ma question est-elle directe sans énumérer les options ?
 
 ÉCOUTE & EMPATHIE :
 - Ai-je reformulé ce que l'utilisateur a dit en 1 phrase ?
@@ -1494,13 +1492,13 @@ PROFONDEUR CLINIQUE :
 - Ai-je ajouté un micro-tip sur un ingrédient pertinent en 1 phrase ?
 
 RECOMMANDATION :
-- **Si l'utilisateur pose une question SPÉCIFIQUE sur une cure (composition, posologie, effets), ai-je répondu D'ABORD avant le format 4.6 ? ⚠️ PRIORITÉ ABSOLUE**
-- **Si je mentionne une cure par son nom, ai-je appliqué le format .6 COMPLET avec les 14 lignes ? ⚠️ PRIORITÉ ABSOLUE**
-- **Ai-je vérifié que je ne parle PAS d'une cure en texte simple sans la présenter selon le format 4.6 ?**
+- Si l'utilisateur pose une question SPÉCIFIQUE sur une cure (composition, posologie, effets), ai-je répondu D'ABORD avant le format 4.6 ? PRIORITÉ ABSOLUE
+- Si je mentionne une cure par son nom, ai-je appliqué le format .6 COMPLET avec les 14 lignes ? PRIORITÉ ABSOLUE
+- Ai-je vérifié que je ne parle PAS d'une cure en texte simple sans la présenter selon le format 4.6 ?
 - Si je recommande une cure, ai-je appliqué le format 4.6 COMPLET avec les 12 lignes ?
 - Ai-je expliqué minimum 3 ingrédients en GRAS avec leur action en 2-3 phrases CONCISES (ligne 6) ?
 - Ai-je donné une timeline d'effets avec une date JJ/MM/AAAA précise en 2-3 phrases (ligne 9) ?
-- Les lignes 4, 6 et 8 du format 4.6 sont-elles présentes ? ⚠️
+- Les lignes 4, 6 et 8 du format 4.6 sont-elles présentes ?
 - Les 3 CTAs sont-ils présents pour faciliter l'achat ?
 
 TECHNIQUE :
@@ -1509,7 +1507,7 @@ TECHNIQUE :
 - Ai-je évité tous les anti-patterns ?
 
 MODE C SPÉCIFIQUE :
-- Ai-je posé MINIMUM 5 questions cliniques avant de recommander ? ⚠️
+- Ai-je posé MINIMUM 5 questions cliniques avant de recommander ?
 - Ai-je systématiquement évalué les 6 axes fonctionnels ?
 - Ai-je identifié l'axe prioritaire avec CERTITUDE ?
 
@@ -1519,7 +1517,7 @@ FIN DU PROMPT THYREN 2.1 — VERSION OPTIMISÉE CONCISE
 `;
 
 // ==============================
-// ✅ Utilitaires texte / normalisation
+// Utilitaires texte / normalisation
 // ==============================
 function normalizeText(raw) {
   return String(raw || "")
@@ -1534,7 +1532,7 @@ function normalizeSoft(raw) {
     .replace(/\s+/g, " ");
 }
 
-// ✅ Convertit content assistant en texte (robuste si content est déjà un objet)
+// Convertit content assistant en texte (robuste si content est déjà un objet)
 function assistantContentToText(content) {
   // si ton front envoie déjà un objet
   if (content && typeof content === "object") {
@@ -1561,7 +1559,21 @@ function assistantContentToText(content) {
 }
 
 // ==============================
-// ✅ Date Bruxelles
+// Convertit content user en texte (robuste UI)
+// ==============================
+function contentToText(content) {
+  if (content && typeof content === "object") {
+    if (typeof content.text === "string") return content.text;
+    if (typeof content.label === "string") return content.label;
+    if (typeof content.value === "string") return content.value;
+    if (typeof content.message === "string") return content.message;
+    return JSON.stringify(content);
+  }
+  return String(content || "");
+}
+
+// ==============================
+// Date Bruxelles
 // ==============================
 function getBrusselsNowString() {
   const now = new Date();
@@ -1585,7 +1597,7 @@ function getBrusselsNowString() {
 }
 
 // ==============================
-// ✅ Validation/normalisation réponse assistant
+// Validation/normalisation réponse assistant
 // ==============================
 function normalizeAssistantJson(obj, fallbackMode) {
   const mode = fallbackMode || "B";
@@ -1631,7 +1643,7 @@ function normalizeAssistantJson(obj, fallbackMode) {
 }
 
 // ==============================
-// ✅ Détection MODE (OPTIMISÉE)
+// Détection MODE (OPTIMISÉE)
 // ==============================
 const STARTERS = {
   A: "Quiz : Ma thyroïde fonctionne-t-elle normalement ?",
@@ -1684,7 +1696,7 @@ function detectIntentMode(lastUserMsgRaw, historyText) {
 }
 
 // ==============================
-// ✅ Handler principal
+// Handler principal
 // ==============================
 export default async function handler(req, res) {
   // -------- CORS --------
@@ -1722,10 +1734,9 @@ export default async function handler(req, res) {
     }
 
     // -------- Dernier message user --------
-    const lastUserMsgRaw = String(
-      [...messages].reverse().find((m) => (m.role || "") === "user")?.content || ""
-    );
-
+    const lastUserMsgRaw = contentToText(
+    [...messages].reverse().find((m) => (m.role || "") === "user")?.content
+    ).trim();
     // -------- Mode detection --------
     const starterMode = detectStarterMode(lastUserMsgRaw);
     const historyMetaMode = detectModeFromHistoryMeta(messages);
@@ -1761,7 +1772,7 @@ ${`[LES_CURES_ALL]\n${LES_CURES_ALL_TRUNC}\n[COMPOSITIONS]\n${COMPOSITIONS_TRUNC
       ...messages.map((m) => ({
         role: m.role === "assistant" ? "assistant" : "user",
         content:
-          m.role === "assistant" ? assistantContentToText(m.content) : String(m.content || ""),
+          m.role === "assistant" ? assistantContentToText(m.content) : contentToText(m.content || ""),
       })),
     ];
 
@@ -1813,7 +1824,7 @@ ${`[LES_CURES_ALL]\n${LES_CURES_ALL_TRUNC}\n[COMPOSITIONS]\n${COMPOSITIONS_TRUNC
     // -------- Normalisation minimale --------
     parsedReply = normalizeAssistantJson(parsedReply, activeMode);
 
-    // ✅ Réponse front
+    // Réponse front
     res.status(200).json({
       reply: parsedReply,
       conversationId: conversationId || null,
