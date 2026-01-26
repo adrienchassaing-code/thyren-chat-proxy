@@ -1668,15 +1668,19 @@ const STARTERS = {
   B: "J'ai une question - SAV",
 };
 
-function detectStarterMode(raw) {
-  const msg = normalizeSoft(raw).toLowerCase();
+function stripDiacritics(s) {
+  return String(s || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
 
-  // MODE A - Plusieurs patterns pour thyroïde
+function detectStarterMode(raw) {
+  const msg = stripDiacritics(normalizeSoft(raw)).toLowerCase();
+
+  // MODE A - Quiz thyroïde (accent-insensitive)
   if (msg.includes("quiz") && (
-    msg.includes("thyro") || 
-    msg.includes("thyroi") || 
-    msg.includes("thyroï") ||
-    /ma\s+thyro[iï]de/i.test(msg) ||
+    msg.includes("thyro") ||
+    /ma\s+thyroide/i.test(msg) ||
     msg.includes("fonctionne-t-elle normalement")
   )) {
     return "A";
@@ -1695,13 +1699,15 @@ function detectStarterMode(raw) {
     return "B";
   }
 
-  // fallback exact si jamais
-  if (normalizeText(raw) === STARTERS.A) return "A";
-  if (normalizeText(raw) === STARTERS.C) return "C";
-  if (normalizeText(raw) === STARTERS.B) return "B";
+  // fallback exact (mais accent-insensitive aussi)
+  const exact = stripDiacritics(normalizeText(raw)).toLowerCase();
+  if (exact === stripDiacritics(STARTERS.A).toLowerCase()) return "A";
+  if (exact === stripDiacritics(STARTERS.C).toLowerCase()) return "C";
+  if (exact === stripDiacritics(STARTERS.B).toLowerCase()) return "B";
 
   return null;
 }
+
 
 
 function detectModeFromHistoryMeta(messages) {
