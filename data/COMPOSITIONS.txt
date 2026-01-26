@@ -1,93 +1,705 @@
-COMPOSITIONS 0.8.3
-Voici la liste des gélules capsule comprimée, leurs compositions comprises dans les cures SUPLEMINT® si tu dois les décrire ou intégrer dans ton raisonnement utilise uniquement des allégations validées par l’ AFSCA.
-Gélule YAM® :
-INGRÉDIENT(S) : Extrait de Yam (500 mg), pullulan.
-ADRENO+® :
-INGRÉDIENT(S) :Gélule = pullulane; Poudre d'algue Klamath (Aphanizomenon flos-aquae)(200 mg dont phycocianine 11,3%22,6 mg), extrait de Bacopa monnieri(150mg dont bacosides 50%75 mg), gélule : pullulane, poudre de ginsgeng HRG80™ (50 mg), extrait de Panax ginseng CA Meyer (50 mg dont ginsenoïdes totaux11.45 mg /dont ginseng rares 5 mg), Oryza sativa L., extrait de Ginkgo biloba(60 mg dont glycoside de flavonol 24 %14,4 mg / dont terpéno-lactones 6 %3,6 mg), L-Tyrosine 37,5 mg.
-Gélule OESTROBOOST® :
-INGRÉDIENT(S) : Extrait de houblon (Humulus lupulus) 262,5 mg, gélule : pullulane, extrait de houblon (Lifenol®) 62,5 mg, extrait de sauge sclarée (Salvia sclarea) 25 mg, extrait de sauge officinale (Salvia officinalis) 25mg
-Gélule BOURRACHE + ONAGRE® :
-INGRÉDIENT(S) : Huile de bourrache (Borago officinalis L.) 750 mg, huile d’onagre (Oenothera biennis L.) 750 mg, capsule gélatine, glycérol (humectant), eau, d-α tocophérol 22,5 mg.
-Gélule MULTI VIT® :
-INGRÉDIENT(S) : Gélule pullulane, bisglycinate de zinc (60 mg dont zinc élément 15 mg [150%]), vit. B3 (nicotinamide) 54 mg [338%], co-enzyme Q10 (ubiquinone) 50 mg, amidon de riz, farine de riz, bio-flavonoïdes d'agrumes (Citrus sinensis) 33,33 mg, N-AcétylCystéine 33,33 mg, quercétine 33,33 mg, acide alphalipoïque 33,33 mg, myrtille (Vaccinium myrtillus L.) 33,33 mg, vit. C (acide L-ascorbique) 26,67 mg [33%], levure de sélénium (25 mg dont sélénium élément 50 µg [91%]), vit. B5 (D-Pantothénate de calcium) 18 mg [300%], vit. E naturelle (Vitaphérole®) 12 mg [100%], huile de colza, rutine 6,67 mg, vit. B1 (chlorhydrate de thiamine) 3,6 mg [327%], lycopène 2,5 mg, vit. B2 (riboflavine 2,4 mg [171%], oléorésine riche en astaxanthine extrait de l'algue d'Haematococcus pluvialis 2 mg, lutéine 2 mg, vit. B6 (pyridoxal phosphate) 1,94 mg [139%], bêtacarotène 1,60 mg, vit. B8 (D-biotine) 450 µg [900%], zéaxanthine 400 µg, vit. B9 - acide (6S)-5-méthyltétrahydrofolique sous forme de sel de glucosamine (Quatrefolic®) 200 µg [100%], iodure de potassium 150 µg (dont iode élément 114,6 µg [76%]), menaquinone (vitamine K2) (synthétique) (source microbienne) 75µg [100%], vit. D3 (cholécalciférol) 25 µg/1000 UI [500%], vit. B12 (méthylcobalamine 1,6 µg [64%], vit. B12 : hydroxycobalamine 1,6 µg [64%].
-Gélule ENZYM+® :
-INGRÉDIENT(S) :  Bromélaïne (100 mg), gélule gastrorésistante d'origine végétale (DRcaps™) : hydroxypropylmethylcellulose (HPMC),amidon de riz, papaïne (75 mg), gingembre (Zingiber officinale ; 50 mg), Oryza sativa, amylase (25 mg), lipase (25 mg), protéase issue du ficus carica (25 mg), trypsine (25 mg), huile de colza (Brassica napus L.).
-Gélule THYROÏDE+® :
-INGRÉDIENT(S) : Guggul (Commiphora mukul) 266 mg dont 26,6 mg de guggulstérones, gélule : pullulane, ashwagandha (KSM 66®) (Withania somnifera) 200 mg dont 10 mg de withanolides, L-tyrosine (166,6 mg), fucus vésiculeux (Fucus vesiculosus) 160 mg dont 100 µg d’iode (VNR* : 66.6%),Oryza sativa, Sophora Japonica, bisglycinate de zinc 33,33 mg dont 10 mg de zinc(VNR*= 100%), levure de sélénium 18,3 mg dont 36,6 µg de sélénium (VNR*= 66.6%), amidon de riz, gluconate de manganèse 5,4 mg dont 0,66 mg de manganèse (VNR*= 33,3%), méthylcobalamine 8,3 µg (VNR*= 333,3%).
+{
+  "version": "0.8.3",
+  "capsules": {
+    "YAM": {
+      "display_name": "Gélule YAM®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Extrait de Yam", "amount_mg": 500 },
+        { "name": "Pullulan", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": ["yam"],
+      "notes": ""
+    },
 
-Gélule L-TYRO TOP® :
-INGRÉDIENT(S) :  L-Tyrosine (125 mg), amidon de riz, gélule : pullulane, acide ascorbique (30 mg, VNR*= 37,5%),farine de riz, nicotinamide (6 mg , VNR*= 37,5 %), riboflavine (525 µg, VNR*= 37,5%), chlorhydrate de pyridoxine (525 µg, VNR*= 37,5%) , acide (6S)-5-méthyltétrahydrofolique sous forme de sel de glucosamine (Quatrefolic®) (75 µg, VNR*= 37,5%), methylcobalamine (0,94 µg , VNR*= 37,5 %).
-Gélule L-TYRO ACTIV® :
-INGRÉDIENT(S) : L-Tyrosine 500 mg, gélule : pullulane.
-Capsule MAG TOP® :
-INGRÉDIENT(S) : Bisglycinate de magnésium (700 mg dont 70mg de magnesium élément), glycérophosphate de magnésium (700 mg dont 81.9 mg de magnésium élément), malate de magnésium (250 mg dont 37,5 mg de magnésium élément), hydroxypropylmethylcellulose, acide stéarique (agent d'enrobage), glycéryldibéhénate, poudre d'huile de colza (Brassica napus L.)(Boeson).
-Gélule PHENOL+® :
-INGRÉDIENT(S) : pullulane, extrait de romarin (Rosmarinus officinalis)(100 mg dont 6 % d’acide rosmarinique), MitoActiv™ (extrait de cassis (Ribes nigrum) + extrait de groseille (Ribes rubrum) dont 10% de polyphénols), extrait de sophorée du japon (Sophora japonica) (50 mg dont 98 % de quercétine), extrait de pépin raisin (Vitis vinifera L.)(50 mg dont 40 % d’OPC et 30% de monomères), extrait de cacao (Theobroma cacao) (50 mg dont 10% de polyphénols), extrait de grenade (Punica granatum) (50 mg dont 90% d’acide ellagique), extrait d'orange (Citrus sinensis) (50 mg dont 45% de polyphénols), extrait de feuille d'olivier (Olea europaea)(50 mg dont 20% d’hydroxytyrosol), extrait de myrtille (Vaccinium myrtillus)(50 mg dont 10% de polyphénols), extrait d'écorce de pin sylvestre (Pinus sylvestris).
-Gélule ANTIOX® :
-INGRÉDIENT(S) : Acérola (Malpighia glabra L.) 160 mg dont 25% de vitamine C, gélule : pullulane; thé vert (Camellia sinensis) 125 mg (Présence de caféine; Q ≤ 10 mg), Resvératrol (100 mg), Co-enzyme Q10 (100 mg), raisin (Vitis vinifera L.) (52,64 mg dont 50 mg d'Oligo-proanthocyanidines), amidon de riz bio.
-Capsule KRILL® :
-INGRÉDIENT(S) : Extrait lipidique de crustacés krill de l'Antarctique (Euphausia superba) (590 mg dont phospholipides totaux 330 mg, oméga 3 totaux 160 mg (EPA + DHA = 125 mg), choline 41.12 mg et astaxanthine 60 µg), gélule : gélatine de poisson.
-Capsule KLAMATH® :
-INGRÉDIENT(S) : Poudre d'algue Klamath (Aphanizomenon flos-aquae)(200 mg dont phycocianine 11,3%22,6 mg), extrait de Bacopa monnieri(150mg dont bacosides 50%75 mg), gélule : pullulane, poudre de ginsgeng HRG80™ (50 mg), extrait de Panax ginseng CA Meyer (50 mg dont ginsenoïdes totaux11,45 mg /dont ginseng rares 5 mg), Oryza sativa L., extrait de Ginkgo biloba(60 mg dont glycoside de flavonol 24 %14,4 mg / dont terpéno-lactones 6 %3,6 mg), L-Tyrosine 37,5 mg.* Valeurs nutritionnelles de référence.
-Capsule OMEGA 3® :
-INGRÉDIENT(S) : Huile de poisson (huile de qualité EPAX) 1000 mg dont omega-3 EPA + DHA 700 mg (EPA min. 400mg et DHA min. 300mg), capsule : gélatine de poisson, glycérol (agent de texture), cire d'abeille blanche (agent d'enrobage), eau, lécithine (agent de texture).
-Gélule BIO ACTIV® :
-INGRÉDIENT(S) : Fibre d'acacia bio (épaississant), gélule/capsule (DRcaps™) : hydroxypropylmethylcellulose (HPMC) gastrorésistante d'origine végétale , Lactobacillus acidophilus (3,32 milliards), Lactobacillus rhamnosus (3,32 milliards), Bifidobacterium bifidum (3,32 milliards), Bifidobacterium longum (3,32 milliards), Bifidobacterium lactis (3,32 milliards), Streptococcus thermophilus (3,32 milliards).
-Gélule B9 4FOLIC® :
-INGRÉDIENT(S) : Fibre d'acacia BIO(épaississant), gélule : pullulane, acide folique (acide (6S)-5- méthyltétrahydrofolique sous forme de sel de glucosamine)(360 μg ; VNR = 180%).
-Gélule MG MALATE®
-INGRÉDIENT(S) : Malate de magnésium (1500 mg dont 225 mg de magnésium élément, VNR* = 60%), gélule : gélatine bovine, gomme d’acacia bio (épaississant).
-Capsule SVELT OMEGA 3® :
-INGRÉDIENT(S) : Huile de Calanus finmarchicus (crustacés) 1000 mg, Gélatine de poisson
-Gélule BERBERINE ACTIV® :
-INGRÉDIENT(S) : Berbérine HB® 375 mg, Gélule en pullulan
-Capsule COQ10® :
-INGRÉDIENT(S) : Co-enzyme Q10 LEO HB, gélule : pullulane, fibre d'acacia.
-Gélule ACETYL CARN® :
-INGRÉDIENT(S) : Acétyl-L-Carnitine 1500 mg, Gélule en pullulan
-Gélule ENZYM+® :
-INGRÉDIENT(S) :  Bromélaïne (100 mg), gélule gastrorésistante d'origine végétale (DRcaps™) : hydroxypropylmethylcellulose (HPMC), amidon de riz, papaïne (75 mg), gingembre (Zingiber officinale ; 50 mg), Oryza sativa, amylase (25 mg), lipase (25 mg), protéase issue du Ficus carica (25 mg), trypsine (25 mg), huile de colza (Brassica napus L.).
-Gélule GASTRATOP® : 
-INGRÉDIENT(S) : Gamma-Oryzanol (250 mg), fucus vésiculeux (Fucus vesiculosus ; 120 mg dont 75 µg d’iode , VNR*= 50%), gélule : pullulane, réglisse (Glycyrrhiza glabra) déglycyrrhizinée (50 mg), vitamine U (DL-Methionine Methylsulfonium Chloride ; 50 mg), Oryza sativa, huile de colza (Brassica napus L.), L-Cystéine (2,5 mg), vitamine B1 (thiamine mononitrate ; 0,62 mg, VNR*= 56,4%).
-Gélule TRANSITEAM® : 
-INGRÉDIENT(S) : Enveloppe de psyllium (1500 mg) (Plantago ovata), gomme d'acacia bio, gélule : pullulane, Lactobacillus acidophilus (1250 millions), Lactobacillus rhamnosus (1250 millions), Bifidobacterium bifidum (1250 millions), Bifidobacterium longum (1250 millions), Bifidobacterium lactis (1250 millions), Streptococcus thermophilus (1250 millions).
-Gélule VITAMINE C® :
-INGRÉDIENT(S) : Vitamine C (acide L-ascorbique) 650 mg ; VNR* = 821%, gélule : pullulane.
-Gélule MAGNESIUM+®
-INGRÉDIENT(S) : Glycérophosphate de magnésium 741,88 mg, bisglycinate de magnésium 300 mg (magnésium élément total = 146,8 mg ; VNR* = 39%), taurine 200 mg, gomme arabique (épaississant), hydroxypropylmethylcellulose (gélule), huile de colza (Brassica napus L.), amidon de riz, farine de riz, acide stéarique (agent d'enrobage), nicotinamide (17 mg ; VNR* = 106%), acide pantothénique (9 mg ; VNR* = 150%), pyridoxine (3,4 mg ; VNR* = 243%), thiamine (3,2 mg ; VNR* = 290%), riboflavine (2 mg ; VNR* = 143%), d-biotine (150 μg ; VNR* = 300%), acide folique (100 μg ; VNR* = 50%), cholécalciférol (7,5 μg ; VNR* = 150%), méthylcobalamine (2 μg ; VNR* = 80%).
-Gélule MELATOP® :
-INGRÉDIENT(S) : Gélule = pullulane; valériane (Valeriana officinalis L.)(250 mg); lavande (Lavandula angustifolia Mill.)(150 mg) ; passiflore (Passiflora incarnata L. dont 6 mg de flavonoïdes)(150 mg) ; eschscholzia de californie (Eschscholzia californica)(150 mg) ; GABA (150 mg) ; aubépine (Crataegus monogyna Jacq.)(140 mg dont 2.4 mg de vitexine); amidon de riz ; farine de riz; safran (Crocus sativus) (45 mg) ; arginine (45 mg) ; nicotinamide (37 mg ; VNR*= 205 %); huile de colza (Bras - sica napus L.); mélatonine (0.299 mg).
-Gélule ASHWAGANDHA® :
-INGRÉDIENT(S) :  Ashwagandha (KSM 66®) (Withania somnifera L.)(600 mg dont 30 mg de withanolides), gélule : pullulane.
-Gélule ANTIOX® :
-INGRÉDIENT(S) : Acérola (Malpighia glabra L.) 160 mg dont 25% de vitamine C, gélule : pullulane, thé vert (Camellia sinensis) 125 mg dont 56.25 mg d'épigallocatéchine gallate (présence de caféine Q ≤ 10 mg), resvératrol (100 mg), co-enzyme Q10 (100 mg), raisin (Vitis vinifera L.) (52,64 mg dont 50 mg d’Oligo-proanthocyanidines), amidon de riz bio.
-Gélule L-CARNOSINE® :
-INGRÉDIENT(S) : L-Carnosine 500 mg, gélule : pullulane.
-Gélule BETA ALANINE® :
-INGRÉDIENT(S) : Bêta-alanine 500 mg, gélule : pullulane, poudre de Spirulina platensis 100 mg.
-Gélule MACA® :
-INGRÉDIENT(S) :Maca (Lepidium meyenii Walp) 1000 mg, gélule : pullulane.
-Gélule STIM+® :
-INGRÉDIENT(S) :Gélule : pullulane, Eleutherococcus (330 mg), amidon de riz, ginseng rouge (Panax ginseng C.) (300 mg dont 72 mg de ginsénosides), damiana (Turnera diffusa W.) (300 mg), fenugrec (Trigonella foenum-graecum L.) (300 mg), farine de riz, extrait d’écorce de pin sylvestre (Pinus sylvestris) (60 mg), nicotinamide (54 mg ; VNR = 337,5%), KaempMax (Kaempferia parviflora) (45 mg), bisglycinate de zinc (45 mg dont 11,25 mg de zinc élément ; VNR* = 112,5%), huile de colza (Brassica napus L.), safran (Crocus sativus L.) (30 mg).
-Gélule RELAX+® :
-INGRÉDIENT(S) :Gélule : pullulane, lavande (Lavandula angustifolia) (160 mg), passiflore (Passiflora incarnata L.) (160 mg), valériane (Valeriana officinalis L.) (160 mg), aubépine (Crataegus laevigata) (110 mg), Eschscholtzia californica Cham. (110 mg), mélisse (Melissa officinalis) (115,96 mg dont acide hydroxycinnamique 20,48% (7,98 mg) et acide rosmarinique 7,26% (7,98 mg)), acide gamma aminobutyrique (GABA) (100 mg), nicotinamide (36 mg ; AJR = 225 %), safran (Crocus sativus) (30 mg dont 12% safromotivines (3,6 mg), 3% crocine (0,9 mg), 2% safranal (0,6 mg)), L-arginine (30 mg).
-Gélule KLAMATH® :
-INGRÉDIENT(S) : Poudre d'algue Klamath (Aphanizomenon flos-aquae) (1000 mg dont 56,5 mg phycocianine et 5,5 mg phényléthylamine) ; gélule : pullulane.
-Gélule RECUP+® :
-INGRÉDIENT(S) :Citrate de potassium anhydre (900 mg dont 324 mg potassium élément, VNR = 16,2%), citrate de magnésium anhydre (600 mg dont 97,2 mg magnésium élément, VNR = 25,9%), gélule : gélatine bovine.
-Gélule CURCUM ARTI® :
-INGRÉDIENT(S) : Acujoint™ (250 mg dont 30 mg de curcuminoïdes, 25 mg de bêta-caryophyllène et 12,5 mg de Bio-AKBA), curcuma (Cureit®) (250 mg dont 125 mg de curcuminoïdes), extrait de Boswellia serrata (250 mg dont 162,5 mg d’acides boswelliques), gélule : pullulane.
-Capsule ONAGRE B® :
-INGRÉDIENT(S) : Huile de bourrache (Borago officinalis L.) (500 mg dont 100 mg d’acide gamma linoléique (GLA), huile d'onagre (Oenothera biennis L.) 500 mg dont 45 mg d’acide gamma linoléique (GLA), capsule gélatine, glycérol, eau, vitamine E naturelle 15 mg (AJR = 125%)dont 10 mg de d-α tocophérol concentré.
-Capsule SKIN ACTIV® :
-INGRÉDIENT(S) : Extrait de blé concentré en phytocéramides, capsule gélatine de bœuf, glycérol, cire d’abeille, oxyde de zinc, caramel, extrait de romarin, huile de graines de tournesol.
-Capsule HEPATOP® :
-INGRÉDIENT(S) :Triméthylglycine (240 mg), gélule : pullulane, Phosphatidylcholine (170 mg), Chlorella pyrenoidosa (150 mg), extrait de radis noir (Raphanus sativus) (90 mg), extrait d’artichaut (Silybum marianum) (90 mg dont 4,5 mg de cynarine), extrait de chardon-marie (Cynara scolymus)(90 mg dont 72 mg de silymarine, N-acétyl-L-cystéine (80 mg), silice (anti-agglomérant).
-Capsule RENATOP® :
-INGRÉDIENT(S) :Agent de charge : gomme d’acacia BIO, extrait d’extrait de feuille de pissenlit (Taraxacum officinale) 200 mg dont 6 mg de vitexine, extrait de fleur de piloselle (Hieracium pilosella)200 mg, poudre d’Hibiscus sabdariffa (200 mg dont 40 mg d’acides), gélule : pullulane.
-Capsule IMMUNO® :
-INGRÉDIENT(S) :Gélule = pullulane; Quercétine (250 mg), Ginseng (Panax ginseng C. - 150 mg dont 36 mg de ginsenosides), Reishi (Ganoderma lucidum - 150 mg dont 50 mg de β-glucane), extrait du Shiitake (Lentinula edodes (Berk.) Pegler - 150 mg dont 50 mg de β-(1,3/1,6)-glucane), Cordyceps sinensis (150 mg), Propolis Bio (150 mg), Vitamine C (90 mg ; VNR = 112.5%), farine de riz, (Betavia™ (Biomasse d’algues Euglena gracilis séchée) (70 mg), Bisglycinate de Zinc (45 mg dont 11.25 mg de zinc élément ; VNR*= 112.5%), amidon de riz, poudre de colza (Brassica napus L.), Vitamine D3 (cholécalciférol) (50 µg ; VNR = 1000%).
+    "ADRENO_PLUS": {
+      "display_name": "ADRENO+®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Poudre d'algue Klamath (Aphanizomenon flos-aquae)", "amount_mg": 200, "notes": "dont phycocianine 11,3% (22,6 mg)" },
+        { "name": "Extrait de Bacopa monnieri", "amount_mg": 150, "notes": "dont bacosides 50% (75 mg)" },
+        { "name": "Poudre de ginseng HRG80™", "amount_mg": 50 },
+        { "name": "Extrait de Panax ginseng CA Meyer", "amount_mg": 50, "notes": "dont ginsenoïdes totaux 11,45 mg / dont ginseng rares 5 mg" },
+        { "name": "Extrait de Ginkgo biloba", "amount_mg": 60, "notes": "dont glycoside de flavonol 24% (14,4 mg) / dont terpéno-lactones 6% (3,6 mg)" },
+        { "name": "L-Tyrosine", "amount_mg": 37.5 },
+        { "name": "Oryza sativa L.", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": "La liste source mentionne aussi 'gélule : pullulane' + 'Oryza sativa'."
+    },
 
+    "OESTROBOOST": {
+      "display_name": "Gélule OESTROBOOST®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Extrait de houblon (Humulus lupulus)", "amount_mg": 262.5 },
+        { "name": "Extrait de houblon (Lifenol®)", "amount_mg": 62.5 },
+        { "name": "Extrait de sauge sclarée (Salvia sclarea)", "amount_mg": 25 },
+        { "name": "Extrait de sauge officinale (Salvia officinalis)", "amount_mg": 25 }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
 
+    "BOURRACHE_ONAGRE": {
+      "display_name": "Gélule BOURRACHE + ONAGRE®",
+      "form": "capsule",
+      "ingredients": [
+        { "name": "Huile de bourrache (Borago officinalis L.)", "amount_mg": 750 },
+        { "name": "Huile d’onagre (Oenothera biennis L.)", "amount_mg": 750 },
+        { "name": "d-α tocophérol", "amount_mg": 22.5 },
+        { "name": "Glycérol (humectant)", "amount_mg": null },
+        { "name": "Eau", "amount_mg": null }
+      ],
+      "capsule_shell": "gélatine",
+      "allergen_tags": [],
+      "notes": ""
+    },
 
+    "MULTI_VIT": {
+      "display_name": "Gélule MULTI VIT®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Bisglycinate de zinc", "amount_mg": 60, "notes": "dont zinc élément 15 mg (150%)" },
+        { "name": "Vitamine B3 (nicotinamide)", "amount_mg": 54, "notes": "338%" },
+        { "name": "Co-enzyme Q10 (ubiquinone)", "amount_mg": 50 },
+        { "name": "Bio-flavonoïdes d'agrumes (Citrus sinensis)", "amount_mg": 33.33 },
+        { "name": "N-AcétylCystéine", "amount_mg": 33.33 },
+        { "name": "Quercétine", "amount_mg": 33.33 },
+        { "name": "Acide alpha-lipoïque", "amount_mg": 33.33 },
+        { "name": "Myrtille (Vaccinium myrtillus L.)", "amount_mg": 33.33 },
+        { "name": "Vitamine C (acide L-ascorbique)", "amount_mg": 26.67, "notes": "33%" },
+        { "name": "Levure de sélénium", "amount_mg": 25, "notes": "dont sélénium élément 50 µg (91%)" },
+        { "name": "Vitamine B5 (D-Pantothénate de calcium)", "amount_mg": 18, "notes": "300%" },
+        { "name": "Vitamine E naturelle (Vitaphérole®)", "amount_mg": 12, "notes": "100%" },
+        { "name": "Rutine", "amount_mg": 6.67 },
+        { "name": "Vitamine B1 (chlorhydrate de thiamine)", "amount_mg": 3.6, "notes": "327%" },
+        { "name": "Lycopène", "amount_mg": 2.5 },
+        { "name": "Vitamine B2 (riboflavine)", "amount_mg": 2.4, "notes": "171%" },
+        { "name": "Oléorésine riche en astaxanthine (Haematococcus pluvialis)", "amount_mg": 2 },
+        { "name": "Lutéine", "amount_mg": 2 },
+        { "name": "Vitamine B6 (pyridoxal phosphate)", "amount_mg": 1.94, "notes": "139%" },
+        { "name": "Bêtacarotène", "amount_mg": 1.6 },
+        { "name": "Vitamine B8 (D-biotine)", "amount_mg": 0.45, "notes": "450 µg (900%)" },
+        { "name": "Zéaxanthine", "amount_mg": 0.4, "notes": "400 µg" },
+        { "name": "Vitamine B9 (Quatrefolic®)", "amount_mg": 0.2, "notes": "200 µg (100%)" },
+        { "name": "Iodure de potassium", "amount_mg": 0.150, "notes": "dont iode élément 114,6 µg (76%)" },
+        { "name": "Vitamine K2 (menaquinone)", "amount_mg": 0.075, "notes": "75 µg (100%)" },
+        { "name": "Vitamine D3 (cholécalciférol)", "amount_mg": 0.025, "notes": "25 µg / 1000 UI (500%)" },
+        { "name": "Vitamine B12 (méthylcobalamine)", "amount_mg": 0.0016, "notes": "1,6 µg (64%)" },
+        { "name": "Vitamine B12 (hydroxycobalamine)", "amount_mg": 0.0016, "notes": "1,6 µg (64%)" },
+        { "name": "Amidon de riz", "amount_mg": null },
+        { "name": "Farine de riz", "amount_mg": null },
+        { "name": "Huile de colza", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": "Contient iode + sélénium. Valeurs % selon VNR source."
+    },
 
+    "ENZYM_PLUS": {
+      "display_name": "Gélule ENZYM+®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Bromélaïne", "amount_mg": 100 },
+        { "name": "Papaïne", "amount_mg": 75 },
+        { "name": "Gingembre (Zingiber officinale)", "amount_mg": 50 },
+        { "name": "Amylase", "amount_mg": 25 },
+        { "name": "Lipase", "amount_mg": 25 },
+        { "name": "Protéase issue du Ficus carica", "amount_mg": 25 },
+        { "name": "Trypsine", "amount_mg": 25 },
+        { "name": "Amidon de riz", "amount_mg": null },
+        { "name": "Oryza sativa", "amount_mg": null },
+        { "name": "Huile de colza (Brassica napus L.)", "amount_mg": null }
+      ],
+      "capsule_shell": "DRcaps HPMC (gastro-résistante d'origine végétale)",
+      "allergen_tags": [],
+      "notes": "Doublon présent dans la source, gardé une seule entrée."
+    },
+
+    "THYROIDE_PLUS": {
+      "display_name": "Gélule THYROÏDE+®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Guggul (Commiphora mukul)", "amount_mg": 266, "notes": "dont 26,6 mg guggulstérones" },
+        { "name": "Ashwagandha KSM-66® (Withania somnifera)", "amount_mg": 200, "notes": "dont 10 mg withanolides" },
+        { "name": "L-tyrosine", "amount_mg": 166.6 },
+        { "name": "Fucus vesiculeux (Fucus vesiculosus)", "amount_mg": 160, "notes": "dont 100 µg d’iode (66,6% VNR)" },
+        { "name": "Bisglycinate de zinc", "amount_mg": 33.33, "notes": "dont 10 mg zinc (100% VNR)" },
+        { "name": "Levure de sélénium", "amount_mg": 18.3, "notes": "dont 36,6 µg sélénium (66,6% VNR)" },
+        { "name": "Gluconate de manganèse", "amount_mg": 5.4, "notes": "dont 0,66 mg manganèse (33,3% VNR)" },
+        { "name": "Méthylcobalamine", "amount_mg": 0.0083, "notes": "8,3 µg (333,3% VNR)" },
+        { "name": "Oryza sativa", "amount_mg": null },
+        { "name": "Sophora Japonica", "amount_mg": null },
+        { "name": "Amidon de riz", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "contains_iodine": true,
+      "notes": ""
+    },
+
+    "L_TYRO_TOP": {
+      "display_name": "Gélule L-TYRO TOP®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "L-Tyrosine", "amount_mg": 125 },
+        { "name": "Acide ascorbique (Vitamine C)", "amount_mg": 30, "notes": "37,5% VNR" },
+        { "name": "Nicotinamide (Vitamine B3)", "amount_mg": 6, "notes": "37,5% VNR" },
+        { "name": "Riboflavine (Vitamine B2)", "amount_mg": 0.525, "notes": "525 µg (37,5% VNR)" },
+        { "name": "Chlorhydrate de pyridoxine (Vitamine B6)", "amount_mg": 0.525, "notes": "525 µg (37,5% VNR)" },
+        { "name": "Quatrefolic® (Vitamine B9)", "amount_mg": 0.075, "notes": "75 µg (37,5% VNR)" },
+        { "name": "Méthylcobalamine (Vitamine B12)", "amount_mg": 0.00094, "notes": "0,94 µg (37,5% VNR)" },
+        { "name": "Amidon de riz", "amount_mg": null },
+        { "name": "Farine de riz", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "L_TYRO_ACTIV": {
+      "display_name": "Gélule L-TYRO ACTIV®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "L-Tyrosine", "amount_mg": 500 },
+        { "name": "Pullulan", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "MAG_TOP": {
+      "display_name": "Capsule MAG TOP®",
+      "form": "capsule",
+      "ingredients": [
+        { "name": "Bisglycinate de magnésium", "amount_mg": 700, "notes": "dont 70 mg magnésium élément" },
+        { "name": "Glycérophosphate de magnésium", "amount_mg": 700, "notes": "dont 81,9 mg magnésium élément" },
+        { "name": "Malate de magnésium", "amount_mg": 250, "notes": "dont 37,5 mg magnésium élément" },
+        { "name": "Hydroxypropylmethylcellulose", "amount_mg": null },
+        { "name": "Acide stéarique", "amount_mg": null },
+        { "name": "Glycéryldibéhénate", "amount_mg": null },
+        { "name": "Poudre d'huile de colza (Brassica napus L.)", "amount_mg": null, "notes": "Boeson" }
+      ],
+      "capsule_shell": "HPMC",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "PHENOL_PLUS": {
+      "display_name": "Gélule PHENOL+®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Extrait de romarin (Rosmarinus officinalis)", "amount_mg": 100, "notes": "dont 6% acide rosmarinique" },
+        { "name": "MitoActiv™ (cassis + groseille)", "amount_mg": null, "notes": "dont 10% polyphénols" },
+        { "name": "Extrait de Sophora japonica", "amount_mg": 50, "notes": "dont 98% quercétine" },
+        { "name": "Extrait de pépin de raisin (Vitis vinifera)", "amount_mg": 50, "notes": "40% OPC + 30% monomères" },
+        { "name": "Extrait de cacao (Theobroma cacao)", "amount_mg": 50, "notes": "dont 10% polyphénols" },
+        { "name": "Extrait de grenade (Punica granatum)", "amount_mg": 50, "notes": "dont 90% acide ellagique" },
+        { "name": "Extrait d'orange (Citrus sinensis)", "amount_mg": 50, "notes": "dont 45% polyphénols" },
+        { "name": "Extrait de feuille d'olivier (Olea europaea)", "amount_mg": 50, "notes": "dont 20% hydroxytyrosol" },
+        { "name": "Extrait de myrtille (Vaccinium myrtillus)", "amount_mg": 50, "notes": "dont 10% polyphénols" },
+        { "name": "Extrait d'écorce de pin sylvestre (Pinus sylvestris)", "amount_mg": null },
+        { "name": "Pullulane", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "ANTIOX": {
+      "display_name": "Gélule ANTIOX®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Acérola (Malpighia glabra)", "amount_mg": 160, "notes": "dont 25% vitamine C" },
+        { "name": "Thé vert (Camellia sinensis)", "amount_mg": 125, "notes": "présence caféine Q ≤ 10 mg / EGCG mentionnée dans le doublon source" },
+        { "name": "Resvératrol", "amount_mg": 100 },
+        { "name": "Co-enzyme Q10", "amount_mg": 100 },
+        { "name": "Raisin (Vitis vinifera)", "amount_mg": 52.64, "notes": "dont 50 mg d’OPC" },
+        { "name": "Amidon de riz bio", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": ["caffeine_trace"],
+      "notes": "Doublon présent, fusionné."
+    },
+
+    "KRILL": {
+      "display_name": "Capsule KRILL®",
+      "form": "capsule",
+      "ingredients": [
+        { "name": "Extrait lipidique de krill (Euphausia superba)", "amount_mg": 590, "notes": "phospholipides 330 mg; oméga 3 totaux 160 mg; EPA+DHA 125 mg; choline 41,12 mg; astaxanthine 60 µg" }
+      ],
+      "capsule_shell": "gélatine de poisson",
+      "allergen_tags": ["crustacean", "fish"],
+      "notes": ""
+    },
+
+    "KLAMATH_COMPLEX": {
+      "display_name": "Capsule KLAMATH® (complexe bacopa/ginseng/ginkgo)",
+      "form": "capsule",
+      "ingredients": [
+        { "name": "Poudre d'algue Klamath (Aphanizomenon flos-aquae)", "amount_mg": 200, "notes": "dont phycocianine 11,3% (22,6 mg)" },
+        { "name": "Extrait de Bacopa monnieri", "amount_mg": 150, "notes": "dont bacosides 50% (75 mg)" },
+        { "name": "Poudre de ginseng HRG80™", "amount_mg": 50 },
+        { "name": "Extrait de Panax ginseng CA Meyer", "amount_mg": 50, "notes": "dont ginsenoïdes totaux 11,45 mg / dont ginseng rares 5 mg" },
+        { "name": "Extrait de Ginkgo biloba", "amount_mg": 60, "notes": "dont glycoside de flavonol 24% (14,4 mg) / dont terpéno-lactones 6% (3,6 mg)" },
+        { "name": "L-Tyrosine", "amount_mg": 37.5 },
+        { "name": "Oryza sativa L.", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": "Correspond aux formulations ADRENO+/KLAMATH complexe."
+    },
+
+    "OMEGA3": {
+      "display_name": "Capsule OMEGA 3®",
+      "form": "capsule",
+      "ingredients": [
+        { "name": "Huile de poisson (EPAX)", "amount_mg": 1000, "notes": "EPA+DHA 700 mg (EPA min 400 mg / DHA min 300 mg)" },
+        { "name": "Cire d'abeille blanche", "amount_mg": null },
+        { "name": "Lécithine", "amount_mg": null },
+        { "name": "Glycérol", "amount_mg": null },
+        { "name": "Eau", "amount_mg": null }
+      ],
+      "capsule_shell": "gélatine de poisson",
+      "allergen_tags": ["fish"],
+      "notes": ""
+    },
+
+    "BIO_ACTIV": {
+      "display_name": "Gélule BIO ACTIV®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Fibre d'acacia bio", "amount_mg": null },
+        { "name": "Lactobacillus acidophilus", "amount": 3.32, "unit": "milliards" },
+        { "name": "Lactobacillus rhamnosus", "amount": 3.32, "unit": "milliards" },
+        { "name": "Bifidobacterium bifidum", "amount": 3.32, "unit": "milliards" },
+        { "name": "Bifidobacterium longum", "amount": 3.32, "unit": "milliards" },
+        { "name": "Bifidobacterium lactis", "amount": 3.32, "unit": "milliards" },
+        { "name": "Streptococcus thermophilus", "amount": 3.32, "unit": "milliards" }
+      ],
+      "capsule_shell": "DRcaps HPMC (gastro-résistante d'origine végétale)",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "B9_4FOLIC": {
+      "display_name": "Gélule B9 4FOLIC®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Fibre d'acacia BIO", "amount_mg": null },
+        { "name": "Acide folique (5-MTHF sel de glucosamine)", "amount_mcg": 360, "notes": "VNR 180%" }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "MG_MALATE": {
+      "display_name": "Gélule MG MALATE®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Malate de magnésium", "amount_mg": 1500, "notes": "dont 225 mg magnésium élément (VNR 60%)" },
+        { "name": "Gomme d’acacia bio", "amount_mg": null }
+      ],
+      "capsule_shell": "gélatine bovine",
+      "allergen_tags": ["bovine_gelatin"],
+      "notes": ""
+    },
+
+    "SVELT_OMEGA3": {
+      "display_name": "Capsule SVELT OMEGA 3®",
+      "form": "capsule",
+      "ingredients": [
+        { "name": "Huile de Calanus finmarchicus (crustacés)", "amount_mg": 1000 }
+      ],
+      "capsule_shell": "gélatine de poisson",
+      "allergen_tags": ["crustacean", "fish"],
+      "notes": ""
+    },
+
+    "BERBERINE_ACTIV": {
+      "display_name": "Gélule BERBERINE ACTIV®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Berbérine HB®", "amount_mg": 375 }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "COQ10": {
+      "display_name": "Capsule COQ10®",
+      "form": "capsule",
+      "ingredients": [
+        { "name": "Co-enzyme Q10 LEO HB", "amount_mg": null },
+        { "name": "Fibre d'acacia", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": "La source ne donne pas le mg exact."
+    },
+
+    "ACETYL_CARN": {
+      "display_name": "Gélule ACETYL CARN®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Acétyl-L-Carnitine", "amount_mg": 1500 }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "GASTRATOP": {
+      "display_name": "Gélule GASTRATOP®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Gamma-Oryzanol", "amount_mg": 250 },
+        { "name": "Fucus vésiculeux (Fucus vesiculosus)", "amount_mg": 120, "notes": "dont 75 µg iode (VNR 50%)" },
+        { "name": "Réglisse (déglycyrrhizinée)", "amount_mg": 50 },
+        { "name": "Vitamine U (DL-Methionine Methylsulfonium Chloride)", "amount_mg": 50 },
+        { "name": "L-Cystéine", "amount_mg": 2.5 },
+        { "name": "Vitamine B1 (thiamine mononitrate)", "amount_mg": 0.62, "notes": "VNR 56,4%" },
+        { "name": "Oryza sativa", "amount_mg": null },
+        { "name": "Huile de colza (Brassica napus L.)", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "contains_iodine": true,
+      "notes": ""
+    },
+
+    "TRANSITEAM": {
+      "display_name": "Gélule TRANSITEAM®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Enveloppe de psyllium (Plantago ovata)", "amount_mg": 1500 },
+        { "name": "Gomme d'acacia bio", "amount_mg": null },
+        { "name": "Lactobacillus acidophilus", "amount": 1.25, "unit": "milliards" },
+        { "name": "Lactobacillus rhamnosus", "amount": 1.25, "unit": "milliards" },
+        { "name": "Bifidobacterium bifidum", "amount": 1.25, "unit": "milliards" },
+        { "name": "Bifidobacterium longum", "amount": 1.25, "unit": "milliards" },
+        { "name": "Bifidobacterium lactis", "amount": 1.25, "unit": "milliards" },
+        { "name": "Streptococcus thermophilus", "amount": 1.25, "unit": "milliards" }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "VITAMINE_C": {
+      "display_name": "Gélule VITAMINE C®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Vitamine C (acide L-ascorbique)", "amount_mg": 650, "notes": "VNR 821%" }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "MAGNESIUM_PLUS": {
+      "display_name": "Gélule MAGNESIUM+®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Glycérophosphate de magnésium", "amount_mg": 741.88 },
+        { "name": "Bisglycinate de magnésium", "amount_mg": 300, "notes": "magnésium élément total 146,8 mg (VNR 39%)" },
+        { "name": "Taurine", "amount_mg": 200 },
+        { "name": "Nicotinamide", "amount_mg": 17, "notes": "VNR 106%" },
+        { "name": "Acide pantothénique", "amount_mg": 9, "notes": "VNR 150%" },
+        { "name": "Pyridoxine", "amount_mg": 3.4, "notes": "VNR 243%" },
+        { "name": "Thiamine", "amount_mg": 3.2, "notes": "VNR 290%" },
+        { "name": "Riboflavine", "amount_mg": 2, "notes": "VNR 143%" },
+        { "name": "d-biotine", "amount_mcg": 150, "notes": "VNR 300%" },
+        { "name": "Acide folique", "amount_mcg": 100, "notes": "VNR 50%" },
+        { "name": "Cholécalciférol", "amount_mcg": 7.5, "notes": "VNR 150%" },
+        { "name": "Méthylcobalamine", "amount_mcg": 2, "notes": "VNR 80%" },
+        { "name": "Gomme arabique", "amount_mg": null },
+        { "name": "Huile de colza (Brassica napus L.)", "amount_mg": null },
+        { "name": "Amidon de riz", "amount_mg": null },
+        { "name": "Farine de riz", "amount_mg": null },
+        { "name": "Acide stéarique", "amount_mg": null }
+      ],
+      "capsule_shell": "HPMC",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "MELATOP": {
+      "display_name": "Gélule MELATOP®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Valériane (Valeriana officinalis)", "amount_mg": 250 },
+        { "name": "Lavande (Lavandula angustifolia)", "amount_mg": 150 },
+        { "name": "Passiflore (Passiflora incarnata)", "amount_mg": 150, "notes": "dont 6 mg flavonoïdes" },
+        { "name": "Eschscholzia californica", "amount_mg": 150 },
+        { "name": "GABA", "amount_mg": 150 },
+        { "name": "Aubépine (Crataegus monogyna)", "amount_mg": 140, "notes": "dont 2,4 mg vitexine" },
+        { "name": "Safran (Crocus sativus)", "amount_mg": 45 },
+        { "name": "Arginine", "amount_mg": 45 },
+        { "name": "Nicotinamide", "amount_mg": 37, "notes": "VNR 205%" },
+        { "name": "Mélatonine", "amount_mg": 0.299 },
+        { "name": "Amidon de riz", "amount_mg": null },
+        { "name": "Farine de riz", "amount_mg": null },
+        { "name": "Huile de colza", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "ASHWAGANDHA": {
+      "display_name": "Gélule ASHWAGANDHA®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Ashwagandha KSM-66® (Withania somnifera)", "amount_mg": 600, "notes": "dont 30 mg withanolides" }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "L_CARNOSINE": {
+      "display_name": "Gélule L-CARNOSINE®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "L-Carnosine", "amount_mg": 500 }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "BETA_ALANINE": {
+      "display_name": "Gélule BETA ALANINE®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Bêta-alanine", "amount_mg": 500 },
+        { "name": "Spirulina platensis", "amount_mg": 100 }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "MACA": {
+      "display_name": "Gélule MACA®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Maca (Lepidium meyenii)", "amount_mg": 1000 }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "STIM_PLUS": {
+      "display_name": "Gélule STIM+®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Eleutherococcus", "amount_mg": 330 },
+        { "name": "Ginseng rouge (Panax ginseng C.)", "amount_mg": 300, "notes": "dont 72 mg ginsénosides" },
+        { "name": "Damiana (Turnera diffusa)", "amount_mg": 300 },
+        { "name": "Fenugrec (Trigonella foenum-graecum)", "amount_mg": 300 },
+        { "name": "Extrait d’écorce de pin sylvestre (Pinus sylvestris)", "amount_mg": 60 },
+        { "name": "Nicotinamide", "amount_mg": 54, "notes": "VNR 337,5%" },
+        { "name": "KaempMax (Kaempferia parviflora)", "amount_mg": 45 },
+        { "name": "Bisglycinate de zinc", "amount_mg": 45, "notes": "dont 11,25 mg zinc (VNR 112,5%)" },
+        { "name": "Safran (Crocus sativus)", "amount_mg": 30 },
+        { "name": "Amidon de riz", "amount_mg": null },
+        { "name": "Farine de riz", "amount_mg": null },
+        { "name": "Huile de colza (Brassica napus L.)", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "RELAX_PLUS": {
+      "display_name": "Gélule RELAX+®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Lavande (Lavandula angustifolia)", "amount_mg": 160 },
+        { "name": "Passiflore (Passiflora incarnata)", "amount_mg": 160 },
+        { "name": "Valériane (Valeriana officinalis)", "amount_mg": 160 },
+        { "name": "Aubépine (Crataegus laevigata)", "amount_mg": 110 },
+        { "name": "Eschscholtzia californica", "amount_mg": 110 },
+        { "name": "Mélisse (Melissa officinalis)", "amount_mg": 115.96, "notes": "acides hydroxycinnamiques 20,48% (7,98 mg) + acide rosmarinique 7,26% (7,98 mg)" },
+        { "name": "GABA", "amount_mg": 100 },
+        { "name": "Nicotinamide", "amount_mg": 36, "notes": "AJR 225%" },
+        { "name": "Safran (Crocus sativus)", "amount_mg": 30, "notes": "dont safromotivines 3,6 mg; crocine 0,9 mg; safranal 0,6 mg" },
+        { "name": "L-arginine", "amount_mg": 30 }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "KLAMATH": {
+      "display_name": "Gélule KLAMATH® (1000 mg)",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Poudre d'algue Klamath (Aphanizomenon flos-aquae)", "amount_mg": 1000, "notes": "dont 56,5 mg phycocianine et 5,5 mg phényléthylamine" }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "RECUP_PLUS": {
+      "display_name": "Gélule RECUP+®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Citrate de potassium anhydre", "amount_mg": 900, "notes": "dont 324 mg potassium élément (VNR 16,2%)" },
+        { "name": "Citrate de magnésium anhydre", "amount_mg": 600, "notes": "dont 97,2 mg magnésium élément (VNR 25,9%)" }
+      ],
+      "capsule_shell": "gélatine bovine",
+      "allergen_tags": ["bovine_gelatin"],
+      "notes": ""
+    },
+
+    "CURCUM_ARTI": {
+      "display_name": "Gélule CURCUM ARTI®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Acujoint™", "amount_mg": 250, "notes": "dont 30 mg curcuminoïdes, 25 mg bêta-caryophyllène, 12,5 mg Bio-AKBA" },
+        { "name": "Curcuma Cureit®", "amount_mg": 250, "notes": "dont 125 mg curcuminoïdes" },
+        { "name": "Extrait de Boswellia serrata", "amount_mg": 250, "notes": "dont 162,5 mg acides boswelliques" }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "ONAGRE_B": {
+      "display_name": "Capsule ONAGRE B®",
+      "form": "capsule",
+      "ingredients": [
+        { "name": "Huile de bourrache (Borago officinalis)", "amount_mg": 500, "notes": "dont 100 mg GLA" },
+        { "name": "Huile d'onagre (Oenothera biennis)", "amount_mg": 500, "notes": "dont 45 mg GLA" },
+        { "name": "Vitamine E naturelle", "amount_mg": 15, "notes": "AJR 125%, dont 10 mg d-α tocophérol concentré" }
+      ],
+      "capsule_shell": "gélatine",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "SKIN_ACTIV": {
+      "display_name": "Capsule SKIN ACTIV®",
+      "form": "capsule",
+      "ingredients": [
+        { "name": "Extrait de blé concentré en phytocéramides", "amount_mg": null },
+        { "name": "Oxyde de zinc", "amount_mg": null },
+        { "name": "Extrait de romarin", "amount_mg": null },
+        { "name": "Huile de graines de tournesol", "amount_mg": null },
+        { "name": "Cire d’abeille", "amount_mg": null },
+        { "name": "Caramel", "amount_mg": null }
+      ],
+      "capsule_shell": "gélatine de bœuf",
+      "allergen_tags": ["gluten_possible", "bovine_gelatin", "bee_wax"],
+      "notes": "La source ne donne pas les mg."
+    },
+
+    "HEPATOP": {
+      "display_name": "Capsule HEPATOP®",
+      "form": "capsule",
+      "ingredients": [
+        { "name": "Triméthylglycine", "amount_mg": 240 },
+        { "name": "Phosphatidylcholine", "amount_mg": 170 },
+        { "name": "Chlorella pyrenoidosa", "amount_mg": 150 },
+        { "name": "Extrait de radis noir (Raphanus sativus)", "amount_mg": 90 },
+        { "name": "Extrait d’artichaut", "amount_mg": 90, "notes": "dont 4,5 mg cynarine (tel que fourni)" },
+        { "name": "Extrait de chardon-marie", "amount_mg": 90, "notes": "dont 72 mg silymarine (tel que fourni)" },
+        { "name": "N-acétyl-L-cystéine", "amount_mg": 80 },
+        { "name": "Silice", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": "La source mélange artichaut/chardon-marie, gardé tel quel."
+    },
+
+    "RENATOP": {
+      "display_name": "Capsule RENATOP®",
+      "form": "capsule",
+      "ingredients": [
+        { "name": "Extrait de feuille de pissenlit (Taraxacum officinale)", "amount_mg": 200, "notes": "dont 6 mg vitexine (tel que fourni)" },
+        { "name": "Extrait de fleur de piloselle (Hieracium pilosella)", "amount_mg": 200 },
+        { "name": "Poudre d’Hibiscus sabdariffa", "amount_mg": 200, "notes": "dont 40 mg d’acides" },
+        { "name": "Gomme d’acacia BIO", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "notes": ""
+    },
+
+    "IMMUNO": {
+      "display_name": "Capsule IMMUNO®",
+      "form": "capsule",
+      "ingredients": [
+        { "name": "Quercétine", "amount_mg": 250 },
+        { "name": "Ginseng (Panax ginseng C.)", "amount_mg": 150, "notes": "dont 36 mg ginsenosides" },
+        { "name": "Reishi (Ganoderma lucidum)", "amount_mg": 150, "notes": "dont 50 mg β-glucane" },
+        { "name": "Shiitake (Lentinula edodes)", "amount_mg": 150, "notes": "dont 50 mg β-(1,3/1,6)-glucane" },
+        { "name": "Cordyceps sinensis", "amount_mg": 150 },
+        { "name": "Propolis Bio", "amount_mg": 150 },
+        { "name": "Vitamine C", "amount_mg": 90, "notes": "VNR 112,5%" },
+        { "name": "Betavia™ (Euglena gracilis)", "amount_mg": 70 },
+        { "name": "Bisglycinate de zinc", "amount_mg": 45, "notes": "dont 11,25 mg zinc (VNR 112,5%)" },
+        { "name": "Vitamine D3 (cholécalciférol)", "amount_mcg": 50, "notes": "VNR 1000%" },
+        { "name": "Farine de riz", "amount_mg": null },
+        { "name": "Amidon de riz", "amount_mg": null },
+        { "name": "Poudre de colza (Brassica napus L.)", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": ["bee_product"],
+      "notes": ""
+    },
+
+    "MISSING__LACTOP": {
+      "display_name": "LACTOP (non présent dans COMPOSITIONS 0.8.3 fourni)",
+      "missing_in_compositions": true,
+      "ingredients": [],
+      "capsule_shell": null,
+      "allergen_tags": [],
+      "notes": "À compléter depuis ta source SUPLEMINT."
+    },
+    "MISSING__GUDZU": {
+      "display_name": "GUDZU (non présent dans COMPOSITIONS 0.8.3 fourni)",
+      "missing_in_compositions": true,
+      "ingredients": [],
+      "capsule_shell": null,
+      "allergen_tags": [],
+      "notes": "À compléter depuis ta source SUPLEMINT."
+    },
+    "MISSING__QUERCETINE": {
+      "display_name": "QUERCETINE (non présent dans COMPOSITIONS 0.8.3 fourni)",
+      "missing_in_compositions": true,
+      "ingredients": [],
+      "capsule_shell": null,
+      "allergen_tags": [],
+      "notes": "À compléter depuis ta source SUPLEMINT."
+    },
+    "MISSING__TEA_ACTIV": {
+      "display_name": "TEA ACTIV (non présent dans COMPOSITIONS 0.8.3 fourni)",
+      "missing_in_compositions": true,
+      "ingredients": [],
+      "capsule_shell": null,
+      "allergen_tags": [],
+      "notes": "À compléter depuis ta source SUPLEMINT."
+    },
+    "MISSING__CARDIO_PLUS": {
+      "display_name": "CARDIO+ (non présent dans COMPOSITIONS 0.8.3 fourni)",
+      "missing_in_compositions": true,
+      "ingredients": [],
+      "capsule_shell": null,
+      "allergen_tags": [],
+      "notes": "À compléter depuis ta source SUPLEMINT."
+    }
+  }
+}
