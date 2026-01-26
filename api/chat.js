@@ -1720,43 +1720,6 @@ function detectModeFromHistoryMeta(messages) {
   }
 }
 
-// ✅ FONCTION MANQUANTE - À AJOUTER
-function detectIntentMode(lastUserMsgRaw, historyText) {
-  const last = stripDiacritics(normalizeSoft(lastUserMsgRaw)).toLowerCase();
-
-  // MODE C triggers
-  const triggerModeC =
-    /quiz.*quelle\s+cure/.test(last) ||
-    /quelle\s+cure.*quiz/.test(last) ||
-    /trouver.*cure/.test(last) ||
-    /cure.*moi/.test(last);
-
-  // MODE A triggers - "thyroïde" devient "thyroide" sans accent
-  const triggerModeA =
-    /quiz.*thyroide/.test(last) ||
-    /thyroide.*quiz/.test(last) ||
-    /thyroide.*fonctionne/.test(last) ||
-    /test.*thyro/.test(last) ||
-    /ma\s+thyroide/.test(last);
-
-  // Historique aussi normalisé
-  const hist = stripDiacritics(normalizeSoft(historyText || "")).toLowerCase();
-  
-  const startedModeC =
-    /quelle cure est faite pour moi/.test(hist) && 
-    /quel est ton prenom/.test(hist);
-    
-  const startedModeA =
-    /thyroide fonctionne/.test(hist) && 
-    /quel est ton prenom/.test(hist);
-
-  if (startedModeC || triggerModeC) return "C";
-  if (startedModeA || triggerModeA) return "A";
-  return "B";
-}
-
-
-
 function detectIntentMode(lastUserMsgRaw, historyText) {
   const last = normalizeSoft(lastUserMsgRaw);
   const lastLower = last.toLowerCase();
@@ -1923,3 +1886,6 @@ ${`[LES_CURES_ALL]\n${LES_CURES_ALL_TRUNC}\n[COMPOSITIONS]\n${COMPOSITIONS_TRUNC
     res.status(500).json({ error: "THYREN error", details: String(err) });
   }
 }
+
+
+
