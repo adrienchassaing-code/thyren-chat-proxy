@@ -1,4 +1,5 @@
-  "version": "THYREN_FLOW_QUIZ_2.0_DOCTEUR",
+{
+"version": "THYREN_FLOW_QUIZ_2.0_DOCTEUR",
   "description": "Quiz simplifié - THYREN utilise son raisonnement clinique Docteur 2.0 pour poser les bonnes questions après les infos de base",
   "flow_order": ["Q1","Q2","Q2_plus","Q3","Q4","Q4b","Q5","CLINICAL_QUESTIONS","Q_EMAIL","RESULT"],
   "nodes": {
@@ -91,3 +92,4 @@
     "clinical_mode": "THYREN doit utiliser son raisonnement clinique (section 3 du prompt) pour poser des questions intelligentes",
     "max_clinical_questions": 4
   }
+ }
