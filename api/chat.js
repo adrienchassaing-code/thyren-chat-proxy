@@ -4,13 +4,14 @@ import path from "path";
 // ==============================
 // ✅ Lecture fichiers DATA
 // ==============================
-const readDataFile = (filename) => {
+const readJsonFile = (filename) => {
+  const raw = readDataFile(filename);
+  if (!raw) return null;
   try {
-    const filePath = path.join(process.cwd(), "data", filename);
-    return fs.readFileSync(filePath, "utf8");
+    return JSON.parse(raw);
   } catch (e) {
-    console.error("Erreur lecture fichier", filename, e);
-    return "";
+    console.error("Erreur JSON parse", filename, e);
+    return null;
   }
 };
 
@@ -39,16 +40,25 @@ const readDataFolder = (folderName) => {
 // ==============================
 // ✅ Base de connaissances
 // ==============================
-const QUESTION_THYROIDE = readDataFile("QUESTION_THYROIDE.txt");
-const LES_CURES_ALL = readDataFile("LES_CURES_ALL.txt");
-const COMPOSITIONS = readDataFile("COMPOSITIONS.txt");
+const QUESTION_THYROIDE = ("QUESTION_THYROIDE.txt");
+const LES_CURES_ALL_JSON = readJsonFile("LES_CURES_ALL.json");
+const COMPOSITIONS_JSON = readJsonFile("COMPOSITIONS.json");
 const SAV_FAQ = readDataFile("SAV_FAQ.txt");
 const QUESTION_ALL = readDataFile("QUESTION_ALL.txt");
 
 // Limites (évite tokens/perf)
-const clamp = (s, n) => String(s || "").slice(0, n);
-const LES_CURES_ALL_TRUNC = clamp(LES_CURES_ALL, 25000);
-const COMPOSITIONS_TRUNC = clamp(COMPOSITIONS, 25000);
+function safeJsonStringify(obj, maxLen) {
+  try {
+    const s = JSON.stringify(obj, null, 2);
+    return s.length > maxLen ? s.slice(0, maxLen) : s;
+  } catch (e) {
+    console.error("safeJsonStringify error", e);
+    return "";
+  }
+}
+
+const LES_CURES_ALL_TRUNC = safeJsonStringify(LES_CURES_ALL_JSON, 25000);
+const COMPOSITIONS_TRUNC = safeJsonStringify(COMPOSITIONS_JSON, 25000);
 const SAV_FAQ_TRUNC = clamp(SAV_FAQ, 12000);
 
 // ====== SYSTEM PROMPT ======
