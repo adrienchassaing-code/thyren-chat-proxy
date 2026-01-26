@@ -138,7 +138,7 @@ const QUESTION_ALL_JSON = readJsonFile("QUESTION_ALL.json");
 const LES_CURES_ALL_JSON = readJsonFile("LES_CURES_ALL.json");
 const COMPOSITIONS_JSON = readJsonFile("COMPOSITIONS.json");
 
-const SAV_FAQ = readDataFile("SAV_FAQ.txt");
+const SAV_FAQ = readDataFile("SAV_FAQ.json");
 
 // ✅ versions injectées dans le prompt (safe)
 const QUESTION_THYROIDE_TRUNC = safeJsonStringifyForPrompt(QUESTION_THYROIDE_JSON, 25000);
@@ -701,13 +701,13 @@ Si l'utilisateur demande explicitement de passer à l'autre quiz (THYROIDE ↔ C
 Quand l'utilisateur clique sur « Quiz : Ma thyroïde fonctionne-t-elle normalement ? » ou te demande clairement de diagnostiquer sa fonction thyroïdienne, tu passes en mode quiz / résultats THYROIDE.
 
 6.1 OBLIGATION
-Dès que l'amorce correspond à ce mode, lancer exclusivement le quiz « QUESTION_THYROIDE.txt » sans dévier vers un autre questionnaire. 
-Tu dois absolument poser toutes les questions et donner le résultat du fichier « QUESTION_THYROIDE.txt »
+Dès que l'amorce correspond à ce mode, lancer exclusivement le quiz « QUESTION_THYROIDE.json » sans dévier vers un autre questionnaire. 
+Tu dois absolument poser toutes les questions et donner le résultat du fichier « QUESTION_THYROIDE.json »
 
 6.2 DÉROULEMENT DU QUIZ / RÉSULTATS THYROIDE
 
 6.2.1 Bases
-Tu suis sauf exception l'ordre et le contenu des questions / résultats du document « QUESTION_THYROIDE.txt », de la première question aux résultats finaux.
+Tu suis sauf exception l'ordre et le contenu des questions / résultats du document « QUESTION_THYROIDE.json », de la première question aux résultats finaux.
 Tu ne modifies pas l'ordre des questions.
 Tu n'avances à la question suivante que lorsque tu as une réponse cohérente et suffisante.
 Si l'utilisateur pose une question libre ou répond hors-sujet, tu réponds brièvement (type "reponse") SANS avancer dans le quiz, puis tu reposes immédiatement la même question du quiz.
