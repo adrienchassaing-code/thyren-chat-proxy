@@ -1733,14 +1733,6 @@ export default async function handler(req, res) {
     const intentMode = detectIntentMode(lastUserMsgRaw, historyText);
 
     const activeMode = starterMode || historyMetaMode || intentMode || "B";
-    
-    console.log("=== THYREN DEBUG MODE ===");
-    console.log("lastUserMsgRaw:", JSON.stringify(lastUserMsgRaw));
-    console.log("starterMode:", starterMode);
-    console.log("historyMetaMode:", historyMetaMode);
-    console.log("intentMode:", intentMode);
-    console.log("activeMode:", activeMode);
-    console.log("==========================");
 
     // -------- Systems --------
     const NOW_SYSTEM = `DATE ET HEURE SYSTÈME: ${getBrusselsNowString()} (Europe/Brussels)`;
