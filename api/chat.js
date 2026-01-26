@@ -1622,7 +1622,23 @@ function normalizeSoft(raw) {
     .replace(/[’]/g, "'")
     .replace(/\s+/g, " ");
 }
+function assistantContentToText(content) {
+  const s = String(content || "").trim();
 
+  // Si c'est un JSON string (ton cas)
+  try {
+    const obj = JSON.parse(s);
+    if (obj && typeof obj === "object") {
+      const mode = obj.meta?.mode ? `MODE:${obj.meta.mode}\n` : "";
+      const text = obj.text ? String(obj.text) : "";
+      return (mode + text).trim();
+    }
+  } catch (e) {
+    // pas du JSON, on renvoie tel quel
+  }
+
+  return s;
+}
 // ==============================
 // ✅ Date Bruxelles
 // ==============================
@@ -1846,9 +1862,13 @@ ${activeMode === "D" ? `[RESIMONT]\n${RESIMONT_TRUNC}\n` : ""}
       // On ne passe que content (string) à OpenAI, comme tu fais déjà.
       // (Si tu veux exploiter meta côté modèle, il faut l'inclure dans content, mais c’est un autre chantier.)
       ...messages.map((m) => ({
-        role: m.role === "assistant" ? "assistant" : "user",
-        content: String(m.content || ""),
-      })),
+  role: m.role === "assistant" ? "assistant" : "user",
+  content:
+    m.role === "assistant"
+      ? assistantContentToText(m.content)
+      : String(m.content || ""),
+})),
+
     ];
 
     // -------- Timeout fetch --------
