@@ -116,13 +116,13 @@ function safeJsonStringifyForPrompt(obj, maxChars = 25000) {
   }
 }
 
-const QUESTION_THYROIDE_JSON = readJsonFile("QUESTION_THYROIDE.json");
+const QUESTION_THYROÏDE_JSON = readJsonFile("QUESTION_THYROÏDE.json");
 const QUESTION_ALL_JSON = readJsonFile("QUESTION_ALL.json");
 const LES_CURES_ALL_JSON = readJsonFile("LES_CURES_ALL.json");
 const COMPOSITIONS_JSON = readJsonFile("COMPOSITIONS.json");
 const SAV_FAQ = readDataFile("SAV_FAQ.json");
 
-const QUESTION_THYROIDE_TRUNC = safeJsonStringifyForPrompt(QUESTION_THYROIDE_JSON, 25000);
+const QUESTION_THYROÏDE_TRUNC = safeJsonStringifyForPrompt(QUESTION_THYROÏDE_JSON, 25000);
 const QUESTION_ALL_TRUNC = safeJsonStringifyForPrompt(QUESTION_ALL_JSON, 25000);
 const LES_CURES_ALL_TRUNC = safeJsonStringifyForPrompt(LES_CURES_ALL_JSON, 25000);
 const COMPOSITIONS_TRUNC = safeJsonStringifyForPrompt(COMPOSITIONS_JSON, 25000);
@@ -214,7 +214,7 @@ RÈGLES CRITIQUES :
 
 Contexte scientifique selon le quiz actif :
 
-- QUESTION_THYROIDE :
+- QUESTION_THYROÏDE :
   L’explication DOIT être liée à l’hypothyroïdie fonctionnelle
   (thyroïde, métabolisme, énergie, thermorégulation, T3/T4, conversion hormonale).
 
@@ -311,12 +311,12 @@ Aucun texte ou commentaire en dehors des { }.
 Pas de mélange texte + JSON dans un même message.
 Pas de tableau de plusieurs JSON.
 Pas de deuxième objet JSON.
-Pas de commentaire de type "QUESTION THYROIDE" dans la réponse.
+Pas de commentaire de type "QUESTION THYROÏDE" dans la réponse.
 Pas de retour à la ligne qui casse la validité JSON.
 Il doit toujours y avoir un seul objet JSON valide par réponse.
 
 4.3.2 RÈGLE ANTI-CONSIGNES (OBLIGATOIRE)
-Dans les fichiers QUESTION_THYROIDE / QUESTION_ALL, certaines phrases sont des CONSIGNES internes (ex: "Interprétation personnalisée..." ou "une très courte...").
+Dans les fichiers QUESTION_THYROÏDE / QUESTION_ALL, certaines phrases sont des CONSIGNES internes (ex: "Interprétation personnalisée..." ou "une très courte...").
 Ces consignes ne doivent JAMAIS être affichées mot pour mot à l'utilisateur.
 Tu dois les exécuter, puis les remplacer par ton propre texte naturel.
 
@@ -390,7 +390,7 @@ STRUCTURE COMPLÈTE (12 LIGNES OBLIGATOIRES À COMPTER) :
 
 LIGNE 1 - URL image :
 - Format : URL complète directe (.jpg/.png/.webp)
-- Exemple : https://cdn.shopify.com/s/files/1/0XXX/cure-thyroide.jpg
+- Exemple : https://cdn.shopify.com/s/files/1/0XXX/cure-THYROÏDE.jpg
 - C'est la SEULE URL brute autorisée dans le texte
 
 LIGNE 2 - Nom de la cure :
@@ -485,7 +485,7 @@ Le format complet garantit que l'utilisateur comprend POURQUOI cette cure lui co
 5.1 Bases
 Tu t'appuies exclusivement sur :
 - « LES CURES ALL » : toutes les cures, les gélules, leur composition et leur temps de prise.
-- « QUESTION THYROIDE » : la structure complète du questionnaire THYROIDE
+- « QUESTION THYROÏDE » : la structure complète du questionnaire THYROÏDE
 - « QUESTION ALL » : la structure complète du questionnaire CURES
 - « COMPOSITIONS » : composition précise des gélules et ingrédients des cures.
 - « SAV - FAQ » : Toutes les FAQ et les questions récurrentes du SAV.
@@ -635,7 +635,7 @@ Règles MODE CRÉATEUR:
 - Pour quitter le MODE CRÉATEUR: si l'utilisateur écrit EXACTEMENT "QUIT", tu reprends le comportement normal.
 
 5.7 CHANGEMENT DE QUIZ — PRIORITÉ UTILISATEUR (OBLIGATOIRE)
-Si l'utilisateur demande explicitement de passer à l'autre quiz (THYROIDE ↔ CURE) :
+Si l'utilisateur demande explicitement de passer à l'autre quiz (THYROÏDE ↔ CURE) :
 - Tu NE REFUSES JAMAIS.
 - Tu mets en pause le quiz actuel (sans perdre les réponses).
 - Tu lances immédiatement le quiz demandé.
@@ -643,56 +643,24 @@ Si l'utilisateur demande explicitement de passer à l'autre quiz (THYROIDE ↔ C
 - Tu n'affiches jamais de messages "mode actif / lock / je ne peux pas".
 - Tu ne mentionnes pas de logique interne, tu enchaînes naturellement.
 
-═══════════════════════════════════════════════════════════════════
-6. MODE A — QUIZ THYROÏDE
-═══════════════════════════════════════════════════════════════════
+6. MODE A — QUESTION THYROÏDE
 
-Quand l'utilisateur clique sur «Ma thyroïde fonctionne-t-elle normalement ?» ou te demande clairement de diagnostiquer sa fonction thyroïdienne, tu passes en mode quiz / résultats THYROIDE.
+Quand l'utilisateur clique sur l'amorce «Ma thyroïde fonctionne-t-elle normalement ?» ou te demande clairement de diagnostiquer sa fonction thyroïdienne, tu passes en mode QUESTIONNAIRE / RÉSULTATS THYROÏDE
 
 6.1 OBLIGATION
-Dès que l'amorce correspond à ce mode, lancer exclusivement le quiz « QUESTION_THYROIDE.json » sans dévier vers un autre questionnaire. 
-Tu dois absolument poser toutes les questions et donner le résultat du fichier « QUESTION_THYROIDE.json »
+Dès que l'amorce correspond à ce mode, lancer exclusivement le DATA «data/QUESTION_THYROIDE.json» sans dévier vers un autre questionnaire. 
+Tu dois absolument poser toutes les questions et donner le résultat du fichier «data/QUESTION_THYROIDE.json»
 
-6.2 DÉROULEMENT DU QUIZ / RÉSULTATS THYROIDE
+6.2 DÉROULEMENT DU QUESTIONNAIRE / RÉSULTATS THYROÏDE
 
 6.2.1 Bases
-Tu suis sauf exception l'ordre et le contenu des questions / résultats du document « QUESTION_THYROIDE.json », de la première question aux résultats finaux.
+Tu suis sauf exception l'ordre et le contenu des questions / résultats du document «data/QUESTION_THYROIDE.json», de la première question aux résultats finaux.
 Tu ne modifies pas l'ordre des questions.
 Tu n'avances à la question suivante que lorsque tu as une réponse cohérente et suffisante.
 Si l'utilisateur pose une question libre ou répond hors-sujet, tu réponds brièvement (type "reponse") SANS avancer dans le quiz, puis tu reposes immédiatement la même question du quiz.
 Si une incohérence importante apparaît (ex: sexe/grossesse/diabète/allergie contradictoires), tu poses 1 question de vérification (type "question"), puis tu reprends le quiz à la question en attente.
 
-6.2.2 Interprétation DOCTEUR 2.1 (VERSION CONCISE - OBLIGATOIRE)
-À CHAQUE question (sauf Q1 prénom), tu DOIS :
-1) Reformuler brièvement la réponse précédente (1 phrase) SAUF si c'est une info factuelle (sexe, âge)
-2) Relier à un mécanisme biologique thyroïdien (1 phrase)
-3) AJOUTER un micro-tip sur un ingrédient pertinent (1 phrase)
-4) Poser la question suivante
-
-RÈGLE CRITIQUE : Maximum 2-3 phrases entre deux questions.
-
-Tu ne dis JAMAIS "Merci pour cette précision" sans développer.
-
-**RÈGLES ANTI-RÉPÉTITION :
-- Ne JAMAIS reformuler "tu es un homme", "tu t'appelles Paul"
-- Ne JAMAIS lister les choix dans le texte
-- Poser la question directement
-
-EXEMPLES CONCIS :
-
-❌ MAUVAIS (répète info factuelle + liste choix) :
-"Merci Adrien, tu es un homme. Cette information est importante car la thyroïde peut influencer différemment selon le sexe. L'axe hormonal et la conversion des hormones thyroïdiennes peuvent varier. As-tu moins de 30 ans, entre 30 et 45 ans, entre 45 et 60 ans, ou plus de 60 ans ?"
-
-✅ BON (concis, direct) :
-"Merci Adrien. Cette information est importante car la thyroïde influence différemment selon le sexe. Quel est ton âge ?"
-
-❌ MAUVAIS (trop long) :
-"Tu me dis être fatiguée dès le matin malgré 8h de sommeil. C'est très évocateur d'un déficit de production d'ATP au niveau mitochondrial. La thyroïde joue un rôle central dans ce mécanisme. Le Magnésium active plus de 300 réactions enzymatiques. Ressens-tu aussi une frilosité inhabituelle, même en été ?"
-
-✅ BON (concis et efficace) :
-"Fatigue dès le matin malgré 8h de sommeil : ton corps ne produit pas assez d'ATP (énergie cellulaire). Le Magnésium active justement plus de 300 réactions enzymatiques dont la production d'énergie. Ressens-tu aussi une frilosité inhabituelle ?"
-
-6.2.3 Règles supplémentaires
+6.2.2 Règles supplémentaires
 Tu n'oublies jamais de donner les résultats.
 Tu ne recommences pas le quiz, sauf si l'utilisateur le demande explicitement.
 Structure de text pour la réponse finale 
@@ -1603,7 +1571,7 @@ function detectStarterMode(raw) {
 
   if (
     msg.includes("thyro") ||
-    /ma\s+thyroide/i.test(msg) ||
+    /ma\s+THYROÏDE/i.test(msg) ||
     msg.includes("fonctionne-t-elle normalement")
   ) {
     return "A";
@@ -1720,7 +1688,7 @@ export default async function handler(req, res) {
       : "MODE B ACTIF";
     const DOCS_SYSTEM = `
 DOCS SUPLEMINT
-${activeMode === "A" ? `[QUESTION_THYROIDE]\n${QUESTION_THYROIDE_TRUNC}\n` : ""}
+${activeMode === "A" ? `[QUESTION_THYROÏDE]\n${QUESTION_THYROÏDE_TRUNC}\n` : ""}
 ${activeMode === "C" ? `[QUESTION_ALL]\n${QUESTION_ALL_TRUNC}\n` : ""}
 ${activeMode !== "B" ? "" : `[SAV_FAQ]\n${SAV_FAQ_TRUNC}\n`}
 ${`[LES_CURES_ALL]\n${LES_CURES_ALL_TRUNC}\n[COMPOSITIONS]\n${COMPOSITIONS_TRUNC}\n`}
