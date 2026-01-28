@@ -59,14 +59,14 @@
     "CLINICAL_QUESTIONS": {
       "id": "CLINICAL_QUESTIONS",
       "type": "ai_driven",
-      "description": "THYREN utilise son raisonnement clinique Docteur 2.0 pour poser 2 à 4 questions ciblées basées sur la plainte_client. Chaque question a un OBJECTIF DIAGNOSTIQUE clair pour identifier l'axe fonctionnel prioritaire.",
+      "description": "THYREN utilise son raisonnement clinique Docteur 2.0 pour poser 5 à 7 questions ciblées basées sur la plainte_client. Chaque question a un OBJECTIF DIAGNOSTIQUE clair pour identifier l'axe fonctionnel prioritaire.",
       "rules": [
         "THYREN analyse la plainte_client et identifie les axes fonctionnels potentiellement impliqués",
-        "THYREN pose 2 à 4 questions maximum (pas plus) avec des choices pertinents",
+        "THYREN pose 5 à 7 questions maximum (pas plus) avec des choices pertinents",
         "Chaque question doit aider à discriminer entre les axes (thyroïdien, énergétique, surrénalien, digestif, etc.)",
         "THYREN utilise son écoute active et son empathie à chaque question",
         "Quand THYREN a assez d'informations pour recommander UNE cure avec confiance, il passe à Q_EMAIL",
-        "Si après 4 questions max THYREN n'est pas sûr, il recommande quand même la cure la plus probable"
+        "Si après 7 questions max THYREN n'est pas sûr, il recommande quand même la cure la plus probable"
       ],
       "next": "Q_EMAIL",
       "meta": { "mode": "clinical_reasoning" }
