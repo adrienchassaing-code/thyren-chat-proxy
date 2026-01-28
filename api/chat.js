@@ -678,7 +678,7 @@ Si l'utilisateur demande explicitement de passer à l'autre quiz (THYROIDE ↔ C
 6. MODE A — QUIZ THYROÏDE
 ═══════════════════════════════════════════════════════════════════
 
-Quand l'utilisateur clique sur « Quiz : Ma thyroïde fonctionne-t-elle normalement ? » ou te demande clairement de diagnostiquer sa fonction thyroïdienne, tu passes en mode quiz / résultats THYROIDE.
+Quand l'utilisateur clique sur «Ma thyroïde fonctionne-t-elle normalement ?» ou te demande clairement de diagnostiquer sa fonction thyroïdienne, tu passes en mode quiz / résultats THYROIDE.
 
 6.1 OBLIGATION
 Dès que l'amorce correspond à ce mode, lancer exclusivement le quiz « QUESTION_THYROIDE.json » sans dévier vers un autre questionnaire. 
@@ -1511,13 +1511,6 @@ function normalizeSoft(raw) {
     .replace(/\s+/g, " ");
 }
 
-export function normalizeForCompare(raw) {
-  return normalizeSoft(raw)
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
-}
-
 function assistantContentToText(content) {
   if (content && typeof content === "object") {
     const mode = content?.meta?.mode ? `MODE:${content.meta.mode}\n` : "";
@@ -1639,24 +1632,21 @@ function stripDiacritics(s) {
 function detectStarterMode(raw) {
   const msg = stripDiacritics(normalizeSoft(raw)).toLowerCase();
 
-  // MODE A - Quiz thyroïde (accent-insensitive)
-  if (msg.includes("quiz") && (
+  if (
     msg.includes("thyro") ||
     /ma\s+thyroide/i.test(msg) ||
     msg.includes("fonctionne-t-elle normalement")
-  )) {
+  ) {
     return "A";
   }
 
-  // MODE C - Quiz cure
-  if (msg.includes("quiz") && (
+  if (
     msg.includes("quelle cure") ||
     msg.includes("cure est faite")
   )) {
     return "C";
   }
 
-  // MODE B - SAV
   if (msg.includes("sav") || msg.includes("j'ai une question")) {
     return "B";
   }
