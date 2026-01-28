@@ -1651,7 +1651,6 @@ function detectStarterMode(raw) {
     return "B";
   }
 
-  // fallback exact (mais accent-insensitive aussi)
   const exact = stripDiacritics(normalizeText(raw)).toLowerCase();
   if (exact === stripDiacritics(STARTERS.A).toLowerCase()) return "A";
   if (exact === stripDiacritics(STARTERS.C).toLowerCase()) return "C";
@@ -1659,8 +1658,6 @@ function detectStarterMode(raw) {
 
   return null;
 }
-
-
 
 function detectModeFromHistoryMeta(messages) {
   try {
@@ -1683,26 +1680,26 @@ function detectIntentMode(lastUserMsgRaw, historyText) {
     /\bcure\b.*\bmoi\b/.test(lastLower);
 
   const triggerModeA =
-    /quiz\s*:?\s*ma\s+thyro[iï]de/.test(lastLower) ||
-    /thyro[iï]de\s+fonctionne/.test(lastLower) ||
+    /quiz\s*:?\s*ma\s+thyro[iï]de/.test(lastLower) ||          // ancien
+    /ma\s+thyro[iï]de\s+fonctionne/.test(lastLower) ||         // nouveau sans quiz
+    /thyro[iï]de\s+fonctionne/.test(lastLower) ||              // existant
+    /fonctionne[-\s]*t[-\s]*elle\s+normalement/.test(lastLower) || // robuste
     /\btest\b.*\bthyro/i.test(lastLower);
 
   const hist = String(historyText || "");
   const startedModeC =
-    /quelle cure est faite pour moi/i.test(hist) && /quel est ton pr[ée]nom/i.test(hist);
+    /quelle cure est faite pour moi/i.test(hist);
   const startedModeA =
-    /ma thyro[iï]de fonctionne-t-elle normalement/i.test(hist) && /quel est ton pr[ée]nom/i.test(hist);
+    /thyro[iï]de/i.test(hist) &&
+    /fonctionne[-\s]*t[-\s]*elle\s+normalement/i.test(hist);
 
   if (startedModeC || triggerModeC) return "C";
   if (startedModeA || triggerModeA) return "A";
   return "B";
 }
 
-// ==============================
-// Handler principal
-// ==============================
 export default async function handler(req, res) {
-  // -------- CORS --------
+  
   const origin = req.headers.origin || "*";
   res.setHeader("Access-Control-Allow-Origin", origin);
   res.setHeader("Vary", "Origin");
@@ -1736,27 +1733,22 @@ export default async function handler(req, res) {
       return;
     }
 
-    // -------- Dernier message user --------
     const lastUserMsgRaw = contentToText(
     [...messages].reverse().find((m) => (m.role || "") === "user")?.content
     ).trim();
-    // -------- Mode detection --------
+ 
     const starterMode = detectStarterMode(lastUserMsgRaw);
     const historyMetaMode = detectModeFromHistoryMeta(messages);
     const historyText = messages.map((m) => contentToText(m.content)).join("\n");
     const intentMode = detectIntentMode(lastUserMsgRaw, historyText);
-
+    
     const activeMode = starterMode || historyMetaMode || intentMode || "B";
 
-    // -------- Systems --------
     const NOW_SYSTEM = `DATE ET HEURE SYSTÈME: ${getBrusselsNowString()} (Europe/Brussels)`;
-
     const ROUTER_SYSTEM =
       activeMode === "A" ? "MODE A ACTIF"
       : activeMode === "C" ? "MODE C ACTIF"
       : "MODE B ACTIF";
-
-    // -------- DOCS système (scopé par mode) --------
     const DOCS_SYSTEM = `
 DOCS SUPLEMINT
 ${activeMode === "A" ? `[QUESTION_THYROIDE]\n${QUESTION_THYROIDE_TRUNC}\n` : ""}
@@ -1765,7 +1757,6 @@ ${activeMode !== "B" ? "" : `[SAV_FAQ]\n${SAV_FAQ_TRUNC}\n`}
 ${`[LES_CURES_ALL]\n${LES_CURES_ALL_TRUNC}\n[COMPOSITIONS]\n${COMPOSITIONS_TRUNC}\n`}
 `.trim();
 
-    // -------- Messages OpenAI --------
     const openAiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "system", content: NOW_SYSTEM },
@@ -1779,7 +1770,6 @@ ${`[LES_CURES_ALL]\n${LES_CURES_ALL_TRUNC}\n[COMPOSITIONS]\n${COMPOSITIONS_TRUNC
       })),
     ];
 
-    // -------- Timeout fetch --------
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 55000);
 
@@ -1811,7 +1801,6 @@ ${`[LES_CURES_ALL]\n${LES_CURES_ALL_TRUNC}\n[COMPOSITIONS]\n${COMPOSITIONS_TRUNC
     const oaData = await oaRes.json();
     const replyText = String(oaData?.choices?.[0]?.message?.content || "").trim();
 
-    // -------- Parse JSON assistant --------
     let parsedReply;
     try {
       parsedReply = JSON.parse(replyText);
@@ -1819,12 +1808,11 @@ ${`[LES_CURES_ALL]\n${LES_CURES_ALL_TRUNC}\n[COMPOSITIONS]\n${COMPOSITIONS_TRUNC
       console.error("JSON parse assistant failed:", e, "RAW:", replyText);
       parsedReply = {
         type: "reponse",
-        text: "Désolé, je n’ai pas pu générer une réponse valide. Peux-tu réessayer ?",
+        text: "Désolé, je n’ai pas pu générer une réponse valide. Pouvez-vous réessayer ?",
         meta: { mode: activeMode, progress: { enabled: false } },
       };
     }
 
-    // -------- Normalisation minimale --------
     parsedReply = normalizeAssistantJson(parsedReply, activeMode);
 
     // Réponse front
@@ -1838,6 +1826,3 @@ ${`[LES_CURES_ALL]\n${LES_CURES_ALL_TRUNC}\n[COMPOSITIONS]\n${COMPOSITIONS_TRUNC
     res.status(500).json({ error: "THYREN error", details: String(err) });
   }
 }
-
-
-
