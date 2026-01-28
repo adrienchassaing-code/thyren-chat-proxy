@@ -1,9 +1,6 @@
 import fs from "fs";
 import path from "path";
 
-// ==============================
-// Lecture fichiers DATA (texte)
-// ==============================
 const readDataFile = (filename) => {
   try {
     const filePath = path.join(process.cwd(), "data", filename);
@@ -14,9 +11,6 @@ const readDataFile = (filename) => {
   }
 };
 
-// ==============================
-// Lecture fichiers DATA (JSON)
-// ==============================
 const readJsonFile = (filename) => {
   const raw = readDataFile(filename);
   if (!raw) return null;
@@ -28,18 +22,12 @@ const readJsonFile = (filename) => {
   }
 };
 
-// ==============================
-// Clamp texte (uniquement TEXTE)
-// ==============================
 function clampText(str, maxLen) {
   const s = String(str || "");
   if (s.length <= maxLen) return s;
   return s.slice(0, maxLen) + "\n\n[...contenu tronqué...]";
 }
 
-// ==============================
-// Résumé JSON "safe" (PAS de slice() sur JSON)
-// ==============================
 function summarizeJsonForPrompt(input, opts = {}) {
   const {
     maxDepth = 5,
@@ -106,7 +94,7 @@ function safeJsonStringifyForPrompt(obj, maxChars = 25000) {
       );
     }
 
-    // Dernier filet (toujours JSON valide)
+    
     if (s.length > maxChars) {
       const meta = {
         notice: "JSON trop volumineux, résumé minimal appliqué",
