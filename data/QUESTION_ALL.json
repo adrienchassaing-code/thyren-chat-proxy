@@ -70,7 +70,7 @@
             "Ne jamais lister les choices dans le texte",
             "Quand THYREN a assez d'informations pour recommander UNE cure avec confiance, il passe à Q_EMAIL",
             "Si après 7 questions max THYREN n'est pas sûr, il recommande quand même la cure la plus probable"
-               ]
+               ],
       "next": "Q_EMAIL",
       "meta": { "mode": "clinical_reasoning" }
     },
