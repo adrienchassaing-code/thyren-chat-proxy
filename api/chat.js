@@ -1643,7 +1643,7 @@ function detectStarterMode(raw) {
   if (
     msg.includes("quelle cure") ||
     msg.includes("cure est faite")
-  )) {
+  ) {
     return "C";
   }
 
