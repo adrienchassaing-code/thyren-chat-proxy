@@ -116,25 +116,18 @@ function safeJsonStringifyForPrompt(obj, maxChars = 25000) {
   }
 }
 
-// ==============================
-// Base de connaissances (tout en JSON + SAV en texte)
-// ==============================
 const QUESTION_THYROIDE_JSON = readJsonFile("QUESTION_THYROIDE.json");
 const QUESTION_ALL_JSON = readJsonFile("QUESTION_ALL.json");
 const LES_CURES_ALL_JSON = readJsonFile("LES_CURES_ALL.json");
 const COMPOSITIONS_JSON = readJsonFile("COMPOSITIONS.json");
-
 const SAV_FAQ = readDataFile("SAV_FAQ.json");
 
-// versions injectées dans le prompt (safe)
 const QUESTION_THYROIDE_TRUNC = safeJsonStringifyForPrompt(QUESTION_THYROIDE_JSON, 25000);
 const QUESTION_ALL_TRUNC = safeJsonStringifyForPrompt(QUESTION_ALL_JSON, 25000);
 const LES_CURES_ALL_TRUNC = safeJsonStringifyForPrompt(LES_CURES_ALL_JSON, 25000);
 const COMPOSITIONS_TRUNC = safeJsonStringifyForPrompt(COMPOSITIONS_JSON, 25000);
-
 const SAV_FAQ_TRUNC = clampText(SAV_FAQ, 12000);
 
-// ====== SYSTEM PROMPT ======
 const SYSTEM_PROMPT = `
 SCRIPT THYREN 2.1 — DOCTEUR FONCTIONNEL EXPERT (VERSION OPTIMISÉE)
 
@@ -1505,9 +1498,6 @@ FIN DU PROMPT THYREN 2.1 — VERSION OPTIMISÉE CONCISE
 ═══════════════════════════════════════════════════════════════════
 `;
 
-// ==============================
-// Utilitaires texte / normalisation
-// ==============================
 function normalizeText(raw) {
   return String(raw || "")
     .normalize("NFKC")
@@ -1521,9 +1511,14 @@ function normalizeSoft(raw) {
     .replace(/\s+/g, " ");
 }
 
-// Convertit content assistant en texte (robuste si content est déjà un objet)
+export function normalizeForCompare(raw) {
+  return normalizeSoft(raw)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 function assistantContentToText(content) {
-  // si ton front envoie déjà un objet
   if (content && typeof content === "object") {
     const mode = content?.meta?.mode ? `MODE:${content.meta.mode}\n` : "";
     const text = content?.text ? String(content.text) : JSON.stringify(content);
@@ -1532,7 +1527,6 @@ function assistantContentToText(content) {
 
   const s = String(content || "").trim();
 
-  // si c'est un JSON string
   try {
     const obj = JSON.parse(s);
     if (obj && typeof obj === "object") {
@@ -1541,22 +1535,14 @@ function assistantContentToText(content) {
       return (mode + text).trim();
     }
   } catch {
-    // pas du JSON
   }
 
   return s;
 }
 
-// ==============================
-// Convertit content user en texte (robuste UI)
-// ==============================
 function contentToText(content) {
   if (content == null) return "";
-
-  // string/number/bool
   if (typeof content !== "object") return String(content);
-
-  // ✅ cas fréquents (direct)
   if (typeof content.text === "string") return content.text;
   if (typeof content.label === "string") return content.label;
   if (typeof content.value === "string") return content.value;
@@ -1564,22 +1550,17 @@ function contentToText(content) {
   if (typeof content.title === "string") return content.title;
   if (typeof content.choice === "string") return content.choice;
   if (typeof content.name === "string") return content.name;
-
-  // ✅ cas fréquents (nested)
   if (content.payload) return contentToText(content.payload);
   if (content.data) return contentToText(content.data);
   if (content.action) return String(content.action); // utile si bouton envoie une action
 
-  // fallback
   try {
     return JSON.stringify(content);
   } catch {
     return "[Unserializable object]";
   }
 }
-// ==============================
-// Date Bruxelles
-// ==============================
+
 function getBrusselsNowString() {
   const now = new Date();
   const parts = new Intl.DateTimeFormat("fr-BE", {
@@ -1601,9 +1582,6 @@ function getBrusselsNowString() {
   return `${map.weekday} ${map.day} ${map.month} ${map.year}, ${map.hour}:${map.minute}`;
 }
 
-// ==============================
-// Validation/normalisation réponse assistant
-// ==============================
 function normalizeAssistantJson(obj, fallbackMode) {
   const mode = fallbackMode || "B";
 
@@ -1625,7 +1603,6 @@ function normalizeAssistantJson(obj, fallbackMode) {
 
   if (typeof obj.text !== "string") obj.text = String(obj.text || "");
 
-  // meta obligatoire sauf resultat
   if (obj.type !== "resultat") {
     if (!obj.meta || typeof obj.meta !== "object") {
       obj.meta = { mode, progress: { enabled: false } };
@@ -1639,7 +1616,7 @@ function normalizeAssistantJson(obj, fallbackMode) {
       }
     }
   } else {
-    // en resultat: pas de meta, pas de choices
+    
     if ("meta" in obj) delete obj.meta;
     if ("choices" in obj) delete obj.choices;
   }
@@ -1647,13 +1624,10 @@ function normalizeAssistantJson(obj, fallbackMode) {
   return obj;
 }
 
-// ==============================
-// Détection MODE (OPTIMISÉE)
-// ==============================
 const STARTERS = {
-  A: "Quiz : Ma thyroïde fonctionne-t-elle normalement ?",
-  C: "Quiz : Quelle cure est faite pour moi ?",
-  B: "J'ai une question - SAV",
+  A: "Ma thyroïde fonctionne-t-elle normalement ?",
+  C: "Quelle cure est faite pour moi ?",
+  B: "J'ai une question",
 };
 
 function stripDiacritics(s) {
