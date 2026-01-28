@@ -21,7 +21,7 @@
     "Q2_plus": {
       "id": "Q2_plus",
       "type": "choices",
-      "text": "Es-tu enceinte ou allaitante ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n Es-tu enceinte ou allaitante ?",
       "choices": ["Oui","Non"],
       "next": "Q3",
       "meta": { "capture": "enceinte" }
@@ -29,7 +29,7 @@
     "Q3": {
       "id": "Q3",
       "type": "choices",
-      "text": "Quel est ton âge ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n Quel est ton âge ?",
       "choices": ["Moins de 30 ans","30-45 ans","45-60 ans","Plus de 60 ans"],
       "next": "Q4",
       "meta": { "capture": "age_band" }
@@ -37,7 +37,7 @@
     "Q4": {
       "id": "Q4",
       "type": "choices",
-      "text": "As-tu une condition médicale ou une allergie à signaler ?",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu une condition médicale ou une allergie à signaler ?",
       "choices": ["Tout va bien","J'ai des allergies ou une condition médicale à signaler"],
       "next_map": { "Tout va bien": "Q5", "J'ai des allergies ou une condition médicale à signaler": "Q4b" },
       "meta": { "capture": "safety_flag" }
@@ -52,7 +52,7 @@
     "Q5": {
       "id": "Q5",
       "type": "open",
-      "text": "Maintenant, raconte-moi ce qui te gêne en ce moment, ce que tu ressens et ce que tu aimerais améliorer. Prends ton temps, sois précis : tout peut m'aider à te proposer la cure la plus adaptée.",
+      "text": "{{AI_PREV_INTERPRETATION}}\n\n Maintenant, raconte-moi ce qui te gêne en ce moment, ce que tu ressens et ce que tu aimerais améliorer. Prends ton temps, sois précis : tout peut m'aider à te proposer la cure la plus adaptée.",
       "next": "CLINICAL_QUESTIONS",
       "meta": { "capture": "plainte_client" }
     },
@@ -61,13 +61,16 @@
       "type": "ai_driven",
       "description": "THYREN utilise son raisonnement clinique Docteur 2.0 pour poser 5 à 7 questions ciblées basées sur la plainte_client. Chaque question a un OBJECTIF DIAGNOSTIQUE clair pour identifier l'axe fonctionnel prioritaire.",
       "rules": [
-        "THYREN analyse la plainte_client et identifie les axes fonctionnels potentiellement impliqués",
-        "THYREN pose 5 à 7 questions maximum (pas plus) avec des choices pertinents",
-        "Chaque question doit aider à discriminer entre les axes (thyroïdien, énergétique, surrénalien, digestif, etc.)",
-        "THYREN utilise son écoute active et son empathie à chaque question",
-        "Quand THYREN a assez d'informations pour recommander UNE cure avec confiance, il passe à Q_EMAIL",
-        "Si après 7 questions max THYREN n'est pas sûr, il recommande quand même la cure la plus probable"
-      ],
+            "THYREN analyse la plainte_client et identifie les axes fonctionnels potentiellement impliqués",
+            "THYREN pose 5 à 7 questions maximum (pas plus) avec des choices pertinents",
+            "Chaque question doit aider à discriminer entre les axes (thyroïdien, énergétique, surrénalien, digestif, etc.)",
+            "THYREN utilise une écoute active sobre (pas systématique, pas étouffante)",
+            "Pour chacune des 5 à 7 questions : le champ 'text' doit commencer par {{AI_PREV_INTERPRETATION}} puis enchaîner immédiatement avec la question ; {{AI_PREV_INTERPRETATION}} doit être remplacé par 2-3 phrases max (écoute si pertinent + mécanisme + micro-tip), sans jamais afficher le placeholder tel quel",
+            "Ne jamais reformuler des informations factuelles (prénom, sexe, âge, grossesse)",
+            "Ne jamais lister les choices dans le texte",
+            "Quand THYREN a assez d'informations pour recommander UNE cure avec confiance, il passe à Q_EMAIL",
+            "Si après 7 questions max THYREN n'est pas sûr, il recommande quand même la cure la plus probable"
+               ]
       "next": "Q_EMAIL",
       "meta": { "mode": "clinical_reasoning" }
     },
