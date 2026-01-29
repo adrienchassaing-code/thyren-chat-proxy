@@ -122,11 +122,11 @@ const LES_CURES_ALL_JSON = readJsonFile("LES_CURES_ALL.json");
 const COMPOSITIONS_JSON = readJsonFile("COMPOSITIONS.json");
 const SAV_FAQ = readDataFile("SAV_FAQ.json");
 
-const QUESTION_THYROÏDE_TRUNC = safeJsonStringifyForPrompt(QUESTION_THYROÏDE_JSON, 25000);
-const QUESTION_ALL_TRUNC = safeJsonStringifyForPrompt(QUESTION_ALL_JSON, 25000);
-const LES_CURES_ALL_TRUNC = safeJsonStringifyForPrompt(LES_CURES_ALL_JSON, 25000);
-const COMPOSITIONS_TRUNC = safeJsonStringifyForPrompt(COMPOSITIONS_JSON, 25000);
-const SAV_FAQ_TRUNC = clampText(SAV_FAQ, 12000);
+const QUESTION_THYROÏDE_TRUNC = safeJsonStringifyForPrompt(QUESTION_THYROÏDE_JSON, 50000);
+const QUESTION_ALL_TRUNC = safeJsonStringifyForPrompt(QUESTION_ALL_JSON, 50000);
+const LES_CURES_ALL_TRUNC = safeJsonStringifyForPrompt(LES_CURES_ALL_JSON, 50000);
+const COMPOSITIONS_TRUNC = safeJsonStringifyForPrompt(COMPOSITIONS_JSON, 50000);
+const SAV_FAQ_TRUNC = clampText(SAV_FAQ, 50000);
 
 const SYSTEM_PROMPT = `
 SCRIPT THYREN 2.1 — DOCTEUR FONCTIONNEL EXPERT (VERSION OPTIMISÉE)
@@ -1567,15 +1567,16 @@ function stripDiacritics(s) {
 }
 
 function detectStarterMode(raw) {
-  const msg = stripDiacritics(normalizeSoft(raw)).toLowerCase();
+  const msgOriginal = normalizeSoft(raw).toLowerCase();
+  const msgNoDiacritics = stripDiacritics(msgOriginal);
 
-  if (
-    msg.includes("thyro") ||
-    /ma\s+THYROÏDE/i.test(msg) ||
-    msg.includes("fonctionne-t-elle normalement")
-  ) {
-    return "A";
-  }
+if (
+  msgNoDiacritics.includes("thyro") ||
+  msgOriginal.includes("thyroïde") ||
+  msgOriginal.includes("thyroide")
+) {
+  return "A";
+}
 
   if (
     msg.includes("quelle cure") ||
