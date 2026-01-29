@@ -1,15 +1,13 @@
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
 const readDataFile = (filename) => {
-  const filePath = path.join(__dirname, "..", "data", filename);
-
   try {
+    const filePath = path.join(process.cwd(), "data", filename);
     return fs.readFileSync(filePath, "utf8");
   } catch (e) {
-    console.error("❌ DATA introuvable :", filename);
-    console.error("Chemin testé :", filePath);
-    throw e;
+    console.error("Erreur lecture fichier", filename, e);
+    return "";
   }
 };
 
