@@ -1569,26 +1569,24 @@ function stripDiacritics(s) {
 function detectStarterMode(raw) {
   const msgOriginal = normalizeSoft(raw).toLowerCase();
   const msgNoDiacritics = stripDiacritics(msgOriginal);
+  const msg = msgNoDiacritics; // ✅ alias pour le reste du code
 
-if (
-  msgNoDiacritics.includes("thyro") ||
-  msgOriginal.includes("thyroïde") ||
-  msgOriginal.includes("thyroide")
-) {
-  return "A";
-}
+  // THYROIDE (A)
+  if (msg.includes("thyro")) {
+    return "A";
+  }
 
-  if (
-    msg.includes("quelle cure") ||
-    msg.includes("cure est faite")
-  ) {
+  // CURE (C)
+  if (msg.includes("quelle cure") || msg.includes("cure est faite")) {
     return "C";
   }
 
+  // SAV (B)
   if (msg.includes("sav") || msg.includes("j'ai une question")) {
     return "B";
   }
 
+  // Match exact sur les starters (sans accents)
   const exact = stripDiacritics(normalizeText(raw)).toLowerCase();
   if (exact === stripDiacritics(STARTERS.A).toLowerCase()) return "A";
   if (exact === stripDiacritics(STARTERS.C).toLowerCase()) return "C";
