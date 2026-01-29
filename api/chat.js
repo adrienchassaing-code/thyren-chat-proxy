@@ -116,7 +116,7 @@ function safeJsonStringifyForPrompt(obj, maxChars = 25000) {
   }
 }
 
-const QUESTION_THYROÏDE_JSON = readJsonFile("QUESTION_THYROÏDE.json");
+const QUESTION_THYROÏDE_JSON = readJsonFile("QUESTION_THYROIDE.json");
 const QUESTION_ALL_JSON = readJsonFile("QUESTION_ALL.json");
 const LES_CURES_ALL_JSON = readJsonFile("LES_CURES_ALL.json");
 const COMPOSITIONS_JSON = readJsonFile("COMPOSITIONS.json");
