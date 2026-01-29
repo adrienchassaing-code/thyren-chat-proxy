@@ -1653,6 +1653,14 @@ ${`[LES_CURES_ALL]\n${LES_CURES_ALL_TRUNC}\n[COMPOSITIONS]\n${COMPOSITIONS_TRUNC
     }
 
     parsedReply = normalizeAssistantJson(parsedReply, activeMode);
+    
+    // ✅ ANTI-DOUBLON CTA : on retire la ligne CTA markdown du texte (les boutons UI restent)
+    if (parsedReply && typeof parsedReply.text === "string") {
+     parsedReply.text = parsedReply.text
+    // supprime la ligne CTA + tout ce qui suit (si jamais ça ré-apparaît)
+    .replace(/\n?\[Commander ma cure\]\([^)]+\)[\s\S]*$/m, "")
+    .trim();
+    }
 
     // Réponse front
     res.status(200).json({
