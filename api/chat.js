@@ -1,11 +1,7 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+const fs = require("fs");
+const path = require("path");
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-export const readDataFile = (filename) => {
+const readDataFile = (filename) => {
   const filePath = path.join(__dirname, "..", "data", filename);
 
   try {
@@ -13,9 +9,12 @@ export const readDataFile = (filename) => {
   } catch (e) {
     console.error("❌ DATA introuvable :", filename);
     console.error("Chemin testé :", filePath);
-    throw e; // important : on bloque si data absente
+    throw e;
   }
 };
+
+module.exports = { readDataFile };
+
 
 const readJsonFile = (filename) => {
   const raw = readDataFile(filename);
