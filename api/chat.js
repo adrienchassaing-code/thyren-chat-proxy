@@ -11,9 +11,6 @@ const readDataFile = (filename) => {
   }
 };
 
-module.exports = { readDataFile };
-
-
 const readJsonFile = (filename) => {
   const raw = readDataFile(filename);
   if (!raw) return null;
@@ -119,13 +116,13 @@ function safeJsonStringifyForPrompt(obj, maxChars = 25000) {
   }
 }
 
-const QUESTION_THYROÏDE_JSON = readJsonFile("QUESTION_THYROIDE.json");
+const QUESTION_THYROÏDE_JSON = readJsonFile("QUESTION_THYROÏDE.json");
 const QUESTION_ALL_JSON = readJsonFile("QUESTION_ALL.json");
 const LES_CURES_ALL_JSON = readJsonFile("LES_CURES_ALL.json");
 const COMPOSITIONS_JSON = readJsonFile("COMPOSITIONS.json");
 const SAV_FAQ = readDataFile("SAV_FAQ.json");
 
-const QUESTION_THYROÏDE_TRUNC = safeJsonStringifyForPrompt(QUESTION_THYROIDE_JSON, 25000);
+const QUESTION_THYROÏDE_TRUNC = safeJsonStringifyForPrompt(QUESTION_THYROÏDE_JSON, 25000);
 const QUESTION_ALL_TRUNC = safeJsonStringifyForPrompt(QUESTION_ALL_JSON, 25000);
 const LES_CURES_ALL_TRUNC = safeJsonStringifyForPrompt(LES_CURES_ALL_JSON, 25000);
 const COMPOSITIONS_TRUNC = safeJsonStringifyForPrompt(COMPOSITIONS_JSON, 25000);
