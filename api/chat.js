@@ -75,26 +75,20 @@ function summarizeJsonForPrompt(input, opts = {}) {
   return walk(input, 0);
 }
 
-function safeJsonStringifyForPrompt(obj, maxChars = 25000) {
+function safeJsonStringifyForPrompt(obj, maxChars = 50000) {
   try {
-    let s = JSON.stringify(summarizeJsonForPrompt(obj), null, 2);
+    let s = JSON.stringify(summarizeJsonForPrompt(obj));
 
     if (s.length > maxChars) {
       s = JSON.stringify(
         summarizeJsonForPrompt(obj, { maxDepth: 4, maxArray: 25, maxString: 350 }),
-        null,
-        2
       );
     }
     if (s.length > maxChars) {
       s = JSON.stringify(
-        summarizeJsonForPrompt(obj, { maxDepth: 3, maxArray: 15, maxString: 220 }),
-        null,
-        2
+        summarizeJsonForPrompt(obj, { maxDepth: 3, maxArray: 15, maxString: 220 }), 
       );
     }
-
-    
     if (s.length > maxChars) {
       const meta = {
         notice: "JSON trop volumineux, résumé minimal appliqué",
@@ -106,7 +100,7 @@ function safeJsonStringifyForPrompt(obj, maxChars = 25000) {
             : undefined,
         length: Array.isArray(obj) ? obj.length : undefined,
       };
-      s = JSON.stringify(meta, null, 2);
+      s = JSON.stringify(meta);
     }
 
     return s;
@@ -122,11 +116,11 @@ const LES_CURES_ALL_JSON = readJsonFile("LES_CURES_ALL.json");
 const COMPOSITIONS_JSON = readJsonFile("COMPOSITIONS.json");
 const SAV_FAQ = readDataFile("SAV_FAQ.json");
 
-const QUESTION_THYROÏDE_TRUNC = safeJsonStringifyForPrompt(QUESTION_THYROÏDE_JSON, 25000);
-const QUESTION_ALL_TRUNC = safeJsonStringifyForPrompt(QUESTION_ALL_JSON, 25000);
-const LES_CURES_ALL_TRUNC = safeJsonStringifyForPrompt(LES_CURES_ALL_JSON, 25000);
-const COMPOSITIONS_TRUNC = safeJsonStringifyForPrompt(COMPOSITIONS_JSON, 25000);
-const SAV_FAQ_TRUNC = clampText(SAV_FAQ, 25000);
+const QUESTION_THYROÏDE_TRUNC = safeJsonStringifyForPrompt(QUESTION_THYROÏDE_JSON);
+const QUESTION_ALL_TRUNC = safeJsonStringifyForPrompt(QUESTION_ALL_JSON);
+const LES_CURES_ALL_TRUNC = safeJsonStringifyForPrompt(LES_CURES_ALL_JSON);
+const COMPOSITIONS_TRUNC = safeJsonStringifyForPrompt(COMPOSITIONS_JSON);
+const SAV_FAQ_TRUNC = clampText(SAV_FAQ);
 
 const SYSTEM_PROMPT = `
 SCRIPT THYREN 2.1 — DOCTEUR FONCTIONNEL EXPERT (VERSION OPTIMISÉE)
