@@ -1,6 +1,6 @@
 {
   "document_name": "LES CURES ALL",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "brand": "SUPLEMINT",
   "global_rules": {
     "cure_duration_days": 30,
@@ -15,14 +15,12 @@
       "id": 1,
       "name": "CURE THYROÏDE",
       "short_description": "Complexe micronutritionnel pour un soutien naturel de la thyroïde.",
-      "timing": {
-        "when": "le matin à jeun juste avant le petit déjeuner"
-      },
+      "timing": { "when": "le matin à jeun juste avant le petit déjeuner" },
       "composition_intake": [
-        { "item": "ADRENO+", "qty_per_day": 1 },
-        { "item": "MULTI VIT", "qty_per_day": 1 },
-        { "item": "THYROÏDE+", "qty_per_day": 1 },
-        { "item": "L-TYRO ACTIV", "qty_per_day": 1 }
+        { "item": "ADRENO_PLUS", "qty_per_day": 1 },
+        { "item": "MULTI_VIT", "qty_per_day": 1 },
+        { "item": "THYROIDE_PLUS", "qty_per_day": 1 },
+        { "item": "L_TYRO_ACTIV", "qty_per_day": 1 }
       ],
       "recommendation_logic": [
         "Hypothyroïdie diagnostiquée",
@@ -65,12 +63,10 @@
       "id": 2,
       "name": "CURE INTESTIN",
       "short_description": "Améliore ton transit et ta digestion.",
-      "timing": {
-        "when": "durant le repas le plus important"
-      },
+      "timing": { "when": "durant le repas le plus important" },
       "composition_intake": [
         { "item": "GASTRATOP", "qty_per_day": 1 },
-        { "item": "ENZYM+", "qty_per_day": 1 },
+        { "item": "ENZYM_PLUS", "qty_per_day": 1 },
         { "item": "TRANSITEAM", "qty_per_day": 3 }
       ],
       "recommendation_logic": [
@@ -83,9 +79,7 @@
         "Déconseillé aux enfants de moins de 12 ans.",
         "Interdiction traitement anticoagulant coumariniques."
       ],
-      "notes": [
-        "Parfaite pour préparer le terrain pour la cure thyroïde."
-      ],
+      "notes": ["Parfaite pour préparer le terrain pour la cure thyroïde."],
       "links": {
         "product_url": "https://www.suplemint.com/products/cure-intestin",
         "image_url": "https://www.suplemint.com/products/cure-intestin"
@@ -95,15 +89,13 @@
       "id": 3,
       "name": "CURE ÉNERGIE",
       "short_description": "Retrouve vitalité et tonus.",
-      "timing": {
-        "when": "le matin à jeun juste avant le petit déjeuner"
-      },
+      "timing": { "when": "le matin à jeun juste avant le petit déjeuner" },
       "composition_intake": [
-        { "item": "VITAMINE C", "qty_per_day": 1 },
+        { "item": "VITAMINE_C", "qty_per_day": 1 },
         { "item": "COQ10", "qty_per_day": 1 },
-        { "item": "OMEGA 3", "qty_per_day": 1 },
-        { "item": "L-TYRO ACTIV", "qty_per_day": 1 },
-        { "item": "MAGNESIUM+", "qty_per_day": 1 }
+        { "item": "OMEGA3", "qty_per_day": 1 },
+        { "item": "L_TYRO_ACTIV", "qty_per_day": 1 },
+        { "item": "MAGNESIUM_PLUS", "qty_per_day": 1 }
       ],
       "recommendation_logic": [
         "Fatigue constante",
@@ -114,9 +106,7 @@
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans."
       ],
-      "notes": [
-        "Parfaite pour un effet “Waouh” boost immédiat."
-      ],
+      "notes": ["Parfaite pour un effet “Waouh” boost immédiat."],
       "links": {
         "product_url": "https://www.suplemint.com/products/cure-energie",
         "image_url": "https://www.suplemint.com/products/cure-energie"
@@ -126,14 +116,12 @@
       "id": 4,
       "name": "CURE POIDS",
       "short_description": "Facilite ta perte de poids naturellement.",
-      "timing": {
-        "when": "le matin à jeun juste avant le petit déjeuner"
-      },
+      "timing": { "when": "le matin à jeun juste avant le petit déjeuner" },
       "composition_intake": [
         { "item": "COQ10", "qty_per_day": 1 },
         { "item": "OMEGA3", "qty_per_day": 2 },
-        { "item": "BERBERINE ACTIV", "qty_per_day": 1 },
-        { "item": "ACETYL CARN", "qty_per_day": 2 }
+        { "item": "BERBERINE_ACTIV", "qty_per_day": 1 },
+        { "item": "ACETYL_CARN", "qty_per_day": 2 }
       ],
       "recommendation_logic": [
         "Prise de poids inexpliquée",
@@ -145,9 +133,7 @@
         "Déconseillé aux enfants de moins de 12 ans.",
         "Interdiction traitement contre le diabète."
       ],
-      "notes": [
-        "Super résultats si prise à la suite d’INTESTIN et THYROIDE."
-      ],
+      "notes": ["Super résultats si prise à la suite d’INTESTIN et THYROIDE."],
       "links": {
         "product_url": "https://www.suplemint.com/products/cure-poids",
         "image_url": "https://www.suplemint.com/products/cure-poids"
@@ -157,18 +143,12 @@
       "id": 5,
       "name": "CURE IMMUNITÉ",
       "short_description": "Renforce vos défenses naturelles.",
-      "timing": {
-        "when": "le matin durant le petit déjeuner"
-      },
+      "timing": { "when": "le matin durant le petit déjeuner" },
       "composition_intake": [
         { "item": "IMMUNO", "qty_per_day": 3 },
-        { "item": "BIO ACTIV", "qty_per_day": 1 }
+        { "item": "BIO_ACTIV", "qty_per_day": 1 }
       ],
-      "recommendation_logic": [
-        "Fatigue",
-        "Peau sèche",
-        "Transit perturbé"
-      ],
+      "recommendation_logic": ["Fatigue", "Peau sèche", "Transit perturbé"],
       "contraindications": [
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans.",
@@ -183,21 +163,15 @@
       "id": 6,
       "name": "CURE SENIOR",
       "short_description": "Accompagne le vieillissement en douceur.",
-      "timing": {
-        "when": "le matin durant le petit déjeuner"
-      },
+      "timing": { "when": "le matin durant le petit déjeuner" },
       "composition_intake": [
         { "item": "COQ10", "qty_per_day": 1 },
         { "item": "OMEGA3", "qty_per_day": 1 },
-        { "item": "MULTI VIT", "qty_per_day": 1 },
-        { "item": "BETA ALANINE", "qty_per_day": 1 },
-        { "item": "L-CARNOSINE", "qty_per_day": 1 }
+        { "item": "MULTI_VIT", "qty_per_day": 1 },
+        { "item": "BETA_ALANINE", "qty_per_day": 1 },
+        { "item": "L_CARNOSINE", "qty_per_day": 1 }
       ],
-      "recommendation_logic": [
-        "Âge > 60 ans",
-        "Fatigue",
-        "Peau/cheveux fragiles"
-      ],
+      "recommendation_logic": ["Âge > 60 ans", "Fatigue", "Peau/cheveux fragiles"],
       "contraindications": [
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans.",
@@ -214,18 +188,13 @@
       "id": 7,
       "name": "CURE SOMMEIL",
       "short_description": "Favorise un sommeil réparateur.",
-      "timing": {
-        "when": "le soir au coucher"
-      },
+      "timing": { "when": "le soir au coucher" },
       "composition_intake": [
         { "item": "MELATOP", "qty_per_day": 3 },
         { "item": "ASHWAGANDHA", "qty_per_day": 1 },
-        { "item": "MAGNESIUM+", "qty_per_day": 1 }
+        { "item": "MAGNESIUM_PLUS", "qty_per_day": 1 }
       ],
-      "recommendation_logic": [
-        "Sommeil non réparateur",
-        "Humeur fluctuante"
-      ],
+      "recommendation_logic": ["Sommeil non réparateur", "Humeur fluctuante"],
       "contraindications": [
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans.",
@@ -240,18 +209,14 @@
       "id": 8,
       "name": "CURE COMPLÈTE",
       "short_description": "Couvre l’ensemble des besoins essentiels.",
-      "timing": {
-        "when": "le matin durant le petit déjeuner"
-      },
+      "timing": { "when": "le matin durant le petit déjeuner" },
       "composition_intake": [
-        { "item": "MULTI VIT", "qty_per_day": 1 },
-        { "item": "MAG TOP", "qty_per_day": 1 },
-        { "item": "PHENOL+", "qty_per_day": 1 },
+        { "item": "MULTI_VIT", "qty_per_day": 1 },
+        { "item": "MAG_TOP", "qty_per_day": 1 },
+        { "item": "PHENOL_PLUS", "qty_per_day": 1 },
         { "item": "ANTIOX", "qty_per_day": 1 }
       ],
-      "recommendation_logic": [
-        "Toutes réponses légèrement positives sans pathologie marquée"
-      ],
+      "recommendation_logic": ["Toutes réponses légèrement positives sans pathologie marquée"],
       "contraindications": [
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans.",
@@ -269,20 +234,14 @@
       "id": 9,
       "name": "CURE HOMME+",
       "short_description": "Soutient la vitalité masculine et la libido.",
-      "timing": {
-        "when": "le soir juste avant le dîner"
-      },
+      "timing": { "when": "le soir juste avant le dîner" },
       "composition_intake": [
         { "item": "COQ10", "qty_per_day": 1 },
-        { "item": "OMEGA 3", "qty_per_day": 1 },
-        { "item": "STIM+", "qty_per_day": 3 },
+        { "item": "OMEGA3", "qty_per_day": 1 },
+        { "item": "STIM_PLUS", "qty_per_day": 3 },
         { "item": "MACA", "qty_per_day": 2 }
       ],
-      "recommendation_logic": [
-        "Sexe : Homme",
-        "Fatigue",
-        "Baisse motivation"
-      ],
+      "recommendation_logic": ["Sexe : Homme", "Fatigue", "Baisse motivation"],
       "contraindications": [
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans.",
@@ -298,19 +257,13 @@
       "id": 10,
       "name": "CURE ZÉNITUDE",
       "short_description": "Aide à réduire le stress et l’anxiété.",
-      "timing": {
-        "when": "le matin durant le petit déjeuner"
-      },
+      "timing": { "when": "le matin durant le petit déjeuner" },
       "composition_intake": [
         { "item": "ASHWAGANDHA", "qty_per_day": 1 },
-        { "item": "MG MALATE", "qty_per_day": 3 },
-        { "item": "RELAX+", "qty_per_day": 2 }
+        { "item": "MG_MALATE", "qty_per_day": 3 },
+        { "item": "RELAX_PLUS", "qty_per_day": 2 }
       ],
-      "recommendation_logic": [
-        "Humeur fluctuante",
-        "Sommeil léger",
-        "Difficulté de concentration"
-      ],
+      "recommendation_logic": ["Humeur fluctuante", "Sommeil léger", "Difficulté de concentration"],
       "contraindications": [
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans.",
@@ -333,10 +286,7 @@
         { "item": "HEPATOP", "qty_per_day": 2, "time": "morning" },
         { "item": "RENATOP", "qty_per_day": 2, "time": "evening" }
       ],
-      "recommendation_logic": [
-        "Q14 Transit lent",
-        "Q15 Gonflement visage/mains"
-      ],
+      "recommendation_logic": ["Q14 Transit lent", "Q15 Gonflement visage/mains"],
       "contraindications": [
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans."
@@ -350,17 +300,12 @@
       "id": 12,
       "name": "CURE ARTICULATION",
       "short_description": "Protège et renforce vos articulations.",
-      "timing": {
-        "when": "durant le repas le plus important"
-      },
+      "timing": { "when": "durant le repas le plus important" },
       "composition_intake": [
         { "item": "OMEGA3", "qty_per_day": 1 },
-        { "item": "CURCUM ARTI", "qty_per_day": 2 }
+        { "item": "CURCUM_ARTI", "qty_per_day": 2 }
       ],
-      "recommendation_logic": [
-        "Âge > 45 ans",
-        "Douleurs articulaires éventuelles"
-      ],
+      "recommendation_logic": ["Âge > 45 ans", "Douleurs articulaires éventuelles"],
       "contraindications": [
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans.",
@@ -376,18 +321,13 @@
       "id": 13,
       "name": "CURE PEAU",
       "short_description": "Améliore l’aspect et la santé de ta peau.",
-      "timing": {
-        "when": "durant le repas le plus important"
-      },
+      "timing": { "when": "durant le repas le plus important" },
       "composition_intake": [
-        { "item": "ONAGRE B", "qty_per_day": 2 },
-        { "item": "PHENOL+", "qty_per_day": 1 },
-        { "item": "SKIN ACTIV", "qty_per_day": 1 }
+        { "item": "ONAGRE_B", "qty_per_day": 2 },
+        { "item": "PHENOL_PLUS", "qty_per_day": 1 },
+        { "item": "SKIN_ACTIV", "qty_per_day": 1 }
       ],
-      "recommendation_logic": [
-        "Peau sèche",
-        "Transit lent"
-      ],
+      "recommendation_logic": ["Peau sèche", "Transit lent"],
       "contraindications": [
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans."
@@ -401,22 +341,15 @@
       "id": 14,
       "name": "CURE MÉNOPAUSE",
       "short_description": "Accompagne l’équilibre hormonal.",
-      "timing": {
-        "when": "le matin durant le petit déjeuner"
-      },
+      "timing": { "when": "le matin durant le petit déjeuner" },
       "composition_intake": [
         { "item": "YAM", "qty_per_day": 2 },
         { "item": "OESTROBOOST", "qty_per_day": 1 },
-        { "item": "ONAGRE B", "qty_per_day": 3 },
-        { "item": "MULTI VIT", "qty_per_day": 1 },
-        { "item": "ENZYM+", "qty_per_day": 1 }
+        { "item": "ONAGRE_B", "qty_per_day": 3 },
+        { "item": "MULTI_VIT", "qty_per_day": 1 },
+        { "item": "ENZYM_PLUS", "qty_per_day": 1 }
       ],
-      "recommendation_logic": [
-        "Sexe : Femme",
-        "Âge 45–60 ans",
-        "Humeur fluctuante",
-        "Sommeil perturbé"
-      ],
+      "recommendation_logic": ["Sexe : Femme", "Âge 45–60 ans", "Humeur fluctuante", "Sommeil perturbé"],
       "contraindications": [
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans.",
@@ -432,20 +365,15 @@
       "id": 15,
       "name": "CURE SPORT",
       "short_description": "Soutien l’endurance et la récupération.",
-      "timing": {
-        "when": "juste avant l'activité sportive"
-      },
+      "timing": { "when": "juste avant l'activité sportive" },
       "composition_intake": [
         { "item": "KLAMATH", "qty_per_day": 1 },
-        { "item": "RECUP+", "qty_per_day": 3 },
-        { "item": "L-TYRO ACTIV", "qty_per_day": 1 },
-        { "item": "BETA ALANINE", "qty_per_day": 1 },
-        { "item": "L-CARNOSINE", "qty_per_day": 1 }
+        { "item": "RECUP_PLUS", "qty_per_day": 3 },
+        { "item": "L_TYRO_ACTIV", "qty_per_day": 1 },
+        { "item": "BETA_ALANINE", "qty_per_day": 1 },
+        { "item": "L_CARNOSINE", "qty_per_day": 1 }
       ],
-      "recommendation_logic": [
-        "Bonne énergie",
-        "Pratique sportive régulière"
-      ],
+      "recommendation_logic": ["Bonne énergie", "Pratique sportive régulière"],
       "contraindications": [
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans.",
@@ -463,19 +391,14 @@
       "id": 16,
       "name": "CURE MÉMOIRE",
       "short_description": "Stimule la concentration et la clarté mentale.",
-      "timing": {
-        "when": "le matin durant le petit déjeuner"
-      },
+      "timing": { "when": "le matin durant le petit déjeuner" },
       "composition_intake": [
         { "item": "KRILL", "qty_per_day": 1 },
-        { "item": "MULTI VIT", "qty_per_day": 1 },
-        { "item": "MAG TOP", "qty_per_day": 1 },
+        { "item": "MULTI_VIT", "qty_per_day": 1 },
+        { "item": "MAG_TOP", "qty_per_day": 1 },
         { "item": "KLAMATH", "qty_per_day": 2 }
       ],
-      "recommendation_logic": [
-        "Difficulté de concentration",
-        "Âge > 45 ans"
-      ],
+      "recommendation_logic": ["Difficulté de concentration", "Âge > 45 ans"],
       "contraindications": [
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans.",
@@ -493,20 +416,14 @@
       "id": 17,
       "name": "CURE ADDICT FREE",
       "short_description": "Aide à arrêter de fumer.",
-      "timing": {
-        "when": "le matin à jeun juste avant le petit déjeuner"
-      },
+      "timing": { "when": "le matin à jeun juste avant le petit déjeuner" },
       "composition_intake": [
         { "item": "OMEGA3", "qty_per_day": 1 },
-        { "item": "L-TYRO ACTIV", "qty_per_day": 2 },
+        { "item": "L_TYRO_ACTIV", "qty_per_day": 2 },
         { "item": "KLAMATH", "qty_per_day": 2 },
         { "item": "GUDZU", "qty_per_day": 4 }
       ],
-      "recommendation_logic": [
-        "Utilisateur fumeur",
-        "Fatigue",
-        "Humeur fluctuante"
-      ],
+      "recommendation_logic": ["Utilisateur fumeur", "Fatigue", "Humeur fluctuante"],
       "contraindications": [
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans."
@@ -520,21 +437,15 @@
       "id": 18,
       "name": "CURE CONCEPTION",
       "short_description": "Optimise la fertilité.",
-      "timing": {
-        "when": "le matin durant le petit déjeuner"
-      },
+      "timing": { "when": "le matin durant le petit déjeuner" },
       "composition_intake": [
         { "item": "COQ10", "qty_per_day": 1 },
-        { "item": "OMEGA 3", "qty_per_day": 1 },
-        { "item": "B94FOLIC", "qty_per_day": 1 },
-        { "item": "MAG MALATE", "qty_per_day": 2 },
-        { "item": "MULTI VIT", "qty_per_day": 1 }
+        { "item": "OMEGA3", "qty_per_day": 1 },
+        { "item": "B9_4FOLIC", "qty_per_day": 1 },
+        { "item": "MG_MALATE", "qty_per_day": 2 },
+        { "item": "MULTI_VIT", "qty_per_day": 1 }
       ],
-      "recommendation_logic": [
-        "Projet de grossesse",
-        "Sexe : Femme",
-        "Âge < 40"
-      ],
+      "recommendation_logic": ["Projet de grossesse", "Sexe : Femme", "Âge < 40"],
       "contraindications": [
         "Interdiction de grossesse plus de 7 mois ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans.",
@@ -552,19 +463,14 @@
       "id": 19,
       "name": "CURE ALLAITEMENT",
       "short_description": "Soutient la production de lait et l’énergie post-partum.",
-      "timing": {
-        "when": "le matin durant le petit déjeuner"
-      },
+      "timing": { "when": "le matin durant le petit déjeuner" },
       "composition_intake": [
         { "item": "OMEGA3", "qty_per_day": 1 },
-        { "item": "MULTI VIT", "qty_per_day": 1 },
+        { "item": "MULTI_VIT", "qty_per_day": 1 },
         { "item": "LACTOP", "qty_per_day": 2 },
-        { "item": "MG MALATE", "qty_per_day": 2 }
+        { "item": "MG_MALATE", "qty_per_day": 2 }
       ],
-      "recommendation_logic": [
-        "Allaitement en cours",
-        "Fatigue post-partum"
-      ],
+      "recommendation_logic": ["Allaitement en cours", "Fatigue post-partum"],
       "contraindications": [
         "Interdiction de grossesse.",
         "Déconseillé aux enfants de moins de 12 ans.",
@@ -582,20 +488,14 @@
       "id": 20,
       "name": "CURE ANTIOXYDANT",
       "short_description": "Protège du vieillissement cellulaire.",
-      "timing": {
-        "when": "le matin durant le petit déjeuner"
-      },
+      "timing": { "when": "le matin durant le petit déjeuner" },
       "composition_intake": [
-        { "item": "PHENOL+", "qty_per_day": 1 },
-        { "item": "VITAMINE C", "qty_per_day": 1 },
+        { "item": "PHENOL_PLUS", "qty_per_day": 1 },
+        { "item": "VITAMINE_C", "qty_per_day": 1 },
         { "item": "QUERCETINE", "qty_per_day": 1 },
-        { "item": "TEA ACTIV", "qty_per_day": 1 }
+        { "item": "TEA_ACTIV", "qty_per_day": 1 }
       ],
-      "recommendation_logic": [
-        "Âge > 45 ans",
-        "Fatigue",
-        "Peau terne"
-      ],
+      "recommendation_logic": ["Âge > 45 ans", "Fatigue", "Peau terne"],
       "contraindications": [
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans."
@@ -609,20 +509,14 @@
       "id": 21,
       "name": "CURE CARDIO",
       "short_description": "Favorise la santé cardiaque et circulatoire.",
-      "timing": {
-        "when": "le matin durant le petit déjeuner"
-      },
+      "timing": { "when": "le matin durant le petit déjeuner" },
       "composition_intake": [
         { "item": "OMEGA3", "qty_per_day": 2 },
-        { "item": "ACETYL CARN", "qty_per_day": 2 },
-        { "item": "CARDIO+", "qty_per_day": 3 },
+        { "item": "ACETYL_CARN", "qty_per_day": 2 },
+        { "item": "CARDIO_PLUS", "qty_per_day": 3 },
         { "item": "COQ10", "qty_per_day": 1 }
       ],
-      "recommendation_logic": [
-        "Âge > 60 ans",
-        "Frilosité",
-        "Gonflement"
-      ],
+      "recommendation_logic": ["Âge > 60 ans", "Frilosité", "Gonflement"],
       "contraindications": [
         "Interdiction de grossesse ou d'allaitement.",
         "Déconseillé aux enfants de moins de 12 ans."
