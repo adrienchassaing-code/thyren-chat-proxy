@@ -1,35 +1,21 @@
 {
-  "version": "0.8.5",
+  "version": "0.8.6",
   "capsules": {
     "YAM": {
       "display_name": "Gélule YAM®",
       "form": "gelule",
       "ingredients": [
-        { "name": "Extrait de Yam", "amount_mg": 500 },
-        { "name": "Pullulan", "amount_mg": null }
+        { "name": "Extrait de Yam (Dioscorea opposita)", "amount_mg": 500 },
+        { "name": "Pullulane", "amount_mg": null }
       ],
       "capsule_shell": "pullulane",
       "allergen_tags": ["yam"],
-      "notes": "",
-      "aliases": ["YAM", "Gélule YAM", "YAM®"]
-    },
-
-    "ADRENO_PLUS": {
-      "display_name": "ADRENO+®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Poudre d'algue Klamath (Aphanizomenon flos-aquae)", "amount_mg": 200, "notes": "dont phycocianine 11,3% (22,6 mg)" },
-        { "name": "Extrait de Bacopa monnieri", "amount_mg": 150, "notes": "dont bacosides 50% (75 mg)" },
-        { "name": "Poudre de ginseng HRG80™", "amount_mg": 50 },
-        { "name": "Extrait de Panax ginseng CA Meyer", "amount_mg": 50, "notes": "dont ginsenoïdes totaux 11,45 mg / dont ginseng rares 5 mg" },
-        { "name": "Extrait de Ginkgo biloba", "amount_mg": 60, "notes": "dont glycoside de flavonol 24% (14,4 mg) / dont terpéno-lactones 6% (3,6 mg)" },
-        { "name": "L-Tyrosine", "amount_mg": 37.5 },
-        { "name": "Oryza sativa L.", "amount_mg": null }
+      "origin": "Le Yam (Dioscorea villosa), aussi appelé igname sauvage, est une plante originaire d’Amérique du Nord et d’Asie. Son tubercule est traditionnellement utilisé et standardisé en extrait pour garantir une concentration constante en principes actifs naturels. La gélule est fabriquée à partir de pullulane, un polymère végétal obtenu par fermentation naturelle de l’amidon.",
+      "benefits_allegations": [
+        "L’Igname sauvage contribue au confort lors de la ménopause."
       ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "La liste source mentionne aussi 'gélule : pullulane' + 'Oryza sativa'.",
-      "aliases": ["ADRENO+", "ADRENO_PLUS", "ADRENO PLUS", "ADRENO+®"]
+      "notes": "Texte source mentionne Dioscorea opposita (ingrédients) et Dioscorea villosa (origine).",
+      "aliases": ["YAM", "Gélule YAM", "YAM®"]
     },
 
     "OESTROBOOST": {
@@ -39,12 +25,42 @@
         { "name": "Extrait de houblon (Humulus lupulus)", "amount_mg": 262.5 },
         { "name": "Extrait de houblon (Lifenol®)", "amount_mg": 62.5 },
         { "name": "Extrait de sauge sclarée (Salvia sclarea)", "amount_mg": 25 },
-        { "name": "Extrait de sauge officinale (Salvia officinalis)", "amount_mg": 25 }
+        { "name": "Extrait de sauge officinale (Salvia officinalis)", "amount_mg": 25 },
+        { "name": "Pullulane", "amount_mg": null }
       ],
       "capsule_shell": "pullulane",
       "allergen_tags": [],
+      "origin": "L’extrait de houblon (Humulus lupulus) provient des cônes femelles de la plante, cultivée en Europe, connus pour contenir des flavonoïdes spécifiques comme le 8-prénylnaringénine. La souche brevetée Lifenol® est issue d’un procédé d’extraction standardisé pour une qualité constante. La sauge sclarée (Salvia sclarea) et la sauge officinale (Salvia officinalis) proviennent de plantes herbacées de la famille des Lamiacées, traditionnellement cultivées en Europe méditerranéenne. Les extraits sont obtenus par séchage et extraction des parties aériennes (feuilles et sommités fleuries). La gélule est en pullulane d’origine végétale.",
+      "benefits_allegations": [
+        "L’houblon contribue au bon sommeil, à la relaxation, à la santé digestive et au confort lors de la ménopause.",
+        "Il possède également une action antioxydante.",
+        "La sauge sclarée contribue aux défenses naturelles de l’organisme, présente une action antioxydante et favorise le confort digestif.",
+        "La sauge officinale contribue à la régulation de la transpiration."
+      ],
       "notes": "",
       "aliases": ["OESTROBOOST", "OESTROBOOST®"]
+    },
+
+    "BOURRACHE_ONAGRE": {
+      "display_name": "Gélule BOURRACHE + ONAGRE®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Huile de bourrache (Borago officinalis L.)", "amount_mg": 750 },
+        { "name": "Huile d’onagre (Oenothera biennis L.)", "amount_mg": 750 },
+        { "name": "d-α tocophérol (vitamine E)", "amount_mg": 22.5 },
+        { "name": "Gélatine (capsule)", "amount_mg": null },
+        { "name": "Glycérol (humectant)", "amount_mg": null },
+        { "name": "Eau", "amount_mg": null }
+      ],
+      "capsule_shell": "gélatine (origine animale)",
+      "allergen_tags": [],
+      "origin": "L’huile de bourrache (Borago officinalis L.) est extraite par pression à froid des graines, riches en acides gras essentiels, notamment en acide gamma-linolénique (GLA). L’huile d’onagre (Oenothera biennis L.) est également obtenue par pression à froid des graines de cette plante originaire d’Amérique du Nord, reconnue pour sa richesse en GLA et acide linoléique. La capsule est composée de gélatine (origine animale), de glycérol comme agent humectant, d’eau purifiée et de d-α tocophérol (vitamine E naturelle issue de sources végétales).",
+      "benefits_allegations": [
+        "La bourrache contribue au bon fonctionnement des voies respiratoires et favorise le confort articulaire.",
+        "La vitamine E contribue à protéger les cellules contre le stress oxydatif."
+      ],
+      "notes": "",
+      "aliases": ["BOURRACHE + ONAGRE", "BOURRACHE_ONAGRE", "BOURRACHE + ONAGRE®"]
     },
 
     "MULTI_VIT": {
@@ -70,22 +86,34 @@
         { "name": "Oléorésine riche en astaxanthine (Haematococcus pluvialis)", "amount_mg": 2 },
         { "name": "Lutéine", "amount_mg": 2 },
         { "name": "Vitamine B6 (pyridoxal phosphate)", "amount_mg": 1.94, "notes": "139%" },
-        { "name": "Bêtacarotène", "amount_mg": 1.6 },
-        { "name": "Vitamine B8 (D-biotine)", "amount_mg": 0.45, "notes": "450 µg (900%)" },
-        { "name": "Zéaxanthine", "amount_mg": 0.4, "notes": "400 µg" },
-        { "name": "Vitamine B9 (Quatrefolic®)", "amount_mg": 0.2, "notes": "200 µg (100%)" },
-        { "name": "Iodure de potassium", "amount_mg": 0.150, "notes": "dont iode élément 114,6 µg (76%)" },
-        { "name": "Vitamine K2 (menaquinone)", "amount_mg": 0.075, "notes": "75 µg (100%)" },
-        { "name": "Vitamine D3 (cholécalciférol)", "amount_mg": 0.025, "notes": "25 µg / 1000 UI (500%)" },
-        { "name": "Vitamine B12 (méthylcobalamine)", "amount_mg": 0.0016, "notes": "1,6 µg (64%)" },
-        { "name": "Vitamine B12 (hydroxycobalamine)", "amount_mg": 0.0016, "notes": "1,6 µg (64%)" },
+        { "name": "Bêta-carotène", "amount_mg": 1.6 },
+        { "name": "Vitamine B8 (D-biotine)", "amount_mcg": 450, "notes": "900%" },
+        { "name": "Zéaxanthine", "amount_mcg": 400 },
+        { "name": "Vitamine B9 (Quatrefolic®)", "amount_mcg": 200, "notes": "100%" },
+        { "name": "Iodure de potassium", "amount_mcg": 150, "notes": "dont iode élément 114,6 µg (76%)" },
+        { "name": "Vitamine K2 (ménaquinone) (synthétique) (source microbienne)", "amount_mcg": 75, "notes": "100%" },
+        { "name": "Vitamine D3 (cholécalciférol)", "amount_mcg": 25, "notes": "1000 UI (500%)" },
+        { "name": "Vitamine B12 (méthylcobalamine)", "amount_mcg": 1.6, "notes": "64%" },
+        { "name": "Vitamine B12 (hydroxycobalamine)", "amount_mcg": 1.6, "notes": "64%" },
         { "name": "Amidon de riz", "amount_mg": null },
         { "name": "Farine de riz", "amount_mg": null },
-        { "name": "Huile de colza", "amount_mg": null }
+        { "name": "Huile de colza", "amount_mg": null },
+        { "name": "Pullulane (gélule)", "amount_mg": null }
       ],
       "capsule_shell": "pullulane",
       "allergen_tags": [],
-      "notes": "Contient iode + sélénium. Valeurs % selon VNR source.",
+      "contains_iodine": true,
+      "origin": "Les vitamines et minéraux contenus dans cette formule proviennent de sources variées : le zinc (bisglycinate) est obtenu par chélation du zinc élément avec la glycine pour une meilleure biodisponibilité ; la vitamine B3 (nicotinamide), la vitamine C (acide L-ascorbique) et les autres vitamines du groupe B sont produites par fermentation bactérienne ou synthèse contrôlée ; le sélénium est issu de levures enrichies (Saccharomyces cerevisiae) ; la vitamine E naturelle (Vitaphérole®) est extraite d’huiles végétales ; la vitamine D3 est dérivée de la lanoline de laine de mouton, source naturelle de cholécalciférol ; la vitamine K2 (ménaquinone-7) provient de la fermentation bactérienne (Bacillus subtilis natto) ; enfin, les caroténoïdes (lutéine, zéaxanthine, lycopène, bêta-carotène, astaxanthine) sont extraits de végétaux tels que les algues, tomates, maïs, piments et myrtilles. La gélule est fabriquée en pullulane, un polymère naturel obtenu par fermentation de l’amidon.",
+      "benefits_allegations": [
+        "La thiamine, la riboflavine, la niacine et la vitamine B6 contribuent à un métabolisme énergétique normal et au fonctionnement normal du système nerveux.",
+        "La thiamine soutient également des fonctions psychologiques normales et une fonction cardiaque normale.",
+        "La riboflavine participe au maintien de muqueuses, de globules rouges, de la peau et de la vision normales, contribue au métabolisme normal du fer, aide à protéger les cellules contre le stress oxydatif et à réduire la fatigue.",
+        "La niacine contribue aussi au maintien d’une peau et de muqueuses normales ainsi qu’à des fonctions psychologiques normales.",
+        "La vitamine B6 intervient dans la synthèse normale de la cystéine et aide à réduire la fatigue.",
+        "La vitamine B6 contribue à réguler l’activité hormonale et à réduire la fatigue.",
+        "Le zinc contribue au fonctionnement normal du système immunitaire et à la protection des cellules contre le stress oxydatif."
+      ],
+      "notes": "",
       "aliases": ["MULTI VIT", "MULTI_VIT", "MULTI VIT®"]
     },
 
@@ -93,19 +121,24 @@
       "display_name": "Gélule ENZYM+®",
       "form": "gelule",
       "ingredients": [
-        { "name": "Bromélaïne", "amount_mg": 100 },
-        { "name": "Papaïne", "amount_mg": 75 },
+        { "name": "Bromélaïne", "amount_mg": 100, "notes": "extraite de la tige d’ananas (Ananas comosus)" },
+        { "name": "Papaïne", "amount_mg": 75, "notes": "issue du latex de papaye (Carica papaya)" },
         { "name": "Gingembre (Zingiber officinale)", "amount_mg": 50 },
         { "name": "Amylase", "amount_mg": 25 },
         { "name": "Lipase", "amount_mg": 25 },
-        { "name": "Protéase issue du Ficus carica", "amount_mg": 25 },
+        { "name": "Protéase issue de Ficus carica", "amount_mg": 25 },
         { "name": "Trypsine", "amount_mg": 25 },
         { "name": "Amidon de riz", "amount_mg": null },
         { "name": "Oryza sativa", "amount_mg": null },
-        { "name": "Huile de colza (Brassica napus L.)", "amount_mg": null }
+        { "name": "Huile de colza (Brassica napus L.)", "amount_mg": null },
+        { "name": "HPMC (DRcaps™) - gélule gastrorésistante d'origine végétale", "amount_mg": null }
       ],
-      "capsule_shell": "DRcaps HPMC (gastro-résistante d'origine végétale)",
+      "capsule_shell": "DRcaps™ (HPMC) gastrorésistante d'origine végétale",
       "allergen_tags": [],
+      "origin": "ENZYM+ associe des enzymes d’origine végétale et fruitière : la bromélaïne est extraite de la tige d’ananas (Ananas comosus), la papaïne du latex de papaye (Carica papaya), et une protéase issue de Ficus carica ; l’amylase et la lipase sont des enzymes d’usage alimentaire, complétées par un extrait de racine de gingembre (Zingiber officinale). Les excipients sont d’origine végétale (amidon/farine de riz, huile de colza). La gélule gastrorésistante DRcaps™ est en HPMC d’origine végétale.",
+      "benefits_allegations": [
+        "Le gingembre contribue au bon fonctionnement du système immunitaire et du système nerveux."
+      ],
       "notes": "",
       "aliases": ["ENZYM+", "ENZYM_PLUS", "ENZYM +", "ENZYM+®"]
     },
@@ -114,23 +147,66 @@
       "display_name": "Gélule THYROÏDE+®",
       "form": "gelule",
       "ingredients": [
-        { "name": "Guggul (Commiphora mukul)", "amount_mg": 266, "notes": "dont 26,6 mg guggulstérones" },
-        { "name": "Ashwagandha KSM-66® (Withania somnifera)", "amount_mg": 200, "notes": "dont 10 mg withanolides" },
+        { "name": "Guggul (Commiphora mukul)", "amount_mg": 266, "notes": "dont 26,6 mg de guggulstérones" },
+        { "name": "Ashwagandha (KSM-66®) (Withania somnifera)", "amount_mg": 200, "notes": "dont 10 mg de withanolides" },
         { "name": "L-tyrosine", "amount_mg": 166.6 },
-        { "name": "Fucus vesiculeux (Fucus vesiculosus)", "amount_mg": 160, "notes": "dont 100 µg d’iode (66,6% VNR)" },
-        { "name": "Bisglycinate de zinc", "amount_mg": 33.33, "notes": "dont 10 mg zinc (100% VNR)" },
-        { "name": "Levure de sélénium", "amount_mg": 18.3, "notes": "dont 36,6 µg sélénium (66,6% VNR)" },
-        { "name": "Gluconate de manganèse", "amount_mg": 5.4, "notes": "dont 0,66 mg manganèse (33,3% VNR)" },
-        { "name": "Méthylcobalamine", "amount_mg": 0.0083, "notes": "8,3 µg (333,3% VNR)" },
+        { "name": "Fucus vésiculeux (Fucus vesiculosus)", "amount_mg": 160, "notes": "dont 100 µg d’iode (VNR 66,6%)" },
+        { "name": "Bisglycinate de zinc", "amount_mg": 33.33, "notes": "dont 10 mg de zinc (VNR 100%)" },
+        { "name": "Levure de sélénium", "amount_mg": 18.3, "notes": "dont 36,6 µg de sélénium (VNR 66,6%)" },
+        { "name": "Gluconate de manganèse", "amount_mg": 5.4, "notes": "dont 0,66 mg de manganèse (VNR 33,3%)" },
+        { "name": "Méthylcobalamine (Vitamine B12)", "amount_mcg": 8.3, "notes": "VNR 333,3%" },
         { "name": "Oryza sativa", "amount_mg": null },
-        { "name": "Sophora Japonica", "amount_mg": null },
-        { "name": "Amidon de riz", "amount_mg": null }
+        { "name": "Sophora japonica", "amount_mg": null },
+        { "name": "Amidon de riz", "amount_mg": null },
+        { "name": "Pullulane (gélule)", "amount_mg": null }
       ],
       "capsule_shell": "pullulane",
       "allergen_tags": [],
       "contains_iodine": true,
+      "origin": "La formule associe des ingrédients d’origines végétales, marines et minérales. Le guggul est extrait de la résine de Commiphora mukul, l’ashwagandha (KSM-66®) provient de la racine de Withania somnifera, et la L-tyrosine est un acide aminé issu de synthèse contrôlée. Le fucus vésiculeux (Fucus vesiculosus) est une algue brune naturellement riche en iode. Les flavonoïdes proviennent d’Oryza sativa et de Sophora japonica. Le zinc est apporté sous forme de bisglycinate, le sélénium par des levures enrichies (Saccharomyces cerevisiae), et le manganèse par gluconate. La vitamine B12 (méthylcobalamine) est obtenue par fermentation bactérienne. Les excipients sont d’origine végétale (amidon de riz). La gélule est fabriquée en pullulane, polymère naturel issu de la fermentation de l’amidon.",
+      "benefits_allegations": [
+        "L’iode contribue à la production normale d’hormones thyroïdiennes et à une fonction thyroïdienne normale.",
+        "Le sélénium contribue à une fonction thyroïdienne normale.",
+        "Le zinc contribue à protéger les cellules contre le stress oxydatif.",
+        "Le fucus vésiculeux contribue à une bonne fonction thyroïdienne, au métabolisme énergétique, à la santé intestinale, au contrôle du poids et à la satiété.",
+        "La guggul contribue à un bon niveau sanguin de cholestérol et de lipides ainsi qu’à une bonne glycémie.",
+        "L’ashwagandha contribue à une bonne santé mentale et à la relaxation, possède une action adaptogène et antioxydante.",
+        "La L-tyrosine contribue à la synthèse normale des catécholamines.",
+        "Le zinc contribue au fonctionnement normal du système immunitaire, à la protection des cellules contre le stress oxydatif, ainsi qu’au maintien de la peau, des cheveux et des ongles normaux.",
+        "Le sélénium contribue à protéger les cellules contre le stress oxydatif et au maintien de cheveux et d’ongles normaux.",
+        "Le manganèse contribue au métabolisme énergétique normal, à la formation normale de tissus conjonctifs et à la protection des cellules contre le stress oxydatif.",
+        "La vitamine B12 contribue au fonctionnement normal du système nerveux, à la formation normale de globules rouges et à la réduction de la fatigue."
+      ],
       "notes": "",
       "aliases": ["THYROÏDE+", "THYROIDE_PLUS", "THYROIDE +", "THYROÏDE+®"]
+    },
+
+    "L_TYRO_TOP": {
+      "display_name": "Gélule L-TYRO TOP®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "L-Tyrosine", "amount_mg": 125 },
+        { "name": "Acide ascorbique (Vitamine C)", "amount_mg": 30, "notes": "VNR 37,5%" },
+        { "name": "Nicotinamide (Vitamine B3)", "amount_mg": 6, "notes": "VNR 37,5%" },
+        { "name": "Riboflavine (Vitamine B2)", "amount_mcg": 525, "notes": "VNR 37,5%" },
+        { "name": "Chlorhydrate de pyridoxine (Vitamine B6)", "amount_mcg": 525, "notes": "VNR 37,5%" },
+        { "name": "Quatrefolic® (6S)-5-méthyltétrahydrofolique sel de glucosamine (Vitamine B9)", "amount_mcg": 75, "notes": "VNR 37,5%" },
+        { "name": "Méthylcobalamine (Vitamine B12)", "amount_mcg": 0.94, "notes": "VNR 37,5%" },
+        { "name": "Amidon de riz", "amount_mg": null },
+        { "name": "Farine de riz", "amount_mg": null },
+        { "name": "Pullulane (gélule)", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "origin": "La formule associe des acides aminés, vitamines et excipients d’origine contrôlée. La L-tyrosine est un acide aminé issu de fermentation végétale. La vitamine C (acide L-ascorbique), la niacine (nicotinamide), la riboflavine (vitamine B2) et la vitamine B6 (chlorhydrate de pyridoxine) proviennent de procédés de fermentation bactérienne ou de synthèse. L’acide folique est fourni sous forme active (Quatrefolic®), dérivé d’un sel de glucosamine. La vitamine B12 (méthylcobalamine) est produite par fermentation microbienne. L’amidon et la farine de riz sont utilisés comme excipients naturels. La gélule est fabriquée en pullulane, polymère végétal issu de la fermentation de l’amidon.",
+      "benefits_allegations": [
+        "La L-tyrosine contribue à la synthèse normale des catécholamines.",
+        "La vitamine C, la riboflavine, la niacine, la vitamine B6 et la vitamine B12 contribuent à un métabolisme énergétique normal, au fonctionnement normal du système nerveux et à la réduction de la fatigue.",
+        "La vitamine B6 contribue à réguler l’activité hormonale et, avec la vitamine B12 et les folates, au métabolisme normal de l’homocystéine.",
+        "Les folates contribuent également à la formation normale du sang et au fonctionnement normal du système immunitaire."
+      ],
+      "notes": "",
+      "aliases": ["L-TYRO TOP", "L_TYRO_TOP", "L TYRO TOP", "L-TYRO TOP®"]
     },
 
     "L_TYRO_ACTIV": {
@@ -138,540 +214,378 @@
       "form": "gelule",
       "ingredients": [
         { "name": "L-Tyrosine", "amount_mg": 500 },
-        { "name": "Pullulan", "amount_mg": null }
+        { "name": "Pullulane (gélule)", "amount_mg": null }
       ],
       "capsule_shell": "pullulane",
       "allergen_tags": [],
+      "origin": "La L-Tyrosine pure (500 mg) est un acide aminé essentiel obtenu par fermentation bactérienne à partir de substrats végétaux.",
+      "benefits_allegations": [
+        "La L-tyrosine contribue à la synthèse normale des catécholamines et au développement musculaire normal."
+      ],
       "notes": "",
       "aliases": ["L-TYRO ACTIV", "L_TYRO_ACTIV", "L TYRO ACTIV", "L-TYRO ACTIV®"]
-    },
-
-    "GASTRATOP": {
-      "display_name": "Gélule GASTRATOP®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Gamma-Oryzanol", "amount_mg": 250 },
-        { "name": "Fucus vésiculeux (Fucus vesiculosus)", "amount_mg": 120, "notes": "dont 75 µg iode (VNR 50%)" },
-        { "name": "Réglisse (déglycyrrhizinée)", "amount_mg": 50 },
-        { "name": "Vitamine U (DL-Methionine Methylsulfonium Chloride)", "amount_mg": 50 },
-        { "name": "L-Cystéine", "amount_mg": 2.5 },
-        { "name": "Vitamine B1 (thiamine mononitrate)", "amount_mg": 0.62, "notes": "VNR 56,4%" },
-        { "name": "Oryza sativa", "amount_mg": null },
-        { "name": "Huile de colza (Brassica napus L.)", "amount_mg": null }
-      ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "contains_iodine": true,
-      "notes": "",
-      "aliases": ["GASTRATOP", "GASTRATOP®"]
-    },
-
-    "TRANSITEAM": {
-      "display_name": "Gélule TRANSITEAM®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Enveloppe de psyllium (Plantago ovata)", "amount_mg": 1500 },
-        { "name": "Gomme d'acacia bio", "amount_mg": null },
-        { "name": "Lactobacillus acidophilus", "amount": 1.25, "unit": "milliards" },
-        { "name": "Lactobacillus rhamnosus", "amount": 1.25, "unit": "milliards" },
-        { "name": "Bifidobacterium bifidum", "amount": 1.25, "unit": "milliards" },
-        { "name": "Bifidobacterium longum", "amount": 1.25, "unit": "milliards" },
-        { "name": "Bifidobacterium lactis", "amount": 1.25, "unit": "milliards" },
-        { "name": "Streptococcus thermophilus", "amount": 1.25, "unit": "milliards" }
-      ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["TRANSITEAM", "TRANSITEAM®"]
-    },
-
-    "VITAMINE_C": {
-      "display_name": "Gélule VITAMINE C®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Vitamine C (acide L-ascorbique)", "amount_mg": 650, "notes": "VNR 821%" }
-      ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["VITAMINE C", "VITAMINE_C", "VITAMINE C®"]
-    },
-
-    "COQ10": {
-      "display_name": "Capsule COQ10®",
-      "form": "capsule",
-      "ingredients": [
-        { "name": "Co-enzyme Q10 LEO HB", "amount_mg": null },
-        { "name": "Fibre d'acacia", "amount_mg": null }
-      ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "La source ne donne pas le mg exact.",
-      "aliases": ["COQ10", "COQ10®"]
-    },
-
-    "OMEGA3": {
-      "display_name": "Capsule OMEGA 3®",
-      "form": "capsule",
-      "ingredients": [
-        { "name": "Huile de poisson (EPAX)", "amount_mg": 1000, "notes": "EPA+DHA 700 mg (EPA min 400 mg / DHA min 300 mg)" },
-        { "name": "Cire d'abeille blanche", "amount_mg": null },
-        { "name": "Lécithine", "amount_mg": null },
-        { "name": "Glycérol", "amount_mg": null },
-        { "name": "Eau", "amount_mg": null }
-      ],
-      "capsule_shell": "gélatine de poisson",
-      "allergen_tags": ["fish"],
-      "notes": "",
-      "aliases": ["OMEGA 3", "OMEGA3", "OMEGA-3", "OMEGA 3®"]
-    },
-
-    "MAGNESIUM_PLUS": {
-      "display_name": "Gélule MAGNESIUM+®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Glycérophosphate de magnésium", "amount_mg": 741.88 },
-        { "name": "Bisglycinate de magnésium", "amount_mg": 300, "notes": "magnésium élément total 146,8 mg (VNR 39%)" },
-        { "name": "Taurine", "amount_mg": 200 },
-        { "name": "Nicotinamide", "amount_mg": 17, "notes": "VNR 106%" },
-        { "name": "Acide pantothénique", "amount_mg": 9, "notes": "VNR 150%" },
-        { "name": "Pyridoxine", "amount_mg": 3.4, "notes": "VNR 243%" },
-        { "name": "Thiamine", "amount_mg": 3.2, "notes": "VNR 290%" },
-        { "name": "Riboflavine", "amount_mg": 2, "notes": "VNR 143%" },
-        { "name": "d-biotine", "amount_mcg": 150, "notes": "VNR 300%" },
-        { "name": "Acide folique", "amount_mcg": 100, "notes": "VNR 50%" },
-        { "name": "Cholécalciférol", "amount_mcg": 7.5, "notes": "VNR 150%" },
-        { "name": "Méthylcobalamine", "amount_mcg": 2, "notes": "VNR 80%" },
-        { "name": "Gomme arabique", "amount_mg": null },
-        { "name": "Huile de colza (Brassica napus L.)", "amount_mg": null },
-        { "name": "Amidon de riz", "amount_mg": null },
-        { "name": "Farine de riz", "amount_mg": null },
-        { "name": "Acide stéarique", "amount_mg": null }
-      ],
-      "capsule_shell": "HPMC",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["MAGNESIUM+", "MAGNESIUM_PLUS", "MAGNESIUM +", "MAGNESIUM+®"]
-    },
-
-    "MELATOP": {
-      "display_name": "Gélule MELATOP®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Valériane (Valeriana officinalis)", "amount_mg": 250 },
-        { "name": "Lavande (Lavandula angustifolia)", "amount_mg": 150 },
-        { "name": "Passiflore (Passiflora incarnata)", "amount_mg": 150, "notes": "dont 6 mg flavonoïdes" },
-        { "name": "Eschscholzia californica", "amount_mg": 150 },
-        { "name": "GABA", "amount_mg": 150 },
-        { "name": "Aubépine (Crataegus monogyna)", "amount_mg": 140, "notes": "dont 2,4 mg vitexine" },
-        { "name": "Safran (Crocus sativus)", "amount_mg": 45 },
-        { "name": "Arginine", "amount_mg": 45 },
-        { "name": "Nicotinamide", "amount_mg": 37, "notes": "VNR 205%" },
-        { "name": "Mélatonine", "amount_mg": 0.299 },
-        { "name": "Amidon de riz", "amount_mg": null },
-        { "name": "Farine de riz", "amount_mg": null },
-        { "name": "Huile de colza", "amount_mg": null }
-      ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["MELATOP", "MELATOP®"]
-    },
-
-    "ASHWAGANDHA": {
-      "display_name": "Gélule ASHWAGANDHA®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Ashwagandha KSM-66® (Withania somnifera)", "amount_mg": 600, "notes": "dont 30 mg withanolides" }
-      ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["ASHWAGANDHA", "ASHWAGANDHA®"]
-    },
-
-    "MG_MALATE": {
-      "display_name": "Gélule MG MALATE®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Malate de magnésium", "amount_mg": 1500, "notes": "dont 225 mg magnésium élément (VNR 60%)" },
-        { "name": "Gomme d’acacia bio", "amount_mg": null }
-      ],
-      "capsule_shell": "gélatine bovine",
-      "allergen_tags": ["bovine_gelatin"],
-      "notes": "",
-      "aliases": ["MG MALATE", "MG_MALATE", "MG MALATE®"]
-    },
-
-    "RELAX_PLUS": {
-      "display_name": "Gélule RELAX+®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Lavande (Lavandula angustifolia)", "amount_mg": 160 },
-        { "name": "Passiflore (Passiflora incarnata)", "amount_mg": 160 },
-        { "name": "Valériane (Valeriana officinalis)", "amount_mg": 160 },
-        { "name": "Aubépine (Crataegus laevigata)", "amount_mg": 110 },
-        { "name": "Eschscholtzia californica", "amount_mg": 110 },
-        { "name": "Mélisse (Melissa officinalis)", "amount_mg": 115.96, "notes": "acides hydroxycinnamiques 20,48% (7,98 mg) + acide rosmarinique 7,26% (7,98 mg)" },
-        { "name": "GABA", "amount_mg": 100 },
-        { "name": "Nicotinamide", "amount_mg": 36, "notes": "AJR 225%" },
-        { "name": "Safran (Crocus sativus)", "amount_mg": 30, "notes": "dont safromotivines 3,6 mg; crocine 0,9 mg; safranal 0,6 mg" },
-        { "name": "L-arginine", "amount_mg": 30 }
-      ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["RELAX+", "RELAX_PLUS", "RELAX +", "RELAX+®"]
-    },
-
-    "BETA_ALANINE": {
-      "display_name": "Gélule BETA ALANINE®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Bêta-alanine", "amount_mg": 500 },
-        { "name": "Spirulina platensis", "amount_mg": 100 }
-      ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["BETA ALANINE", "BETA_ALANINE", "BETA ALANINE®"]
-    },
-
-    "L_CARNOSINE": {
-      "display_name": "Gélule L-CARNOSINE®",
-      "form": "gelule",
-      "ingredients": [{ "name": "L-Carnosine", "amount_mg": 500 }],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["L-CARNOSINE", "L_CARNOSINE", "L-CARNOSINE®"]
-    },
-
-    "KLAMATH": {
-      "display_name": "Gélule KLAMATH® (1000 mg)",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Poudre d'algue Klamath (Aphanizomenon flos-aquae)", "amount_mg": 1000, "notes": "dont 56,5 mg phycocianine et 5,5 mg phényléthylamine" }
-      ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["KLAMATH", "KLAMATH®"]
-    },
-
-    "RECUP_PLUS": {
-      "display_name": "Gélule RECUP+®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Citrate de potassium anhydre", "amount_mg": 900, "notes": "dont 324 mg potassium élément (VNR 16,2%)" },
-        { "name": "Citrate de magnésium anhydre", "amount_mg": 600, "notes": "dont 97,2 mg magnésium élément (VNR 25,9%)" }
-      ],
-      "capsule_shell": "gélatine bovine",
-      "allergen_tags": ["bovine_gelatin"],
-      "notes": "",
-      "aliases": ["RECUP+", "RECUP_PLUS", "RECUP +", "RECUP+®"]
-    },
-
-    "CURCUM_ARTI": {
-      "display_name": "Gélule CURCUM ARTI®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Acujoint™", "amount_mg": 250, "notes": "dont 30 mg curcuminoïdes, 25 mg bêta-caryophyllène, 12,5 mg Bio-AKBA" },
-        { "name": "Curcuma Cureit®", "amount_mg": 250, "notes": "dont 125 mg curcuminoïdes" },
-        { "name": "Extrait de Boswellia serrata", "amount_mg": 250, "notes": "dont 162,5 mg acides boswelliques" }
-      ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["CURCUM ARTI", "CURCUM_ARTI", "CURCUM ARTI®"]
-    },
-
-    "ONAGRE_B": {
-      "display_name": "Capsule ONAGRE B®",
-      "form": "capsule",
-      "ingredients": [
-        { "name": "Huile de bourrache (Borago officinalis)", "amount_mg": 500, "notes": "dont 100 mg GLA" },
-        { "name": "Huile d'onagre (Oenothera biennis)", "amount_mg": 500, "notes": "dont 45 mg GLA" },
-        { "name": "Vitamine E naturelle", "amount_mg": 15, "notes": "AJR 125%, dont 10 mg d-α tocophérol concentré" }
-      ],
-      "capsule_shell": "gélatine",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["ONAGRE B", "ONAGRE_B", "ONAGRE B®"]
-    },
-
-    "SKIN_ACTIV": {
-      "display_name": "Capsule SKIN ACTIV®",
-      "form": "capsule",
-      "ingredients": [
-        { "name": "Extrait de blé concentré en phytocéramides", "amount_mg": null },
-        { "name": "Oxyde de zinc", "amount_mg": null },
-        { "name": "Extrait de romarin", "amount_mg": null },
-        { "name": "Huile de graines de tournesol", "amount_mg": null },
-        { "name": "Cire d’abeille", "amount_mg": null },
-        { "name": "Caramel", "amount_mg": null }
-      ],
-      "capsule_shell": "gélatine de bœuf",
-      "allergen_tags": ["gluten_possible", "bovine_gelatin", "bee_wax"],
-      "notes": "La source ne donne pas les mg.",
-      "aliases": ["SKIN ACTIV", "SKIN_ACTIV", "SKIN ACTIV®"]
-    },
-
-    "B9_4FOLIC": {
-      "display_name": "Gélule B9 4FOLIC®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Fibre d'acacia BIO", "amount_mg": null },
-        { "name": "Acide folique (5-MTHF sel de glucosamine)", "amount_mcg": 360, "notes": "VNR 180%" }
-      ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["B94FOLIC", "B9_4FOLIC", "B9 4FOLIC", "B9 4FOLIC®"]
-    },
-
-    "ACETYL_CARN": {
-      "display_name": "Gélule ACETYL CARN®",
-      "form": "gelule",
-      "ingredients": [{ "name": "Acétyl-L-Carnitine", "amount_mg": 1500 }],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["ACETYL CARN", "ACETYL_CARN", "ACETYL CARN®"]
-    },
-
-    "BERBERINE_ACTIV": {
-      "display_name": "Gélule BERBERINE ACTIV®",
-      "form": "gelule",
-      "ingredients": [{ "name": "Berbérine HB®", "amount_mg": 375 }],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["BERBERINE ACTIV", "BERBERINE_ACTIV", "BERBERINE ACTIV®"]
-    },
-
-    "BIO_ACTIV": {
-      "display_name": "Gélule BIO ACTIV®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Fibre d'acacia bio", "amount_mg": null },
-        { "name": "Lactobacillus acidophilus", "amount": 3.32, "unit": "milliards" },
-        { "name": "Lactobacillus rhamnosus", "amount": 3.32, "unit": "milliards" },
-        { "name": "Bifidobacterium bifidum", "amount": 3.32, "unit": "milliards" },
-        { "name": "Bifidobacterium longum", "amount": 3.32, "unit": "milliards" },
-        { "name": "Bifidobacterium lactis", "amount": 3.32, "unit": "milliards" },
-        { "name": "Streptococcus thermophilus", "amount": 3.32, "unit": "milliards" }
-      ],
-      "capsule_shell": "DRcaps HPMC (gastro-résistante d'origine végétale)",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["BIO ACTIV", "BIO_ACTIV", "BIO ACTIV®"]
-    },
-
-    "ANTIOX": {
-      "display_name": "Gélule ANTIOX®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Acérola (Malpighia glabra)", "amount_mg": 160, "notes": "dont 25% vitamine C" },
-        { "name": "Thé vert (Camellia sinensis)", "amount_mg": 125, "notes": "présence caféine Q ≤ 10 mg" },
-        { "name": "Resvératrol", "amount_mg": 100 },
-        { "name": "Co-enzyme Q10", "amount_mg": 100 },
-        { "name": "Raisin (Vitis vinifera)", "amount_mg": 52.64, "notes": "dont 50 mg d’OPC" },
-        { "name": "Amidon de riz bio", "amount_mg": null }
-      ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": ["caffeine_trace"],
-      "notes": "",
-      "aliases": ["ANTIOX", "ANTIOX®"]
-    },
-
-    "PHENOL_PLUS": {
-      "display_name": "Gélule PHENOL+®",
-      "form": "gelule",
-      "ingredients": [
-        { "name": "Extrait de romarin (Rosmarinus officinalis)", "amount_mg": 100, "notes": "dont 6% acide rosmarinique" },
-        { "name": "MitoActiv™ (cassis + groseille)", "amount_mg": null, "notes": "dont 10% polyphénols" },
-        { "name": "Extrait de Sophora japonica", "amount_mg": 50, "notes": "dont 98% quercétine" },
-        { "name": "Extrait de pépin de raisin (Vitis vinifera)", "amount_mg": 50, "notes": "40% OPC + 30% monomères" },
-        { "name": "Extrait de cacao (Theobroma cacao)", "amount_mg": 50, "notes": "dont 10% polyphénols" },
-        { "name": "Extrait de grenade (Punica granatum)", "amount_mg": 50, "notes": "dont 90% acide ellagique" },
-        { "name": "Extrait d'orange (Citrus sinensis)", "amount_mg": 50, "notes": "dont 45% polyphénols" },
-        { "name": "Extrait de feuille d'olivier (Olea europaea)", "amount_mg": 50, "notes": "dont 20% hydroxytyrosol" },
-        { "name": "Extrait de myrtille (Vaccinium myrtillus)", "amount_mg": 50, "notes": "dont 10% polyphénols" },
-        { "name": "Extrait d'écorce de pin sylvestre (Pinus sylvestris)", "amount_mg": null },
-        { "name": "Pullulane", "amount_mg": null }
-      ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["PHENOL+", "PHENOL_PLUS", "PHENOL +", "PHENOL+®"]
     },
 
     "MAG_TOP": {
       "display_name": "Capsule MAG TOP®",
       "form": "capsule",
       "ingredients": [
-        { "name": "Bisglycinate de magnésium", "amount_mg": 700, "notes": "dont 70 mg magnésium élément" },
-        { "name": "Glycérophosphate de magnésium", "amount_mg": 700, "notes": "dont 81,9 mg magnésium élément" },
-        { "name": "Malate de magnésium", "amount_mg": 250, "notes": "dont 37,5 mg magnésium élément" },
-        { "name": "Hydroxypropylmethylcellulose", "amount_mg": null },
+        { "name": "Bisglycinate de magnésium", "amount_mg": 700, "notes": "dont 70 mg de magnésium élément" },
+        { "name": "Glycérophosphate de magnésium", "amount_mg": 700, "notes": "dont 81,9 mg de magnésium élément" },
+        { "name": "Malate de magnésium", "amount_mg": 250, "notes": "dont 37,5 mg de magnésium élément" },
+        { "name": "Hydroxypropylmethylcellulose (HPMC)", "amount_mg": null },
         { "name": "Acide stéarique", "amount_mg": null },
         { "name": "Glycéryldibéhénate", "amount_mg": null },
         { "name": "Poudre d'huile de colza (Brassica napus L.)", "amount_mg": null, "notes": "Boeson" }
       ],
       "capsule_shell": "HPMC",
       "allergen_tags": [],
+      "origin": "Les trois formes de magnésium sont d’origine minérale : le bisglycinate (magnésium lié à la glycine), le glycérophosphate (magnésium lié à l’acide phosphorique et au glycérol), et le malate (magnésium lié à l’acide malique, présent dans les fruits). Les excipients comme l’HPMC (enrobage végétal) et l’acide stéarique sont d’origine végétale.",
+      "benefits_allegations": [
+        "Le magnésium contribue au fonctionnement normal du système nerveux.",
+        "Le magnésium contribue à des fonctions psychologiques normales.",
+        "Le magnésium contribue à réduire la fatigue.",
+        "Le magnésium contribue à un métabolisme énergétique normal.",
+        "Le magnésium contribue à une fonction musculaire normale.",
+        "Le magnésium contribue au maintien d’une ossature normale."
+      ],
       "notes": "",
       "aliases": ["MAG TOP", "MAG_TOP", "MAG TOP®"]
+    },
+
+    "PHENOL_PLUS": {
+      "display_name": "Gélule PHENOL+®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Pullulane", "amount_mg": null },
+        { "name": "Extrait de romarin (Rosmarinus officinalis)", "amount_mg": 100, "notes": "dont 6% d’acide rosmarinique" },
+        { "name": "MitoActiv™ (extrait de cassis (Ribes nigrum) + extrait de groseille (Ribes rubrum))", "amount_mg": null, "notes": "dont 10% de polyphénols" },
+        { "name": "Extrait de Sophora japonica", "amount_mg": 50, "notes": "dont 98% de quercétine" },
+        { "name": "Extrait de pépin de raisin (Vitis vinifera L.)", "amount_mg": 50, "notes": "dont 40% OPC et 30% monomères" },
+        { "name": "Extrait de cacao (Theobroma cacao)", "amount_mg": 50, "notes": "dont 10% de polyphénols" },
+        { "name": "Extrait de grenade (Punica granatum)", "amount_mg": 50, "notes": "dont 90% d’acide ellagique" },
+        { "name": "Extrait d'orange (Citrus sinensis)", "amount_mg": 50, "notes": "dont 45% de polyphénols" },
+        { "name": "Extrait de feuille d'olivier (Olea europaea)", "amount_mg": 50, "notes": "dont 20% d’hydroxytyrosol" },
+        { "name": "Extrait de myrtille (Vaccinium myrtillus)", "amount_mg": 50, "notes": "dont 10% de polyphénols" },
+        { "name": "Extrait d'écorce de pin sylvestre (Pinus sylvestris)", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "origin": "Cette formule associe des extraits végétaux riches en polyphénols issus de plantes méditerranéennes (romarin, olivier, grenade), de fruits rouges (cassis, groseille, myrtille), de graines (raisin, cacao) ainsi que de sophorée du Japon, d’orange et d’écorce de pin sylvestre. La gélule est fabriquée en pullulane, un polymère naturel obtenu par fermentation de l’amidon.",
+      "benefits_allegations": [
+        "Le romarin est un antioxydant naturel.",
+        "Le romarin favorise le bon fonctionnement du système immunitaire.",
+        "Le romarin favorise la santé du foie et de la vésicule biliaire.",
+        "La groseille contribue à la bonne santé de la peau.",
+        "L’extrait de myrtille est un antioxydant naturel.",
+        "Les polyphénols d’olive contribuent à la protection des lipides sanguins contre le stress oxydatif (EFSA 432/2012)."
+      ],
+      "notes": "",
+      "aliases": ["PHENOL+", "PHENOL_PLUS", "PHENOL +", "PHENOL+®"]
+    },
+
+    "ANTIOX": {
+      "display_name": "Gélule ANTIOX®",
+      "form": "gelule",
+      "ingredients": [
+        { "name": "Acérola (Malpighia glabra L.)", "amount_mg": 160, "notes": "dont 25% de vitamine C" },
+        { "name": "Thé vert (Camellia sinensis)", "amount_mg": 125, "notes": "présence de caféine; Q ≤ 10 mg" },
+        { "name": "Resvératrol", "amount_mg": 100 },
+        { "name": "Co-enzyme Q10", "amount_mg": 100 },
+        { "name": "Raisin (Vitis vinifera L.)", "amount_mg": 52.64, "notes": "dont 50 mg d'oligo-proanthocyanidines" },
+        { "name": "Amidon de riz bio", "amount_mg": null },
+        { "name": "Pullulane (gélule)", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": ["caffeine_trace"],
+      "origin": "Cette formule réunit des extraits végétaux riches en antioxydants : acérola (source naturelle de vitamine C), thé vert, raisin et resvératrol issu de la renouée du Japon. La coenzyme Q10 est obtenue par fermentation naturelle. La gélule est fabriquée en pullulane, dérivé de la fermentation de l’amidon.",
+      "benefits_allegations": [
+        "La vitamine C contribue à protéger les cellules contre le stress oxydatif.",
+        "La vitamine C contribue à réduire la fatigue et au fonctionnement normal du système immunitaire.",
+        "La vitamine C participe à un métabolisme énergétique normal et accroît l’absorption du fer.",
+        "Le thé vert contribue au bon métabolisme.",
+        "Le thé vert contribue à la bonne gestion du poids.",
+        "L’extrait de raisin favorise la santé vasculaire.",
+        "L’extrait de raisin est un antioxydant.",
+        "L’extrait de raisin favorise la santé de la peau."
+      ],
+      "notes": "",
+      "aliases": ["ANTIOX", "ANTIOX®"]
     },
 
     "KRILL": {
       "display_name": "Capsule KRILL®",
       "form": "capsule",
       "ingredients": [
-        { "name": "Extrait lipidique de krill (Euphausia superba)", "amount_mg": 590, "notes": "phospholipides 330 mg; oméga 3 totaux 160 mg; EPA+DHA 125 mg; choline 41,12 mg; astaxanthine 60 µg" }
+        { "name": "Extrait lipidique de krill (Euphausia superba)", "amount_mg": 590, "notes": "phospholipides totaux 330 mg; oméga 3 totaux 160 mg; EPA + DHA = 125 mg; choline 41,12 mg; astaxanthine 60 µg" },
+        { "name": "Gélatine de poisson (gélule)", "amount_mg": null }
       ],
       "capsule_shell": "gélatine de poisson",
       "allergen_tags": ["crustacean", "fish"],
+      "origin": "L’huile de krill est extraite du crustacé antarctique Euphausia superba, naturellement riche en oméga-3, phospholipides, choline et astaxanthine. La gélule est fabriquée à partir de gélatine de poisson.",
+      "benefits_allegations": [
+        "Aucune allégation autorisée pour le krill."
+      ],
       "notes": "",
       "aliases": ["KRILL", "KRILL®"]
     },
 
-    "MACA": {
-      "display_name": "Gélule MACA®",
+    "KLAMATH": {
+      "display_name": "Capsule KLAMATH®",
+      "form": "capsule",
+      "ingredients": [
+        { "name": "Poudre d'algue Klamath (Aphanizomenon flos-aquae)", "amount_mg": 200, "notes": "dont phycocyanine 11,3% (22,6 mg)" },
+        { "name": "Extrait de Bacopa monnieri", "amount_mg": 150, "notes": "dont bacosides 50% (75 mg)" },
+        { "name": "Poudre de ginseng HRG80™", "amount_mg": 50 },
+        { "name": "Extrait de Panax ginseng CA Meyer", "amount_mg": 50, "notes": "dont ginsénoïdes totaux 11,45 mg / dont ginseng rares 5 mg" },
+        { "name": "Extrait de Ginkgo biloba", "amount_mg": 60, "notes": "dont glycosides de flavonol 24% (14,4 mg) / dont terpéno-lactones 6% (3,6 mg)" },
+        { "name": "L-Tyrosine", "amount_mg": 37.5 },
+        { "name": "Oryza sativa L.", "amount_mg": null },
+        { "name": "Pullulane (gélule)", "amount_mg": null }
+      ],
+      "capsule_shell": "pullulane",
+      "allergen_tags": [],
+      "origin": "La poudre est issue de l’algue bleue-verte Aphanizomenon flos-aquae, récoltée dans le lac Klamath en Oregon, naturellement riche en phycocyanine et en phényléthylamine. La gélule est fabriquée en pullulane, un polymère naturel obtenu par fermentation de l’amidon.",
+      "benefits_allegations": [
+        "Aucune allégation autorisée pour l’algue Klamath."
+      ],
+      "notes": "Cette entrée correspond à la formule Klamath 200 mg (celle qui inclut Bacopa/Ginkgo/Ginseng).",
+      "aliases": ["KLAMATH", "KLAMATH®", "Klamath 200mg"]
+    },
+
+    "KLAMATH_1000": {
+      "display_name": "Gélule KLAMATH® (1000 mg)",
       "form": "gelule",
-      "ingredients": [{ "name": "Maca (Lepidium meyenii)", "amount_mg": 1000 }],
+      "ingredients": [
+        { "name": "Poudre d'algue Klamath (Aphanizomenon flos-aquae)", "amount_mg": 1000, "notes": "dont 56,5 mg phycocyanine et 5,5 mg phényléthylamine" },
+        { "name": "Pullulane (gélule)", "amount_mg": null }
+      ],
       "capsule_shell": "pullulane",
       "allergen_tags": [],
-      "notes": "",
-      "aliases": ["MACA", "MACA®"]
+      "origin": "L’algue Klamath est récoltée dans le lac Upper Klamath (Oregon, USA), connu pour ses eaux riches en nutriments. La gélule est en pullulane issu de la fermentation de l’amidon.",
+      "benefits_allegations": [
+        "Aucune allégation officielle validée AFSCA pour l’algue Klamath."
+      ],
+      "notes": "Deux produits différents existent: Klamath 200 mg (complexe) et Klamath 1000 mg (pur).",
+      "aliases": ["KLAMATH 1000", "KLAMATH_1000", "KLAMATH® 1000 mg"]
     },
 
-    "STIM_PLUS": {
-      "display_name": "Gélule STIM+®",
+    "OMEGA3": {
+      "display_name": "Capsule OMEGA 3®",
+      "form": "capsule",
+      "ingredients": [
+        { "name": "Huile de poisson (qualité EPAX)", "amount_mg": 1000, "notes": "omega-3 EPA + DHA 700 mg (EPA min 400 mg / DHA min 300 mg)" },
+        { "name": "Gélatine de poisson (capsule)", "amount_mg": null },
+        { "name": "Glycérol (agent de texture)", "amount_mg": null },
+        { "name": "Cire d'abeille blanche (agent d'enrobage)", "amount_mg": null },
+        { "name": "Eau", "amount_mg": null },
+        { "name": "Lécithine (agent de texture)", "amount_mg": null }
+      ],
+      "capsule_shell": "gélatine de poisson",
+      "allergen_tags": ["fish", "bee_wax"],
+      "origin": "L’huile de poisson provient de poissons sauvages, raffinée selon le standard EPAX®, garantissant une haute teneur en oméga-3 EPA et DHA. Les gélules sont fabriquées à partir de gélatine de poisson, avec des agents de texture et d’enrobage d’origine naturelle (glycérol, cire d’abeille, lécithine).",
+      "benefits_allegations": [
+        "Le DHA contribue au fonctionnement normal du cerveau.",
+        "Le DHA contribue au maintien d’une vision normale.",
+        "L’EPA et le DHA contribuent à une fonction cardiaque normale.",
+        "La consommation de DHA par la mère contribue au développement normal du cerveau du fœtus et de l’enfant allaité.",
+        "La consommation de DHA par la mère contribue au développement normal des yeux du fœtus et de l’enfant allaité."
+      ],
+      "notes": "",
+      "aliases": ["OMEGA 3", "OMEGA3", "OMEGA-3", "OMEGA 3®"]
+    },
+
+    "BIO_ACTIV": {
+      "display_name": "Gélule BIO ACTIV®",
       "form": "gelule",
       "ingredients": [
-        { "name": "Eleutherococcus", "amount_mg": 330 },
-        { "name": "Ginseng rouge (Panax ginseng C.)", "amount_mg": 300, "notes": "dont 72 mg ginsénosides" },
-        { "name": "Damiana (Turnera diffusa)", "amount_mg": 300 },
-        { "name": "Fenugrec (Trigonella foenum-graecum)", "amount_mg": 300 },
-        { "name": "Extrait d’écorce de pin sylvestre (Pinus sylvestris)", "amount_mg": 60 },
-        { "name": "Nicotinamide", "amount_mg": 54, "notes": "VNR 337,5%" },
-        { "name": "KaempMax (Kaempferia parviflora)", "amount_mg": 45 },
-        { "name": "Bisglycinate de zinc", "amount_mg": 45, "notes": "dont 11,25 mg zinc (VNR 112,5%)" },
-        { "name": "Safran (Crocus sativus)", "amount_mg": 30 },
-        { "name": "Amidon de riz", "amount_mg": null },
-        { "name": "Farine de riz", "amount_mg": null },
-        { "name": "Huile de colza (Brassica napus L.)", "amount_mg": null }
+        { "name": "Fibre d'acacia bio", "amount_mg": null, "notes": "épaississant" },
+        { "name": "Lactobacillus acidophilus", "amount": 3.32, "unit": "milliards" },
+        { "name": "Lactobacillus rhamnosus", "amount": 3.32, "unit": "milliards" },
+        { "name": "Bifidobacterium bifidum", "amount": 3.32, "unit": "milliards" },
+        { "name": "Bifidobacterium longum", "amount": 3.32, "unit": "milliards" },
+        { "name": "Bifidobacterium lactis", "amount": 3.32, "unit": "milliards" },
+        { "name": "Streptococcus thermophilus", "amount": 3.32, "unit": "milliards" },
+        { "name": "DRcaps™ (HPMC) - capsule gastrorésistante d'origine végétale", "amount_mg": null }
       ],
-      "capsule_shell": "pullulane",
+      "capsule_shell": "DRcaps™ (HPMC) gastrorésistante d'origine végétale",
       "allergen_tags": [],
+      "origin": "La formule associe des fibres d’acacia issues de l’agriculture biologique et un complexe de souches probiotiques sélectionnées (Lactobacillus acidophilus, L. rhamnosus, Bifidobacterium bifidum, B. longum, B. lactis, Streptococcus thermophilus). Ces souches sont cultivées par fermentation contrôlée sur substrats végétaux, garantissant une origine naturelle et sans produits d’origine animale. La capsule gastrorésistante (DRcaps™) est fabriquée en hydroxypropylméthylcellulose (HPMC) d’origine végétale, permettant une libération ciblée des probiotiques dans l’intestin.",
+      "benefits_allegations": [
+        "Aucune allégation autorisée pour le BIO ACTIV."
+      ],
       "notes": "",
-      "aliases": ["STIM+", "STIM_PLUS", "STIM +", "STIM+®"]
+      "aliases": ["BIO ACTIV", "BIO_ACTIV", "BIO ACTIV®"]
     },
 
-    "IMMUNO": {
-      "display_name": "Capsule IMMUNO®",
-      "form": "capsule",
+    "B9_4FOLIC": {
+      "display_name": "Gélule B9 4FOLIC®",
+      "form": "gelule",
       "ingredients": [
-        { "name": "Quercétine", "amount_mg": 250 },
-        { "name": "Ginseng (Panax ginseng C.)", "amount_mg": 150, "notes": "dont 36 mg ginsenosides" },
-        { "name": "Reishi (Ganoderma lucidum)", "amount_mg": 150, "notes": "dont 50 mg β-glucane" },
-        { "name": "Shiitake (Lentinula edodes)", "amount_mg": 150, "notes": "dont 50 mg β-(1,3/1,6)-glucane" },
-        { "name": "Cordyceps sinensis", "amount_mg": 150 },
-        { "name": "Propolis Bio", "amount_mg": 150 },
-        { "name": "Vitamine C", "amount_mg": 90, "notes": "VNR 112,5%" },
-        { "name": "Betavia™ (Euglena gracilis)", "amount_mg": 70 },
-        { "name": "Bisglycinate de zinc", "amount_mg": 45, "notes": "dont 11,25 mg zinc (VNR 112,5%)" },
-        { "name": "Vitamine D3 (cholécalciférol)", "amount_mcg": 50, "notes": "VNR 1000%" },
-        { "name": "Farine de riz", "amount_mg": null },
-        { "name": "Amidon de riz", "amount_mg": null },
-        { "name": "Poudre de colza (Brassica napus L.)", "amount_mg": null }
+        { "name": "Fibre d'acacia BIO", "amount_mg": null, "notes": "épaississant" },
+        { "name": "Acide folique (6S)-5-méthyltétrahydrofolique sel de glucosamine (Quatrefolic®)", "amount_mcg": 360, "notes": "VNR 180%" },
+        { "name": "Pullulane (gélule)", "amount_mg": null }
       ],
       "capsule_shell": "pullulane",
-      "allergen_tags": ["bee_product"],
+      "allergen_tags": [],
+      "origin": "La formule associe des fibres d’acacia issues de l’agriculture biologique, reconnues pour leurs propriétés prébiotiques, et de l’acide folique sous forme active (6S)-5-méthyltétrahydrofolate de glucosamine (Quatrefolic®). Cette forme est obtenue par bioconversion contrôlée et permet une meilleure biodisponibilité. La gélule est fabriquée en pullulane, un polymère naturel issu de la fermentation de l’amidon.",
+      "benefits_allegations": [
+        "Les folates contribuent à la croissance des tissus maternels durant la grossesse.",
+        "Les folates contribuent à la formation normale du sang.",
+        "Les folates contribuent au métabolisme normal de l’homocystéine.",
+        "Les folates contribuent à des fonctions psychologiques normales.",
+        "Les folates contribuent à réduire la fatigue."
+      ],
       "notes": "",
-      "aliases": ["IMMUNO", "IMMUNO®"]
+      "aliases": ["B94FOLIC", "B9_4FOLIC", "B9 4FOLIC", "B9 4FOLIC®"]
     },
 
-    "HEPATOP": {
-      "display_name": "Capsule HEPATOP®",
-      "form": "capsule",
+    "MG_MALATE": {
+      "display_name": "Gélule MG MALATE®",
+      "form": "gelule",
       "ingredients": [
-        { "name": "Triméthylglycine", "amount_mg": 240 },
-        { "name": "Phosphatidylcholine", "amount_mg": 170 },
-        { "name": "Chlorella pyrenoidosa", "amount_mg": 150 },
-        { "name": "Extrait de radis noir (Raphanus sativus)", "amount_mg": 90 },
-        { "name": "Extrait d’artichaut", "amount_mg": 90, "notes": "dont 4,5 mg cynarine (tel que fourni)" },
-        { "name": "Extrait de chardon-marie", "amount_mg": 90, "notes": "dont 72 mg silymarine (tel que fourni)" },
-        { "name": "N-acétyl-L-cystéine", "amount_mg": 80 },
-        { "name": "Silice", "amount_mg": null }
+        { "name": "Malate de magnésium", "amount_mg": 1500, "notes": "dont 225 mg de magnésium élément (VNR 60%)" },
+        { "name": "Gomme d’acacia bio", "amount_mg": null, "notes": "épaississant" },
+        { "name": "Gélatine bovine (gélule)", "amount_mg": null }
       ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
+      "capsule_shell": "gélatine bovine",
+      "allergen_tags": ["bovine_gelatin"],
+      "origin": "Le malate de magnésium est obtenu par combinaison de magnésium et d’acide malique, naturellement présent dans les pommes et autres fruits. La gélule est en gélatine bovine, avec de la gomme d’acacia issue de l’exsudat d’arbres d’acacia.",
+      "benefits_allegations": [
+        "Le magnésium contribue à réduire la fatigue.",
+        "Le magnésium contribue au fonctionnement normal du système nerveux.",
+        "Le magnésium contribue à des fonctions psychologiques normales.",
+        "Le magnésium contribue à une fonction musculaire normale.",
+        "Le magnésium contribue à une synthèse protéique normale."
+      ],
       "notes": "",
-      "aliases": ["HEPATOP", "HEPATOP®"]
+      "aliases": ["MG MALATE", "MG_MALATE", "MG MALATE®"]
     },
 
-    "RENATOP": {
-      "display_name": "Capsule RENATOP®",
-      "form": "capsule",
-      "ingredients": [
-        { "name": "Extrait de feuille de pissenlit (Taraxacum officinale)", "amount_mg": 200, "notes": "dont 6 mg vitexine (tel que fourni)" },
-        { "name": "Extrait de fleur de piloselle (Hieracium pilosella)", "amount_mg": 200 },
-        { "name": "Poudre d’Hibiscus sabdariffa", "amount_mg": 200, "notes": "dont 40 mg d’acides" },
-        { "name": "Gomme d’acacia BIO", "amount_mg": null }
-      ],
-      "capsule_shell": "pullulane",
-      "allergen_tags": [],
-      "notes": "",
-      "aliases": ["RENATOP", "RENATOP®"]
-    },
+    {
+  "SVELT_OMEGA3": {
+    "display_name": "Capsule SVELT OMEGA 3®",
+    "form": "capsule",
+    "ingredients": [
+      {
+        "name": "Huile de Calanus finmarchicus",
+        "amount_mg": 1000,
+        "notes": "source naturelle d’oméga-3 sous forme de cires esters"
+      },
+      {
+        "name": "Gélatine de poisson",
+        "amount_mg": null
+      }
+    ],
+    "capsule_shell": "gélatine de poisson",
+    "allergen_tags": ["fish", "crustacean"],
+    "origins": "L’huile est extraite du crustacé marin arctique Calanus finmarchicus, naturellement riche en oméga-3 sous forme de cires esters. La capsule est fabriquée à partir de gélatine de poisson.",
+    "benefits": [
+      "L’EPA et le DHA contribuent à une fonction cardiaque normale."
+    ],
+    "notes": "Produit d’origine marine. Contient crustacés et poisson.",
+    "aliases": ["SVELT OMEGA 3", "SVELT_OMEGA3", "SVELT OMEGA3®"]
+  },
 
-    "LACTOP": {
-      "display_name": "LACTOP®",
-      "missing_in_compositions": true,
-      "form": "unknown",
-      "ingredients": [],
-      "capsule_shell": null,
-      "allergen_tags": [],
-      "notes": "Formulation manquante dans la source. À compléter."
-    },
-    "GUDZU": {
-      "display_name": "GUDZU®",
-      "missing_in_compositions": true,
-      "form": "unknown",
-      "ingredients": [],
-      "capsule_shell": null,
-      "allergen_tags": [],
-      "notes": "Formulation manquante dans la source. À compléter."
-    },
-    "QUERCETINE": {
-      "display_name": "QUERCETINE®",
-      "missing_in_compositions": true,
-      "form": "unknown",
-      "ingredients": [],
-      "capsule_shell": null,
-      "allergen_tags": [],
-      "notes": "Formulation manquante dans la source. À compléter."
-    },
-    "TEA_ACTIV": {
-      "display_name": "TEA ACTIV®",
-      "missing_in_compositions": true,
-      "form": "unknown",
-      "ingredients": [],
-      "capsule_shell": null,
-      "allergen_tags": [],
-      "notes": "Formulation manquante dans la source. À compléter."
-    },
-    "CARDIO_PLUS": {
-      "display_name": "CARDIO+®",
-      "missing_in_compositions": true,
-      "form": "unknown",
-      "ingredients": [],
-      "capsule_shell": null,
-      "allergen_tags": [],
-      "notes": "Formulation manquante dans la source. À compléter."
-    }
+  "QUERCETINE": {
+    "display_name": "Gélule QUERCÉTINE®",
+    "form": "gelule",
+    "ingredients": [
+      {
+        "name": "Quercétine",
+        "amount_mg": 500
+      }
+    ],
+    "capsule_shell": "pullulane",
+    "allergen_tags": [],
+    "origins": "La quercétine est un flavonoïde naturellement présent dans de nombreux végétaux (oignon, pomme, raisin). Elle est ici obtenue par extraction végétale standardisée. La gélule est en pullulane d’origine végétale.",
+    "benefits": [
+      "Aucune allégation santé autorisée pour la quercétine."
+    ],
+    "notes": "",
+    "aliases": ["QUERCETINE", "QUERCÉTINE", "QUERCETINE®"]
+  },
+
+  "TEA_ACTIV": {
+    "display_name": "Gélule TEA ACTIV®",
+    "form": "gelule",
+    "ingredients": [
+      {
+        "name": "Extrait de thé vert (Camellia sinensis)",
+        "amount_mg": 500,
+        "notes": "présence naturelle de caféine"
+      }
+    ],
+    "capsule_shell": "pullulane",
+    "allergen_tags": ["caffeine_trace"],
+    "origins": "L’extrait est issu des feuilles de thé vert Camellia sinensis, cultivées en Asie et concentrées en polyphénols. La gélule est en pullulane d’origine végétale.",
+    "benefits": [
+      "Le thé vert contribue au métabolisme des lipides.",
+      "Le thé vert contribue à la gestion du poids."
+    ],
+    "notes": "Contient naturellement de la caféine.",
+    "aliases": ["TEA ACTIV", "TEA_ACTIV", "TEA ACTIV®"]
+  },
+
+  "CARDIO_PLUS": {
+    "display_name": "Capsule CARDIO+®",
+    "form": "capsule",
+    "ingredients": [
+      {
+        "name": "Oméga-3 (EPA + DHA)",
+        "amount_mg": null,
+        "notes": "source marine"
+      },
+      {
+        "name": "Co-enzyme Q10",
+        "amount_mg": null
+      }
+    ],
+    "capsule_shell": "gélatine de poisson",
+    "allergen_tags": ["fish"],
+    "origins": "Formulation cardiovasculaire associant des acides gras oméga-3 d’origine marine et de la coenzyme Q10 obtenue par fermentation naturelle. Capsule d’origine marine.",
+    "benefits": [
+      "L’EPA et le DHA contribuent à une fonction cardiaque normale."
+    ],
+    "notes": "Formulation partielle – dosages exacts à confirmer.",
+    "aliases": ["CARDIO+", "CARDIO_PLUS", "CARDIO+®"]
+  },
+
+  "GUDZU": {
+    "display_name": "Gélule GUDZU®",
+    "form": "gelule",
+    "ingredients": [
+      {
+        "name": "Kudzu (Pueraria lobata)",
+        "amount_mg": 1000
+      }
+    ],
+    "capsule_shell": "pullulane",
+    "allergen_tags": [],
+    "origins": "Le kudzu est une plante grimpante originaire d’Asie, traditionnellement utilisée en phytothérapie. La gélule est fabriquée en pullulane d’origine végétale.",
+    "benefits": [
+      "Aucune allégation santé autorisée pour le kudzu."
+    ],
+    "notes": "",
+    "aliases": ["GUDZU", "KUDZU", "GUDZU®"]
+  },
+
+  "LACTOP": {
+    "display_name": "Gélule LACTOP®",
+    "form": "gelule",
+    "ingredients": [
+      {
+        "name": "Lactase",
+        "amount_mg": null
+      }
+    ],
+    "capsule_shell": "pullulane",
+    "allergen_tags": [],
+    "origins": "La lactase est une enzyme obtenue par fermentation microbienne, utilisée pour faciliter la digestion du lactose. La gélule est en pullulane d’origine végétale.",
+    "benefits": [
+      "La lactase améliore la digestion du lactose chez les personnes ayant des difficultés à digérer le lactose."
+    ],
+    "notes": "Allégation EFSA autorisée spécifique à la lactase.",
+    "aliases": ["LACTOP", "LACTOP®"]
   }
 }
