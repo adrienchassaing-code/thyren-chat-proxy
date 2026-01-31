@@ -200,7 +200,14 @@ export default async function handler(req, res) {
     // Dernier message utilisateur
     const lastUserMsg = messages.filter(m => m.role === "user").pop()?.content || "";
     const userText = typeof lastUserMsg === "object" ? lastUserMsg.text || "" : String(lastUserMsg);
-    
+    console.log("──────── DEBUG THYREN ────────");
+console.log("MODE ACTIF :", activeMode);
+console.log("USER TEXT :", userText);
+console.log("USER TEXT LENGTH :", userText.length);
+console.log("DATA SECTION LENGTH :", dataSection.length);
+console.log("EST. TOKENS :", Math.round(dataSection.length / 4));
+console.log("─────────────────────────────");
+
     // Historique texte
     const historyText = messages.map(m => {
       const c = m.content;
