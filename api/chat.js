@@ -203,6 +203,41 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
+// ===== DIAG DATA FOLDER =====
+if (req.method === "POST") {
+  const last = (req.body?.messages || []).slice(-1)[0]?.content || "";
+  const t = typeof last === "object" ? (last.text || "") : String(last);
+
+  if (String(t).trim().toLowerCase() === "diag") {
+    const dataDir = path.join(process.cwd(), "data");
+    let files = [];
+    try {
+      files = fs.readdirSync(dataDir).map(name => {
+        const p = path.join(dataDir, name);
+        const st = fs.statSync(p);
+        return { name, size: st.size };
+      });
+    } catch (e) {
+      return res.status(200).json({
+        reply: {
+          type: "reponse",
+          text: `❌ Impossible de lire /data\npath=${dataDir}\nerror=${e.message}`,
+          meta: { mode: "B", progress: { enabled: false } }
+        }
+      });
+    }
+
+    return res.status(200).json({
+      reply: {
+        type: "reponse",
+        text:
+          "✅ /data trouvé.\nFichiers:\n" +
+          files.map(f => `- ${f.name} (${f.size} bytes)`).join("\n"),
+        meta: { mode: "B", progress: { enabled: false } }
+      }
+    });
+  }
+}
 
   try {
     const { messages, conversationId } = req.body || {};
