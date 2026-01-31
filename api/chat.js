@@ -231,6 +231,33 @@ export default async function handler(req, res) {
     console.log("USER TEXT LENGTH :", userText.length);
 
     console.log(`🎯 Mode: ${activeMode} | Message: ${userText.substring(0, 50)}...`);
+// ===== DEBUG OMEGA (TEST DATA) =====
+if (userText.toLowerCase().includes("omega")) {
+  const caps = COMPOSITIONS?.capsules || {};
+  const keys = Object.keys(caps);
+
+  const direct =
+    caps.OMEGA3 || caps.OMEGA_3 || caps["OMEGA-3"] || null;
+
+  const found = direct || keys
+    .map(k => ({ k, v: caps[k] }))
+    .find(x => {
+      const v = x.v || {};
+      const dn = String(v.display_name || "").toLowerCase();
+      const als = (v.aliases || []).map(a => String(a).toLowerCase());
+      return dn.includes("omega") || als.some(a => a.includes("omega"));
+    })?.v;
+
+  return res.status(200).json({
+    reply: {
+      type: "reponse",
+      text: found
+        ? "✅ OMEGA trouvé:\n" + JSON.stringify(found, null, 2)
+        : "❌ OMEGA introuvable.\nClés détectées:\n" + keys.slice(0, 20).join(", "),
+      meta: { mode: "B", progress: { enabled: false } }
+    }
+  });
+}
 
     // Construire les DATA selon le mode
     let dataSection = "";
