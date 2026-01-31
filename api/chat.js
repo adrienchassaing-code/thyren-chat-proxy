@@ -281,7 +281,7 @@ ${DATA_SAV_TEXT}
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",  // ✅ MODÈLE CORRECT
+        model: "gpt-5-mini",  // ✅ MODÈLE CORRECT
         messages: openaiMessages,
         response_format: { type: "json_object" },
         temperature: 0.2,
