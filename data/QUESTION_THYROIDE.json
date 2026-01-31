@@ -37,18 +37,19 @@
       "meta": { "capture": "age_band" }
     },
     "Q4": {
-  "id": "Q4",
-  "type": "choices",
-  "text": "Avez-vous une condition médicale, une allergie, ou prenez-vous actuellement un traitement médical ou des compléments alimentaires ?",
-  "choices": [
-    "Tout va bien",
-    "J’ai une allergie, une condition médicale ou je prends un traitement / complément"
-  ],
-  "next_map": {
-    "Tout va bien": "Q5",
-    "J’ai une allergie, une condition médicale ou je prends un traitement / complément": "Q4b"
-  },
-  "meta": { "capture": "safety_flag" }
+      "id": "Q4",
+      "type": "choices",
+      "text": "Avez-vous une condition médicale, une allergie, ou prenez-vous actuellement un traitement médical ou des compléments alimentaires ?",
+      "choices": [
+        "Tout va bien",
+        "J'ai une allergie, une condition médicale ou je prends un traitement / complément"
+      ],
+      "next_map": {
+        "Tout va bien": "Q5",
+        "J'ai une allergie, une condition médicale ou je prends un traitement / complément": "Q4b"
+      },
+      "meta": { "capture": "safety_flag" }
+    },
     "Q4b": {
       "id": "Q4b",
       "type": "open",
@@ -60,7 +61,7 @@
       "id": "Q5",
       "type": "choices",
       "text": "Avez-vous déjà été diagnostiqué(e) avec une hypothyroïdie ?",
-      "choices": ["Oui, j’ai une hypothyroïdie diagnostiquée.","Non, jamais de diagnostic médical."],
+      "choices": ["Oui, j'ai une hypothyroïdie diagnostiquée.","Non, jamais de diagnostic médical."],
       "next": "Q6",
       "meta": { "capture": "dx_hypo" }
     },
@@ -75,8 +76,8 @@
     "Q7": {
       "id": "Q7",
       "type": "choices",
-      "text": "Comment décririez-vous votre niveau d’énergie au quotidien ?",
-      "choices": ["Bonne énergie tout au long de la journée.","Fatigue légère ou passagère.","Fatigue constante malgré le repos.","Autre – j’aimerais préciser."],
+      "text": "Comment décririez-vous votre niveau d'énergie au quotidien ?",
+      "choices": ["Bonne énergie tout au long de la journée.","Fatigue légère ou passagère.","Fatigue constante malgré le repos.","Autre – j'aimerais préciser."],
       "next": "Q8",
       "meta": { "capture": "energy" }
     },
@@ -84,7 +85,7 @@
       "id": "Q8",
       "type": "choices",
       "text": "Avez-vous pris du poids sans changer votre alimentation ?",
-      "choices": ["Non, mon poids est stable.","Oui, une légère prise de poids.","Oui, une prise de poids importante ou inexpliquée malgré plusieurs régimes.","Autre – j’aimerais préciser."],
+      "choices": ["Non, mon poids est stable.","Oui, une légère prise de poids.","Oui, une prise de poids importante ou inexpliquée malgré plusieurs régimes.","Autre – j'aimerais préciser."],
       "next": "Q9",
       "meta": { "capture": "weight" }
     },
@@ -92,7 +93,7 @@
       "id": "Q9",
       "type": "choices",
       "text": "Ressentez-vous souvent le froid (mains ou pieds froids) ?",
-      "choices": ["Non, température normale.","Parfois, mains ou pieds froids.","Souvent froid, même quand il fait bon.","Autre – j’aimerais préciser."],
+      "choices": ["Non, température normale.","Parfois, mains ou pieds froids.","Souvent froid, même quand il fait bon.","Autre – j'aimerais préciser."],
       "next": "Q10",
       "meta": { "capture": "cold" }
     },
@@ -100,7 +101,7 @@
       "id": "Q10",
       "type": "choices",
       "text": "Comment décririez-vous votre humeur ces derniers temps ?",
-      "choices": ["Moral stable, bonne humeur.","Humeur fluctuante ou baisse légère.","Moral bas, tristesse ou perte de motivation.","Autre – j’aimerais préciser."],
+      "choices": ["Moral stable, bonne humeur.","Humeur fluctuante ou baisse légère.","Moral bas, tristesse ou perte de motivation.","Autre – j'aimerais préciser."],
       "next": "Q11",
       "meta": { "capture": "mood" }
     },
@@ -108,7 +109,7 @@
       "id": "Q11",
       "type": "choices",
       "text": "Votre sommeil est-il réparateur ?",
-      "choices": ["Oui, je dors bien et me réveille reposé(e).","Sommeil parfois léger ou agité.","Difficultés à dormir ou fatigue au réveil.","Autre – j’aimerais préciser."],
+      "choices": ["Oui, je dors bien et me réveille reposé(e).","Sommeil parfois léger ou agité.","Difficultés à dormir ou fatigue au réveil.","Autre – j'aimerais préciser."],
       "next": "Q12",
       "meta": { "capture": "sleep" }
     },
@@ -116,7 +117,7 @@
       "id": "Q12",
       "type": "choices",
       "text": "Avez-vous remarqué des changements de la peau ou des cheveux (sécheresse, chute, cheveux ternes) ?",
-      "choices": ["Non, tout est normal.","Peau un peu sèche ou cheveux ternes.","Peau très sèche, cheveux cassants ou perte importante.","Autre – j’aimerais préciser."],
+      "choices": ["Non, tout est normal.","Peau un peu sèche ou cheveux ternes.","Peau très sèche, cheveux cassants ou perte importante.","Autre – j'aimerais préciser."],
       "next": "Q13",
       "meta": { "capture": "skin_hair" }
     },
@@ -124,7 +125,7 @@
       "id": "Q13",
       "type": "choices",
       "text": "Comment est votre transit intestinal ?",
-      "choices": ["Transit régulier.","Parfois un peu lent.","Constipation ou digestion difficile.","Autre – j’aimerais préciser."],
+      "choices": ["Transit régulier.","Parfois un peu lent.","Constipation ou digestion difficile.","Autre – j'aimerais préciser."],
       "next": "Q14",
       "meta": { "capture": "bowel" }
     },
@@ -132,15 +133,15 @@
       "id": "Q14",
       "type": "choices",
       "text": "Avez-vous remarqué un gonflement du visage ou des mains le matin ?",
-      "choices": ["Non, jamais.","Parfois, gonflement léger.","Oui, gonflement visible chaque matin.","Autre – j’aimerais préciser."],
+      "choices": ["Non, jamais.","Parfois, gonflement léger.","Oui, gonflement visible chaque matin.","Autre – j'aimerais préciser."],
       "next": "Q15",
       "meta": { "capture": "edema_am" }
     },
     "Q15": {
       "id": "Q15",
       "type": "choices",
-      "text": "Avez-vous parfois l’esprit confus ou des difficultés de concentration ?",
-      "choices": ["Concentration normale.","Légère distraction, oublis occasionnels.","Brouillard mental, difficulté à se concentrer.","Autre – j’aimerais préciser."],
+      "text": "Avez-vous parfois l'esprit confus ou des difficultés de concentration ?",
+      "choices": ["Concentration normale.","Légère distraction, oublis occasionnels.","Brouillard mental, difficulté à se concentrer.","Autre – j'aimerais préciser."],
       "next": "Q16",
       "meta": { "capture": "brain_fog" }
     },
@@ -148,22 +149,22 @@
       "id": "Q16",
       "type": "choices",
       "text": "Avez-vous remarqué un changement de votre libido ?",
-      "choices": ["Aucun changement notable.","Libido variable.","Libido très basse.","Autre – j’aimerais préciser."],
+      "choices": ["Aucun changement notable.","Libido variable.","Libido très basse.","Autre – j'aimerais préciser."],
       "next": "Q17",
       "meta": { "capture": "libido" }
     },
     "Q17": {
-  "id": "Q17",
-  "type": "open",
-  "text": "Merci pour toutes vos réponses. Pouvez-vous indiquer votre adresse e-mail pour recevoir le récapitulatif de vos résultats ?",
-  "next_on_valid": "RESULT",
-  "next_on_skip": "RESULT",
-  "validation": {
-    "type": "email_regex",
-    "pattern": "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
-  },
-  "meta": { "capture": "email" }
-}
+      "id": "Q17",
+      "type": "open",
+      "text": "Merci pour toutes vos réponses. Pouvez-vous indiquer votre adresse e-mail pour recevoir le récapitulatif de vos résultats ?",
+      "next_on_valid": "RESULT",
+      "next_on_skip": "RESULT",
+      "validation": {
+        "type": "email_regex",
+        "pattern": "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+      },
+      "meta": { "capture": "email" }
+    },
     "RESULT": {
       "id": "RESULT",
       "type": "terminal",
