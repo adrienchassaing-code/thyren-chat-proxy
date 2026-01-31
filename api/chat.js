@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 // ============================================================================
-// LECTURE DES 5 FICHIERS DATA
+// LECTURE DES 5 FICHIERS DATA AVEC VALIDATION
 // ============================================================================
 
 const loadJson = (filename) => {
@@ -10,30 +10,39 @@ const loadJson = (filename) => {
     const filePath = path.join(process.cwd(), "data", filename);
     const content = fs.readFileSync(filePath, "utf8");
     const parsed = JSON.parse(content);
-    console.log(`✅ ${filename} chargé - ${Object.keys(parsed).length} clés`);
+    
+    // Vérification que le parsing a réussi
+    const keys = Object.keys(parsed);
+    console.log(`✅ ${filename} chargé - ${keys.length} clés principales`);
     return parsed;
   } catch (e) {
-    console.error(`❌ Erreur chargement ${filename}:`, e.message);
+    console.error(`❌ ERREUR ${filename}:`, e.message);
+    console.error(`   → Vérifiez la syntaxe JSON (virgules, accolades)`);
     return null;
   }
 };
 
 // Charger les 5 DATA
+console.log("📦 Chargement des données...");
 const COMPOSITIONS = loadJson("COMPOSITIONS.json");
 const CURES = loadJson("LES_CURES_ALL.json");
 const QUIZ_CURE = loadJson("QUESTION_ALL.json");
 const QUIZ_THYROIDE = loadJson("QUESTION_THYROIDE.json");
 const SAV_FAQ = loadJson("SAV_FAQ.json");
 
+// Vérifier que tout est chargé
+const allLoaded = COMPOSITIONS && CURES && QUIZ_CURE && QUIZ_THYROIDE && SAV_FAQ;
+if (!allLoaded) {
+  console.error("⚠️  ATTENTION: Certaines données n'ont pas été chargées!");
+}
+
 // ============================================================================
-// FORMATER LES DATA EN TEXTE LISIBLE
-// IMPORTANT: PAS de pretty print (null, 2) pour économiser les tokens !
+// FORMATER LES DATA EN TEXTE COMPACT (économie de tokens)
 // ============================================================================
 
 const formatData = (json, type) => {
-  if (!json) return `[${type} NON DISPONIBLE]`;
-  // Compact JSON (sans espaces inutiles) pour réduire la taille
-  return JSON.stringify(json);
+  if (!json) return `[${type} NON DISPONIBLE - ERREUR DE CHARGEMENT]`;
+  return JSON.stringify(json); // Compact, sans espaces
 };
 
 const DATA_COMPOSITIONS_TEXT = formatData(COMPOSITIONS, "COMPOSITIONS");
@@ -51,10 +60,10 @@ console.log(`   QUIZ_THYROIDE: ${Math.round(DATA_QUIZ_THYROIDE_TEXT.length / 100
 console.log(`   SAV_FAQ: ${Math.round(DATA_SAV_TEXT.length / 1000)}KB`);
 
 // ============================================================================
-// PROMPT SIMPLE ET EFFICACE
+// PROMPT SYSTEM
 // ============================================================================
 
-const SYSTEM_PROMPT = `Tu es THYREN, assistant IA de SUPLEMINT. Tu réponds comme ChatGPT mais en utilisant les DATA SUPLEMINT.
+const SYSTEM_PROMPT = `Tu es THYREN, assistant IA de SUPLEMINT. Tu réponds en utilisant UNIQUEMENT les DATA SUPLEMINT fournies.
 
 ═══════════════════════════════════════════════════════════════
 RÈGLE D'OR : UTILISE LES DATA POUR RÉPONDRE. NE LES INVENTE PAS.
@@ -80,53 +89,31 @@ Déclencheur : "J'ai une question" ou toute autre question
 
 1. Pose les questions EXACTEMENT comme écrites dans les DATA (mot pour mot)
 2. Propose les choix EXACTEMENT dans l'ordre des DATA
-3. Question type "open" → pas de choices dans le JSON
-4. Question type "choices" → inclure choices dans le JSON
+3. Question type "open" → pas de choices dans le JSON de réponse
+4. Question type "choices" → inclure choices dans le JSON de réponse
 5. Suis le branchement (next_map) selon les réponses
 
-## FORMAT JSON OBLIGATOIRE
+## FORMAT JSON OBLIGATOIRE (toujours répondre en JSON)
 
 Réponse simple :
 {"type":"reponse","text":"...","meta":{"mode":"B","progress":{"enabled":false}}}
 
 Question quiz avec choix :
-{"type":"question","text":"QUESTION EXACTE","choices":["choix1","choix2"],"meta":{"mode":"A ou C","progress":{"enabled":true,"current":X,"total":Y}}}
+{"type":"question","text":"QUESTION EXACTE DES DATA","choices":["choix1","choix2"],"meta":{"mode":"A ou C","progress":{"enabled":true,"current":X,"total":Y}}}
 
 Question quiz ouverte :
-{"type":"question","text":"QUESTION EXACTE","meta":{"mode":"A ou C","progress":{"enabled":true,"current":X,"total":Y}}}
+{"type":"question","text":"QUESTION EXACTE DES DATA","meta":{"mode":"A ou C","progress":{"enabled":true,"current":X,"total":Y}}}
 
 Résultats quiz (8 blocs) :
 {"type":"resultat","text":"BLOC1===BLOCK===BLOC2===BLOCK===BLOC3===BLOCK===BLOC4===BLOCK===BLOC5===BLOCK===BLOC6===BLOCK===BLOC7===BLOCK===BLOC8"}
 
-## FORMAT RÉSULTATS QUIZ (8 blocs séparés par ===BLOCK===)
-
-BLOC 1: Résumé clinique (2-3 phrases empathie + symptômes)
-
-BLOC 2: Besoins fonctionnels
-"Ces pourcentages indiquent le degré de soutien dont ton corps a besoin."
-Fonction1 : XX% → explication
-Fonction2 : XX% → explication
-(5 lignes)
-
-BLOC 3: Cure essentielle (FORMAT CURE ci-dessous)
-BLOC 4: Cure de soutien (FORMAT CURE ci-dessous)
-BLOC 5: Cure de confort (FORMAT CURE ci-dessous)
-
-BLOC 6: Contre-indications (si allergie mentionnée, sinon "Aucune")
-
-BLOC 7: "Nos nutritionnistes sont disponibles pour un échange gratuit.
-[Prendre rendez-vous](https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252)"
-
-BLOC 8: "Ce test est un outil de bien-être. Il ne remplace pas un avis médical."
-
-## FORMAT CURE (pour résultats quiz ET questions libres sur une cure)
+## FORMAT CURE (pour résultats et questions sur une cure)
 
 [URL_IMAGE depuis CURES]
-
 [NOM DE LA CURE]
 
 Comment ça marche :
-[2-3 phrases avec **3 ingrédients en gras** et leur action - depuis COMPOSITIONS]
+[2-3 phrases avec **3 ingrédients en gras** depuis COMPOSITIONS]
 
 Bénéfices fonctionnels attendus :
 [Effets en 2 semaines puis 2-3 mois]
@@ -142,11 +129,10 @@ Contre-indications :
 [Commander](checkout:VARIANT_ID) [Ajouter au panier](addtocart:VARIANT_ID) [En savoir plus](URL)
 
 ## STYLE
-- Naturel comme ChatGPT
+- Naturel et professionnel
 - Tu vouvoies
 - Pas d'emojis
 - Direct et précis
-- Utilise tes connaissances scientifiques pour enrichir les explications
 `;
 
 // ============================================================================
@@ -178,8 +164,15 @@ function detectMode(message, history) {
 function getModeFromHistory(messages) {
   for (let i = messages.length - 1; i >= 0; i--) {
     const msg = messages[i];
-    if (msg.role === "assistant" && msg.content?.meta?.mode) {
-      return msg.content.meta.mode;
+    if (msg.role === "assistant") {
+      try {
+        const content = typeof msg.content === "string" ? JSON.parse(msg.content) : msg.content;
+        if (content?.meta?.mode) {
+          return content.meta.mode;
+        }
+      } catch {
+        // Ignorer les erreurs de parsing
+      }
     }
   }
   return null;
@@ -204,6 +197,12 @@ export default async function handler(req, res) {
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     if (!OPENAI_API_KEY) return res.status(500).json({ error: "API key missing" });
 
+    // Vérifier que les données sont chargées
+    if (!allLoaded) {
+      console.error("❌ Données non chargées - vérifier les fichiers JSON");
+      return res.status(500).json({ error: "Data files not loaded - check JSON syntax" });
+    }
+
     // Dernier message utilisateur
     const lastUserMsg = messages.filter((m) => m.role === "user").pop()?.content || "";
     const userText = typeof lastUserMsg === "object" ? lastUserMsg.text || "" : String(lastUserMsg);
@@ -221,7 +220,7 @@ export default async function handler(req, res) {
     const detectedMode = detectMode(userText, historyText);
     const activeMode = historyMode || detectedMode;
 
-    console.log(`🎯 Mode actif: ${activeMode} (historique: ${historyMode}, détecté: ${detectedMode})`);
+    console.log(`🎯 Mode: ${activeMode} (historique: ${historyMode}, détecté: ${detectedMode})`);
 
     // Construire les DATA selon le mode
     let dataSection = "";
@@ -261,9 +260,9 @@ ${DATA_SAV_TEXT}
 `;
     }
 
-    // DEBUG: Taille totale du contexte
-    const totalDataSize = dataSection.length;
-    console.log(`📦 Taille data injectée: ${Math.round(totalDataSize / 1000)}KB (~${Math.round(totalDataSize / 4)} tokens)`);
+    // DEBUG: Taille totale
+    const totalSize = SYSTEM_PROMPT.length + dataSection.length;
+    console.log(`📦 Contexte total: ${Math.round(totalSize / 1000)}KB (~${Math.round(totalSize / 4)} tokens)`);
 
     const openaiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
@@ -274,7 +273,7 @@ ${DATA_SAV_TEXT}
       })),
     ];
 
-    // ⚠️ MODÈLE CORRIGÉ : gpt-4o-mini (pas gpt-4.1-mini qui n'existe pas!)
+    // ⚠️ MODÈLE CORRIGÉ: gpt-4o-mini (PAS gpt-4.1-mini qui n'existe pas!)
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -282,7 +281,7 @@ ${DATA_SAV_TEXT}
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",  // ✅ CORRIGÉ !
+        model: "gpt-4o-mini",  // ✅ MODÈLE CORRECT
         messages: openaiMessages,
         response_format: { type: "json_object" },
         temperature: 0.2,
@@ -299,13 +298,13 @@ ${DATA_SAV_TEXT}
     const data = await response.json();
     const replyText = data.choices?.[0]?.message?.content || "";
     
-    console.log(`✅ Réponse reçue: ${replyText.substring(0, 100)}...`);
+    console.log(`✅ Réponse reçue (${replyText.length} chars)`);
 
     let reply;
     try {
       reply = JSON.parse(replyText);
-    } catch {
-      console.error("❌ Erreur parsing JSON réponse");
+    } catch (parseError) {
+      console.error("❌ Erreur parsing JSON réponse:", parseError.message);
       reply = { type: "reponse", text: replyText, meta: { mode: activeMode, progress: { enabled: false } } };
     }
 
