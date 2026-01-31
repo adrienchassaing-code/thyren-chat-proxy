@@ -1,164 +1,169 @@
 {
-"version": "THYREN_FLOW_1.0",
-  "flow_order": ["Q1","Q2","Q3","Q4","Q4b","Q5","Q6","Q7","Q8","Q9","Q10","Q11","Q12","Q13","Q14","Q15","Q16","Q17","RESULT"],
+  "version": "THYREN_FLOW_1.1_MINIMAL_VOUS",
+  "flow_order": ["Q1","Q2","Q2_plus","Q3","Q4","Q4b","Q5","Q6","Q7","Q8","Q9","Q10","Q11","Q12","Q13","Q14","Q15","Q16","Q17","RESULT"],
   "nodes": {
     "Q1": {
       "id": "Q1",
       "type": "open",
-      "text": "On va vérifier ça ensemble. Je vais te poser quelques questions rapides sur tes symptômes. Pour commencer, quel est ton prénom ?",
+      "text": "On va vérifier cela ensemble. Pour commencer, quel est votre prénom ?",
       "next": "Q2",
-      "meta": {"capture": "first_name"}
+      "meta": { "capture": "first_name" }
     },
     "Q2": {
-  "id": "Q2",
-  "type": "choices",
-  "text": "Enchanté {{first_name}}. Quel est ton sexe biologique ?",
-  "choices": ["Femme", "Homme"],
-  "next_map": {
-    "Femme": "Q2_plus",
-    "Homme": "Q3"
-  },
-  "meta": { "capture": "sex" }
-},
-"Q2_plus": {
-  "id": "Q2_plus",
-  "type": "choices",
-  "text": "{{AI_PREV_INTERPRETATION}}\n\n Es-tu enceinte ou allaitante ?",
-  "choices": ["oui", "non"],
-  "next": "Q3",
-  "meta": { "capture": "enceinte" }
+      "id": "Q2",
+      "type": "choices",
+      "text": "Quel est votre sexe biologique ?",
+      "choices": ["Femme", "Homme"],
+      "next_map": {
+        "Femme": "Q2_plus",
+        "Homme": "Q3"
+      },
+      "meta": { "capture": "sex" }
+    },
+    "Q2_plus": {
+      "id": "Q2_plus",
+      "type": "choices",
+      "text": "Êtes-vous enceinte ou allaitante ?",
+      "choices": ["Oui", "Non"],
+      "next": "Q3",
+      "meta": { "capture": "enceinte" }
     },
     "Q3": {
       "id": "Q3",
       "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}}\n\n Quel est ton âge ?",
+      "text": "Quel est votre âge ?",
       "choices": ["Moins de 30 ans","30-45 ans","45-60 ans","Plus de 60 ans"],
       "next": "Q4",
-      "meta": {"capture": "age_band"}
+      "meta": { "capture": "age_band" }
     },
     "Q4": {
-      "id": "Q4",
-      "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu une condition médicale ou une allergie à signaler ?",
-      "choices": ["Tout va bien","J’ai des allergies ou une condition médicale à signaler"],
-      "next_map": {
-        "Tout va bien": "Q5",
-        "J’ai des allergies ou une condition médicale à signaler": "Q4b"
-      },
-      "meta": {"capture": "safety_flag"}
-    },
+  "id": "Q4",
+  "type": "choices",
+  "text": "Avez-vous une condition médicale, une allergie, ou prenez-vous actuellement un traitement médical ou des compléments alimentaires ?",
+  "choices": [
+    "Tout va bien",
+    "J’ai une allergie, une condition médicale ou je prends un traitement / complément"
+  ],
+  "next_map": {
+    "Tout va bien": "Q5",
+    "J’ai une allergie, une condition médicale ou je prends un traitement / complément": "Q4b"
+  },
+  "meta": { "capture": "safety_flag" }
     "Q4b": {
       "id": "Q4b",
       "type": "open",
-      "text": "Merci de préciser tes allergies ou ta condition médicale.",
+      "text": "Merci de préciser votre allergie ou votre condition médicale.",
       "next": "Q5",
-      "meta": {"capture": "safety_details"}
+      "meta": { "capture": "safety_details" }
     },
     "Q5": {
       "id": "Q5",
       "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu déjà été diagnostiqué(e) avec une hypothyroïdie ?",
+      "text": "Avez-vous déjà été diagnostiqué(e) avec une hypothyroïdie ?",
       "choices": ["Oui, j’ai une hypothyroïdie diagnostiquée.","Non, jamais de diagnostic médical."],
       "next": "Q6",
-      "meta": {"capture": "dx_hypo"}
+      "meta": { "capture": "dx_hypo" }
     },
     "Q6": {
       "id": "Q6",
       "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu déjà réalisé un bilan sanguin pour la thyroïde ?",
+      "text": "Avez-vous déjà réalisé un bilan sanguin pour la thyroïde ?",
       "choices": ["Oui, mon bilan montre une hypothyroïdie.","Oui, mais mon bilan était normal.","Non, jamais fait de bilan."],
       "next": "Q7",
-      "meta": {"capture": "lab_status"}
+      "meta": { "capture": "lab_status" }
     },
     "Q7": {
       "id": "Q7",
       "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}}\n\n Comment décrirais-tu ton niveau d’énergie au quotidien ?",
+      "text": "Comment décririez-vous votre niveau d’énergie au quotidien ?",
       "choices": ["Bonne énergie tout au long de la journée.","Fatigue légère ou passagère.","Fatigue constante malgré le repos.","Autre – j’aimerais préciser."],
       "next": "Q8",
-      "meta": {"capture": "energy"}
+      "meta": { "capture": "energy" }
     },
     "Q8": {
       "id": "Q8",
       "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu pris du poids sans changer ton alimentation ?",
+      "text": "Avez-vous pris du poids sans changer votre alimentation ?",
       "choices": ["Non, mon poids est stable.","Oui, une légère prise de poids.","Oui, une prise de poids importante ou inexpliquée malgré plusieurs régimes.","Autre – j’aimerais préciser."],
       "next": "Q9",
-      "meta": {"capture": "weight"}
+      "meta": { "capture": "weight" }
     },
     "Q9": {
       "id": "Q9",
       "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}}\n\n Ressens-tu souvent le froid (mains/pieds froids) ?",
+      "text": "Ressentez-vous souvent le froid (mains ou pieds froids) ?",
       "choices": ["Non, température normale.","Parfois, mains ou pieds froids.","Souvent froid, même quand il fait bon.","Autre – j’aimerais préciser."],
       "next": "Q10",
-      "meta": {"capture": "cold"}
+      "meta": { "capture": "cold" }
     },
     "Q10": {
       "id": "Q10",
       "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}}\n\n Comment décrirais-tu ton humeur ces derniers temps ?",
+      "text": "Comment décririez-vous votre humeur ces derniers temps ?",
       "choices": ["Moral stable, bonne humeur.","Humeur fluctuante ou baisse légère.","Moral bas, tristesse ou perte de motivation.","Autre – j’aimerais préciser."],
       "next": "Q11",
-      "meta": {"capture": "mood"}
+      "meta": { "capture": "mood" }
     },
     "Q11": {
       "id": "Q11",
       "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}}\n\n Ton sommeil est-il réparateur ?",
+      "text": "Votre sommeil est-il réparateur ?",
       "choices": ["Oui, je dors bien et me réveille reposé(e).","Sommeil parfois léger ou agité.","Difficultés à dormir ou fatigue au réveil.","Autre – j’aimerais préciser."],
       "next": "Q12",
-      "meta": {"capture": "sleep"}
+      "meta": { "capture": "sleep" }
     },
     "Q12": {
       "id": "Q12",
       "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu remarqué des changements (peau sèche, cheveux ternes/cassants, chute) ?",
+      "text": "Avez-vous remarqué des changements de la peau ou des cheveux (sécheresse, chute, cheveux ternes) ?",
       "choices": ["Non, tout est normal.","Peau un peu sèche ou cheveux ternes.","Peau très sèche, cheveux cassants ou perte importante.","Autre – j’aimerais préciser."],
       "next": "Q13",
-      "meta": {"capture": "skin_hair"}
+      "meta": { "capture": "skin_hair" }
     },
     "Q13": {
       "id": "Q13",
       "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}}\n\n Comment est ton transit intestinal ?",
+      "text": "Comment est votre transit intestinal ?",
       "choices": ["Transit régulier.","Parfois un peu lent.","Constipation ou digestion difficile.","Autre – j’aimerais préciser."],
       "next": "Q14",
-      "meta": {"capture": "bowel"}
+      "meta": { "capture": "bowel" }
     },
     "Q14": {
       "id": "Q14",
       "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu remarqué un gonflement du visage ou des mains le matin ?",
+      "text": "Avez-vous remarqué un gonflement du visage ou des mains le matin ?",
       "choices": ["Non, jamais.","Parfois, gonflement léger.","Oui, gonflement visible chaque matin.","Autre – j’aimerais préciser."],
       "next": "Q15",
-      "meta": {"capture": "edema_am"}
+      "meta": { "capture": "edema_am" }
     },
     "Q15": {
       "id": "Q15",
       "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu parfois l’esprit confus ou du mal à te concentrer ?",
+      "text": "Avez-vous parfois l’esprit confus ou des difficultés de concentration ?",
       "choices": ["Concentration normale.","Légère distraction, oublis occasionnels.","Brouillard mental, difficulté à se concentrer.","Autre – j’aimerais préciser."],
       "next": "Q16",
-      "meta": {"capture": "brain_fog"}
+      "meta": { "capture": "brain_fog" }
     },
     "Q16": {
       "id": "Q16",
       "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}}\n\n As-tu remarqué un changement dans ta libido ?",
+      "text": "Avez-vous remarqué un changement de votre libido ?",
       "choices": ["Aucun changement notable.","Libido variable.","Libido très basse.","Autre – j’aimerais préciser."],
       "next": "Q17",
-      "meta": {"capture": "libido"}
+      "meta": { "capture": "libido" }
     },
     "Q17": {
-      "id": "Q17",
-      "type": "open",
-      "text": "Peux-tu me partager ton adresse e-mail pour t’envoyer le récapitulatif de tes résultats et recommandations ?",
-      "next_on_valid": "RESULT",
-      "next_on_skip": "RESULT",
-      "validation": {"type": "email_regex","pattern": "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"},
-      "meta": {"capture": "email"}
-    },
+  "id": "Q17",
+  "type": "open",
+  "text": "Merci pour toutes vos réponses. Pouvez-vous indiquer votre adresse e-mail pour recevoir le récapitulatif de vos résultats ?",
+  "next_on_valid": "RESULT",
+  "next_on_skip": "RESULT",
+  "validation": {
+    "type": "email_regex",
+    "pattern": "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+  },
+  "meta": { "capture": "email" }
+}
     "RESULT": {
       "id": "RESULT",
       "type": "terminal",
@@ -166,10 +171,14 @@
     }
   },
   "engine_hints": {
-    "state_model": {"current_id": "string","answers": "map","history": "array"},
-    "advance_rule": "Toujours suivre nodes[current_id].next ou next_map. Ne jamais relire le prompt d’origine pour deviner la prochaine question.",
-    "branching": "Q4 utilise next_map selon la réponse.",
+    "state_model": { "current_id": "string", "answers": "map", "history": "array" },
+    "advance_rule": "Toujours suivre nodes[current_id].next ou next_map.",
+    "branching": "Q2 et Q4 utilisent next_map selon la réponse.",
     "restart_phrases": ["on recommence le quiz","je veux refaire le test","on repart de zéro","recommencer le quiz"],
-    "placeholders": {"first_name": "capitalized"}
+    "placeholders": { "first_name": "capitalized" },
+    "quiz_style": {
+      "ai_prev_interpretation": "disabled",
+      "max_sentences_per_step": 1
+    }
   }
 }
