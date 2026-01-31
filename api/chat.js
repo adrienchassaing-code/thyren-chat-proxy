@@ -200,14 +200,7 @@ export default async function handler(req, res) {
     // Dernier message utilisateur
     const lastUserMsg = messages.filter(m => m.role === "user").pop()?.content || "";
     const userText = typeof lastUserMsg === "object" ? lastUserMsg.text || "" : String(lastUserMsg);
-    console.log("──────── DEBUG THYREN ────────");
-console.log("MODE ACTIF :", activeMode);
-console.log("USER TEXT :", userText);
-console.log("USER TEXT LENGTH :", userText.length);
-console.log("DATA SECTION LENGTH :", dataSection.length);
-console.log("EST. TOKENS :", Math.round(dataSection.length / 4));
-console.log("─────────────────────────────");
-
+    
     // Historique texte
     const historyText = messages.map(m => {
       const c = m.content;
@@ -218,6 +211,11 @@ console.log("──────────────────────�
     const historyMode = getModeFromHistory(messages);
     const detectedMode = detectMode(userText, historyText);
     const activeMode = historyMode || detectedMode;
+    
+console.log("──────── DEBUG THYREN ────────");
+console.log("MODE ACTIF :", activeMode);
+console.log("USER TEXT :", userText);
+console.log("USER TEXT LENGTH :", userText.length);
 
     console.log(`🎯 Mode: ${activeMode} | Message: ${userText.substring(0, 50)}...`);
 
@@ -261,6 +259,9 @@ ${DATA_CURES_TEXT}
 ${DATA_SAV_TEXT}
 `;
     }
+console.log("DATA SECTION LENGTH :", dataSection.length);
+console.log("EST. TOKENS :", Math.round(dataSection.length / 4));
+console.log("─────────────────────────────");
 
     // Préparer les messages pour OpenAI
     const openaiMessages = [
