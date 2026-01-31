@@ -330,7 +330,7 @@ ${DATA_SAV_TEXT}
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-5-mini",
+        model: "gpt-4.1-mini",
         messages: openaiMessages,
         response_format: { type: "json_object" },
         temperature: 0.1, // Plus bas = plus déterministe
