@@ -1,6 +1,5 @@
 {
-  "version": "THYREN_FLOW_QUIZ_2.1_MINIMAL_VOUS",
-  "description": "Quiz simplifié – raisonnement clinique discret. Questions claires, peu de texte, choix multiples pour plus d’intelligence perçue.",
+  "version": "THYREN_QUESTION_CURE",
   "flow_order": ["Q1","Q2","Q2_plus","Q3","Q4","Q4b","Q5","CLINICAL_QUESTIONS","Q_EMAIL","RESULT"],
   "nodes": {
     "Q1": {
