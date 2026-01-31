@@ -66,7 +66,7 @@
     "CLINICAL_QUESTIONS": {
       "id": "CLINICAL_QUESTIONS",
       "type": "ai_driven",
-      "description": "Questions cliniques ciblées, simples, avec plusieurs choix pour affiner le profil sans alourdir l’expérience.",
+      "description": "Questions cliniques ciblées, simples, avec plusieurs choix pour affiner le profil sans alourdir l'expérience.",
       "rules": [
         "THYREN analyse plainte_client et identifie 2 à 3 axes fonctionnels probables",
         "THYREN pose 4 à 6 questions maximum",
@@ -75,7 +75,7 @@
         "Une seule phrase maximum avant la question si nécessaire, sinon question directe",
         "Ne jamais afficher {{AI_PREV_INTERPRETATION}}",
         "Ne jamais reformuler les informations factuelles",
-        "Quand l’axe prioritaire est identifié, passer à Q_EMAIL"
+        "Quand l'axe prioritaire est identifié, passer à Q_EMAIL"
       ],
       "next": "Q_EMAIL",
       "meta": { "mode": "clinical_reasoning_minimal" }
