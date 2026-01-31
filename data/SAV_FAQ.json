@@ -3,25 +3,17 @@
   "version": "0.8.3",
   "language": "fr",
   "brand": "Suplemint",
-  "updated_note": "Source: SAV - FAQ 0.8.3 (format JSON par thèmes + questions/réponses).",
   "sections": [
     {
       "title": "Entreprise & contact",
       "items": [
         {
           "question": "Suplemint est-elle une entreprise belge ?",
-          "answer": "Oui. Suplemint® est une entreprise 100 % belge, fondée en 2021 par Adrien et Maïté Chassaing. Nos bureaux se trouvent au 431H Chaussée de Louvain, 1380 Lasne (1er étage), au cœur du Brabant wallon. Notre siège social est situé au 64 Chemin de Bas Ransbeck, également à Lasne. Toute la gestion, la conception, le conditionnement et la logistique de nos produits sont pilotées depuis la Belgique, afin de garantir une qualité irréprochable et une transparence totale. Notre ambition : développer des compléments efficaces, sûrs et scientifiquement fondés, avec une expertise particulière sur la thyroïde, l’équilibre hormonal et la micronutrition fonctionnelle. Suplemint® dispose également de succursales au Luxembourg et en France pour soutenir notre croissance internationale."
+          "answer": "Oui. Suplemint® est une entreprise 100% belge, fondée en 2021 par Adrien et Maïté Chassaing. Bureaux: 431H Chaussée de Louvain, 1380 Lasne. Siège social: 64 Chemin de Bas Ransbeck, Lasne."
         },
         {
           "question": "Comment nous contacter ?",
-          "answer": "Notre équipe est à votre disposition pour toutes vos questions : concernant vos commandes, nos produits, la cure thyroïde, ou pour tout autre conseil personnalisé.",
-          "contact": {
-            "email": "info@suplemint.com",
-            "form_url": "https://www.suplemint.com/pages/contact",
-            "phone": "+32 2 884 56 99",
-            "phone_hours": "du lundi au vendredi, de 9h à 19h",
-            "note": "Vous pouvez aussi passer par l’IA THYREN, qui dispose de notre base de données mise à jour chaque semaine."
-          }
+          "answer": "Email: info@suplemint.com | Tél: +32 2 884 56 99 (lun-ven, 9h-19h) | Formulaire: https://www.suplemint.com/pages/contact"
         }
       ]
     },
@@ -30,230 +22,49 @@
       "items": [
         {
           "question": "Quels types de cures proposez-vous ?",
-          "answer": "Nous développons des cures naturelles de micronutrition ciblée, conçues pour répondre à des besoins précis du quotidien : thyroïde, énergie, sommeil, immunité, fertilité, digestion, ménopause, et bien d’autres. Nos formules sont élaborées à partir d’ingrédients naturels rigoureusement sélectionnés, utilisent des actifs hautement biodisponibles, sont développées en collaboration avec des médecins, pharmaciens et experts en médecine fonctionnelle, et sont entièrement conçues et développées depuis la Belgique. Notre expertise phare est aujourd’hui la Cure Thyroïde 2.0, une approche complète et innovante pour soutenir la thyroïde, les surrénales, l’énergie, le métabolisme et l’équilibre hormonal global. Toutes nos cures sont disponibles à l’unité (1 mois), en packs de plusieurs mois, ou via un abonnement flexible.",
-          "links": [
-            {
-              "label": "Voir toutes les cures",
-              "url": "https://www.suplemint.com/collections/trouvezvotrecure"
-            }
-          ]
+          "answer": "Cures naturelles de micronutrition ciblée: thyroïde, énergie, sommeil, immunité, fertilité, digestion, ménopause. Expertise phare: Cure Thyroïde 2.0. Disponibles à l'unité, en packs ou par abonnement.",
+          "link": "https://www.suplemint.com/collections/trouvezvotrecure"
         },
         {
-          "question": "Vendez-vous également les compléments seuls ?",
-          "answer": "Oui. En plus de nos cures complètes, nous proposons certains compléments individuels, issus des formules les plus efficaces (ex: Melatop, CoQ10, Omega 3, Magnésium+, Vitamine C, Multivit). Ces compléments peuvent être commandés au mois, en plusieurs mois d’un coup, ou via un abonnement mensuel.",
-          "examples": ["Melatop", "CoQ10", "Omega 3", "Magnésium+", "Vitamine C", "Multivit"],
-          "links": [
-            {
-              "label": "Découvrir les formules",
-              "url": "https://www.suplemint.com/collections/trouvezvotrecure"
-            }
-          ]
+          "question": "Combien de temps pour sentir des résultats ?",
+          "answer": "1-2 semaines: premiers effets possibles. 1 mois: premiers bénéfices. 3 mois minimum recommandé. 6 mois ou plus pour résultats durables (thyroïde, hormones)."
         },
         {
-          "question": "Combien de temps dois-je prendre ma cure avant de sentir des résultats ?",
-          "answer": "Cela dépend de votre situation de départ, de vos besoins et de votre régularité.",
-          "timeline": [
-            {
-              "when": "1 à 2 semaines",
-              "details": "Certains effets peuvent déjà se faire sentir (énergie, sommeil, confort digestif/intestinal, certaines fonctions liées à la thyroïde)."
-            },
-            {
-              "when": "1 mois",
-              "details": "Permet de tester le produit et d’observer les premiers bénéfices, mais reste souvent un peu court pour agir en profondeur."
-            },
-            {
-              "when": "3 mois (recommandation minimale)",
-              "details": "Pour une action plus complète et efficace, nos experts recommandent une cure d’au minimum 3 mois."
-            },
-            {
-              "when": "6 mois ou plus",
-              "details": "Pour des résultats durables, notamment sur la thyroïde et l’équilibre hormonal, une prise de 6 mois ou plus est souvent conseillée."
-            }
-          ],
-          "principle": "La régularité est plus importante qu’une prise ponctuelle. Nous recommandons de poursuivre la cure tant que vous vous sentez bien et tant que vous en ressentez le besoin."
+          "question": "Compatibilité avec un traitement médical ?",
+          "answer": "Dépend de la cure et du traitement. Exemple: Cure Thyroïde compatible avec traitement hypothyroïdie. Cure Poids contre-indiquée avec anticoagulants antivitamine K. Toujours vérifier les contre-indications."
         },
         {
-          "question": "Nos produits sont-ils compatibles avec un traitement médical ?",
-          "answer": "La réponse est : oui et non. Tout dépend du type de traitement médical que vous suivez et de la cure SUPLEMINT® que vous souhaitez prendre.",
-          "cases": [
-            {
-              "type": "Compatibilité (exemple)",
-              "example": "Cure Thyroïde",
-              "details": "Elle peut être prise en association avec un traitement médical pour l’hypothyroïdie. De nombreux clients l’utilisent avec succès depuis plus de 3 ans, en complément de leur traitement. Cette prise concomitante est validée et justifiée par nos médecins internes."
-            },
-            {
-              "type": "Contre-indication (exemple)",
-              "example": "Cure Poids",
-              "details": "Elle est contre-indiquée si vous prenez des anticoagulants antivitamine K (anticoumariniques), en raison de l’effet des oméga-3 sur la fluidité sanguine."
-            }
-          ],
-          "recommendations": [
-            "Consultez toujours les contre-indications spécifiques à chaque cure (sur la page produit, rubrique « Contre-indications », au-dessus du bouton « Ajouter au panier »).",
-            "En cas de doute, demandez l’avis d’un professionnel de santé, surtout en cas de traitement médical ou de terrain particulier."
-          ]
+          "question": "Grossesse et allaitement ?",
+          "answer": "Grossesse: seule Cure Conception autorisée (arrêt avant 7ème mois). Allaitement: seule Cure Allaitement autorisée. Toutes autres cures contre-indiquées."
         },
         {
-          "question": "Puis-je prendre vos cures si je suis enceinte ou si j’allaite ?",
-          "answer": "Nos recommandations sont basées sur le principe de précaution et sur les spécificités physiologiques de chaque période de vie.",
-          "pregnancy": {
-            "allowed_cures": [
-              {
-                "name": "Cure Conception",
-                "rules": "Peut être prise pendant la grossesse, mais doit impérativement être arrêtée avant le 7ᵉ mois (présence d’oméga-3 pouvant participer à la fluidification du sang)."
-              }
-            ],
-            "other_cures": "Toutes les autres cures sont contre-indiquées pendant la grossesse."
-          },
-          "breastfeeding": {
-            "allowed_cures": [
-              {
-                "name": "Cure Allaitement",
-                "rules": "Spécifiquement formulée pour l’allaitement ; respecter strictement les apports journaliers recommandés."
-              }
-            ],
-            "other_cures": "Toutes les autres cures sont contre-indiquées pendant l’allaitement."
-          },
-          "children": {
-            "general_rule": "En règle générale, nos cures ne sont pas recommandées chez les enfants de moins de 12 ans et, par mesure de sécurité, nous préconisons l’utilisation à partir de 18 ans.",
-            "note": "Toujours lire les contre-indications propres à chaque cure."
-          },
-          "safety_note": "En cas de doute (grossesse, allaitement, âge, pathologie, traitement), demander l’avis d’un professionnel de santé."
+          "question": "Quand prendre mes compléments ?",
+          "answer": "Énergisants: le matin. Sommeil/relaxation: le soir. Certains au milieu ou fin de repas. Instructions sur page produit, boîte et sachet."
         },
         {
-          "question": "Quand dois-je prendre mes compléments ?",
-          "answer": "Cela dépend de la cure choisie et du type de compléments.",
-          "rules": [
-            "Les compléments énergisants (énergie, thyroïde, métabolisme…) se prennent en général le matin.",
-            "Les compléments liés au sommeil ou à la relaxation se prennent plutôt le soir.",
-            "Certaines gélules sont à prendre au milieu ou à la fin d’un repas pour une meilleure tolérance digestive."
-          ],
-          "where_to_find_instructions": [
-            "sur la page produit de votre cure",
-            "au dos de la boîte",
-            "sur chaque sachet",
-            "sur la carte explicative incluse dans chaque pack (accessible aussi via le QR code d’activation)"
-          ],
-          "note": "Chaque organisme est différent : vous pouvez adapter légèrement vos prises à votre rythme quotidien. L’essentiel est la régularité."
+          "question": "Si j'oublie une dose ?",
+          "answer": "Ne jamais doubler la dose. Sauter la prise oubliée et reprendre normalement. L'important c'est la régularité sur le long terme."
         },
         {
-          "question": "Et si j’oublie de prendre une dose ?",
-          "answer": "Pas de panique, cela arrive à tout le monde. Ne doublez jamais la dose lors de la prise suivante. Sautez simplement la prise oubliée et reprenez votre cure normalement au moment habituel.",
-          "principle": "En micronutrition, le principe clé n’est pas la perfection quotidienne, mais l’observance dans le temps : les compléments agissent progressivement (accumulation et régulation), pas comme un médicament à effet immédiat.",
-          "notes": [
-            "Oublier une prise de temps en temps (même 1–2 fois/semaine) n’a généralement pas d’impact significatif.",
-            "Si plus de 30–35 % des prises sont oubliées, l’effet devient logiquement moins optimal."
-          ]
+          "question": "Sans gluten et sans lactose ?",
+          "answer": "Pas de gluten ni lactose ajoutés, sauf Cure Peau (SKIN ACTIV peut en contenir). Contamination croisée possible. Consulter si allergie sévère."
         },
         {
-          "question": "Est-ce que je peux prendre d’autres compléments en plus de Suplemint ?",
-          "answer": "En théorie, oui, mais ce n’est généralement pas nécessaire : nos cures sont déjà hautement dosées et équilibrées.",
-          "recommendations": [
-            "Vérifier les compositions pour éviter les doublons",
-            "Ne pas dépasser les doses journalières recommandées",
-            "Demander conseil à votre médecin ou pharmacien en cas de doute"
-          ],
-          "watchouts": {
-            "vitamins": {
-              "Vitamine A (rétinol)": "800 µg/jour",
-              "Vitamine D": "3 000 UI/jour (75 µg)",
-              "Vitamine E": "300 mg/jour",
-              "Vitamine B6": "25 mg/jour",
-              "Vitamine B9 (acide folique)": "1 000 µg/jour"
-            },
-            "minerals": {
-              "Fer": "14–20 mg/jour (hors carence diagnostiquée)",
-              "Zinc": "25 mg/jour",
-              "Sélénium": "200 µg/jour",
-              "Iode": "150–200 µg/jour",
-              "Cuivre": "5 mg/jour",
-              "Magnésium (supplémentation)": "250–350 mg/jour"
-            },
-            "others": {
-              "Oméga-3 (EPA + DHA)": "éviter > 3 g/jour sans avis médical",
-              "Plantes adaptogènes": "attention au cumul prolongé (ashwagandha, rhodiola, ginseng…)",
-              "Antioxydants concentrés": "prudence en association multiple (curcumine, resvératrol, quercétine)"
-            }
-          },
-          "summary": "Ajouter d’autres compléments est rarement utile ; l’excès n’améliore pas les résultats ; la cohérence et la régularité sont plus efficaces que l’accumulation."
-        },
-        {
-          "question": "Qu’est-ce qui justifie le prix de vos cures ?",
-          "answer": "Nos tarifs reflètent la qualité des matières premières, la complexité des formules, le travail d’experts, et le suivi scientifique (mises à jour régulières selon les données scientifiques disponibles).",
-          "value_argument": [
-            "Meilleure synergie (action 360°) qu’un seul multivitamine faiblement dosé",
-            "Moins de redondances/incompatibilités",
-            "Évite d’acheter séparément une multitude de compléments"
-          ],
-          "example": {
-            "name": "Cure Thyroïde",
-            "alternative_total_value_eur": 343,
-            "pack_value_eur": 125,
-            "estimated_savings_eur": 218,
-            "note": "Détail indicatif fourni dans la FAQ."
-          }
-        },
-        {
-          "question": "Les produits sont-ils disponibles partout ?",
-          "answer": "Nous respectons strictement les réglementations européennes et locales en vigueur dans chaque pays. Certaines formules peuvent être temporairement retirées le temps d’une mise à jour, d’une reformulation ou d’une revalidation réglementaire. Si un produit n’est pas autorisé à la vente dans votre pays, il ne sera pas disponible au moment du paiement.",
-          "note": "Chaque cure dispose de numéros d’enregistrement légaux de mise sur le marché, spécifiques à chaque pays de commercialisation."
-        },
-        {
-          "question": "Vos produits sont-ils sans gluten et sans lactose ?",
-          "answer": "Tous nos produits ne contiennent pas de gluten ni de lactose ajoutés, à l’exception de la cure Peau, dont la gélule SKIN ACTIV peut en contenir.",
-          "cross_contamination_note": "Les compléments sont fabriqués dans des installations multi-produits : une contamination croisée ne peut donc jamais être exclue à 100 %.",
-          "may_contain_traces_of": [
-            "blé",
-            "soja",
-            "lactose",
-            "maïs",
-            "œuf",
-            "poisson",
-            "crustacés",
-            "fruits à coque",
-            "arachides",
-            "gluten"
-          ],
-          "safety_note": "En cas d’allergie sévère ou d’hypersensibilité, consulter un médecin et vérifier attentivement la liste des ingrédients de chaque cure."
-        },
-        {
-          "question": "Allergène poisson & dérivés marins",
-          "answer": "Certaines cures contiennent des ingrédients issus du poisson ou de dérivés marins (oméga-3, krill, etc.).",
-          "cures_with_marine_ingredients": [
-            { "cure": "Cure Énergie", "ingredients": ["Oméga-3 (huile de poisson)"] },
-            { "cure": "Cure Poids", "ingredients": ["Oméga-3 (huile de poisson)"] },
-            { "cure": "Cure Immunité", "ingredients": ["Oméga-3 (huile de poisson)"] },
-            { "cure": "Cure Senior", "ingredients": ["Oméga-3 (huile de poisson)"] },
-            { "cure": "Cure Mémoire", "ingredients": ["Krill (extrait lipidique de crustacés)", "Oméga-3 (huile de poisson)"] },
-            { "cure": "Cure Homme+", "ingredients": ["Oméga-3 (huile de poisson)"] },
-            { "cure": "Cure Cardio", "ingredients": ["Oméga-3 (huile de poisson)"] }
-          ],
-          "no_other_cures_note": "Aucune autre cure ne contient d’ingrédients marins.",
-          "safety_note": "En cas d’allergie au poisson ou aux crustacés, un avis médical est indispensable avant toute utilisation."
-        },
-        {
-          "question": "Vos produits sont-ils végétariens ou végétaliens ?",
-          "answer": "Selon les formules : certaines cures sont végétariennes, d’autres contiennent des oméga 3 issus d’huile de poisson (certifiés pêche durable), et actuellement, nos cures ne sont pas 100 % végétaliennes. Les informations « végétarien / non végétarien » sont précisées dans la description du produit."
+          "question": "Allergène poisson & dérivés marins ?",
+          "answer": "Cures avec oméga-3/krill: Énergie, Poids, Immunité, Senior, Mémoire, Homme+, Cardio. Avis médical indispensable si allergie."
         }
       ]
     },
     {
-      "title": "Qualité, fabrication & ingrédients",
+      "title": "Qualité & fabrication",
       "items": [
         {
-          "question": "Où et comment vos produits sont-ils fabriqués ?",
-          "answer": "Nos compléments sont développés dans un environnement spécialisé en micronutrition et médecine fonctionnelle, produits en collaboration avec des laboratoires au Luxembourg, en Belgique et en France, et fabriqués dans des sites certifiés (dont GMP). Les matières premières sont sélectionnées pour leur qualité, pureté et traçabilité, et analysées sur le plan toxicologique et microbiologique dans des laboratoires indépendants (par ex. Primoris, Phytocontrol). L’assemblage des emballages est réalisé en Belgique."
+          "question": "Où sont fabriqués vos produits ?",
+          "answer": "Laboratoires au Luxembourg, Belgique et France. Sites certifiés GMP. Analyses toxicologiques et microbiologiques en laboratoires indépendants."
         },
         {
-          "question": "L’emballage est-il recyclable ?",
-          "answer": "Oui. Sachets biodégradables et compostables industriellement (fine couche de PLA), boîtes en carton 100 % biodégradable, notices en papier recyclable, cartons d’expédition recyclables, ruban adhésif en papier/carton recyclable."
-        },
-        {
-          "question": "Comment choisissez-vous vos ingrédients ?",
-          "answer": "Deux critères guident nos choix : efficacité et naturalité. Nos équipes s’appuient sur les dernières données scientifiques, collaborent avec le Dr Stéphane Résimont, et travaillent avec une équipe scientifique pluridisciplinaire. Nous privilégions des actifs hautement assimilables, des matières premières traçables et des ingrédients issus de l’agriculture raisonnée et du commerce équitable lorsque possible."
-        },
-        {
-          "question": "Par qui sont développés les produits ?",
-          "answer": "Nos produits sont développés par une équipe de 20 scientifiques pluridisciplinaires (médecins, nutritionnistes et nutrithérapeutes, pharmaciens biologistes), sous la coordination du Dr Stéphane Résimont. Un conseil scientifique indépendant accompagne et valide les formules."
+          "question": "Emballage recyclable ?",
+          "answer": "Oui. Sachets biodégradables, boîtes carton 100% biodégradable, notices papier recyclable, ruban adhésif recyclable."
         }
       ]
     },
@@ -261,21 +72,12 @@
       "title": "Paiement",
       "items": [
         {
-          "question": "Quels moyens de paiement acceptez-vous ?",
-          "answer": "Apple Pay, carte de crédit, PayPal, Bancontact, iDEAL, Klarna. Pour les achats sur place : terminal bancaire et espèces."
+          "question": "Moyens de paiement acceptés ?",
+          "answer": "Apple Pay, carte de crédit, PayPal, Bancontact, iDEAL, Klarna. Sur place: terminal bancaire et espèces."
         },
         {
-          "question": "Comment utiliser mon code promotionnel ?",
-          "answer": "Ajoutez vos produits au panier, passez à la page de paiement, puis entrez votre code promotionnel dans le champ prévu avant le paiement.",
-          "important": [
-            "Un seul code promotionnel à la fois.",
-            "Si plusieurs codes sont éligibles, le code le plus avantageux est appliqué automatiquement.",
-            "Les codes promotionnels sont cumulables avec des réductions automatiques (–15 % abonnements, –10 % dès 2 produits, –15 % dès 3 produits)."
-          ]
-        },
-        {
-          "question": "Pourquoi mon code ne fonctionne pas ?",
-          "answer": "Un code peut ne pas s’appliquer s’il a déjà été utilisé, s’il a expiré, ou s’il ne s’applique pas aux produits de votre panier. En cas de doute, contactez info@suplemint.com."
+          "question": "Code promotionnel ?",
+          "answer": "Ajouter au panier, page paiement, entrer le code. Un seul code à la fois. Cumulable avec réductions automatiques (-15% abonnement, -10% dès 2 produits, -15% dès 3)."
         }
       ]
     },
@@ -283,63 +85,29 @@
       "title": "Livraison",
       "items": [
         {
-          "question": "Modalité de livraison",
-          "answer": "Nous livrons en Europe et à l’international via des transporteurs fiables, avec suivi de commande.",
-          "estimated_delays": [
-            { "zone": "Benelux", "delay": "2 à 3 jours ouvrés", "carrier": "GLS" },
-            { "zone": "France", "delay": "2 à 5 jours ouvrés", "carrier": "GLS" },
-            { "zone": "Suisse (DAP)", "delay": "3 à 6 jours ouvrés", "carrier": "Bpost", "note": "aucun frais de douane à payer" },
-            { "zone": "Autres pays d’Europe", "delay": "3 à 6 jours ouvrés", "carrier": "Bpost" },
-            { "zone": "États-Unis", "delay": "4 à 6 jours ouvrés", "carrier": "Bpost" },
-            { "zone": "Autres destinations internationales", "delay": "6 à 12 jours ouvrés", "carrier": "Bpost" }
-          ],
-          "notes": [
-            "Les délais sont donnés à titre indicatif et peuvent varier (problèmes techniques, pénurie de matières premières, disponibilité limitée des stocks).",
-            "Si votre pays n’apparaît pas au checkout, contactez-nous pour débloquer la destination."
-          ]
+          "question": "Délais de livraison ?",
+          "answer": "Benelux: 2-3 jours (GLS). France: 2-5 jours (GLS). Suisse: 3-6 jours (Bpost). Europe: 3-6 jours. USA: 4-6 jours. International: 6-12 jours."
         },
         {
-          "question": "Comment vérifier le statut de ma commande ?",
-          "answer": "Après commande, vous recevez un e-mail de confirmation puis des e-mails de suivi. Chaque e-mail contient un lien ou un code de suivi. Il peut y avoir un décalage entre le suivi Shopify et celui du transporteur ; attendez jusqu’à 24h pour la synchronisation."
-        },
-        {
-          "question": "Ma commande est en retard",
-          "answer": "Vérifiez le tracking via le lien reçu par e-mail. Pensez à vérifier vos spams. Si le retard dépasse 5 jours ouvrables, contactez info@suplemint.com avec votre numéro de commande.",
-          "contact_options": ["info@suplemint.com", "+32 2 884 56 99", "THYREN (assistant)"]
+          "question": "Ma commande est en retard ?",
+          "answer": "Vérifier le tracking. Vérifier les spams. Si retard > 5 jours ouvrables, contacter info@suplemint.com avec numéro de commande."
         }
       ]
     },
     {
-      "title": "Compte, factures & modifications",
+      "title": "Compte & modifications",
       "items": [
         {
-          "question": "Où puis-je trouver l’historique de mes commandes et/ou des abonnements ?",
-          "answer": "Connectez-vous à votre compte client Suplemint® avec l’adresse e-mail utilisée lors de votre achat. Vous recevez un code à usage unique par e-mail. Ensuite, allez dans l’onglet « Historique des commandes »."
+          "question": "Annuler ma commande ?",
+          "answer": "Possible tant que non expédiée. Commandes avant 12h expédiées le jour même. Contacter rapidement. Après expédition: retour sous 14 jours."
         },
         {
-          "question": "Où puis-je obtenir ma facture de commande ?",
-          "answer": "Envoyez votre numéro de commande et vos coordonnées de facturation à info@suplemint.com. Nous vous enverrons la facture par e-mail."
+          "question": "Modifier ma commande ?",
+          "answer": "Possible avant expédition. Contacter info@suplemint.com ou +32 2 884 56 99."
         },
         {
-          "question": "Puis-je annuler ma commande ?",
-          "answer": "Oui, tant que le colis n’a pas été expédié. Les commandes passées avant 12h sont généralement expédiées le jour même ; après 12h, le lendemain. Contactez-nous au plus vite. Une fois expédié, vous pouvez retourner dans les 14 jours selon les CGV."
-        },
-        {
-          "question": "Puis-je modifier ma commande ?",
-          "answer": "Oui tant que le colis n’est pas expédié (souvent vers midi le jour même ou le lendemain). Pour ajouter/retirer un produit ou modifier une cure, contactez info@suplemint.com ou +32 2 884 56 99."
-        },
-        {
-          "question": "J’ai reçu le mauvais produit ou un produit endommagé",
-          "answer": "Contactez-nous avec votre numéro de commande et une photo du produit reçu et/ou endommagé. Nous trouverons une solution (remplacement, renvoi, etc.).",
-          "contact": ["info@suplemint.com", "+32 2 884 56 99"]
-        },
-        {
-          "question": "Puis-je modifier l’adresse de livraison de ma commande ?",
-          "answer": "Oui, uniquement avant l’expédition. Contactez info@suplemint.com au plus vite. Après expédition, nous ne pouvons plus modifier l’adresse (mais on peut voir une solution avec le transporteur)."
-        },
-        {
-          "question": "Puis-je échanger ma commande contre une autre cure ?",
-          "answer": "Oui, si vous retournez le colis dans les 14 jours, produits non ouverts, emballage d’origine, frais de retour à votre charge. Contactez info@suplemint.com pour organiser l’échange."
+          "question": "Produit endommagé ou erreur ?",
+          "answer": "Contacter avec numéro de commande et photo. Solution: remplacement ou renvoi."
         }
       ]
     },
@@ -347,56 +115,16 @@
       "title": "Abonnement",
       "items": [
         {
-          "question": "Abonnement ou achat unique ?",
-          "answer": "Nos produits sont conçus comme de véritables cures : une prise d’au minimum 3 mois est fortement recommandée.",
-          "subscription": {
-            "how_it_works": [
-              "Paiement automatique par prélèvement SEPA",
-              "Envoi automatique tous les 30 jours (30 jours après la première commande)",
-              "Renouvellement tant que vous ne l’arrêtez pas",
-              "Sans engagement : annulable, modifiable ou suspendable à tout moment"
-            ],
-            "benefits": [
-              "–15 % sur le prix total des cures",
-              "Livraison offerte",
-              "Pilulier offert lors de la première commande",
-              "Suivi mensuel offert avec une nutritionniste (téléphone ou visio)"
-            ]
-          },
-          "one_time_purchase": {
-            "ideal_for": ["tester un produit", "ne pas souscrire à un abonnement"],
-            "discounts": [
-              "–10 % dès 2 cures",
-              "–15 % dès 3 cures (même avantage prix que l’abonnement)"
-            ],
-            "benefits": [
-              "Livraison offerte",
-              "Possibilité de RDV gratuit avec une nutritionniste (téléphone ou visio)"
-            ]
-          },
-          "summary": "L’abonnement est la solution la plus complète et la plus avantageuse pour une cure efficace et suivie. L’achat unique est parfait pour découvrir nos produits en toute liberté."
+          "question": "Avantages abonnement ?",
+          "answer": "-15% sur prix total. Livraison offerte. Pilulier offert (1ère commande). Suivi mensuel offert avec nutritionniste. Envoi automatique tous les 30 jours. Sans engagement, annulable à tout moment."
         }
       ]
     },
     {
       "title": "Codes promotionnels",
-      "items": [
-        {
-          "question": "Règle générale des codes promotionnels",
-          "answer": "On ne donne qu’un code à la fois."
-        }
-      ],
       "promo_codes": [
-        {
-          "code": "STANARNOW10",
-          "offer": "-10% à l'inscription à la newsletter",
-          "conditions": "Un seul code à la fois."
-        },
-        {
-          "code": "JANVIER30",
-          "offer": "-30% sur chaque commande",
-          "conditions": "Valable uniquement pendant le mois de janvier 2026. Un seul code à la fois."
-        }
+        { "code": "STANARNOW10", "offer": "-10% à l'inscription newsletter" },
+        { "code": "JANVIER30", "offer": "-30% sur chaque commande", "conditions": "Valable janvier 2026 uniquement" }
       ]
     }
   ]
