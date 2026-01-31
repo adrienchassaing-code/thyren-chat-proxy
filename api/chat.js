@@ -1,412 +1,244 @@
 import fs from "fs";
 import path from "path";
 
-// ============================================================================
-// LECTURE DES 5 FICHIERS DATA
-// ============================================================================
+// =====================
+// LOAD JSON ONCE
+// =====================
+function loadJson(filename) {
+  const filePath = path.join(process.cwd(), "data", filename);
+  const raw = fs.readFileSync(filePath, "utf8");
+  return JSON.parse(raw);
+}
 
-const loadJson = (filename) => {
-  try {
-    const filePath = path.join(process.cwd(), "data", filename);
-    const content = fs.readFileSync(filePath, "utf8");
-    return JSON.parse(content);
-  } catch (e) {
-    console.error(`❌ Erreur chargement ${filename}:`, e.message);
-    return null;
-  }
-};
-console.log("📁 CWD:", process.cwd());
-console.log("📁 DATA DIR EXISTS?", fs.existsSync(path.join(process.cwd(), "data")));
-console.log("📄 COMPOSITIONS exists?", fs.existsSync(path.join(process.cwd(), "data", "COMPOSITIONS.json")));
-console.log("📄 CURES exists?", fs.existsSync(path.join(process.cwd(), "data", "LES_CURES_ALL.json")));
-console.log("📄 QUIZ_CURE exists?", fs.existsSync(path.join(process.cwd(), "data", "QUESTION_ALL.json")));
-console.log("📄 QUIZ_THYROIDE exists?", fs.existsSync(path.join(process.cwd(), "data", "QUESTION_THYROIDE.json")));
-console.log("📄 SAV exists?", fs.existsSync(path.join(process.cwd(), "data", "SAV_FAQ.json")));
-
-// Charger les 5 DATA
 const COMPOSITIONS = loadJson("COMPOSITIONS.json");
 const CURES = loadJson("LES_CURES_ALL.json");
 const QUIZ_CURE = loadJson("QUESTION_ALL.json");
 const QUIZ_THYROIDE = loadJson("QUESTION_THYROIDE.json");
 const SAV_FAQ = loadJson("SAV_FAQ.json");
 
-// Log de vérification
-console.log("📊 DATA chargées:");
-console.log(`  COMPOSITIONS: ${COMPOSITIONS ? Object.keys(COMPOSITIONS.capsules || {}).length + " gélules" : "❌"}`);
-console.log(`  CURES: ${CURES ? (CURES.cures || []).length + " cures" : "❌"}`);
-console.log(`  QUIZ_CURE: ${QUIZ_CURE ? Object.keys(QUIZ_CURE.nodes || {}).length + " questions" : "❌"}`);
-console.log(`  QUIZ_THYROIDE: ${QUIZ_THYROIDE ? Object.keys(QUIZ_THYROIDE.nodes || {}).length + " questions" : "❌"}`);
-console.log(`  SAV_FAQ: ${SAV_FAQ ? (SAV_FAQ.sections || []).length + " sections" : "❌"}`);
-
-// ============================================================================
-// FORMATER LES DATA EN TEXTE LISIBLE
-// ============================================================================
-
-const formatData = (json, type) => {
-  if (!json) return `[${type} NON DISPONIBLE]`;
-  return JSON.stringify(json, null, 2);
-};
-
-const DATA_COMPOSITIONS_TEXT = formatData(COMPOSITIONS, "COMPOSITIONS");
-const DATA_CURES_TEXT = formatData(CURES, "CURES");
-const DATA_QUIZ_CURE_TEXT = formatData(QUIZ_CURE, "QUIZ_CURE");
-const DATA_QUIZ_THYROIDE_TEXT = formatData(QUIZ_THYROIDE, "QUIZ_THYROIDE");
-const DATA_SAV_TEXT = formatData(SAV_FAQ, "SAV_FAQ");
-
-// ============================================================================
-// PROMPT SIMPLE ET EFFICACE
-// ============================================================================
-
-const SYSTEM_PROMPT = `Tu es THYREN, assistant IA de SUPLEMINT. Tu réponds comme ChatGPT mais en utilisant les DATA SUPLEMINT.
-
-═══════════════════════════════════════════════════════════════
-RÈGLE D'OR : UTILISE LES DATA POUR RÉPONDRE. NE LES INVENTE PAS.
-═══════════════════════════════════════════════════════════════
-
-## LES 3 MODES
-
-**MODE A - Quiz Thyroïde**
-Déclencheur : "Ma thyroïde fonctionne-t-elle normalement ?" ou question sur thyroïde
-→ Suis EXACTEMENT les questions de [QUIZ_THYROIDE] dans l'ordre du flow
-→ À la fin, recommande des cures validées avec [CURES] et [COMPOSITIONS]
-
-**MODE C - Quiz Cure**  
-Déclencheur : "Quelle cure est faite pour moi ?" ou question sur choix de cure
-→ Suis EXACTEMENT les questions de [QUIZ_CURE] dans l'ordre du flow
-→ À la fin, recommande des cures validées avec [CURES] et [COMPOSITIONS]
-
-**MODE B - Questions libres**
-Déclencheur : "J'ai une question" ou toute autre question
-→ Utilise [COMPOSITIONS], [CURES], [SAV_FAQ] pour répondre
-
-## RÈGLES QUIZ (Mode A et C)
-
-1. Pose les questions EXACTEMENT comme écrites dans les DATA (mot pour mot)
-2. Propose les choix EXACTEMENT dans l'ordre des DATA
-3. Question type "open" → pas de choices dans le JSON
-4. Question type "choices" → inclure choices dans le JSON
-5. Suis le branchement (next_map) selon les réponses
-
-## FORMAT JSON OBLIGATOIRE
-
-Réponse simple :
-{"type":"reponse","text":"...","meta":{"mode":"B","progress":{"enabled":false}}}
-
-Question quiz avec choix :
-{"type":"question","text":"QUESTION EXACTE","choices":["choix1","choix2"],"meta":{"mode":"A ou C","progress":{"enabled":true,"current":X,"total":Y}}}
-
-Question quiz ouverte :
-{"type":"question","text":"QUESTION EXACTE","meta":{"mode":"A ou C","progress":{"enabled":true,"current":X,"total":Y}}}
-
-Résultats quiz (8 blocs) :
-{"type":"resultat","text":"BLOC1===BLOCK===BLOC2===BLOCK===BLOC3===BLOCK===BLOC4===BLOCK===BLOC5===BLOCK===BLOC6===BLOCK===BLOC7===BLOCK===BLOC8"}
-
-## FORMAT RÉSULTATS QUIZ (8 blocs séparés par ===BLOCK===)
-
-BLOC 1: Résumé clinique (2-3 phrases empathie + symptômes)
-
-BLOC 2: Besoins fonctionnels
-"Ces pourcentages indiquent le degré de soutien dont ton corps a besoin."
-Fonction1 : XX% → explication
-Fonction2 : XX% → explication
-(5 lignes)
-
-BLOC 3: Cure essentielle (FORMAT CURE ci-dessous)
-BLOC 4: Cure de soutien (FORMAT CURE ci-dessous)
-BLOC 5: Cure de confort (FORMAT CURE ci-dessous)
-
-BLOC 6: Contre-indications (si allergie mentionnée, sinon "Aucune")
-
-BLOC 7: "Nos nutritionnistes sont disponibles pour un échange gratuit.
-[Prendre rendez-vous](https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252)"
-
-BLOC 8: "Ce test est un outil de bien-être. Il ne remplace pas un avis médical."
-
-## FORMAT CURE (pour résultats quiz ET questions libres sur une cure)
-
-[URL_IMAGE depuis CURES]
-
-[NOM DE LA CURE]
-
-Comment ça marche :
-[2-3 phrases avec **3 ingrédients en gras** et leur action - depuis COMPOSITIONS]
-
-Bénéfices fonctionnels attendus :
-[Effets en 2 semaines puis 2-3 mois]
-
-Conseils de prise (posologie) :
-– Durée : 3 à 6 mois
-– Moment : [depuis CURES timing]
-– Composition : [liste gélules/jour depuis CURES]
-
-Contre-indications :
-[depuis CURES contraindications]
-
-[Commander](checkout:VARIANT_ID) [Ajouter au panier](addtocart:VARIANT_ID) [En savoir plus](URL)
-
-## STYLE
-- Naturel comme ChatGPT
-- Tu vouvoies
-- Pas d'emojis
-- Direct et précis
-- Utilise tes connaissances scientifiques pour enrichir les explications
-`;
-
-// ============================================================================
-// DÉTECTION DU MODE
-// ============================================================================
-
-function detectMode(message, history) {
-  const msg = message.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  
-  // Mode A - Thyroïde
-  if (msg.includes("thyroide fonctionne") || msg.includes("thyroïde fonctionne")) return "A";
-  if (msg.includes("thyro") && (msg.includes("probleme") || msg.includes("normale") || msg.includes("test"))) return "A";
-  
-  // Mode C - Quelle cure
-  if (msg.includes("quelle cure") || msg.includes("cure est faite pour moi") || msg.includes("cure pour moi")) return "C";
-  
-  // Vérifier l'historique pour continuer un quiz en cours
-  const hist = history.toLowerCase();
-  if (hist.includes("quiz thyroide") || hist.includes("mode a")) return "A";
-  if (hist.includes("quiz cure") || hist.includes("mode c")) return "C";
-  
-  // Mode B par défaut
-  return "B";
+// =====================
+// HELPERS
+// =====================
+function getLastUserText(messages) {
+  const lastUser = [...(messages || [])].reverse().find(m => m.role === "user");
+  const c = lastUser?.content ?? "";
+  return typeof c === "object" ? (c.text || "") : String(c);
 }
 
-function getModeFromHistory(messages) {
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const msg = messages[i];
-    if (msg.role === "assistant" && msg.content?.meta?.mode) {
-      return msg.content.meta.mode;
+function normalize(s) {
+  return String(s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Trouve une capsule par key / display_name / alias
+function findCapsule(query) {
+  const q = normalize(query);
+  const caps = COMPOSITIONS?.capsules || {};
+
+  // 1) match direct sur clé
+  for (const k of Object.keys(caps)) {
+    if (normalize(k) === q) return { key: k, capsule: caps[k] };
+  }
+
+  // 2) match sur display_name / aliases
+  for (const [k, v] of Object.entries(caps)) {
+    const dn = normalize(v?.display_name || "");
+    const als = Array.isArray(v?.aliases) ? v.aliases.map(normalize) : [];
+    if (dn === q || als.includes(q)) return { key: k, capsule: v };
+  }
+
+  // 3) match partiel (“omega 3” doit matcher “omega-3” etc.)
+  for (const [k, v] of Object.entries(caps)) {
+    const dn = normalize(v?.display_name || "");
+    const als = Array.isArray(v?.aliases) ? v.aliases.map(normalize) : [];
+    if (dn.includes(q) || als.some(a => a.includes(q)) || normalize(k).includes(q)) {
+      return { key: k, capsule: v };
     }
+  }
+
+  return null;
+}
+
+function formatCapsule(c) {
+  const cap = c.capsule;
+  const lines = [];
+  lines.push(`Composition de ${cap.display_name || c.key} :`);
+
+  for (const ing of (cap.ingredients || [])) {
+    let amount = "";
+    if (ing.amount_mg) amount = `${ing.amount_mg} mg`;
+    else if (ing.amount_mcg) amount = `${ing.amount_mcg} µg`;
+    else if (ing.amount) amount = `${ing.amount} ${ing.unit || ""}`.trim();
+    lines.push(`- ${ing.name}${amount ? ` : ${amount}` : ""}`);
+  }
+
+  if (cap.allergen_tags?.length) lines.push(`Allergènes : ${cap.allergen_tags.join(", ")}`);
+  else lines.push(`Allergènes : Aucun`);
+
+  if (cap.contains_iodine) lines.push(`Contient de l’iode : Oui`);
+  return lines.join("\n");
+}
+
+// Trouve une cure par nom (match simple)
+function findCure(query) {
+  const q = normalize(query);
+  const list = CURES?.cures || [];
+  for (const cure of list) {
+    const name = normalize(cure?.name || "");
+    if (name === q || name.includes(q) || q.includes(name)) return cure;
   }
   return null;
 }
 
-// ============================================================================
-// HANDLER PRINCIPAL
-// ============================================================================
-
-export default async function handler(req, res) {
-  console.log("✅ HANDLER APPELÉ", {
-    method: req.method,
-    url: req.url,
-    origin: req.headers.origin,
-    hasBody: !!req.body,
-  });
-
-  // ===== DIAG / DEBUG (DOIT ÊTRE AVANT LES RETURNS OPTIONS/POST) =====
-  if (req.method === "POST") {
-    const msgs = Array.isArray(req.body?.messages) ? req.body.messages : [];
-    const last = msgs.slice(-1)[0]?.content ?? "";
-    const userTextForDiag = typeof last === "object" ? (last.text || "") : String(last);
-
-    // --- DIAG: liste le dossier /data ---
-    if (userTextForDiag.trim().toLowerCase() === "diag") {
-      const dataDir = path.join(process.cwd(), "data");
-      try {
-        const files = fs.readdirSync(dataDir).map((name) => {
-          const p = path.join(dataDir, name);
-          const st = fs.statSync(p);
-          return { name, size: st.size };
-        });
-
-        return res.status(200).json({
-          reply: {
-            type: "reponse",
-            text:
-              "✅ /data trouvé.\nFichiers:\n" +
-              files.map((f) => `- ${f.name} (${f.size} bytes)`).join("\n"),
-            meta: { mode: "B", progress: { enabled: false } },
-          },
-        });
-      } catch (e) {
-        return res.status(200).json({
-          reply: {
-            type: "reponse",
-            text: `❌ Impossible de lire /data\npath=${dataDir}\nerror=${e.message}`,
-            meta: { mode: "B", progress: { enabled: false } },
-          },
-        });
-      }
-    }
-
-    // --- OMEGA DEBUG: tape "omega_debug" dans le chat ---
-    // (je le mets derrière un mot-clé pour ne pas casser le bot en prod)
-    if (userTextForDiag.trim().toLowerCase() === "omega_debug") {
-      const caps = COMPOSITIONS?.capsules || {};
-      const keys = Object.keys(caps);
-
-      // Candidats directs
-      const direct =
-        caps.OMEGA3 ||
-        caps.OMEGA_3 ||
-        caps["OMEGA-3"] ||
-        caps["OMEGA 3"] ||
-        null;
-
-      // Recherche alias / display_name
-      let best = direct;
-      if (!best) {
-        for (const k of keys) {
-          const v = caps[k] || {};
-          const dn = String(v.display_name || "").toLowerCase();
-          const als = Array.isArray(v.aliases) ? v.aliases.map((a) => String(a).toLowerCase()) : [];
-          if (dn.includes("omega") || als.some((a) => a.includes("omega"))) {
-            best = { __key: k, ...v };
-            break;
-          }
-        }
-      }
-
-      // Donne aussi des suggestions de clés proches
-      const omegaKeys = keys
-        .filter((k) => k.toLowerCase().includes("omega") || k.toLowerCase().includes("epa") || k.toLowerCase().includes("dha"))
-        .slice(0, 50);
-
-      return res.status(200).json({
-        reply: {
-          type: "reponse",
-          text: best
-            ? "✅ OMEGA trouvé:\n" + JSON.stringify(best, null, 2)
-            : "❌ OMEGA introuvable.\nClés proches:\n" + (omegaKeys.length ? omegaKeys.join(", ") : keys.slice(0, 30).join(", ")),
-          meta: { mode: "B", progress: { enabled: false } },
-        },
-      });
-    }
+function formatCure(cure) {
+  const lines = [];
+  lines.push(cure.links?.image_url ? cure.links.image_url : "");
+  lines.push("");
+  lines.push(cure.name);
+  lines.push("");
+  lines.push("Conseils de prise (posologie) :");
+  lines.push("– Durée : 3 à 6 mois");
+  if (cure.timing?.when) lines.push(`– Moment : ${cure.timing.when}`);
+  lines.push("– Composition :");
+  for (const item of (cure.composition_intake || [])) {
+    lines.push(`  • ${item.item}: ${item.qty_per_day} / jour${item.time ? ` (${item.time})` : ""}`);
   }
+  lines.push("");
+  lines.push("Contre-indications :");
+  if (cure.contraindications?.length) {
+    cure.contraindications.forEach(ci => lines.push(`- ${ci}`));
+  } else {
+    lines.push("Aucune");
+  }
+  lines.push("");
+  const vid = cure.variants?.one_time_variant_id || cure.variants?.subscription_variant_id || "";
+  const url = cure.links?.product_url || "";
+  lines.push(`[Commander](checkout:${vid}) [Ajouter au panier](addtocart:${vid}) [En savoir plus](${url})`);
+  return lines.join("\n").trim();
+}
 
-  // ===== CORS =====
+// Détection simple
+function detectMode(userText) {
+  const t = normalize(userText);
+  if (t.includes("ma thyroide fonctionne")) return "A";
+  if (t.includes("quelle cure est faite pour moi")) return "C";
+  if (t === "j'ai une question") return "B";
+  // questions libres thyroide
+  if (t.includes("thyro")) return "A";
+  // demande cure
+  if (t.includes("quelle cure") || t.includes("cure pour moi")) return "C";
+  return "B";
+}
+
+// =====================
+// HANDLER
+// =====================
+export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
 
   try {
     const { messages, conversationId } = req.body || {};
-    if (!Array.isArray(messages)) return res.status(400).json({ error: "messages required" });
+    const userText = getLastUserText(messages);
 
-    const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-    if (!OPENAI_API_KEY) return res.status(500).json({ error: "API key missing" });
+    const mode = detectMode(userText);
 
-    // Dernier message utilisateur
-    const lastUserMsg = messages.filter((m) => m.role === "user").pop()?.content || "";
-    const userText = typeof lastUserMsg === "object" ? lastUserMsg.text || "" : String(lastUserMsg);
+    // ✅ CAS 1 : QUESTIONS LIBRES -> on répond DIRECTEMENT depuis JSON
+    // (plus besoin de GPT pour “composition”, “posologie”, “SAV”)
+    const t = normalize(userText);
 
-    // Historique texte
-    const historyText = messages
-      .map((m) => {
-        const c = m.content;
-        return typeof c === "object" ? c.text || "" : String(c);
-      })
-      .join("\n");
-
-    const historyMode = getModeFromHistory(messages);
-    const detectedMode = detectMode(userText, historyText);
-    const activeMode = historyMode || detectedMode;
-
-    console.log("──────── DEBUG THYREN ────────");
-    console.log("MODE ACTIF :", activeMode);
-    console.log("USER TEXT :", userText);
-    console.log("USER TEXT LENGTH :", userText.length);
-    console.log(`🎯 Mode: ${activeMode} | Message: ${userText.substring(0, 50)}...`);
-
-    // Construire les DATA selon le mode
-    let dataSection = "";
-
-    if (activeMode === "A") {
-      dataSection = `
-[QUIZ_THYROIDE]
-${DATA_QUIZ_THYROIDE_TEXT}
-
-[CURES]
-${DATA_CURES_TEXT}
-
-[COMPOSITIONS]
-${DATA_COMPOSITIONS_TEXT}
-`;
-    } else if (activeMode === "C") {
-      dataSection = `
-[QUIZ_CURE]
-${DATA_QUIZ_CURE_TEXT}
-
-[CURES]
-${DATA_CURES_TEXT}
-
-[COMPOSITIONS]
-${DATA_COMPOSITIONS_TEXT}
-`;
-    } else {
-      dataSection = `
-[COMPOSITIONS]
-${DATA_COMPOSITIONS_TEXT}
-
-[CURES]
-${DATA_CURES_TEXT}
-
-[SAV_FAQ]
-${DATA_SAV_TEXT}
-`;
+    // Composition
+    const mComp = t.match(/composition\s+de\s+(.+)$/i) || t.match(/qu.*y a.*dans\s+(.+)$/i);
+    if (mComp) {
+      const name = mComp[1];
+      const found = findCapsule(name);
+      if (!found) {
+        const keys = Object.keys(COMPOSITIONS?.capsules || {}).slice(0, 30).join(", ");
+        return res.status(200).json({
+          reply: {
+            type: "reponse",
+            text: `Je ne trouve pas "${name}" dans COMPOSITIONS.\nExemples de clés: ${keys}`,
+            meta: { mode: "B", progress: { enabled: false } },
+          },
+          conversationId: conversationId || null,
+          mode,
+        });
+      }
+      return res.status(200).json({
+        reply: {
+          type: "reponse",
+          text: formatCapsule(found),
+          meta: { mode: "B", progress: { enabled: false } },
+        },
+        conversationId: conversationId || null,
+        mode,
+      });
     }
 
-    console.log("DATA SECTION LENGTH :", dataSection.length);
-    console.log("EST. TOKENS :", Math.round(dataSection.length / 4));
-    console.log("─────────────────────────────");
+    // Demande de cure spécifique
+    const mCure = t.match(/cure\s+(.+)$/i);
+    if (mCure && mode === "B") {
+      const q = mCure[1];
+      const cure = findCure(q);
+      if (cure) {
+        return res.status(200).json({
+          reply: {
+            type: "reponse",
+            text: formatCure(cure),
+            meta: { mode: "B", progress: { enabled: false } },
+          },
+          conversationId: conversationId || null,
+          mode,
+        });
+      }
+    }
 
-    // Préparer les messages pour OpenAI
-    const openaiMessages = [
-      { role: "system", content: SYSTEM_PROMPT },
-      { role: "system", content: `MODE ACTIF: ${activeMode}\n\nDATA SUPLEMINT:\n${dataSection}` },
-      ...messages.map((m) => ({
-        role: m.role,
-        content: typeof m.content === "object" ? (m.content.text || JSON.stringify(m.content)) : String(m.content),
-      })),
-    ];
+    // ✅ CAS 2 : Quiz A ou C -> (pour l’instant) on renvoie juste Q1
+    // (tu pourras brancher le flow après, mais déjà ça prouve que le JSON est bien lu)
+    if (mode === "A") {
+      const q1 = QUIZ_THYROIDE?.nodes?.[QUIZ_THYROIDE?.flow_order?.[0] || "Q1"];
+      return res.status(200).json({
+        reply: {
+          type: "question",
+          text: q1?.text || "Q1 introuvable dans QUESTION_THYROIDE.json",
+          meta: { mode: "A", progress: { enabled: true, current: 1, total: (QUIZ_THYROIDE?.flow_order || []).length || 1 } },
+        },
+        conversationId: conversationId || null,
+        mode,
+      });
+    }
 
-    // Appel OpenAI
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
+    if (mode === "C") {
+      const q1 = QUIZ_CURE?.nodes?.[QUIZ_CURE?.flow_order?.[0] || "Q1"];
+      return res.status(200).json({
+        reply: {
+          type: "question",
+          text: q1?.text || "Q1 introuvable dans QUESTION_ALL.json",
+          meta: { mode: "C", progress: { enabled: true, current: 1, total: (QUIZ_CURE?.flow_order || []).length || 1 } },
+        },
+        conversationId: conversationId || null,
+        mode,
+      });
+    }
+
+    // Default : SAV (simple exemple)
+    return res.status(200).json({
+      reply: {
+        type: "reponse",
+        text: "OK. Posez votre question (composition / cure / livraison / etc.).",
+        meta: { mode: "B", progress: { enabled: false } },
       },
-      body: JSON.stringify({
-        model: "gpt-4.1-mini",
-        messages: openaiMessages,
-        response_format: { type: "json_object" },
-        temperature: 0.2,
-        max_tokens: 4000,
-      }),
+      conversationId: conversationId || null,
+      mode,
     });
 
-    if (!response.ok) {
-      const error = await response.text();
-      console.error("OpenAI error:", error);
-      return res.status(500).json({ error: "OpenAI error", details: error });
-    }
-
-    const data = await response.json();
-    const replyText = data.choices?.[0]?.message?.content || "";
-
-    // Parser la réponse
-    let reply;
-    try {
-      reply = JSON.parse(replyText);
-    } catch {
-      reply = { type: "reponse", text: replyText, meta: { mode: activeMode, progress: { enabled: false } } };
-    }
-
-    // Normaliser
-    if (!reply.type) reply.type = "reponse";
-    if (reply.type !== "resultat" && !reply.meta) {
-      reply.meta = { mode: activeMode, progress: { enabled: false } };
-    }
-
-    return res.status(200).json({ reply, conversationId: conversationId || null, mode: activeMode });
   } catch (err) {
     console.error("THYREN error:", err);
     return res.status(500).json({ error: "Server error", details: String(err) });
