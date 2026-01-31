@@ -183,6 +183,13 @@ function getModeFromHistory(messages) {
 // ============================================================================
 
 export default async function handler(req, res) {
+  console.log("✅ HANDLER APPELÉ", {
+    method: req.method,
+    url: req.url,
+    origin: req.headers.origin,
+    hasBody: !!req.body,
+  });
+
   // CORS
   res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -200,22 +207,21 @@ export default async function handler(req, res) {
     // Dernier message utilisateur
     const lastUserMsg = messages.filter(m => m.role === "user").pop()?.content || "";
     const userText = typeof lastUserMsg === "object" ? lastUserMsg.text || "" : String(lastUserMsg);
-    
+
     // Historique texte
     const historyText = messages.map(m => {
       const c = m.content;
       return typeof c === "object" ? c.text || "" : String(c);
     }).join("\n");
 
-    // Détecter le mode (priorité: historique > détection)
     const historyMode = getModeFromHistory(messages);
     const detectedMode = detectMode(userText, historyText);
     const activeMode = historyMode || detectedMode;
-    
-console.log("──────── DEBUG THYREN ────────");
-console.log("MODE ACTIF :", activeMode);
-console.log("USER TEXT :", userText);
-console.log("USER TEXT LENGTH :", userText.length);
+
+    console.log("──────── DEBUG THYREN ────────");
+    console.log("MODE ACTIF :", activeMode);
+    console.log("USER TEXT :", userText);
+    console.log("USER TEXT LENGTH :", userText.length);
 
     console.log(`🎯 Mode: ${activeMode} | Message: ${userText.substring(0, 50)}...`);
 
