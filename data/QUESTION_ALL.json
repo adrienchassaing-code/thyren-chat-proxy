@@ -6,14 +6,14 @@
     "Q1": {
       "id": "Q1",
       "type": "open",
-      "text": "C'est parti !\nJe vais te poser quelques questions pour comprendre tes symptomes et te proposer la cure la plus adaptée à tes besoins.\nPour commencer, quel est ton prénom ?",
+      "text": "C'est parti !\nJe vais vous poser quelques questions pour comprendre vos symptomes et vous proposer la cure la plus adaptée à tes besoins.\nPour commencer, quel est votre prénom ?",
       "next": "Q2",
       "meta": { "capture": "first_name" }
     },
     "Q2": {
       "id": "Q2",
       "type": "choices",
-      "text": "Enchanté {{first_name}}. Quel est ton sexe biologique ?",
+      "text": "Enchanté {{first_name}}. Quel est votre sexe biologique ?",
       "choices": ["Femme","Homme"],
       "next_map": { "Femme": "Q2_plus", "Homme": "Q3" },
       "meta": { "capture": "sex" }
@@ -21,7 +21,7 @@
     "Q2_plus": {
       "id": "Q2_plus",
       "type": "choices",
-      "text": "{{AI_PREV_INTERPRETATION}}\n\n Es-tu enceinte ou allaitante ?",
+      "text": "Es-tu enceinte ou allaitante ?",
       "choices": ["Oui","Non"],
       "next": "Q3",
       "meta": { "capture": "enceinte" }
