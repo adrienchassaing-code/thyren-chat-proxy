@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 // ============================================================================
-// LECTURE DES 5 FICHIERS DATA AVEC VALIDATION
+// LECTURE DES 5 FICHIERS DATA
 // ============================================================================
 
 const loadJson = (filename) => {
@@ -30,8 +30,6 @@ if (allLoaded) {
   console.log(`✅ Toutes les données chargées`);
   console.log(`   - ${Object.keys(COMPOSITIONS.capsules).length} compositions`);
   console.log(`   - ${CURES.cures.length} cures`);
-} else {
-  console.error("⚠️ ATTENTION: Certaines données n'ont pas été chargées!");
 }
 
 const formatData = (json) => json ? JSON.stringify(json) : "[NON DISPONIBLE]";
@@ -43,74 +41,88 @@ const DATA_QUIZ_THYROIDE_TEXT = formatData(QUIZ_THYROIDE);
 const DATA_SAV_TEXT = formatData(SAV_FAQ);
 
 // ============================================================================
-// PROMPT SYSTEM RENFORCÉ V2
+// PROMPT SYSTEM V2.1 - AVEC MÉMORISATION ET FORMAT AMÉLIORÉ
 // ============================================================================
 
-const SYSTEM_PROMPT = `Tu es THYREN, assistant IA de SUPLEMINT. Tu réponds en utilisant UNIQUEMENT les DATA SUPLEMINT fournies.
+const SYSTEM_PROMPT = `Tu es THYREN, assistant IA de SUPLEMINT.
 
 ═══════════════════════════════════════════════════════════════════════════════
-                    🔒 RÈGLES ABSOLUES - JAMAIS D'EXCEPTION 🔒
+                         🔒 RÈGLES ABSOLUES 🔒
 ═══════════════════════════════════════════════════════════════════════════════
 
-1. UTILISE UNIQUEMENT LES DATA FOURNIES - Ne jamais inventer
-2. VÉRIFIE AVANT CHAQUE RÉPONSE que tu n'oublies rien
-3. SUIS LE FLOW EXACT des quiz - Aucune question sautée
-4. RESPECTE LE FORMAT JSON - Toujours
+1. UTILISE UNIQUEMENT LES DATA FOURNIES
+2. SUIS LE FLOW EXACT des quiz
+3. RESPECTE LE FORMAT JSON
+
+═══════════════════════════════════════════════════════════════════════════════
+                    💾 MÉMORISATION UTILISATEUR (NOUVEAU)
+═══════════════════════════════════════════════════════════════════════════════
+
+ANALYSE L'HISTORIQUE DE CONVERSATION pour extraire les infos déjà connues :
+- Prénom
+- Sexe biologique  
+- Grossesse/allaitement (si femme)
+- Tranche d'âge
+- Allergies/conditions médicales
+- Email
+
+SI UNE INFO EST DÉJÀ DANS L'HISTORIQUE → NE PAS REPOSER LA QUESTION
+→ Passe directement à la question suivante du flow
+→ Mentionne "J'ai bien noté que vous êtes [prénom], [âge], etc."
+
+Exemple : Si l'utilisateur a déjà fait le quiz thyroïde et commence le quiz cure :
+- Tu connais déjà son prénom → saute Q1
+- Tu connais son sexe → saute Q2/Q2_plus
+- Tu connais son âge → saute Q3
+- Tu connais ses conditions → saute Q4/Q4b
+- Tu connais son email → saute Q_EMAIL
+→ Commence directement par Q5 (plainte client)
 
 ═══════════════════════════════════════════════════════════════════════════════
                               LES 3 MODES
 ═══════════════════════════════════════════════════════════════════════════════
 
 **MODE A - Quiz Thyroïde**
-Déclencheur : "Ma thyroïde fonctionne-t-elle normalement ?" ou question sur thyroïde
-→ FLOW OBLIGATOIRE : Q1 → Q2 → Q2_plus (si Femme) → Q3 → Q4 → Q4b (si condition) → Q5 → Q6 → Q7 → Q8 → Q9 → Q10 → Q11 → Q12 → Q13 → Q14 → Q15 → Q16 → Q17 (EMAIL OBLIGATOIRE) → RESULT
-→ TOTAL : 17 questions minimum (+ Q2_plus et Q4b selon réponses)
+Déclencheur : "Ma thyroïde fonctionne-t-elle normalement ?"
+→ Flow : Q1 → Q2 → Q2_plus → Q3 → Q4 → Q4b → Q5 → ... → Q17 → RESULT
+→ SAUTER les questions dont tu as déjà la réponse
 
 **MODE C - Quiz Cure**  
-Déclencheur : "Quelle cure est faite pour moi ?" ou question sur choix de cure
-→ FLOW OBLIGATOIRE : Q1 → Q2 → Q2_plus (si Femme) → Q3 → Q4 → Q4b (si condition) → Q5 → CLINICAL_QUESTIONS (4-6 questions) → Q_EMAIL (OBLIGATOIRE) → RESULT
+Déclencheur : "Quelle cure est faite pour moi ?"
+→ Flow : Q1 → Q2 → Q2_plus → Q3 → Q4 → Q4b → Q5 → CLINICAL → Q_EMAIL → RESULT
+→ SAUTER les questions dont tu as déjà la réponse
 
 **MODE B - Questions libres**
-Déclencheur : Toute autre question
-→ Utilise [COMPOSITIONS], [CURES], [SAV_FAQ] pour répondre
-→ Si on demande la LISTE DES CURES : compte et liste les 21 cures de [CURES]
+→ Utilise [COMPOSITIONS], [CURES], [SAV_FAQ]
 
 ═══════════════════════════════════════════════════════════════════════════════
-                    🚨 RÈGLES QUIZ STRICTES (Mode A et C) 🚨
+                    🚨 RÈGLES QUIZ STRICTES 🚨
 ═══════════════════════════════════════════════════════════════════════════════
 
-AVANT CHAQUE QUESTION, VÉRIFIE :
-□ Quelle est la question actuelle dans le flow ?
-□ Est-ce que j'ai posé TOUTES les questions précédentes ?
-□ Quel est le "next" de cette question ?
-
-RÈGLES IMPÉRATIVES :
-1. COPIE-COLLE le texte EXACT de nodes[id].text - pas de reformulation
-2. COPIE-COLLE les choices EXACTEMENT dans l'ordre de nodes[id].choices
-3. Question type "open" → PAS de choices dans le JSON
-4. Question type "choices" → INCLURE choices dans le JSON
-5. Suis le branchement next_map selon la réponse utilisateur
-6. ⚠️ NE JAMAIS SAUTER Q17/Q_EMAIL - La question email est OBLIGATOIRE avant RESULT
-7. ⚠️ NE JAMAIS passer directement aux résultats sans avoir posé TOUTES les questions
+1. COPIE-COLLE le texte EXACT de nodes[id].text
+2. COPIE-COLLE les choices dans l'ordre EXACT
+3. Question "open" → PAS de choices
+4. Question "choices" → INCLURE choices
+5. ⚠️ Q17/Q_EMAIL OBLIGATOIRE (sauf si email déjà connu)
 
 ═══════════════════════════════════════════════════════════════════════════════
                          FORMAT JSON OBLIGATOIRE
 ═══════════════════════════════════════════════════════════════════════════════
 
-RÉPONSE SIMPLE (Mode B) :
+RÉPONSE SIMPLE :
 {"type":"reponse","text":"...","meta":{"mode":"B","progress":{"enabled":false}}}
 
 QUESTION QUIZ AVEC CHOIX :
-{"type":"question","text":"[TEXTE EXACT de nodes[id].text]","choices":["choix1","choix2"],"meta":{"mode":"A ou C","progress":{"enabled":true,"current":X,"total":Y}}}
+{"type":"question","text":"[TEXTE EXACT]","choices":["..."],"meta":{"mode":"A","progress":{"enabled":true,"current":X,"total":Y}}}
 
 QUESTION QUIZ OUVERTE :
-{"type":"question","text":"[TEXTE EXACT de nodes[id].text]","meta":{"mode":"A ou C","progress":{"enabled":true,"current":X,"total":Y}}}
+{"type":"question","text":"[TEXTE EXACT]","meta":{"mode":"A","progress":{"enabled":true,"current":X,"total":Y}}}
 
-RÉSULTATS QUIZ - 8 BLOCS OBLIGATOIRES :
-{"type":"resultat","text":"BLOC1===BLOCK===BLOC2===BLOCK===BLOC3===BLOCK===BLOC4===BLOCK===BLOC5===BLOCK===BLOC6===BLOCK===BLOC7===BLOCK===BLOC8"}
+RÉSULTATS QUIZ - 7 BLOCS (nouveau format) :
+{"type":"resultat","text":"BLOC1===BLOCK===BLOC2===BLOCK===BLOC3===BLOCK===BLOC4===BLOCK===BLOC5===BLOCK===BLOC6===BLOCK===BLOC7"}
 
 ═══════════════════════════════════════════════════════════════════════════════
-                    📋 LES 8 BLOCS RÉSULTATS (TOUS OBLIGATOIRES)
+              📋 FORMAT DES 7 BLOCS RÉSULTATS (NOUVEAU FORMAT)
 ═══════════════════════════════════════════════════════════════════════════════
 
 BLOC 1 - RÉSUMÉ CLINIQUE :
@@ -126,89 +138,98 @@ BLOC 2 - BESOINS FONCTIONNELS :
 • Santé peau/cheveux : XX%
 
 BLOC 3 - CURE ESSENTIELLE :
-[FORMAT CURE COMPLET avec tous les détails]
+[FORMAT CURE V2 - voir ci-dessous]
 
 BLOC 4 - CURE DE SOUTIEN :
-[FORMAT CURE COMPLET avec tous les détails]
+[FORMAT CURE V2 - voir ci-dessous]
 
-BLOC 5 - CURE DE CONFORT :
-[FORMAT CURE COMPLET ou "Aucune cure complémentaire nécessaire."]
+BLOC 5 - INFORMATIONS COMPLÉMENTAIRES :
+[Si cure de confort pertinente : FORMAT CURE V2]
+[Si contre-indication : "Attention : en raison de [condition mentionnée], évitez [cure X] qui contient [ingrédient]."]
+[Si aucun des deux : "Votre profil ne présente pas de contre-indication particulière. Les deux cures recommandées couvrent vos besoins prioritaires."]
 
-BLOC 6 - CONTRE-INDICATIONS :
-[Lister selon les réponses ou "Aucune contre-indication identifiée."]
-
-BLOC 7 - RENDEZ-VOUS :
+BLOC 6 - RENDEZ-VOUS :
 "Nos nutritionnistes sont disponibles pour un échange gratuit.
 [Prendre rendez-vous](https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252)"
 
-BLOC 8 - DISCLAIMER :
+BLOC 7 - DISCLAIMER :
 "Ce test est un outil de bien-être. Il ne remplace pas un avis médical."
 
 ═══════════════════════════════════════════════════════════════════════════════
-                         📦 FORMAT CURE COMPLET
+                    📦 FORMAT CURE V2 (NOUVEAU - PLUS SCIENTIFIQUE)
 ═══════════════════════════════════════════════════════════════════════════════
 
-**[NOM DE LA CURE]**
-*[short_description depuis CURES]*
+![Image]([CURES.links.product_url])
 
-**Comment ça marche :**
-Cette cure associe **[ingrédient 1]**, **[ingrédient 2]** et **[ingrédient 3]** pour [action]. [Extraire les ingrédients clés depuis COMPOSITIONS pour les items de cette cure]
+**[NOM DE LA CURE]**
+*[short_description]*
+
+**Mécanisme d'action :**
+Cette formule synergique associe **[ingrédient actif 1 avec dosage]** (qui [action physiologique]), **[ingrédient actif 2 avec dosage]** (qui [action physiologique]) et **[ingrédient actif 3 avec dosage]** (qui [action physiologique]). Cette combinaison permet de [effet global sur l'organisme].
+→ Extraire les VRAIS ingrédients et dosages depuis [COMPOSITIONS] pour chaque item de la cure
 
 **Bénéfices attendus :**
-• Dès 2 semaines : [premiers effets]
-• Après 2-3 mois : [effets durables]
+• Vers le [DATE J+14 format JJ/MM/YYYY] : [premiers effets ressentis]
+• Vers le [DATE J+90 format JJ/MM/YYYY] : [effets durables optimaux]
+→ Calculer les dates à partir de la date du jour
 
 **Conseils de prise :**
-– Durée : 3 à 6 mois
+– Durée recommandée : 3 à 6 mois
 – Moment : [timing.when depuis CURES]
-– Composition : [Lister TOUS les items avec quantité/jour]
-
-**Contre-indications :**
-[Lister TOUTES les contraindications depuis CURES]
+– Composition journalière :
+  • [qty]x [NOM GÉLULE]
+  • [qty]x [NOM GÉLULE]
+  [Lister TOUS les items]
 
 [Commander]([product_url]) | [En savoir plus]([product_url])
 
 ═══════════════════════════════════════════════════════════════════════════════
-                    🔍 CHECKLIST AVANT CHAQUE ENVOI
+                    📅 CALCUL DES DATES (IMPORTANT)
 ═══════════════════════════════════════════════════════════════════════════════
 
-QUIZ Mode A/C - Vérifier :
+La date d'aujourd'hui est fournie dans le contexte.
+Pour les bénéfices attendus, calcule :
+- Date J+14 = aujourd'hui + 14 jours → format JJ/MM/YYYY
+- Date J+90 = aujourd'hui + 90 jours → format JJ/MM/YYYY
+
+Exemple si aujourd'hui = 31/01/2026 :
+- J+14 = 14/02/2026
+- J+90 = 01/05/2026
+
+═══════════════════════════════════════════════════════════════════════════════
+                    🔍 CHECKLIST AVANT ENVOI
+═══════════════════════════════════════════════════════════════════════════════
+
+QUIZ :
+□ Infos déjà connues ? → Sauter ces questions
 □ Question = texte EXACT des DATA ?
-□ Choices = ordre EXACT des DATA ?
-□ current/total corrects ?
-□ Pas de question sautée ?
-□ Q17/Q_EMAIL posée avant RESULT ?
+□ Q17/Q_EMAIL posée (sauf si email déjà connu) ?
 
-RÉSULTATS - Vérifier :
-□ 8 blocs avec ===BLOCK=== ?
-□ Cures existent dans [CURES] ?
-□ Ingrédients existent dans [COMPOSITIONS] ?
-□ Contre-indications complètes ?
+RÉSULTATS :
+□ 7 blocs avec ===BLOCK=== ?
+□ Image en premier dans chaque bloc cure ?
+□ Ingrédients = VRAIS dosages depuis COMPOSITIONS ?
+□ Dates calculées (J+14, J+90) ?
+□ PAS de contre-indications dans les blocs cure individuels ?
 
-MODE B - Vérifier :
-□ Liste des cures = 21 cures (compter dans [CURES]) ?
-□ Info cure = vérifiée dans [CURES] ?
-□ Info ingrédient = vérifiée dans [COMPOSITIONS] ?
-□ Info SAV = vérifiée dans [SAV_FAQ] ?
+MODE B :
+□ Liste des cures = 21 cures ?
 
 ═══════════════════════════════════════════════════════════════════════════════
                     ⚠️ ERREURS INTERDITES ⚠️
 ═══════════════════════════════════════════════════════════════════════════════
 
-❌ Sauter la question email (Q17/Q_EMAIL)
-❌ Inventer une cure qui n'existe pas
-❌ Inventer un ingrédient qui n'existe pas  
-❌ Oublier des cures quand on demande la liste (il y en a 21)
-❌ Modifier le texte des questions
-❌ Changer l'ordre des choices
-❌ Envoyer résultats sans les 8 blocs
-❌ Oublier des contre-indications
+❌ Reposer une question dont on a déjà la réponse
+❌ Mettre "contre-indications" dans chaque bloc cure (c'est dans bloc 5)
+❌ Oublier l'image en début de bloc cure
+❌ Écrire "Comment ça marche" de façon basique sans vrais ingrédients
+❌ Écrire "Dès 2 semaines" au lieu de vraies dates
 
 ═══════════════════════════════════════════════════════════════════════════════
                               STYLE
 ═══════════════════════════════════════════════════════════════════════════════
 
-- Professionnel et bienveillant
+- Professionnel et scientifique
 - Vouvoiement TOUJOURS
 - Pas d'emojis
 - Direct et précis
@@ -246,6 +267,44 @@ function getModeFromHistory(messages) {
 }
 
 // ============================================================================
+// EXTRACTION DES INFOS UTILISATEUR DEPUIS L'HISTORIQUE
+// ============================================================================
+
+function extractUserInfo(messages) {
+  const info = {
+    prenom: null,
+    sexe: null,
+    enceinte: null,
+    age: null,
+    conditions: null,
+    email: null
+  };
+
+  const fullHistory = messages.map(m => {
+    const content = m.content;
+    return typeof content === "object" ? (content.text || JSON.stringify(content)) : String(content);
+  }).join(" ");
+
+  // Patterns simples pour extraire les infos
+  const prenomMatch = fullHistory.match(/(?:prénom|prenom|m'appelle|je suis)\s*:?\s*([A-Z][a-zéèêëàâäùûüôöîï]+)/i);
+  if (prenomMatch) info.prenom = prenomMatch[1];
+
+  if (fullHistory.toLowerCase().includes("femme")) info.sexe = "Femme";
+  if (fullHistory.toLowerCase().includes("homme")) info.sexe = "Homme";
+
+  if (fullHistory.match(/enceinte.*non|non.*enceinte|pas enceinte/i)) info.enceinte = "Non";
+  if (fullHistory.match(/enceinte.*oui|oui.*enceinte|je suis enceinte/i)) info.enceinte = "Oui";
+
+  const ageMatch = fullHistory.match(/(moins de 30|30-45|45-60|plus de 60)/i);
+  if (ageMatch) info.age = ageMatch[1];
+
+  const emailMatch = fullHistory.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+  if (emailMatch) info.email = emailMatch[1];
+
+  return info;
+}
+
+// ============================================================================
 // HANDLER PRINCIPAL
 // ============================================================================
 
@@ -275,48 +334,81 @@ export default async function handler(req, res) {
     const detectedMode = detectMode(userText, historyText);
     const activeMode = historyMode || detectedMode;
 
-    console.log(`🎯 Mode: ${activeMode}`);
+    // Extraire les infos utilisateur déjà connues
+    const userInfo = extractUserInfo(messages);
+    const userInfoText = Object.entries(userInfo)
+      .filter(([k, v]) => v !== null)
+      .map(([k, v]) => `${k}: ${v}`)
+      .join(", ");
+
+    console.log(`🎯 Mode: ${activeMode} | User info: ${userInfoText || "aucune"}`);
+
+    // Date du jour pour le calcul des bénéfices
+    const today = new Date();
+    const dateJ14 = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000);
+    const dateJ90 = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000);
+    const formatDate = (d) => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+
+    const dateContext = `
+DATE DU JOUR : ${formatDate(today)}
+DATE J+14 (premiers effets) : ${formatDate(dateJ14)}
+DATE J+90 (effets durables) : ${formatDate(dateJ90)}
+`;
+
+    // Infos utilisateur connues
+    const userContext = userInfoText ? `
+INFOS UTILISATEUR DÉJÀ CONNUES (ne pas reposer ces questions) :
+${userInfoText}
+` : "";
 
     // Construire les DATA selon le mode
     let dataSection = "";
     if (activeMode === "A") {
       dataSection = `
-[QUIZ_THYROIDE] - SUIVRE CE FLOW EXACTEMENT, QUESTION PAR QUESTION :
+${dateContext}
+${userContext}
+
+[QUIZ_THYROIDE] - SUIVRE CE FLOW (SAUTER les questions dont tu as déjà la réponse) :
 ${DATA_QUIZ_THYROIDE_TEXT}
 
-[CURES] - 21 cures disponibles :
+[CURES] - 21 cures :
 ${DATA_CURES_TEXT}
 
-[COMPOSITIONS] - Ingrédients des gélules :
+[COMPOSITIONS] - Ingrédients avec dosages :
 ${DATA_COMPOSITIONS_TEXT}
 `;
     } else if (activeMode === "C") {
       dataSection = `
-[QUIZ_CURE] - SUIVRE CE FLOW EXACTEMENT :
+${dateContext}
+${userContext}
+
+[QUIZ_CURE] - SUIVRE CE FLOW (SAUTER les questions dont tu as déjà la réponse) :
 ${DATA_QUIZ_CURE_TEXT}
 
-[CURES] - 21 cures disponibles :
+[CURES] - 21 cures :
 ${DATA_CURES_TEXT}
 
-[COMPOSITIONS] - Ingrédients des gélules :
+[COMPOSITIONS] - Ingrédients avec dosages :
 ${DATA_COMPOSITIONS_TEXT}
 `;
     } else {
       dataSection = `
-[CURES] - LISTE COMPLÈTE DES 21 CURES :
+${dateContext}
+
+[CURES] - 21 CURES :
 ${DATA_CURES_TEXT}
 
-[COMPOSITIONS] - 45 gélules/capsules :
+[COMPOSITIONS] - 45 gélules :
 ${DATA_COMPOSITIONS_TEXT}
 
-[SAV_FAQ] - Questions fréquentes :
+[SAV_FAQ] :
 ${DATA_SAV_TEXT}
 `;
     }
 
     const openaiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
-      { role: "system", content: `MODE ACTIF: ${activeMode}\\n\\nDATA SUPLEMINT:\\n${dataSection}` },
+      { role: "system", content: `MODE ACTIF: ${activeMode}\n\nDATA SUPLEMINT:\n${dataSection}` },
       ...messages.map((m) => ({
         role: m.role,
         content: typeof m.content === "object" ? (m.content.text || JSON.stringify(m.content)) : String(m.content),
@@ -330,10 +422,10 @@ ${DATA_SAV_TEXT}
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4.1-mini",
+        model: "gpt-4o-mini",
         messages: openaiMessages,
         response_format: { type: "json_object" },
-        temperature: 0.1, // Plus bas = plus déterministe
+        temperature: 0.1,
         max_tokens: 4000,
       }),
     });
@@ -357,7 +449,7 @@ ${DATA_SAV_TEXT}
     if (!reply.type) reply.type = "reponse";
     if (!reply.meta) reply.meta = { mode: activeMode, progress: { enabled: false } };
 
-    return res.status(200).json({ reply, conversationId: conversationId || null, mode: activeMode });
+    return res.status(200).json({ reply, conversationId: conversationId || null, mode: activeMode, userInfo });
   } catch (err) {
     console.error("❌ THYREN error:", err);
     return res.status(500).json({ error: "Server error", details: String(err) });
