@@ -1,6 +1,6 @@
 {
   "document_name": "LES CURES ALL",
-  "version": "0.8.5",
+  "version": "0.9.0",
   "brand": "SUPLEMINT",
   "global_rules": {
     "cure_duration_days": 30,
@@ -14,7 +14,7 @@
     {
       "id": 1,
       "name": "CURE THYROÏDE",
-      "short_description": "Complexe micronutritionnel pour un soutien naturel de la thyroïde.",
+      "short_description": "Optimise le fonctionnement de ta thyroïde.",
       "timing": { "when": "le matin à jeun juste avant le petit déjeuner" },
       "composition_intake": [
         { "item": "ADRENO_PLUS", "qty_per_day": 1 },
@@ -22,11 +22,10 @@
         { "item": "THYROIDE_PLUS", "qty_per_day": 1 },
         { "item": "L_TYRO_ACTIV", "qty_per_day": 1 }
       ],
-      "recommendation_logic": ["Hypothyroïdie diagnostiquée","Bilan thyroïde anormal","Fatigue constante","Prise de poids inexpliquée","Frilosité","Humeur basse","Sommeil non réparateur","Peau sèche / cheveux cassants","Transit lent","Gonflement visage/mains","Difficulté de concentration"],
-      "contraindications": ["Interdiction de grossesse ou d'allaitement.","Interdiction traitement contre le diabète.","Interdiction des traitements anticoagulant coumariniques.","Interdiction en cas d'hyperthyroïdie.","Déconseillé en cas de maladies auto-immunes.","Déconseillé aux personnes sous traitement antidépresseur.","Déconseillé aux enfants de moins de 12 ans.","Déconseillé en cas d'épilepsie."],
-      "notes": ["Cure essentielle et principale : peut résoudre ~70% des problématiques du questionnaire QUESTION THYREN."],
-      "links": { "product_url": "https://www.suplemint.com/products/cure-thyroide", "image_url": "https://www.suplemint.com/products/cure-thyroide" },
-      "variants": { "subscription_variant_id": "44717496697100", "one_time_variant_id": "44717496631564" }
+      "recommendation_logic": ["Hypothyroïdie diagnostiquée", "Bilan thyroïde anormal", "Fatigue constante", "Prise de poids inexpliquée", "Frilosité", "Humeur basse", "Sommeil non réparateur", "Peau sèche / cheveux cassants", "Transit lent", "Gonflement visage/mains", "Difficulté de concentration"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Interdiction traitement contre le diabète.", "Interdiction des traitements anticoagulant coumariniques.", "Interdiction en cas d'hyperthyroïdie.", "Déconseillé en cas de maladies auto-immunes.", "Déconseillé aux personnes sous traitement antidépresseur.", "Déconseillé aux enfants de moins de 12 ans.", "Déconseillé en cas d'épilepsie.", "Déconseillé en cas d'acte interventionnel invasif programmé."],
+      "notes": ["La cure essentielle et principale de chez SUPLEMINT, peut résoudre 70% des problématiques exprimées dans le questionnaire QUESTION THYREN donc la proposer si ≥ deux réponses positives.", "En cas de maladie auto-immune de la thyroïde (Hashimoto ou Basedow), la cure peut être recommandée d'après le Dr Stéphane Résimont. Toutefois, légalement, il est préférable de prendre rendez-vous avec l'une de nos expertes (Françoise) ou votre médecin traitant."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-thyroide" }
     },
     {
       "id": 2,
@@ -38,10 +37,10 @@
         { "item": "ENZYM_PLUS", "qty_per_day": 1 },
         { "item": "TRANSITEAM", "qty_per_day": 3 }
       ],
-      "recommendation_logic": ["Transit lent ou constipation","Prise de poids inexpliquée","Peau terne ou sèche"],
-      "contraindications": ["Interdiction de grossesse ou d'allaitement.","Déconseillé aux enfants de moins de 12 ans.","Interdiction traitement anticoagulant coumariniques."],
-      "notes": ["Parfaite pour préparer le terrain pour la cure thyroïde."],
-      "links": { "product_url": "https://www.suplemint.com/products/cure-intestin", "image_url": "https://www.suplemint.com/products/cure-intestin" }
+      "recommendation_logic": ["Transit lent ou constipation", "Prise de poids inexpliquée", "Peau terne ou sèche"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans.", "Interdiction traitement anticoagulant coumariniques."],
+      "notes": ["Cette cure en plus de son action sur la digestion et le transit est parfaite pour préparer le terrain pour la cure thyroïde."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-intestin" }
     },
     {
       "id": 3,
@@ -55,10 +54,10 @@
         { "item": "L_TYRO_ACTIV", "qty_per_day": 1 },
         { "item": "MAGNESIUM_PLUS", "qty_per_day": 1 }
       ],
-      "recommendation_logic": ["Fatigue constante","Moral fluctuant","Difficulté de concentration"],
-      "contraindications": ["Interdiction de grossesse ou d'allaitement.","Déconseillé aux enfants de moins de 12 ans."],
-      "notes": ["Parfaite pour un effet boost immédiat."],
-      "links": { "product_url": "https://www.suplemint.com/products/cure-energie", "image_url": "https://www.suplemint.com/products/cure-energie" }
+      "recommendation_logic": ["Fatigue constante", "Moral fluctuant", "Difficulté de concentration"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans."],
+      "notes": ["Cette cure est parfaite pour avoir un effet 'Waouh' boost immédiat."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-energie" }
     },
     {
       "id": 4,
@@ -71,10 +70,10 @@
         { "item": "BERBERINE_ACTIV", "qty_per_day": 1 },
         { "item": "ACETYL_CARN", "qty_per_day": 2 }
       ],
-      "recommendation_logic": ["Prise de poids inexpliquée","Transit lent","Fatigue constante"],
-      "contraindications": ["Interdiction de grossesse ou d'allaitement.","Déconseillé aux enfants de moins de 12 ans.","Interdiction traitement contre le diabète."],
-      "notes": ["Super résultats si prise à la suite d'INTESTIN et THYROIDE."],
-      "links": { "product_url": "https://www.suplemint.com/products/cure-poids", "image_url": "https://www.suplemint.com/products/cure-poids" }
+      "recommendation_logic": ["Prise de poids inexpliquée", "Transit lent", "Fatigue constante"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans.", "Interdiction traitement contre le diabète."],
+      "notes": ["Cette cure a de super résultats si elle est prise à la suite d'INTESTIN et THYROIDE."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-poids" }
     },
     {
       "id": 5,
@@ -85,9 +84,25 @@
         { "item": "IMMUNO", "qty_per_day": 3 },
         { "item": "BIO_ACTIV", "qty_per_day": 1 }
       ],
-      "recommendation_logic": ["Fatigue","Peau sèche","Transit perturbé"],
-      "contraindications": ["Interdiction de grossesse ou d'allaitement.","Déconseillé aux enfants de moins de 12 ans.","Interdiction traitement contre le diabète."],
-      "links": { "product_url": "https://www.suplemint.com/products/cure-immunite", "image_url": "https://www.suplemint.com/products/cure-immunite" }
+      "recommendation_logic": ["Fatigue", "Peau sèche", "Transit perturbé"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans.", "Interdiction traitement contre le diabète."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-immunite" }
+    },
+    {
+      "id": 6,
+      "name": "CURE SENIOR",
+      "short_description": "Accompagne le vieillissement en douceur.",
+      "timing": { "when": "le matin durant le petit déjeuner" },
+      "composition_intake": [
+        { "item": "COQ10", "qty_per_day": 1 },
+        { "item": "OMEGA3", "qty_per_day": 1 },
+        { "item": "MULTI_VIT", "qty_per_day": 1 },
+        { "item": "BETA_ALANINE", "qty_per_day": 1 },
+        { "item": "L_CARNOSINE", "qty_per_day": 1 }
+      ],
+      "recommendation_logic": ["Âge > 60 ans", "Fatigue", "Peau/cheveux fragiles"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans.", "Interdiction traitement contre le diabète.", "Interdiction des traitements anticoagulant coumariniques.", "Interdiction problèmes rénaux (goutte, calculs)."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-senior" }
     },
     {
       "id": 7,
@@ -99,9 +114,39 @@
         { "item": "ASHWAGANDHA", "qty_per_day": 1 },
         { "item": "MAGNESIUM_PLUS", "qty_per_day": 1 }
       ],
-      "recommendation_logic": ["Sommeil non réparateur","Humeur fluctuante"],
-      "contraindications": ["Interdiction de grossesse ou d'allaitement.","Déconseillé aux enfants de moins de 12 ans.","Déconseillé aux personnes sous traitement antidépresseur."],
-      "links": { "product_url": "https://www.suplemint.com/products/cure-sommeil", "image_url": "https://www.suplemint.com/products/cure-sommeil" }
+      "recommendation_logic": ["Sommeil non réparateur", "Humeur fluctuante"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans.", "Déconseillé aux personnes sous traitement antidépresseur."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-sommeil" }
+    },
+    {
+      "id": 8,
+      "name": "CURE COMPLÈTE",
+      "short_description": "Couvre l'ensemble des besoins essentiels.",
+      "timing": { "when": "le matin durant le petit déjeuner" },
+      "composition_intake": [
+        { "item": "MULTI_VIT", "qty_per_day": 1 },
+        { "item": "MAG_TOP", "qty_per_day": 1 },
+        { "item": "PHENOL_PLUS", "qty_per_day": 1 },
+        { "item": "ANTIOX", "qty_per_day": 1 }
+      ],
+      "recommendation_logic": ["Toutes réponses légèrement positives sans pathologie marquée"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans.", "Interdiction traitement contre le diabète.", "Interdiction des traitements anticoagulant coumariniques.", "Interdiction problèmes rénaux (goutte, calculs).", "Déconseillé en cas de maladies auto-immunes."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-complete" }
+    },
+    {
+      "id": 9,
+      "name": "CURE HOMME+",
+      "short_description": "Soutient la vitalité masculine et la libido.",
+      "timing": { "when": "le soir juste avant le dîner" },
+      "composition_intake": [
+        { "item": "COQ10", "qty_per_day": 1 },
+        { "item": "OMEGA3", "qty_per_day": 1 },
+        { "item": "STIM_PLUS", "qty_per_day": 3 },
+        { "item": "MACA", "qty_per_day": 2 }
+      ],
+      "recommendation_logic": ["Sexe : Homme", "Fatigue", "Baisse motivation"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans.", "Interdiction traitement contre le diabète.", "Déconseillé aux personnes sous traitement antidépresseur."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-homme" }
     },
     {
       "id": 10,
@@ -113,9 +158,38 @@
         { "item": "MG_MALATE", "qty_per_day": 3 },
         { "item": "RELAX_PLUS", "qty_per_day": 2 }
       ],
-      "recommendation_logic": ["Humeur fluctuante","Sommeil léger","Difficulté de concentration"],
-      "contraindications": ["Interdiction de grossesse ou d'allaitement.","Déconseillé aux enfants de moins de 12 ans.","Déconseillé aux personnes sous traitement antidépresseur."],
-      "links": { "product_url": "https://www.suplemint.com/products/cure-zenitude", "image_url": "https://www.suplemint.com/products/cure-zenitude" }
+      "recommendation_logic": ["Humeur fluctuante", "Sommeil léger", "Difficulté de concentration"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans.", "Déconseillé aux personnes sous traitement antidépresseur."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-zenitude" }
+    },
+    {
+      "id": 11,
+      "name": "CURE DÉTOX",
+      "short_description": "Purifie le foie et les reins.",
+      "timing": {
+        "morning": "le matin à jeun juste avant le petit déjeuner",
+        "evening": "le soir juste avant le dîner"
+      },
+      "composition_intake": [
+        { "item": "HEPATOP", "qty_per_day": 2, "time": "morning" },
+        { "item": "RENATOP", "qty_per_day": 2, "time": "evening" }
+      ],
+      "recommendation_logic": ["Transit lent", "Gonflement visage/mains"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-detox" }
+    },
+    {
+      "id": 12,
+      "name": "CURE ARTICULATION",
+      "short_description": "Protège et renforce vos articulations.",
+      "timing": { "when": "durant le repas le plus important" },
+      "composition_intake": [
+        { "item": "OMEGA3", "qty_per_day": 1 },
+        { "item": "CURCUM_ARTI", "qty_per_day": 2 }
+      ],
+      "recommendation_logic": ["Âge > 45 ans", "Douleurs articulaires éventuelles"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans.", "Interdiction des traitements anticoagulant coumariniques.", "Interdiction en cas d'ulcères gastrique ou duodénal ou de calculs biliaires."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-articulation" }
     },
     {
       "id": 13,
@@ -127,9 +201,9 @@
         { "item": "PHENOL_PLUS", "qty_per_day": 1 },
         { "item": "SKIN_ACTIV", "qty_per_day": 1 }
       ],
-      "recommendation_logic": ["Peau sèche","Transit lent"],
-      "contraindications": ["Interdiction de grossesse ou d'allaitement.","Déconseillé aux enfants de moins de 12 ans."],
-      "links": { "product_url": "https://www.suplemint.com/products/cure-peau", "image_url": "https://www.suplemint.com/products/cure-peau" }
+      "recommendation_logic": ["Peau sèche", "Transit lent"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-peau" }
     },
     {
       "id": 14,
@@ -143,9 +217,25 @@
         { "item": "MULTI_VIT", "qty_per_day": 1 },
         { "item": "ENZYM_PLUS", "qty_per_day": 1 }
       ],
-      "recommendation_logic": ["Sexe : Femme","Âge 45–60 ans","Humeur fluctuante","Sommeil perturbé"],
-      "contraindications": ["Interdiction de grossesse ou d'allaitement.","Déconseillé aux enfants de moins de 12 ans.","Déconseillé en cas d'antécédent personnel ou familial de cancers hormono-dépendants.","Interdiction des traitements anticoagulant coumariniques."],
-      "links": { "product_url": "https://www.suplemint.com/products/cure-menopause", "image_url": "https://www.suplemint.com/products/cure-menopause" }
+      "recommendation_logic": ["Sexe : Femme", "Âge 45–60 ans", "Humeur fluctuante", "Sommeil perturbé"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans.", "Déconseillé en cas d'antécédent personnel ou familial de cancers hormono-dépendants.", "Interdiction des traitements anticoagulant coumariniques."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-menopause" }
+    },
+    {
+      "id": 15,
+      "name": "CURE SPORT",
+      "short_description": "Soutient l'endurance et la récupération.",
+      "timing": { "when": "juste avant l'activité sportive" },
+      "composition_intake": [
+        { "item": "KLAMATH", "qty_per_day": 1 },
+        { "item": "RECUP_PLUS", "qty_per_day": 3 },
+        { "item": "L_TYRO_ACTIV", "qty_per_day": 1 },
+        { "item": "BETA_ALANINE", "qty_per_day": 1 },
+        { "item": "L_CARNOSINE", "qty_per_day": 1 }
+      ],
+      "recommendation_logic": ["Bonne énergie", "Pratique sportive régulière"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans.", "Interdiction traitement contre le diabète.", "Interdiction des traitements anticoagulant coumariniques.", "Déconseillé en cas de maladies auto-immunes.", "Déconseillé aux personnes sous traitement antidépresseur."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-sport" }
     },
     {
       "id": 16,
@@ -158,9 +248,24 @@
         { "item": "MAG_TOP", "qty_per_day": 1 },
         { "item": "KLAMATH", "qty_per_day": 2 }
       ],
-      "recommendation_logic": ["Difficulté de concentration","Âge > 45 ans"],
-      "contraindications": ["Interdiction de grossesse ou d'allaitement.","Déconseillé aux enfants de moins de 12 ans.","Interdiction traitement contre le diabète.","Interdiction des traitements anticoagulant coumariniques.","Déconseillé en cas de maladies auto-immunes.","Déconseillé aux personnes sous traitement antidépresseur."],
-      "links": { "product_url": "https://www.suplemint.com/products/cure-memoire", "image_url": "https://www.suplemint.com/products/cure-memoire" }
+      "recommendation_logic": ["Difficulté de concentration", "Âge > 45 ans"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans.", "Interdiction traitement contre le diabète.", "Interdiction des traitements anticoagulant coumariniques.", "Déconseillé en cas de maladies auto-immunes.", "Déconseillé aux personnes sous traitement antidépresseur."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-memoire" }
+    },
+    {
+      "id": 17,
+      "name": "CURE ADDICT FREE",
+      "short_description": "Aide à arrêter de fumer.",
+      "timing": { "when": "le matin à jeun juste avant le petit déjeuner" },
+      "composition_intake": [
+        { "item": "OMEGA3", "qty_per_day": 1 },
+        { "item": "L_TYRO_ACTIV", "qty_per_day": 2 },
+        { "item": "KLAMATH", "qty_per_day": 2 },
+        { "item": "GUDZU", "qty_per_day": 4 }
+      ],
+      "recommendation_logic": ["Utilisateur fumeur", "Fatigue", "Humeur fluctuante"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-addicfree" }
     },
     {
       "id": 18,
@@ -174,9 +279,54 @@
         { "item": "MG_MALATE", "qty_per_day": 2 },
         { "item": "MULTI_VIT", "qty_per_day": 1 }
       ],
-      "recommendation_logic": ["Projet de grossesse","Sexe : Femme","Âge < 40"],
-      "contraindications": ["Interdiction de grossesse plus de 7 mois ou d'allaitement.","Déconseillé aux enfants de moins de 12 ans.","Interdiction traitement contre le diabète.","Interdiction des traitements anticoagulant coumariniques.","Déconseillé en cas de maladies auto-immunes.","Déconseillé aux personnes sous traitement antidépresseur."],
-      "links": { "product_url": "https://www.suplemint.com/products/cure-conception", "image_url": "https://www.suplemint.com/products/cure-conception" }
+      "recommendation_logic": ["Projet de grossesse", "Sexe : Femme", "Âge < 40"],
+      "contraindications": ["Interdiction de grossesse plus de 7 mois ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans.", "Interdiction traitement contre le diabète.", "Interdiction des traitements anticoagulant coumariniques.", "Déconseillé en cas de maladies auto-immunes.", "Déconseillé aux personnes sous traitement antidépresseur."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-conception" }
+    },
+    {
+      "id": 19,
+      "name": "CURE ALLAITEMENT",
+      "short_description": "Soutient la production de lait et l'énergie post-partum.",
+      "timing": { "when": "le matin durant le petit déjeuner" },
+      "composition_intake": [
+        { "item": "OMEGA3", "qty_per_day": 1 },
+        { "item": "MULTI_VIT", "qty_per_day": 1 },
+        { "item": "LACTOP", "qty_per_day": 2 },
+        { "item": "MG_MALATE", "qty_per_day": 2 }
+      ],
+      "recommendation_logic": ["Allaitement en cours", "Fatigue post-partum"],
+      "contraindications": ["Interdiction de grossesse.", "Déconseillé aux enfants de moins de 12 ans.", "Interdiction traitement contre le diabète.", "Interdiction des traitements anticoagulant coumariniques.", "Déconseillé en cas de maladies auto-immunes.", "Déconseillé aux personnes sous traitement antidépresseur."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-allaitement" }
+    },
+    {
+      "id": 20,
+      "name": "CURE ANTIOXYDANT",
+      "short_description": "Protège du vieillissement cellulaire.",
+      "timing": { "when": "le matin durant le petit déjeuner" },
+      "composition_intake": [
+        { "item": "PHENOL_PLUS", "qty_per_day": 1 },
+        { "item": "VITAMINE_C", "qty_per_day": 1 },
+        { "item": "QUERCETINE", "qty_per_day": 1 },
+        { "item": "TEA_ACTIV", "qty_per_day": 1 }
+      ],
+      "recommendation_logic": ["Âge > 45 ans", "Fatigue", "Peau terne"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-antioxydant" }
+    },
+    {
+      "id": 21,
+      "name": "CURE CARDIO",
+      "short_description": "Favorise la santé cardiaque et circulatoire.",
+      "timing": { "when": "le matin durant le petit déjeuner" },
+      "composition_intake": [
+        { "item": "OMEGA3", "qty_per_day": 2 },
+        { "item": "ACETYL_CARN", "qty_per_day": 2 },
+        { "item": "CARDIO_PLUS", "qty_per_day": 3 },
+        { "item": "COQ10", "qty_per_day": 1 }
+      ],
+      "recommendation_logic": ["Âge > 60 ans", "Frilosité", "Gonflement"],
+      "contraindications": ["Interdiction de grossesse ou d'allaitement.", "Déconseillé aux enfants de moins de 12 ans."],
+      "links": { "product_url": "https://www.suplemint.com/products/cure-cardio" }
     }
   ]
 }
