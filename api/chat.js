@@ -15,6 +15,13 @@ const loadJson = (filename) => {
     return null;
   }
 };
+console.log("📁 CWD:", process.cwd());
+console.log("📁 DATA DIR EXISTS?", fs.existsSync(path.join(process.cwd(), "data")));
+console.log("📄 COMPOSITIONS exists?", fs.existsSync(path.join(process.cwd(), "data", "COMPOSITIONS.json")));
+console.log("📄 CURES exists?", fs.existsSync(path.join(process.cwd(), "data", "LES_CURES_ALL.json")));
+console.log("📄 QUIZ_CURE exists?", fs.existsSync(path.join(process.cwd(), "data", "QUESTION_ALL.json")));
+console.log("📄 QUIZ_THYROIDE exists?", fs.existsSync(path.join(process.cwd(), "data", "QUESTION_THYROIDE.json")));
+console.log("📄 SAV exists?", fs.existsSync(path.join(process.cwd(), "data", "SAV_FAQ.json")));
 
 // Charger les 5 DATA
 const COMPOSITIONS = loadJson("COMPOSITIONS.json");
