@@ -9,7 +9,9 @@ const loadJson = (filename) => {
   try {
     const filePath = path.join(process.cwd(), "data", filename);
     const content = fs.readFileSync(filePath, "utf8");
-    return JSON.parse(content);
+    const parsed = JSON.parse(content);
+    console.log(`✅ ${filename} chargé - ${Object.keys(parsed).length} clés`);
+    return parsed;
   } catch (e) {
     console.error(`❌ Erreur chargement ${filename}:`, e.message);
     return null;
@@ -25,11 +27,13 @@ const SAV_FAQ = loadJson("SAV_FAQ.json");
 
 // ============================================================================
 // FORMATER LES DATA EN TEXTE LISIBLE
+// IMPORTANT: PAS de pretty print (null, 2) pour économiser les tokens !
 // ============================================================================
 
 const formatData = (json, type) => {
   if (!json) return `[${type} NON DISPONIBLE]`;
-  return JSON.stringify(json, null, 2);
+  // Compact JSON (sans espaces inutiles) pour réduire la taille
+  return JSON.stringify(json);
 };
 
 const DATA_COMPOSITIONS_TEXT = formatData(COMPOSITIONS, "COMPOSITIONS");
@@ -37,6 +41,14 @@ const DATA_CURES_TEXT = formatData(CURES, "CURES");
 const DATA_QUIZ_CURE_TEXT = formatData(QUIZ_CURE, "QUIZ_CURE");
 const DATA_QUIZ_THYROIDE_TEXT = formatData(QUIZ_THYROIDE, "QUIZ_THYROIDE");
 const DATA_SAV_TEXT = formatData(SAV_FAQ, "SAV_FAQ");
+
+// DEBUG: Afficher la taille des données
+console.log("📊 Taille des données:");
+console.log(`   COMPOSITIONS: ${Math.round(DATA_COMPOSITIONS_TEXT.length / 1000)}KB`);
+console.log(`   CURES: ${Math.round(DATA_CURES_TEXT.length / 1000)}KB`);
+console.log(`   QUIZ_CURE: ${Math.round(DATA_QUIZ_CURE_TEXT.length / 1000)}KB`);
+console.log(`   QUIZ_THYROIDE: ${Math.round(DATA_QUIZ_THYROIDE_TEXT.length / 1000)}KB`);
+console.log(`   SAV_FAQ: ${Math.round(DATA_SAV_TEXT.length / 1000)}KB`);
 
 // ============================================================================
 // PROMPT SIMPLE ET EFFICACE
@@ -209,6 +221,8 @@ export default async function handler(req, res) {
     const detectedMode = detectMode(userText, historyText);
     const activeMode = historyMode || detectedMode;
 
+    console.log(`🎯 Mode actif: ${activeMode} (historique: ${historyMode}, détecté: ${detectedMode})`);
+
     // Construire les DATA selon le mode
     let dataSection = "";
 
@@ -247,6 +261,10 @@ ${DATA_SAV_TEXT}
 `;
     }
 
+    // DEBUG: Taille totale du contexte
+    const totalDataSize = dataSection.length;
+    console.log(`📦 Taille data injectée: ${Math.round(totalDataSize / 1000)}KB (~${Math.round(totalDataSize / 4)} tokens)`);
+
     const openaiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "system", content: `MODE ACTIF: ${activeMode}\n\nDATA SUPLEMINT:\n${dataSection}` },
@@ -256,6 +274,7 @@ ${DATA_SAV_TEXT}
       })),
     ];
 
+    // ⚠️ MODÈLE CORRIGÉ : gpt-4o-mini (pas gpt-4.1-mini qui n'existe pas!)
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -263,7 +282,7 @@ ${DATA_SAV_TEXT}
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4.1-mini",
+        model: "gpt-4o-mini",  // ✅ CORRIGÉ !
         messages: openaiMessages,
         response_format: { type: "json_object" },
         temperature: 0.2,
@@ -273,17 +292,20 @@ ${DATA_SAV_TEXT}
 
     if (!response.ok) {
       const error = await response.text();
-      console.error("OpenAI error:", error);
+      console.error("❌ OpenAI error:", error);
       return res.status(500).json({ error: "OpenAI error", details: error });
     }
 
     const data = await response.json();
     const replyText = data.choices?.[0]?.message?.content || "";
+    
+    console.log(`✅ Réponse reçue: ${replyText.substring(0, 100)}...`);
 
     let reply;
     try {
       reply = JSON.parse(replyText);
     } catch {
+      console.error("❌ Erreur parsing JSON réponse");
       reply = { type: "reponse", text: replyText, meta: { mode: activeMode, progress: { enabled: false } } };
     }
 
@@ -294,7 +316,7 @@ ${DATA_SAV_TEXT}
 
     return res.status(200).json({ reply, conversationId: conversationId || null, mode: activeMode });
   } catch (err) {
-    console.error("THYREN error:", err);
+    console.error("❌ THYREN error:", err);
     return res.status(500).json({ error: "Server error", details: String(err) });
   }
 }
