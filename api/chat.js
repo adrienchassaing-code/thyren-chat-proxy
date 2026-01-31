@@ -10,127 +10,206 @@ const loadJson = (filename) => {
     const filePath = path.join(process.cwd(), "data", filename);
     const content = fs.readFileSync(filePath, "utf8");
     const parsed = JSON.parse(content);
-    
-    // Vérification que le parsing a réussi
-    const keys = Object.keys(parsed);
-    console.log(`✅ ${filename} chargé - ${keys.length} clés principales`);
+    console.log(`✅ ${filename} chargé`);
     return parsed;
   } catch (e) {
     console.error(`❌ ERREUR ${filename}:`, e.message);
-    console.error(`   → Vérifiez la syntaxe JSON (virgules, accolades)`);
     return null;
   }
 };
 
-// Charger les 5 DATA
-console.log("📦 Chargement des données...");
+console.log("📦 Chargement des données THYREN...");
 const COMPOSITIONS = loadJson("COMPOSITIONS.json");
 const CURES = loadJson("LES_CURES_ALL.json");
 const QUIZ_CURE = loadJson("QUESTION_ALL.json");
 const QUIZ_THYROIDE = loadJson("QUESTION_THYROIDE.json");
 const SAV_FAQ = loadJson("SAV_FAQ.json");
 
-// Vérifier que tout est chargé
 const allLoaded = COMPOSITIONS && CURES && QUIZ_CURE && QUIZ_THYROIDE && SAV_FAQ;
-if (!allLoaded) {
-  console.error("⚠️  ATTENTION: Certaines données n'ont pas été chargées!");
+if (allLoaded) {
+  console.log(`✅ Toutes les données chargées`);
+  console.log(`   - ${Object.keys(COMPOSITIONS.capsules).length} compositions`);
+  console.log(`   - ${CURES.cures.length} cures`);
+} else {
+  console.error("⚠️ ATTENTION: Certaines données n'ont pas été chargées!");
 }
 
-// ============================================================================
-// FORMATER LES DATA EN TEXTE COMPACT (économie de tokens)
-// ============================================================================
+const formatData = (json) => json ? JSON.stringify(json) : "[NON DISPONIBLE]";
 
-const formatData = (json, type) => {
-  if (!json) return `[${type} NON DISPONIBLE - ERREUR DE CHARGEMENT]`;
-  return JSON.stringify(json); // Compact, sans espaces
-};
-
-const DATA_COMPOSITIONS_TEXT = formatData(COMPOSITIONS, "COMPOSITIONS");
-const DATA_CURES_TEXT = formatData(CURES, "CURES");
-const DATA_QUIZ_CURE_TEXT = formatData(QUIZ_CURE, "QUIZ_CURE");
-const DATA_QUIZ_THYROIDE_TEXT = formatData(QUIZ_THYROIDE, "QUIZ_THYROIDE");
-const DATA_SAV_TEXT = formatData(SAV_FAQ, "SAV_FAQ");
-
-// DEBUG: Afficher la taille des données
-console.log("📊 Taille des données:");
-console.log(`   COMPOSITIONS: ${Math.round(DATA_COMPOSITIONS_TEXT.length / 1000)}KB`);
-console.log(`   CURES: ${Math.round(DATA_CURES_TEXT.length / 1000)}KB`);
-console.log(`   QUIZ_CURE: ${Math.round(DATA_QUIZ_CURE_TEXT.length / 1000)}KB`);
-console.log(`   QUIZ_THYROIDE: ${Math.round(DATA_QUIZ_THYROIDE_TEXT.length / 1000)}KB`);
-console.log(`   SAV_FAQ: ${Math.round(DATA_SAV_TEXT.length / 1000)}KB`);
+const DATA_COMPOSITIONS_TEXT = formatData(COMPOSITIONS);
+const DATA_CURES_TEXT = formatData(CURES);
+const DATA_QUIZ_CURE_TEXT = formatData(QUIZ_CURE);
+const DATA_QUIZ_THYROIDE_TEXT = formatData(QUIZ_THYROIDE);
+const DATA_SAV_TEXT = formatData(SAV_FAQ);
 
 // ============================================================================
-// PROMPT SYSTEM
+// PROMPT SYSTEM RENFORCÉ V2
 // ============================================================================
 
 const SYSTEM_PROMPT = `Tu es THYREN, assistant IA de SUPLEMINT. Tu réponds en utilisant UNIQUEMENT les DATA SUPLEMINT fournies.
 
-═══════════════════════════════════════════════════════════════
-RÈGLE D'OR : UTILISE LES DATA POUR RÉPONDRE. NE LES INVENTE PAS.
-═══════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════
+                    🔒 RÈGLES ABSOLUES - JAMAIS D'EXCEPTION 🔒
+═══════════════════════════════════════════════════════════════════════════════
 
-## LES 3 MODES
+1. UTILISE UNIQUEMENT LES DATA FOURNIES - Ne jamais inventer
+2. VÉRIFIE AVANT CHAQUE RÉPONSE que tu n'oublies rien
+3. SUIS LE FLOW EXACT des quiz - Aucune question sautée
+4. RESPECTE LE FORMAT JSON - Toujours
+
+═══════════════════════════════════════════════════════════════════════════════
+                              LES 3 MODES
+═══════════════════════════════════════════════════════════════════════════════
 
 **MODE A - Quiz Thyroïde**
 Déclencheur : "Ma thyroïde fonctionne-t-elle normalement ?" ou question sur thyroïde
-→ Suis EXACTEMENT les questions de [QUIZ_THYROIDE] dans l'ordre du flow
-→ À la fin, recommande des cures validées avec [CURES] et [COMPOSITIONS]
+→ FLOW OBLIGATOIRE : Q1 → Q2 → Q2_plus (si Femme) → Q3 → Q4 → Q4b (si condition) → Q5 → Q6 → Q7 → Q8 → Q9 → Q10 → Q11 → Q12 → Q13 → Q14 → Q15 → Q16 → Q17 (EMAIL OBLIGATOIRE) → RESULT
+→ TOTAL : 17 questions minimum (+ Q2_plus et Q4b selon réponses)
 
 **MODE C - Quiz Cure**  
 Déclencheur : "Quelle cure est faite pour moi ?" ou question sur choix de cure
-→ Suis EXACTEMENT les questions de [QUIZ_CURE] dans l'ordre du flow
-→ À la fin, recommande des cures validées avec [CURES] et [COMPOSITIONS]
+→ FLOW OBLIGATOIRE : Q1 → Q2 → Q2_plus (si Femme) → Q3 → Q4 → Q4b (si condition) → Q5 → CLINICAL_QUESTIONS (4-6 questions) → Q_EMAIL (OBLIGATOIRE) → RESULT
 
 **MODE B - Questions libres**
-Déclencheur : "J'ai une question" ou toute autre question
+Déclencheur : Toute autre question
 → Utilise [COMPOSITIONS], [CURES], [SAV_FAQ] pour répondre
+→ Si on demande la LISTE DES CURES : compte et liste les 21 cures de [CURES]
 
-## RÈGLES QUIZ (Mode A et C)
+═══════════════════════════════════════════════════════════════════════════════
+                    🚨 RÈGLES QUIZ STRICTES (Mode A et C) 🚨
+═══════════════════════════════════════════════════════════════════════════════
 
-1. Pose les questions EXACTEMENT comme écrites dans les DATA (mot pour mot)
-2. Propose les choix EXACTEMENT dans l'ordre des DATA
-3. Question type "open" → pas de choices dans le JSON de réponse
-4. Question type "choices" → inclure choices dans le JSON de réponse
-5. Suis le branchement (next_map) selon les réponses
+AVANT CHAQUE QUESTION, VÉRIFIE :
+□ Quelle est la question actuelle dans le flow ?
+□ Est-ce que j'ai posé TOUTES les questions précédentes ?
+□ Quel est le "next" de cette question ?
 
-## FORMAT JSON OBLIGATOIRE (toujours répondre en JSON)
+RÈGLES IMPÉRATIVES :
+1. COPIE-COLLE le texte EXACT de nodes[id].text - pas de reformulation
+2. COPIE-COLLE les choices EXACTEMENT dans l'ordre de nodes[id].choices
+3. Question type "open" → PAS de choices dans le JSON
+4. Question type "choices" → INCLURE choices dans le JSON
+5. Suis le branchement next_map selon la réponse utilisateur
+6. ⚠️ NE JAMAIS SAUTER Q17/Q_EMAIL - La question email est OBLIGATOIRE avant RESULT
+7. ⚠️ NE JAMAIS passer directement aux résultats sans avoir posé TOUTES les questions
 
-Réponse simple :
+═══════════════════════════════════════════════════════════════════════════════
+                         FORMAT JSON OBLIGATOIRE
+═══════════════════════════════════════════════════════════════════════════════
+
+RÉPONSE SIMPLE (Mode B) :
 {"type":"reponse","text":"...","meta":{"mode":"B","progress":{"enabled":false}}}
 
-Question quiz avec choix :
-{"type":"question","text":"QUESTION EXACTE DES DATA","choices":["choix1","choix2"],"meta":{"mode":"A ou C","progress":{"enabled":true,"current":X,"total":Y}}}
+QUESTION QUIZ AVEC CHOIX :
+{"type":"question","text":"[TEXTE EXACT de nodes[id].text]","choices":["choix1","choix2"],"meta":{"mode":"A ou C","progress":{"enabled":true,"current":X,"total":Y}}}
 
-Question quiz ouverte :
-{"type":"question","text":"QUESTION EXACTE DES DATA","meta":{"mode":"A ou C","progress":{"enabled":true,"current":X,"total":Y}}}
+QUESTION QUIZ OUVERTE :
+{"type":"question","text":"[TEXTE EXACT de nodes[id].text]","meta":{"mode":"A ou C","progress":{"enabled":true,"current":X,"total":Y}}}
 
-Résultats quiz (8 blocs) :
+RÉSULTATS QUIZ - 8 BLOCS OBLIGATOIRES :
 {"type":"resultat","text":"BLOC1===BLOCK===BLOC2===BLOCK===BLOC3===BLOCK===BLOC4===BLOCK===BLOC5===BLOCK===BLOC6===BLOCK===BLOC7===BLOCK===BLOC8"}
 
-## FORMAT CURE (pour résultats et questions sur une cure)
+═══════════════════════════════════════════════════════════════════════════════
+                    📋 LES 8 BLOCS RÉSULTATS (TOUS OBLIGATOIRES)
+═══════════════════════════════════════════════════════════════════════════════
 
-[URL_IMAGE depuis CURES]
-[NOM DE LA CURE]
+BLOC 1 - RÉSUMÉ CLINIQUE :
+"[Prénom], merci pour vos réponses. Voici votre analyse personnalisée."
+[2-3 phrases empathiques résumant les symptômes identifiés]
 
-Comment ça marche :
-[2-3 phrases avec **3 ingrédients en gras** depuis COMPOSITIONS]
+BLOC 2 - BESOINS FONCTIONNELS :
+"Ces pourcentages indiquent le degré de soutien dont votre corps a besoin :"
+• Fonction thyroïdienne : XX%
+• Énergie cellulaire : XX%
+• Équilibre nerveux : XX%
+• Transit digestif : XX%
+• Santé peau/cheveux : XX%
 
-Bénéfices fonctionnels attendus :
-[Effets en 2 semaines puis 2-3 mois]
+BLOC 3 - CURE ESSENTIELLE :
+[FORMAT CURE COMPLET avec tous les détails]
 
-Conseils de prise (posologie) :
+BLOC 4 - CURE DE SOUTIEN :
+[FORMAT CURE COMPLET avec tous les détails]
+
+BLOC 5 - CURE DE CONFORT :
+[FORMAT CURE COMPLET ou "Aucune cure complémentaire nécessaire."]
+
+BLOC 6 - CONTRE-INDICATIONS :
+[Lister selon les réponses ou "Aucune contre-indication identifiée."]
+
+BLOC 7 - RENDEZ-VOUS :
+"Nos nutritionnistes sont disponibles pour un échange gratuit.
+[Prendre rendez-vous](https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252)"
+
+BLOC 8 - DISCLAIMER :
+"Ce test est un outil de bien-être. Il ne remplace pas un avis médical."
+
+═══════════════════════════════════════════════════════════════════════════════
+                         📦 FORMAT CURE COMPLET
+═══════════════════════════════════════════════════════════════════════════════
+
+**[NOM DE LA CURE]**
+*[short_description depuis CURES]*
+
+**Comment ça marche :**
+Cette cure associe **[ingrédient 1]**, **[ingrédient 2]** et **[ingrédient 3]** pour [action]. [Extraire les ingrédients clés depuis COMPOSITIONS pour les items de cette cure]
+
+**Bénéfices attendus :**
+• Dès 2 semaines : [premiers effets]
+• Après 2-3 mois : [effets durables]
+
+**Conseils de prise :**
 – Durée : 3 à 6 mois
-– Moment : [depuis CURES timing]
-– Composition : [liste gélules/jour depuis CURES]
+– Moment : [timing.when depuis CURES]
+– Composition : [Lister TOUS les items avec quantité/jour]
 
-Contre-indications :
-[depuis CURES contraindications]
+**Contre-indications :**
+[Lister TOUTES les contraindications depuis CURES]
 
-[Commander](checkout:VARIANT_ID) [Ajouter au panier](addtocart:VARIANT_ID) [En savoir plus](URL)
+[Commander]([product_url]) | [En savoir plus]([product_url])
 
-## STYLE
-- Naturel et professionnel
-- Tu vouvoies
+═══════════════════════════════════════════════════════════════════════════════
+                    🔍 CHECKLIST AVANT CHAQUE ENVOI
+═══════════════════════════════════════════════════════════════════════════════
+
+QUIZ Mode A/C - Vérifier :
+□ Question = texte EXACT des DATA ?
+□ Choices = ordre EXACT des DATA ?
+□ current/total corrects ?
+□ Pas de question sautée ?
+□ Q17/Q_EMAIL posée avant RESULT ?
+
+RÉSULTATS - Vérifier :
+□ 8 blocs avec ===BLOCK=== ?
+□ Cures existent dans [CURES] ?
+□ Ingrédients existent dans [COMPOSITIONS] ?
+□ Contre-indications complètes ?
+
+MODE B - Vérifier :
+□ Liste des cures = 21 cures (compter dans [CURES]) ?
+□ Info cure = vérifiée dans [CURES] ?
+□ Info ingrédient = vérifiée dans [COMPOSITIONS] ?
+□ Info SAV = vérifiée dans [SAV_FAQ] ?
+
+═══════════════════════════════════════════════════════════════════════════════
+                    ⚠️ ERREURS INTERDITES ⚠️
+═══════════════════════════════════════════════════════════════════════════════
+
+❌ Sauter la question email (Q17/Q_EMAIL)
+❌ Inventer une cure qui n'existe pas
+❌ Inventer un ingrédient qui n'existe pas  
+❌ Oublier des cures quand on demande la liste (il y en a 21)
+❌ Modifier le texte des questions
+❌ Changer l'ordre des choices
+❌ Envoyer résultats sans les 8 blocs
+❌ Oublier des contre-indications
+
+═══════════════════════════════════════════════════════════════════════════════
+                              STYLE
+═══════════════════════════════════════════════════════════════════════════════
+
+- Professionnel et bienveillant
+- Vouvoiement TOUJOURS
 - Pas d'emojis
 - Direct et précis
 `;
@@ -140,24 +219,16 @@ Contre-indications :
 // ============================================================================
 
 function detectMode(message, history) {
-  const msg = message
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+  const msg = message.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-  // Mode A - Thyroïde
   if (msg.includes("thyroide fonctionne") || msg.includes("thyroïde fonctionne")) return "A";
   if (msg.includes("thyro") && (msg.includes("probleme") || msg.includes("normale") || msg.includes("test"))) return "A";
-
-  // Mode C - Quelle cure
   if (msg.includes("quelle cure") || msg.includes("cure est faite pour moi") || msg.includes("cure pour moi")) return "C";
 
-  // Vérifier l'historique pour continuer un quiz en cours
   const hist = String(history || "").toLowerCase();
   if (hist.includes("quiz thyroide") || hist.includes("mode a")) return "A";
   if (hist.includes("quiz cure") || hist.includes("mode c")) return "C";
 
-  // Mode B par défaut
   return "B";
 }
 
@@ -167,12 +238,8 @@ function getModeFromHistory(messages) {
     if (msg.role === "assistant") {
       try {
         const content = typeof msg.content === "string" ? JSON.parse(msg.content) : msg.content;
-        if (content?.meta?.mode) {
-          return content.meta.mode;
-        }
-      } catch {
-        // Ignorer les erreurs de parsing
-      }
+        if (content?.meta?.mode) return content.meta.mode;
+      } catch {}
     }
   }
   return null;
@@ -183,7 +250,6 @@ function getModeFromHistory(messages) {
 // ============================================================================
 
 export default async function handler(req, res) {
-  // CORS
   res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -197,83 +263,66 @@ export default async function handler(req, res) {
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     if (!OPENAI_API_KEY) return res.status(500).json({ error: "API key missing" });
 
-    // Vérifier que les données sont chargées
     if (!allLoaded) {
-      console.error("❌ Données non chargées - vérifier les fichiers JSON");
-      return res.status(500).json({ error: "Data files not loaded - check JSON syntax" });
+      return res.status(500).json({ error: "Data files not loaded" });
     }
 
-    // Dernier message utilisateur
     const lastUserMsg = messages.filter((m) => m.role === "user").pop()?.content || "";
     const userText = typeof lastUserMsg === "object" ? lastUserMsg.text || "" : String(lastUserMsg);
+    const historyText = messages.map((m) => typeof m.content === "object" ? m.content.text || "" : String(m.content)).join("\\n");
 
-    // Historique texte
-    const historyText = messages
-      .map((m) => {
-        const c = m.content;
-        return typeof c === "object" ? c.text || "" : String(c);
-      })
-      .join("\n");
-
-    // Détecter le mode (priorité: historique > détection)
     const historyMode = getModeFromHistory(messages);
     const detectedMode = detectMode(userText, historyText);
     const activeMode = historyMode || detectedMode;
 
-    console.log(`🎯 Mode: ${activeMode} (historique: ${historyMode}, détecté: ${detectedMode})`);
+    console.log(`🎯 Mode: ${activeMode}`);
 
     // Construire les DATA selon le mode
     let dataSection = "";
-
     if (activeMode === "A") {
       dataSection = `
-[QUIZ_THYROIDE]
+[QUIZ_THYROIDE] - SUIVRE CE FLOW EXACTEMENT, QUESTION PAR QUESTION :
 ${DATA_QUIZ_THYROIDE_TEXT}
 
-[CURES]
+[CURES] - 21 cures disponibles :
 ${DATA_CURES_TEXT}
 
-[COMPOSITIONS]
+[COMPOSITIONS] - Ingrédients des gélules :
 ${DATA_COMPOSITIONS_TEXT}
 `;
     } else if (activeMode === "C") {
       dataSection = `
-[QUIZ_CURE]
+[QUIZ_CURE] - SUIVRE CE FLOW EXACTEMENT :
 ${DATA_QUIZ_CURE_TEXT}
 
-[CURES]
+[CURES] - 21 cures disponibles :
 ${DATA_CURES_TEXT}
 
-[COMPOSITIONS]
+[COMPOSITIONS] - Ingrédients des gélules :
 ${DATA_COMPOSITIONS_TEXT}
 `;
     } else {
       dataSection = `
-[COMPOSITIONS]
-${DATA_COMPOSITIONS_TEXT}
-
-[CURES]
+[CURES] - LISTE COMPLÈTE DES 21 CURES :
 ${DATA_CURES_TEXT}
 
-[SAV_FAQ]
+[COMPOSITIONS] - 45 gélules/capsules :
+${DATA_COMPOSITIONS_TEXT}
+
+[SAV_FAQ] - Questions fréquentes :
 ${DATA_SAV_TEXT}
 `;
     }
 
-    // DEBUG: Taille totale
-    const totalSize = SYSTEM_PROMPT.length + dataSection.length;
-    console.log(`📦 Contexte total: ${Math.round(totalSize / 1000)}KB (~${Math.round(totalSize / 4)} tokens)`);
-
     const openaiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
-      { role: "system", content: `MODE ACTIF: ${activeMode}\n\nDATA SUPLEMINT:\n${dataSection}` },
+      { role: "system", content: `MODE ACTIF: ${activeMode}\\n\\nDATA SUPLEMINT:\\n${dataSection}` },
       ...messages.map((m) => ({
         role: m.role,
         content: typeof m.content === "object" ? (m.content.text || JSON.stringify(m.content)) : String(m.content),
       })),
     ];
 
-    // ⚠️ MODÈLE CORRIGÉ: gpt-4o-mini (PAS gpt-4.1-mini qui n'existe pas!)
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -281,10 +330,10 @@ ${DATA_SAV_TEXT}
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-5-mini",  // ✅ MODÈLE CORRECT
+        model: "gpt-4o-mini",
         messages: openaiMessages,
         response_format: { type: "json_object" },
-        temperature: 0.2,
+        temperature: 0.1, // Plus bas = plus déterministe
         max_tokens: 4000,
       }),
     });
@@ -297,21 +346,16 @@ ${DATA_SAV_TEXT}
 
     const data = await response.json();
     const replyText = data.choices?.[0]?.message?.content || "";
-    
-    console.log(`✅ Réponse reçue (${replyText.length} chars)`);
 
     let reply;
     try {
       reply = JSON.parse(replyText);
-    } catch (parseError) {
-      console.error("❌ Erreur parsing JSON réponse:", parseError.message);
+    } catch {
       reply = { type: "reponse", text: replyText, meta: { mode: activeMode, progress: { enabled: false } } };
     }
 
     if (!reply.type) reply.type = "reponse";
-    if (reply.type !== "resultat" && !reply.meta) {
-      reply.meta = { mode: activeMode, progress: { enabled: false } };
-    }
+    if (!reply.meta) reply.meta = { mode: activeMode, progress: { enabled: false } };
 
     return res.status(200).json({ reply, conversationId: conversationId || null, mode: activeMode });
   } catch (err) {
