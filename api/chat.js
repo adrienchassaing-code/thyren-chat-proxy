@@ -197,47 +197,94 @@ export default async function handler(req, res) {
     hasBody: !!req.body,
   });
 
-  // CORS
-  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  if (req.method === "OPTIONS") return res.status(204).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
-// ===== DIAG DATA FOLDER =====
-if (req.method === "POST") {
-  const last = (req.body?.messages || []).slice(-1)[0]?.content || "";
-  const t = typeof last === "object" ? (last.text || "") : String(last);
+  // ===== DIAG / DEBUG (DOIT ÊTRE AVANT LES RETURNS OPTIONS/POST) =====
+  if (req.method === "POST") {
+    const msgs = Array.isArray(req.body?.messages) ? req.body.messages : [];
+    const last = msgs.slice(-1)[0]?.content ?? "";
+    const userTextForDiag = typeof last === "object" ? (last.text || "") : String(last);
 
-  if (String(t).trim().toLowerCase() === "diag") {
-    const dataDir = path.join(process.cwd(), "data");
-    let files = [];
-    try {
-      files = fs.readdirSync(dataDir).map(name => {
-        const p = path.join(dataDir, name);
-        const st = fs.statSync(p);
-        return { name, size: st.size };
-      });
-    } catch (e) {
+    // --- DIAG: liste le dossier /data ---
+    if (userTextForDiag.trim().toLowerCase() === "diag") {
+      const dataDir = path.join(process.cwd(), "data");
+      try {
+        const files = fs.readdirSync(dataDir).map((name) => {
+          const p = path.join(dataDir, name);
+          const st = fs.statSync(p);
+          return { name, size: st.size };
+        });
+
+        return res.status(200).json({
+          reply: {
+            type: "reponse",
+            text:
+              "✅ /data trouvé.\nFichiers:\n" +
+              files.map((f) => `- ${f.name} (${f.size} bytes)`).join("\n"),
+            meta: { mode: "B", progress: { enabled: false } },
+          },
+        });
+      } catch (e) {
+        return res.status(200).json({
+          reply: {
+            type: "reponse",
+            text: `❌ Impossible de lire /data\npath=${dataDir}\nerror=${e.message}`,
+            meta: { mode: "B", progress: { enabled: false } },
+          },
+        });
+      }
+    }
+
+    // --- OMEGA DEBUG: tape "omega_debug" dans le chat ---
+    // (je le mets derrière un mot-clé pour ne pas casser le bot en prod)
+    if (userTextForDiag.trim().toLowerCase() === "omega_debug") {
+      const caps = COMPOSITIONS?.capsules || {};
+      const keys = Object.keys(caps);
+
+      // Candidats directs
+      const direct =
+        caps.OMEGA3 ||
+        caps.OMEGA_3 ||
+        caps["OMEGA-3"] ||
+        caps["OMEGA 3"] ||
+        null;
+
+      // Recherche alias / display_name
+      let best = direct;
+      if (!best) {
+        for (const k of keys) {
+          const v = caps[k] || {};
+          const dn = String(v.display_name || "").toLowerCase();
+          const als = Array.isArray(v.aliases) ? v.aliases.map((a) => String(a).toLowerCase()) : [];
+          if (dn.includes("omega") || als.some((a) => a.includes("omega"))) {
+            best = { __key: k, ...v };
+            break;
+          }
+        }
+      }
+
+      // Donne aussi des suggestions de clés proches
+      const omegaKeys = keys
+        .filter((k) => k.toLowerCase().includes("omega") || k.toLowerCase().includes("epa") || k.toLowerCase().includes("dha"))
+        .slice(0, 50);
+
       return res.status(200).json({
         reply: {
           type: "reponse",
-          text: `❌ Impossible de lire /data\npath=${dataDir}\nerror=${e.message}`,
-          meta: { mode: "B", progress: { enabled: false } }
-        }
+          text: best
+            ? "✅ OMEGA trouvé:\n" + JSON.stringify(best, null, 2)
+            : "❌ OMEGA introuvable.\nClés proches:\n" + (omegaKeys.length ? omegaKeys.join(", ") : keys.slice(0, 30).join(", ")),
+          meta: { mode: "B", progress: { enabled: false } },
+        },
       });
     }
-
-    return res.status(200).json({
-      reply: {
-        type: "reponse",
-        text:
-          "✅ /data trouvé.\nFichiers:\n" +
-          files.map(f => `- ${f.name} (${f.size} bytes)`).join("\n"),
-        meta: { mode: "B", progress: { enabled: false } }
-      }
-    });
   }
-}
+
+  // ===== CORS =====
+  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") return res.status(204).end();
+  if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
 
   try {
     const { messages, conversationId } = req.body || {};
@@ -247,14 +294,16 @@ if (req.method === "POST") {
     if (!OPENAI_API_KEY) return res.status(500).json({ error: "API key missing" });
 
     // Dernier message utilisateur
-    const lastUserMsg = messages.filter(m => m.role === "user").pop()?.content || "";
+    const lastUserMsg = messages.filter((m) => m.role === "user").pop()?.content || "";
     const userText = typeof lastUserMsg === "object" ? lastUserMsg.text || "" : String(lastUserMsg);
 
     // Historique texte
-    const historyText = messages.map(m => {
-      const c = m.content;
-      return typeof c === "object" ? c.text || "" : String(c);
-    }).join("\n");
+    const historyText = messages
+      .map((m) => {
+        const c = m.content;
+        return typeof c === "object" ? c.text || "" : String(c);
+      })
+      .join("\n");
 
     const historyMode = getModeFromHistory(messages);
     const detectedMode = detectMode(userText, historyText);
@@ -264,41 +313,12 @@ if (req.method === "POST") {
     console.log("MODE ACTIF :", activeMode);
     console.log("USER TEXT :", userText);
     console.log("USER TEXT LENGTH :", userText.length);
-
     console.log(`🎯 Mode: ${activeMode} | Message: ${userText.substring(0, 50)}...`);
-// ===== DEBUG OMEGA (TEST DATA) =====
-if (userText.toLowerCase().includes("omega")) {
-  const caps = COMPOSITIONS?.capsules || {};
-  const keys = Object.keys(caps);
-
-  const direct =
-    caps.OMEGA3 || caps.OMEGA_3 || caps["OMEGA-3"] || null;
-
-  const found = direct || keys
-    .map(k => ({ k, v: caps[k] }))
-    .find(x => {
-      const v = x.v || {};
-      const dn = String(v.display_name || "").toLowerCase();
-      const als = (v.aliases || []).map(a => String(a).toLowerCase());
-      return dn.includes("omega") || als.some(a => a.includes("omega"));
-    })?.v;
-
-  return res.status(200).json({
-    reply: {
-      type: "reponse",
-      text: found
-        ? "✅ OMEGA trouvé:\n" + JSON.stringify(found, null, 2)
-        : "❌ OMEGA introuvable.\nClés détectées:\n" + keys.slice(0, 20).join(", "),
-      meta: { mode: "B", progress: { enabled: false } }
-    }
-  });
-}
 
     // Construire les DATA selon le mode
     let dataSection = "";
-    
+
     if (activeMode === "A") {
-      // Quiz Thyroïde + données pour validation
       dataSection = `
 [QUIZ_THYROIDE]
 ${DATA_QUIZ_THYROIDE_TEXT}
@@ -310,7 +330,6 @@ ${DATA_CURES_TEXT}
 ${DATA_COMPOSITIONS_TEXT}
 `;
     } else if (activeMode === "C") {
-      // Quiz Cure + données pour validation
       dataSection = `
 [QUIZ_CURE]
 ${DATA_QUIZ_CURE_TEXT}
@@ -322,7 +341,6 @@ ${DATA_CURES_TEXT}
 ${DATA_COMPOSITIONS_TEXT}
 `;
     } else {
-      // Questions libres - toutes les données sauf quiz
       dataSection = `
 [COMPOSITIONS]
 ${DATA_COMPOSITIONS_TEXT}
@@ -334,34 +352,35 @@ ${DATA_CURES_TEXT}
 ${DATA_SAV_TEXT}
 `;
     }
-console.log("DATA SECTION LENGTH :", dataSection.length);
-console.log("EST. TOKENS :", Math.round(dataSection.length / 4));
-console.log("─────────────────────────────");
+
+    console.log("DATA SECTION LENGTH :", dataSection.length);
+    console.log("EST. TOKENS :", Math.round(dataSection.length / 4));
+    console.log("─────────────────────────────");
 
     // Préparer les messages pour OpenAI
     const openaiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "system", content: `MODE ACTIF: ${activeMode}\n\nDATA SUPLEMINT:\n${dataSection}` },
-      ...messages.map(m => ({
+      ...messages.map((m) => ({
         role: m.role,
-        content: typeof m.content === "object" ? (m.content.text || JSON.stringify(m.content)) : String(m.content)
-      }))
+        content: typeof m.content === "object" ? (m.content.text || JSON.stringify(m.content)) : String(m.content),
+      })),
     ];
 
     // Appel OpenAI
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${OPENAI_API_KEY}`,
-        "Content-Type": "application/json"
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         model: "gpt-4.1-mini",
         messages: openaiMessages,
         response_format: { type: "json_object" },
         temperature: 0.2,
-        max_tokens: 4000
-      })
+        max_tokens: 4000,
+      }),
     });
 
     if (!response.ok) {
@@ -387,10 +406,9 @@ console.log("──────────────────────�
       reply.meta = { mode: activeMode, progress: { enabled: false } };
     }
 
-    res.status(200).json({ reply, conversationId, mode: activeMode });
-
+    return res.status(200).json({ reply, conversationId: conversationId || null, mode: activeMode });
   } catch (err) {
     console.error("THYREN error:", err);
-    res.status(500).json({ error: "Server error", details: String(err) });
+    return res.status(500).json({ error: "Server error", details: String(err) });
   }
 }
