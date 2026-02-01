@@ -1,11 +1,12 @@
 {
-  "version": "THYREN_QUESTION_THYROIDE",
-  "flow_order": ["Q1","Q2","Q2_plus","Q3","Q4","Q4b","Q5","Q6","Q7","Q8","Q9","Q10","Q11","Q12","Q13","Q14","Q15","Q16","Q17","RESULT"],
+  "version": "THYREN_QUIZ_UNIFIE_V2",
+  "trigger": "Faire le quiz pour trouver ma cure idéale",
+  "flow_order": ["Q1","Q2","Q2_plus","Q3","Q4","Q4b","Q5","Q5b","Q5c","Q6","Q7","Q8","Q9","Q10","Q11","Q12","Q13","Q14","Q15","Q16","RESULT"],
   "nodes": {
     "Q1": {
       "id": "Q1",
       "type": "open",
-      "text": "On va vérifier cela ensemble. Pour commencer, quel est votre prénom ?",
+      "text": "Parfait, trouvons ensemble la cure idéale pour vous. Pour commencer, quel est votre prénom ?",
       "next": "Q2",
       "meta": { "capture": "first_name" }
     },
@@ -59,102 +60,119 @@
     },
     "Q5": {
       "id": "Q5",
-      "type": "choices",
-      "text": "Avez-vous déjà été diagnostiqué(e) avec une hypothyroïdie ?",
-      "choices": ["Oui, j'ai une hypothyroïdie diagnostiquée.","Non, jamais de diagnostic médical."],
+      "type": "open",
+      "text": "Expliquez en quelques mots ce qui vous gêne en ce moment et ce que vous aimeriez améliorer.",
+      "next": "Q5b",
+      "meta": { "capture": "plainte_client" }
+    },
+    "Q5b": {
+      "id": "Q5b",
+      "type": "ai_clarification",
+      "instruction": "THYREN génère UNE question de clarification pertinente basée sur la réponse Q5 pour mieux comprendre la problématique principale de l'utilisateur. La question doit être ouverte et empathique.",
+      "examples": [
+        "Depuis combien de temps ressentez-vous cette fatigue ?",
+        "Cette prise de poids est-elle récente ou progressive ?",
+        "Ces troubles du sommeil affectent-ils votre quotidien ?",
+        "Avez-vous remarqué d'autres symptômes associés ?"
+      ],
+      "next": "Q5c",
+      "meta": { "capture": "clarification_1", "ai_generated": true }
+    },
+    "Q5c": {
+      "id": "Q5c",
+      "type": "ai_clarification",
+      "instruction": "THYREN génère UNE seconde question de clarification pour approfondir un aspect différent de la problématique évoquée en Q5, en tenant compte de la réponse Q5b.",
+      "examples": [
+        "Avez-vous déjà consulté un professionnel de santé à ce sujet ?",
+        "Y a-t-il des moments de la journée où c'est plus difficile ?",
+        "Comment cela impacte-t-il votre vie quotidienne ?",
+        "Avez-vous essayé des solutions jusqu'à présent ?"
+      ],
       "next": "Q6",
-      "meta": { "capture": "dx_hypo" }
+      "meta": { "capture": "clarification_2", "ai_generated": true }
     },
     "Q6": {
       "id": "Q6",
       "type": "choices",
-      "text": "Avez-vous déjà réalisé un bilan sanguin pour la thyroïde ?",
-      "choices": ["Oui, mon bilan montre une hypothyroïdie.","Oui, mais mon bilan était normal.","Non, jamais fait de bilan."],
+      "text": "Comment décririez-vous votre niveau d'énergie au quotidien ?",
+      "choices": ["Bonne énergie tout au long de la journée.","Fatigue légère ou passagère.","Fatigue constante malgré le repos.","Autre – j'aimerais préciser."],
       "next": "Q7",
-      "meta": { "capture": "lab_status" }
+      "meta": { "capture": "energy" }
     },
     "Q7": {
       "id": "Q7",
       "type": "choices",
-      "text": "Comment décririez-vous votre niveau d'énergie au quotidien ?",
-      "choices": ["Bonne énergie tout au long de la journée.","Fatigue légère ou passagère.","Fatigue constante malgré le repos.","Autre – j'aimerais préciser."],
+      "text": "Avez-vous pris du poids sans changer votre alimentation ?",
+      "choices": ["Non, mon poids est stable.","Oui, une légère prise de poids.","Oui, une prise de poids importante ou inexpliquée malgré plusieurs régimes.","Autre – j'aimerais préciser."],
       "next": "Q8",
-      "meta": { "capture": "energy" }
+      "meta": { "capture": "weight" }
     },
     "Q8": {
       "id": "Q8",
       "type": "choices",
-      "text": "Avez-vous pris du poids sans changer votre alimentation ?",
-      "choices": ["Non, mon poids est stable.","Oui, une légère prise de poids.","Oui, une prise de poids importante ou inexpliquée malgré plusieurs régimes.","Autre – j'aimerais préciser."],
+      "text": "Ressentez-vous souvent le froid (mains ou pieds froids) ?",
+      "choices": ["Non, température normale.","Parfois, mains ou pieds froids.","Souvent froid, même quand il fait bon.","Autre – j'aimerais préciser."],
       "next": "Q9",
-      "meta": { "capture": "weight" }
+      "meta": { "capture": "cold" }
     },
     "Q9": {
       "id": "Q9",
       "type": "choices",
-      "text": "Ressentez-vous souvent le froid (mains ou pieds froids) ?",
-      "choices": ["Non, température normale.","Parfois, mains ou pieds froids.","Souvent froid, même quand il fait bon.","Autre – j'aimerais préciser."],
+      "text": "Comment décririez-vous votre humeur ces derniers temps ?",
+      "choices": ["Moral stable, bonne humeur.","Humeur fluctuante ou baisse légère.","Moral bas, tristesse ou perte de motivation.","Autre – j'aimerais préciser."],
       "next": "Q10",
-      "meta": { "capture": "cold" }
+      "meta": { "capture": "mood" }
     },
     "Q10": {
       "id": "Q10",
       "type": "choices",
-      "text": "Comment décririez-vous votre humeur ces derniers temps ?",
-      "choices": ["Moral stable, bonne humeur.","Humeur fluctuante ou baisse légère.","Moral bas, tristesse ou perte de motivation.","Autre – j'aimerais préciser."],
+      "text": "Votre sommeil est-il réparateur ?",
+      "choices": ["Oui, je dors bien et me réveille reposé(e).","Sommeil parfois léger ou agité.","Difficultés à dormir ou fatigue au réveil.","Autre – j'aimerais préciser."],
       "next": "Q11",
-      "meta": { "capture": "mood" }
+      "meta": { "capture": "sleep" }
     },
     "Q11": {
       "id": "Q11",
       "type": "choices",
-      "text": "Votre sommeil est-il réparateur ?",
-      "choices": ["Oui, je dors bien et me réveille reposé(e).","Sommeil parfois léger ou agité.","Difficultés à dormir ou fatigue au réveil.","Autre – j'aimerais préciser."],
+      "text": "Avez-vous remarqué des changements de la peau ou des cheveux (sécheresse, chute, cheveux ternes) ?",
+      "choices": ["Non, tout est normal.","Peau un peu sèche ou cheveux ternes.","Peau très sèche, cheveux cassants ou perte importante.","Autre – j'aimerais préciser."],
       "next": "Q12",
-      "meta": { "capture": "sleep" }
+      "meta": { "capture": "skin_hair" }
     },
     "Q12": {
       "id": "Q12",
       "type": "choices",
-      "text": "Avez-vous remarqué des changements de la peau ou des cheveux (sécheresse, chute, cheveux ternes) ?",
-      "choices": ["Non, tout est normal.","Peau un peu sèche ou cheveux ternes.","Peau très sèche, cheveux cassants ou perte importante.","Autre – j'aimerais préciser."],
+      "text": "Comment est votre transit intestinal ?",
+      "choices": ["Transit régulier.","Parfois un peu lent.","Constipation ou digestion difficile.","Autre – j'aimerais préciser."],
       "next": "Q13",
-      "meta": { "capture": "skin_hair" }
+      "meta": { "capture": "bowel" }
     },
     "Q13": {
       "id": "Q13",
       "type": "choices",
-      "text": "Comment est votre transit intestinal ?",
-      "choices": ["Transit régulier.","Parfois un peu lent.","Constipation ou digestion difficile.","Autre – j'aimerais préciser."],
+      "text": "Avez-vous remarqué un gonflement du visage ou des mains le matin ?",
+      "choices": ["Non, jamais.","Parfois, gonflement léger.","Oui, gonflement visible chaque matin.","Autre – j'aimerais préciser."],
       "next": "Q14",
-      "meta": { "capture": "bowel" }
+      "meta": { "capture": "edema_am" }
     },
     "Q14": {
       "id": "Q14",
       "type": "choices",
-      "text": "Avez-vous remarqué un gonflement du visage ou des mains le matin ?",
-      "choices": ["Non, jamais.","Parfois, gonflement léger.","Oui, gonflement visible chaque matin.","Autre – j'aimerais préciser."],
+      "text": "Avez-vous parfois l'esprit confus ou des difficultés de concentration ?",
+      "choices": ["Concentration normale.","Légère distraction, oublis occasionnels.","Brouillard mental, difficulté à se concentrer.","Autre – j'aimerais préciser."],
       "next": "Q15",
-      "meta": { "capture": "edema_am" }
+      "meta": { "capture": "brain_fog" }
     },
     "Q15": {
       "id": "Q15",
       "type": "choices",
-      "text": "Avez-vous parfois l'esprit confus ou des difficultés de concentration ?",
-      "choices": ["Concentration normale.","Légère distraction, oublis occasionnels.","Brouillard mental, difficulté à se concentrer.","Autre – j'aimerais préciser."],
+      "text": "Avez-vous remarqué un changement de votre libido ?",
+      "choices": ["Aucun changement notable.","Libido variable.","Libido très basse.","Autre – j'aimerais préciser."],
       "next": "Q16",
-      "meta": { "capture": "brain_fog" }
+      "meta": { "capture": "libido" }
     },
     "Q16": {
       "id": "Q16",
-      "type": "choices",
-      "text": "Avez-vous remarqué un changement de votre libido ?",
-      "choices": ["Aucun changement notable.","Libido variable.","Libido très basse.","Autre – j'aimerais préciser."],
-      "next": "Q17",
-      "meta": { "capture": "libido" }
-    },
-    "Q17": {
-      "id": "Q17",
       "type": "open",
       "text": "Merci pour toutes vos réponses. Pouvez-vous indiquer votre adresse e-mail pour recevoir le récapitulatif de vos résultats ?",
       "next_on_valid": "RESULT",
@@ -175,6 +193,10 @@
     "state_model": { "current_id": "string", "answers": "map", "history": "array" },
     "advance_rule": "Toujours suivre nodes[current_id].next ou next_map.",
     "branching": "Q2 et Q4 utilisent next_map selon la réponse.",
+    "ai_clarification_rules": {
+      "Q5b": "Générer une question de clarification basée sur la plainte Q5. Ne pas répéter ce que l'utilisateur a dit. Poser UNE question courte et empathique.",
+      "Q5c": "Générer une seconde question pour approfondir un aspect différent. Tenir compte des réponses Q5 et Q5b."
+    },
     "restart_phrases": ["on recommence le quiz","je veux refaire le test","on repart de zéro","recommencer le quiz"],
     "placeholders": { "first_name": "capitalized" },
     "quiz_style": {
