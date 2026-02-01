@@ -1819,7 +1819,7 @@ const QUIZ = [
   type: "open",
   key: "plainte",
   cond: a => a.objectif?.startsWith("Autre")
-}
+},
   // Q7 (ENERGIE) — intègre la plainte juste avant
   {
     id: "Q7_energie",
@@ -2213,7 +2213,7 @@ DONNÉES DES CURES:
 ${DATA_CURES}
 
 INSTRUCTIONS:
-Génère un JSON avec 7 blocs de texte séparés par "===BLOCK===":
+Génère un JSON avec 4 blocs de texte séparés par "===BLOCK===":
 
 {"type":"resultat","text":"[BLOC1]===BLOCK===[BLOC2]===BLOCK===[BLOC3]===BLOCK===[BLOC4],"meta":{"mode":"A"}}
 
