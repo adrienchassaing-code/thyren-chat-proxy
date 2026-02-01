@@ -480,7 +480,11 @@ ${DATA_SAV}
     if (!reply.type) reply.type = "reponse";
     if (!reply.meta) reply.meta = { mode: activeMode, progress: { enabled: false } };
 
-    return res.status(200).json({ reply, conversationId: conversationId || null, mode: activeMode, userInfo });
+    return res.status(200).json({
+  reply: JSON.stringify(reply),
+  conversationId: conversationId || null
+});
+
   } catch (err) {
     console.error("❌ THYREN error:", err);
     return res.status(500).json({ error: "Server error", details: String(err) });
