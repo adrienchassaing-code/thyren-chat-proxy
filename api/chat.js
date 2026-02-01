@@ -1,3 +1,11 @@
+// ============================================================================
+// THYREN V18 - VERSION SIMPLE (QUIZ UNIQUEMENT)
+// ============================================================================
+
+// ============================================================================
+// DONNÉES
+// ============================================================================
+
 const DATA_COMPOSITIONS = `================================================================================
                          COMPOSITIONS SUPLEMINT
                               Version 0.9.0
@@ -838,6 +846,7 @@ Alias : LACTOP, LACTOP®
                               FIN DU DOCUMENT
 ================================================================================
 `;
+
 const DATA_CURES = `================================================================================
                            LES CURES SUPLEMINT
                               Version 0.9.0
@@ -1388,6 +1397,7 @@ Les cures suivantes contiennent des ingrédients d'origine marine (poisson/crust
                               FIN DU DOCUMENT
 ================================================================================
 `;
+
 const DATA_SAV = `================================================================================
                          FAQ & SAV SUPLEMINT
                               Version 1.0.0
@@ -1705,11 +1715,13 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
                               FIN DU DOCUMENT
 ================================================================================
 `;
-console.log("✅ THYREN V18 - QUIZ ONLY");
+
+console.log("✅ THYREN V18 - Version Simple (Quiz uniquement)");
 
 // ============================================================================
-// QUIZ (inchangé)
+// QUIZ - Questions
 // ============================================================================
+
 const QUIZ = [
   { text: "Parfait, trouvons ensemble la cure idéale. Quel est votre prénom ?", type: "open", key: "prenom" },
   { text: "Bonjour {prenom}, votre sexe biologique ?", type: "choice", choices: ["Femme", "Homme"], key: "sexe" },
@@ -1735,186 +1747,237 @@ const QUIZ = [
 ];
 
 // ============================================================================
-// Helpers Quiz
+// QUIZ - Fonctions utilitaires
 // ============================================================================
+
 function getQuizState(messages) {
   let step = -1;
   let answers = {};
-
+  
   for (const msg of messages) {
-    const content = typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content);
-
-    if (msg.role === "assistant") {
+    const content = typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content);
+    
+    if (msg.role === 'assistant') {
       try {
         const parsed = JSON.parse(content);
-        if (typeof parsed?.meta?.quizStep === "number") step = parsed.meta.quizStep;
-        if (parsed?.meta?.answers) answers = { ...answers, ...parsed.meta.answers };
+        if (typeof parsed.meta?.quizStep === 'number') {
+          step = parsed.meta.quizStep;
+        }
+        if (parsed.meta?.answers) {
+          answers = { ...answers, ...parsed.meta.answers };
+        }
       } catch {}
     }
-
-    if (msg.role === "user" && step >= 0 && QUIZ[step]) {
-      answers[QUIZ[step].key] = String(content).trim();
+    
+    if (msg.role === 'user' && step >= 0 && QUIZ[step]) {
+      answers[QUIZ[step].key] = content.trim();
     }
   }
-
+  
   return { step, answers };
 }
 
 function nextStep(step, answers) {
   let n = step + 1;
-  while (n < QUIZ.length && QUIZ[n].cond && !QUIZ[n].cond(answers)) n++;
+  while (n < QUIZ.length && QUIZ[n].cond && !QUIZ[n].cond(answers)) {
+    n++;
+  }
   return n;
 }
 
 function buildQuestion(step, answers) {
   const q = QUIZ[step];
-  const text = q.text.replace(/{prenom}/g, answers.prenom || "");
-
-  const payload = {
-    type: "question",
-    text,
+  const text = q.text.replace(/{prenom}/g, answers.prenom || '');
+  
+  const response = {
+    type: 'question',
+    text: text,
     meta: {
-      mode: "QUIZ",
+      mode: 'A',
       quizStep: step,
-      answers,
-      progress: { enabled: true, current: step + 1, total: QUIZ.length }
+      answers: answers,
+      progress: {
+        enabled: true,
+        current: step + 1,
+        total: QUIZ.length
+      }
     }
   };
-
-  if (q.type === "choice") payload.choices = q.choices;
-  return payload;
-}
-
-function shouldStartQuiz(userText, messages) {
-  const t = String(userText || "").toLowerCase();
-  if (t.includes("quiz") || t.includes("cure idéale") || t.includes("cure ideale") || t.includes("trouver ma cure")) return true;
-
-  // Si quiz déjà commencé
-  for (const m of messages || []) {
-    if (m.role !== "assistant") continue;
-    try {
-      const parsed = JSON.parse(typeof m.content === "string" ? m.content : "{}");
-      if (parsed?.meta?.mode === "QUIZ") return true;
-    } catch {}
+  
+  if (q.type === 'choice') {
+    response.choices = q.choices;
   }
-  return false;
+  
+  return response;
 }
 
 // ============================================================================
-// Handler
+// HANDLER PRINCIPAL
 // ============================================================================
+
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  if (req.method === "OPTIONS") return res.status(204).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
+  // CORS
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  if (req.method === 'OPTIONS') return res.status(204).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
   try {
     const { messages, conversationId } = req.body || {};
-    if (!Array.isArray(messages)) return res.status(400).json({ error: "messages required" });
-
+    if (!Array.isArray(messages)) return res.status(400).json({ error: 'messages required' });
+    
     const KEY = process.env.OPENAI_API_KEY;
-    if (!KEY) return res.status(500).json({ error: "API key missing" });
+    if (!KEY) return res.status(500).json({ error: 'API key missing' });
 
-    const lastUser = messages.filter(m => m.role === "user").pop()?.content || "";
-    const userText = typeof lastUser === "object" ? (lastUser.text || "") : String(lastUser);
+    // Récupérer le dernier message utilisateur
+    const lastMsg = messages.filter(m => m.role === 'user').pop()?.content || '';
+    const userText = typeof lastMsg === 'object' ? lastMsg.text || '' : String(lastMsg);
 
-    // Si pas quiz -> réponse ultra simple
-    if (!shouldStartQuiz(userText, messages)) {
-      return res.status(200).json({
-        reply: {
-          type: "reponse",
-          text: "Pour démarrer : écrivez « Faire le quiz pour trouver ma cure idéale ».",
-          meta: { mode: "NONE", progress: { enabled: false } }
-        },
-        conversationId,
-        mode: "NONE"
-      });
-    }
-
-    // Quiz flow
-    const state = getQuizState(messages);
-
-    // inject dernière réponse dans la bonne question (si quiz déjà lancé)
-    if (state.step >= 0 && QUIZ[state.step]) {
-      state.answers[QUIZ[state.step].key] = userText.trim();
-    }
-
-    const next = state.step < 0 ? 0 : nextStep(state.step, state.answers);
-
-    // Fin du quiz -> génération résultat via LLM
-    if (next >= QUIZ.length) {
-      const a = state.answers;
-
-      const prompt = `Tu es Dr THYREN (Suplemint). Tu DOIS utiliser UNIQUEMENT les données fournies.
-
-Données:
-- [CURES] contient les 21 cures (composition journalière, contre-indications, moment de prise, lien).
-- [COMPOSITIONS] contient les ingrédients/dosages des gélules.
-- [SAV] contient les règles générales.
-
-Ta mission:
-1) Recommander 1 cure principale (et 1 cure secondaire si utile) en fonction des réponses.
-2) Inclure: nom exact de la cure, lien exact, moment de prise, composition journalière, contre-indications importantes.
-3) Être concis, concret, pas bavard.
-
-Réponses utilisateur:
-- Prénom: ${a.prenom || ""}
-- Sexe: ${a.sexe || ""}
-- Enceinte/allaitante: ${a.enceinte || ""}
-- Âge: ${a.age || ""}
-- Ménopause: ${a.menopause || ""}
-- Condition: ${a.condition || ""} ${a.condition_detail || ""}
-- Plainte: ${a.plainte || ""}
-- Durée: ${a.duree || ""}
-- Impact: ${a.impact || ""}
-- Symptômes: énergie=${a.energie || ""}, poids=${a.poids || ""}, froid=${a.froid || ""}, humeur=${a.humeur || ""}, sommeil=${a.sommeil || ""}, peau=${a.peau || ""}, transit=${a.transit || ""}, gonflement=${a.gonflement || ""}, concentration=${a.concentration || ""}, libido=${a.libido || ""}
-
-Réponds en JSON STRICT:
-{"type":"resultat","text":"...","meta":{"mode":"QUIZ","progress":{"enabled":false}}}
-
-Règles:
-- Si grossesse/allaitement: respecter SAV (souvent seule cure autorisée).
-- Ne pas inventer.
-- Pas de blabla marketing.`;
-
-      const r = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: { Authorization: "Bearer " + KEY, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [
-            { role: "system", content: prompt },
-            { role: "user", content: "[CURES]\n" + DATA_CURES + "\n\n[COMPOSITIONS]\n" + DATA_COMPOSITIONS + "\n\n[SAV]\n" + DATA_SAV }
-          ],
-          response_format: { type: "json_object" },
-          temperature: 0.2,
-          max_tokens: 1200
-        })
-      });
-
-      if (!r.ok) return res.status(500).json({ error: "OpenAI error" });
-
-      let reply;
+    // Détecter si on est en mode quiz
+    let isQuiz = userText.toLowerCase().match(/quiz|cure ideale|trouver ma cure/);
+    
+    // Vérifier si on était déjà dans le quiz
+    for (const m of messages) {
       try {
-        reply = JSON.parse((await r.json()).choices?.[0]?.message?.content || "{}");
-      } catch {
-        reply = { type: "resultat", text: "Erreur de génération des résultats.", meta: { mode: "QUIZ", progress: { enabled: false } } };
+        const parsed = JSON.parse(typeof m.content === 'string' ? m.content : '{}');
+        if (parsed.meta?.mode === 'A') isQuiz = true;
+      } catch {}
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // MODE QUIZ
+    // ═══════════════════════════════════════════════════════════════════
+    if (isQuiz) {
+      const state = getQuizState(messages);
+      
+      // Enregistrer la réponse actuelle
+      if (state.step >= 0 && QUIZ[state.step]) {
+        state.answers[QUIZ[state.step].key] = userText.trim();
+      }
+      
+      // Calculer la prochaine étape
+      const next = state.step < 0 ? 0 : nextStep(state.step, state.answers);
+
+      // ═══════════════════════════════════════════════════════════════════
+      // FIN DU QUIZ - Générer les résultats
+      // ═══════════════════════════════════════════════════════════════════
+      if (next >= QUIZ.length) {
+        const today = new Date();
+        const fmt = d => d.getDate().toString().padStart(2,'0') + '/' + (d.getMonth()+1).toString().padStart(2,'0') + '/' + d.getFullYear();
+        const j14 = fmt(new Date(today.getTime() + 14 * 86400000));
+        const j90 = fmt(new Date(today.getTime() + 90 * 86400000));
+        const a = state.answers;
+        
+        const prompt = `Tu es Dr THYREN, expert en micronutrition chez SUPLEMINT.
+
+PROFIL UTILISATEUR:
+- Prénom: ${a.prenom}
+- Sexe: ${a.sexe}
+- Âge: ${a.age}
+- Condition: ${a.condition} ${a.condition_detail || ''}
+- Plainte principale: ${a.plainte}
+- Durée: ${a.duree}
+- Impact: ${a.impact}
+
+SYMPTÔMES:
+- Énergie: ${a.energie}
+- Poids: ${a.poids}
+- Froid: ${a.froid}
+- Humeur: ${a.humeur}
+- Sommeil: ${a.sommeil}
+- Peau/cheveux: ${a.peau}
+- Transit: ${a.transit}
+- Gonflement: ${a.gonflement}
+- Concentration: ${a.concentration}
+- Libido: ${a.libido}
+
+DATES IMPORTANTES:
+- J+14: ${j14}
+- J+90: ${j90}
+
+RÈGLES DE RECOMMANDATION:
+- Fatigue + froid + poids + moral bas → CURE THYROÏDE (prioritaire)
+- Stress + humeur fluctuante → CURE ZÉNITUDE
+- Problèmes de sommeil → CURE SOMMEIL
+- Transit lent → CURE INTESTIN
+- Femme 45-60 ans + symptômes hormonaux → CURE MÉNOPAUSE
+- Homme + fatigue + baisse motivation → CURE HOMME+
+
+DONNÉES DES CURES:
+${DATA_CURES}
+
+INSTRUCTIONS:
+Génère un JSON avec 7 blocs de texte séparés par "===BLOCK===":
+
+{"type":"resultat","text":"[BLOC1]===BLOCK===[BLOC2]===BLOCK===[BLOC3]===BLOCK===[BLOC4]===BLOCK===[BLOC5]===BLOCK===[BLOC6]===BLOCK===[BLOC7]","meta":{"mode":"A"}}
+
+BLOC 1: Salutation personnalisée + résumé des symptômes (2-3 phrases)
+BLOC 2: Analyse des besoins en % (thyroïde, énergie, système nerveux, transit, peau)
+BLOC 3: Cure principale recommandée avec URL EXACTE, composition et objectifs J+14/J+90
+BLOC 4: Cure de soutien si pertinent
+BLOC 5: Contre-indications à vérifier
+BLOC 6: Proposition de RDV: https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
+BLOC 7: Disclaimer (compléments ≠ médicaments)
+
+IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
+
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { 
+            'Authorization': 'Bearer ' + KEY, 
+            'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [
+              { role: 'system', content: prompt }
+            ],
+            response_format: { type: 'json_object' },
+            temperature: 0.3,
+            max_tokens: 4000
+          })
+        });
+        
+        if (!response.ok) {
+          return res.status(500).json({ error: 'OpenAI error' });
+        }
+        
+        let reply;
+        try {
+          const data = await response.json();
+          reply = JSON.parse(data.choices?.[0]?.message?.content || '{}');
+        } catch {
+          reply = { type: 'resultat', text: 'Erreur lors de la génération des résultats.', meta: { mode: 'A' } };
+        }
+        
+        return res.status(200).json({ reply, conversationId, mode: 'A' });
       }
 
-      return res.status(200).json({ reply, conversationId, mode: "QUIZ" });
+      // Question suivante du quiz
+      return res.status(200).json({
+        reply: buildQuestion(next, state.answers),
+        conversationId,
+        mode: 'A'
+      });
     }
 
-    // Sinon -> prochaine question
+    // ═══════════════════════════════════════════════════════════════════
+    // HORS QUIZ - Message simple
+    // ═══════════════════════════════════════════════════════════════════
     return res.status(200).json({
-      reply: buildQuestion(next, state.answers),
+      reply: {
+        type: 'reponse',
+        text: "Bonjour ! Je suis THYREN, votre assistant SUPLEMINT. Pour trouver la cure idéale pour vous, tapez 'quiz' ou 'trouver ma cure'.",
+        meta: { mode: 'B', progress: { enabled: false } }
+      },
       conversationId,
-      mode: "QUIZ"
+      mode: 'B'
     });
 
   } catch (err) {
-    console.error("❌", err);
-    return res.status(500).json({ error: "Server error" });
+    console.error('❌ Erreur:', err);
+    return res.status(500).json({ error: 'Server error' });
   }
 }
