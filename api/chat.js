@@ -2156,15 +2156,22 @@ export default async function handler(req, res) {
       // FIN DU QUIZ - Générer les résultats
       // ═══════════════════════════════════════════════════════════════════
       if (next >= QUIZ.length) {
-        const today = new Date();
-        const fmt = d => d.getDate().toString().padStart(2,'0') + '/' + (d.getMonth()+1).toString().padStart(2,'0') + '/' + d.getFullYear();
-        const j14 = fmt(new Date(today.getTime() + 14 * 86400000));
-        const j90 = fmt(new Date(today.getTime() + 90 * 86400000));
-        const a = state.answers;
-        
-        const prompt = `Tu es Dr THYREN, expert en micronutrition chez SUPLEMINT.
+  const today = new Date();
+  const fmt = d =>
+    d.getDate().toString().padStart(2, '0') +
+    '/' +
+    (d.getMonth() + 1).toString().padStart(2, '0') +
+    '/' +
+    d.getFullYear();
 
-RÈGLES ABSOLUES (OBLIGATOIRES) :
+  const j14 = fmt(new Date(today.getTime() + 14 * 86400000));
+  const j90 = fmt(new Date(today.getTime() + 90 * 86400000));
+  const a = state.answers;
+
+  const systemMsg = `Tu es Dr THYREN, expert en micronutrition chez SUPLEMINT.
+Tu suis STRICTEMENT les instructions de format. Tu ne fabriques aucune information.`;
+
+  const userMsg = `RÈGLES ABSOLUES (OBLIGATOIRES) :
 1) N'invente AUCUNE information. Tout doit provenir des DONNÉES fournies (CURES + COMPOSITIONS).
 2) Si une info n'existe pas dans les DONNÉES → écrire exactement : INFORMATION_MANQUANTE.
 3) La sortie DOIT être un JSON valide, et rien d'autre.
@@ -2181,16 +2188,16 @@ PROFIL UTILISATEUR :
 - Plainte principale: ${a.plainte || ""}
 
 SYMPTÔMES (quiz) :
-- Énergie: ${a.energie || ""}
-- Poids: ${a.poids || ""}
-- Froid: ${a.froid || ""}
-- Humeur: ${a.humeur || ""}
-- Sommeil: ${a.sommeil || ""}
-- Peau/cheveux: ${a.peau || ""}
-- Transit: ${a.transit || ""}
-- Gonflement: ${a.gonflement || ""}
-- Concentration: ${a.concentration || ""}
-- Libido: ${a.libido || ""}
+- Énergie: ${a.energie || ""} ${a.energie_detail || ""}
+- Poids: ${a.poids || ""} ${a.poids_detail || ""}
+- Froid: ${a.froid || ""} ${a.froid_detail || ""}
+- Humeur: ${a.humeur || ""} ${a.humeur_detail || ""}
+- Sommeil: ${a.sommeil || ""} ${a.sommeil_detail || ""}
+- Peau/cheveux: ${a.peau || ""} ${a.peau_detail || ""}
+- Transit: ${a.transit || ""} ${a.transit_detail || ""}
+- Gonflement: ${a.gonflement || ""} ${a.gonflement_detail || ""}
+- Concentration: ${a.concentration || ""} ${a.concentration_detail || ""}
+- Libido: ${a.libido || ""} ${a.libido_detail || ""}
 
 DATES IMPORTANTES :
 - J+14: ${j14}
@@ -2220,141 +2227,42 @@ ${DATA_COMPOSITIONS || ""}
 SORTIE ATTENDUE — JSON FINAL OBLIGATOIRE :
 {"type":"resultat","text":"[BLOC1]===BLOCK===[BLOC2]===BLOCK===[BLOC3]===BLOCK===[BLOC4]===BLOCK===[BLOC5]===BLOCK===[BLOC6]===BLOCK===[BLOC7]===BLOCK===[BLOC8]","meta":{"mode":"A"}}
 
-7.3.2 STRUCTURE OBLIGATOIRE DES 8 BLOCS DANS text (sans titres "Bloc" visibles) :
+IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte !
 
-BLOC 1 — Résumé clinique hypothyroïde (VERSION CONCISE - APPROCHE DOCTEUR 2.1)
-- 2-3 phrases MAXIMUM.
-- DOIT commencer par une phrase d'empathie/validation.
-- Relier les réponses clés à la physiopathologie thyroïdienne.
-- Nommer et expliquer en 1 phrase : "hypothyroïdie fonctionnelle" (sans diagnostic).
-- Relier chaque symptôme majeur à un mécanisme thyroïdien (1 phrase max).
-- Terminer par une phrase orientée solution micronutritionnelle.
+(Ensuite, applique STRICTEMENT toute la section 7.3.2 + format 5.6 déjà défini dans ce prompt.)`;
 
-BLOC 2 — Lecture des besoins fonctionnels (quiz thyroïde)
-- Le Bloc 2 commence obligatoirement par ces 2 phrases EXACTES (sans modification) :
-« Ces pourcentages indiquent le degré de soutien dont ton corps a besoin sur chaque fonction.
-Plus le pourcentage est élevé, plus le besoin est important (ce n'est pas un niveau "normal"). »
-- Puis exactement 5 lignes, dans cet ordre, format strict :
-Énergie cellulaire : NN % → 1 phrase max avec mécanisme (ATP, mitochondries, CoQ10)
-Régulation du stress : NN % → 1 phrase max avec mécanisme (axe HHS, cortisol, surrénales)
-Sommeil et récupération : NN % → 1 phrase max avec mécanisme (mélatonine, GABA, récupération nocturne)
-Confort digestif : NN % → 1 phrase max avec mécanisme (transit, enzymes, microbiote)
-Équilibre hormonal : NN % → 1 phrase max avec mécanisme (conversion T4→T3, sensibilité hormonale)
-- Les % doivent être basés uniquement sur les signes cliniques rapportés.
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + KEY,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemMsg },
+        { role: 'user', content: userMsg }
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.3,
+      max_tokens: 4000
+    })
+  });
 
-BLOC 3 — Cure essentielle
-- Présenter la cure prioritaire la plus pertinente.
-- Respecter FORMAT 5.6 (14 lignes) EXACT ci-dessous.
-- Compatibilité = la plus élevée des 3 cures.
-- Rôle : pilier central prioritaire.
-- Ligne 5 et 6 obligatoires avant bénéfices.
-- Ligne 9 doit pousser à l'achat + date JJ/MM/AAAA (utiliser J+14 comme date minimum).
-- Compter 14 lignes, sinon recommencer.
+  if (!response.ok) {
+    return res.status(500).json({ error: 'OpenAI error' });
+  }
 
-BLOC 4 — Cure de soutien
-- Deuxième cure, complète sans remplacer.
-- FORMAT 5.6 (14 lignes) IDENTIQUE.
-- Compatibilité <= cure essentielle.
-- Expliquer comment elle renforce l'action de la cure essentielle (ligne 6).
-- Pas de redondance directe.
+  let reply;
+  try {
+    const data = await response.json();
+    reply = JSON.parse(data.choices?.[0]?.message?.content || '{}');
+  } catch {
+    reply = { type: 'resultat', text: 'Erreur lors de la génération des résultats.', meta: { mode: 'A' } };
+  }
 
-BLOC 5 — Cure de confort
-- Troisième cure, facultative.
-- FORMAT 5.6 (14 lignes) IDENTIQUE.
-- Compatibilité = la plus faible.
-- Ton : optionnel, complémentaire.
-
-BLOC 6 — Contre-indications
-- Vérifier si allergie/contre-indication explicitement signalée.
-- Si aucune contre-indication : écrire une chaîne vide "" (bloc vide).
-- Si une cure pertinente est incompatible : afficher UNIQUEMENT ce message EXACT, sans ajout :
-« Cette cure serait pertinente sur le plan fonctionnel, mais elle contient un ingrédient
-incompatible avec les informations que vous avez indiquées. Je ne peux donc pas la recommander
-sans avis médical. »
-
-BLOC 7 — Échange avec une nutritionniste
-Texte EXACT à fournir :
-Nos nutritionnistes sont disponibles pour échanger avec vous et vous aider
-à affiner votre choix de cures en fonction de votre situation.
-
-La consultation est gratuite, par téléphone ou en visio, selon votre préférence.
-Vous pouvez réserver un créneau à votre convenance via notre agenda en ligne.
-
-[Prendre rendez-vous avec une nutritionniste](https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252)
-
-BLOC 8 — Mention légale (texte EXACT) :
-« Ce test est un outil de bien-être et d'éducation à la santé.
-Il ne remplace pas un avis médical.
-En cas de doute ou de symptômes persistants, consultez un professionnel de santé. »
-
-FORMAT 5.6 — PRÉSENTATION D’UNE CURE (14 LIGNES EXACTES) :
-LIGNE 1 : URL image directe (.jpg/.png/.webp) depuis DONNÉES (sinon INFORMATION_MANQUANTE)
-LIGNE 2 : Nom de la cure (texte normal)
-LIGNE 3 : Compatibilité : XX %
-LIGNE 4 : (ligne vide)
-LIGNE 5 : Pourquoi cette cure te correspond :
-LIGNE 6 : 2-3 phrases MAXIMUM, contenant :
-  - 1 phrase symptômes (précis)
-  - minimum 3 ingrédients en GRAS (issus des gélules de la cure via COMPOSITIONS)
-  - lien symptôme → ingrédient → effet
-LIGNE 7 : (ligne vide)
-LIGNE 8 : Bénéfices fonctionnels attendus :
-LIGNE 9 : 2-3 phrases MAXIMUM contenant :
-  - effets 2 premières semaines
-  - effets après 2-3 mois
-  - phrase EXACTE : "Premiers effets dès le ${j14} si tu commandes aujourd'hui."
-LIGNE 10 : (ligne vide)
-LIGNE 11 : Conseils de prise (posologie) :
-LIGNE 12 : 3 sous-lignes EXACTES :
-– Durée recommandée : 3 à 6 mois.
-– Moment de prise : [reprendre EXACTEMENT le moment depuis DONNÉES DES CURES].
-– Composition : [1× X / 1× Y / 3× Z, lister TOUS les items de la cure].
-LIGNE 13 : (ligne vide)
-LIGNE 14 : CTAs SUR UNE SEULE LIGNE, format EXACT :
-[Commander ma cure](checkout:ID) [Ajouter au panier](addtocart:ID) [En savoir plus](URL)
-→ checkout:ID / addtocart:ID / URL doivent venir des DONNÉES, sinon INFORMATION_MANQUANTE.
-
-IMPORTANT :
-- Compte tes lignes pour chaque cure : exactement 14 lignes, pas 13, pas 15.
-- Aucun texte après la ligne 14.
-- Aucun CTA sur plusieurs lignes.
-- Aucun markdown autre que les 3 liens CTA de la ligne 14 et le lien RDV du Bloc 7.`;
+  return res.status(200).json({ reply, conversationId, mode: 'A' });
 }
-
-IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
-
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: { 
-            'Authorization': 'Bearer ' + KEY, 
-            'Content-Type': 'application/json' 
-          },
-          body: JSON.stringify({
-            model: 'gpt-4o-mini',
-            messages: [
-              { role: 'system', content: prompt }
-            ],
-            response_format: { type: 'json_object' },
-            temperature: 0.3,
-            max_tokens: 4000
-          })
-        });
-        
-        if (!response.ok) {
-          return res.status(500).json({ error: 'OpenAI error' });
-        }
-        
-        let reply;
-        try {
-          const data = await response.json();
-          reply = JSON.parse(data.choices?.[0]?.message?.content || '{}');
-        } catch {
-          reply = { type: 'resultat', text: 'Erreur lors de la génération des résultats.', meta: { mode: 'A' } };
-        }
-        
-        return res.status(200).json({ reply, conversationId, mode: 'A' });
-      }
-
       // Question suivante du quiz
       return res.status(200).json({
         reply: buildQuestion(next, state.answers),
