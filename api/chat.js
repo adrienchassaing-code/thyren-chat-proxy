@@ -1742,35 +1742,80 @@ function parseGelules() {
 function parseCures() {
   const cures = [];
   const lines = DATA_CURES.split('\n');
+
   let current = null;
   let inComp = false;
+  let inContra = false;
+
   for (const line of lines) {
     const t = line.trim();
+
+    // Nouveau bloc cure
     const m = t.match(/^CURE\s+\d+\s*:\s*CURE\s+(.+)$/i);
     if (m) {
       if (current) cures.push(current);
-      current = { name: 'CURE ' + m[1].trim(), composition: [], contraindications: [], url: '' };
+      current = {
+        name: 'CURE ' + m[1].trim(),
+        composition: [],
+        contraindications: [],
+        url: ''
+      };
       inComp = false;
+      inContra = false;
+      continue;
     }
-    if (current && t.includes('suplemint.com/products/')) {
+
+    if (!current) continue;
+
+    // URL
+    if (t.includes('suplemint.com/products/')) {
       const u = t.match(/(https?:\/\/[^\s]+)/);
       if (u) current.url = u[1];
     }
-    if (t.toLowerCase().includes('composition')) inComp = true;
-    if (current && inComp && t.match(/•\s*\d*x?\s*[A-Z]/)) {
-      const g = t.match(/•\s*(\d*)x?\s*([A-Z0-9_+]+)/i);
-      if (g) current.composition.push({ name: g[2].trim(), nameNorm: normalize(g[2].trim()), qty: parseInt(g[1]) || 1 });
+
+    // Début/fin composition
+    if (/^Composition journali[èe]re\s*:/i.test(t)) {
+      inComp = true;
+      inContra = false;
+      continue;
     }
-    if (current && t.toLowerCase().includes('contre-indic')) {
+    if (/^Contre-?indications\s*:/i.test(t)) {
+      inContra = true;
       inComp = false;
-      const p = t.split(':')[1];
-      if (p) current.contraindications = p.split(/[,;]/).map(c => c.trim().toLowerCase()).filter(c => c.length > 2);
+      continue;
     }
-    if (t === '' || t.match(/^-+$/)) inComp = false;
+
+    // Lire composition (ex: • 1x MAGNESIUM_PLUS)
+    if (inComp) {
+      const g = t.match(/^•\s*(\d+)\s*x?\s*([A-Z0-9_+]+)\s*$/i);
+      if (g) {
+        current.composition.push({
+          name: g[2].trim(),
+          nameNorm: normalize(g[2].trim()),
+          qty: parseInt(g[1], 10) || 1
+        });
+        continue;
+      }
+      // stop si on sort du bloc bullets
+      if (t === '' || /^[A-Z]/.test(t)) inComp = false;
+    }
+
+    // Lire contre-indications multi-lignes (❌ / ⚠️)
+    if (inContra) {
+      const c = t.replace(/^[❌⚠️]\s*/u, '').trim();
+      if (c.length >= 3 && (t.startsWith('❌') || t.startsWith('⚠️'))) {
+        current.contraindications.push(normalize(c));
+        continue;
+      }
+      // stop si on quitte le bloc
+      if (t === '' || t.startsWith('Notes') || t.startsWith('---')) inContra = false;
+    }
   }
+
   if (current) cures.push(current);
   return cures;
 }
+
 
 let _gel = null, _cur = null;
 function getGelules() { if (!_gel) _gel = parseGelules(); return _gel; }
