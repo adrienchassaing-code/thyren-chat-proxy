@@ -1860,28 +1860,129 @@ function findCompatibleCures(conditions) {
 // ============================================================================
 
 const QUIZ = [
-  { text: "Parfait, trouvons ensemble la cure idéale. Quel est votre prénom ?", type: "open", key: "prenom" },
-  { text: "Bonjour {prenom}, votre sexe biologique ?", type: "choice", choices: ["Femme", "Homme"], key: "sexe" },
-  { text: "Êtes-vous enceinte ou allaitante ?", type: "choice", choices: ["Oui", "Non"], key: "enceinte", cond: a => a.sexe === "Femme" },
-  { text: "Votre âge ?", type: "choice", choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"], key: "age" },
-  { text: "Concernant votre cycle hormonal ?", type: "choice", choices: ["Ménopausée", "Symptômes préménopause", "Pas de symptômes"], key: "menopause", cond: a => a.sexe === "Femme" && (a.age === "45-60 ans" || a.age === "Plus de 60 ans") },
-  { text: "Condition médicale, allergie ou traitement ?", type: "choice", choices: ["Tout va bien", "Oui, à signaler"], key: "condition" },
-  { text: "Précisez votre condition.", type: "open", key: "condition_detail", cond: a => a.condition !== "Tout va bien" },
-  { text: "{prenom}, qu'est-ce qui vous pèse au quotidien ?", type: "open", key: "plainte" },
-  { text: "Depuis combien de temps ?", type: "choice", choices: ["< 1 mois", "1-6 mois", "6-12 mois", "> 1 an"], key: "duree" },
-  { text: "Impact sur votre quotidien ?", type: "choice", choices: ["Léger", "Modéré", "Important", "Sévère"], key: "impact" },
-  { text: "Niveau d'énergie ?", type: "choice", choices: ["Bonne", "Fatigue légère", "Fatigue constante"], key: "energie" },
-  { text: "Prise de poids inexpliquée ?", type: "choice", choices: ["Non", "Légère", "Importante"], key: "poids" },
-  { text: "Sensibilité au froid ?", type: "choice", choices: ["Non", "Parfois", "Souvent"], key: "froid" },
-  { text: "Votre humeur ?", type: "choice", choices: ["Stable", "Fluctuante", "Moral bas"], key: "humeur" },
-  { text: "Sommeil réparateur ?", type: "choice", choices: ["Oui", "Parfois léger", "Difficultés"], key: "sommeil" },
-  { text: "Changements peau/cheveux ?", type: "choice", choices: ["Non", "Un peu secs", "Très secs"], key: "peau" },
-  { text: "Transit intestinal ?", type: "choice", choices: ["Régulier", "Parfois lent", "Constipation"], key: "transit" },
-  { text: "Gonflement visage/mains le matin ?", type: "choice", choices: ["Non", "Parfois", "Oui"], key: "gonflement" },
-  { text: "Difficultés de concentration ?", type: "choice", choices: ["Non", "Légères", "Brouillard mental"], key: "concentration" },
-  { text: "Changement de libido ?", type: "choice", choices: ["Aucun", "Variable", "Très basse"], key: "libido" },
-  { text: "Merci {prenom}. Votre email pour les résultats ?", type: "open", key: "email" }
+  {
+    text: "Parfait, trouvons ensemble la cure idéale. Quel est votre prénom ?",
+    type: "open",
+    key: "prenom"
+  },
+  {
+    text: "Merci {prenom}. Quel est votre âge ?",
+    type: "choice",
+    choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"],
+    key: "age"
+  },
+  {
+    text: "Le fonctionnement hormonal et thyroïdien diffère selon le sexe biologique. Quel est le vôtre ?",
+    type: "choice",
+    choices: ["Femme", "Homme"],
+    key: "sexe"
+  },
+  {
+    text: "Êtes-vous enceinte ou allaitante ?",
+    type: "choice",
+    choices: ["Oui", "Non"],
+    key: "enceinte",
+    cond: a => a.sexe === "Femme"
+  },
+  {
+    text: "Concernant votre cycle hormonal, où en êtes-vous actuellement ?",
+    type: "choice",
+    choices: ["Ménopausée", "Symptômes préménopause", "Pas de symptômes"],
+    key: "menopause",
+    cond: a =>
+      a.sexe === "Femme" &&
+      (a.age === "45-60 ans" || a.age === "Plus de 60 ans")
+  },
+  {
+    text: "Avez-vous une condition médicale, une allergie ou un traitement à signaler ?",
+    type: "choice",
+    choices: ["Tout va bien", "Oui, à signaler"],
+    key: "condition"
+  },
+  {
+    text: "Merci de préciser votre condition afin de vérifier les contre-indications.",
+    type: "open",
+    key: "condition_detail",
+    cond: a => a.condition !== "Tout va bien"
+  },
+  {
+    text: "{prenom}, qu’est-ce qui vous pèse le plus au quotidien en ce moment ?",
+    type: "open",
+    key: "plainte"
+  },
+  {
+  text: "Merci {prenom}. J’ai bien noté ce que vous avez décrit : « {plainte} ». Je l’intègre à mon analyse.\n\nContinuons. Comment décririez-vous votre niveau d’énergie ?",
+  type: "choice",
+  choices: ["Bonne", "Fatigue légère", "Fatigue constante"],
+  key: "energie"
+  },
+  {
+    text: "Comment décririez-vous votre niveau d’énergie ?",
+    type: "choice",
+    choices: ["Bonne", "Fatigue légère", "Fatigue constante"],
+    key: "energie"
+  },
+  {
+    text: "Avez-vous constaté une prise de poids sans changement alimentaire ?",
+    type: "choice",
+    choices: ["Non", "Légère", "Importante"],
+    key: "poids"
+  },
+  {
+    text: "Êtes-vous sensible au froid (mains ou pieds froids) ?",
+    type: "choice",
+    choices: ["Non", "Parfois", "Souvent"],
+    key: "froid"
+  },
+  {
+    text: "Comment décririez-vous votre humeur ces derniers temps ?",
+    type: "choice",
+    choices: ["Stable", "Fluctuante", "Moral bas"],
+    key: "humeur"
+  },
+  {
+    text: "Votre sommeil est-il réparateur ?",
+    type: "choice",
+    choices: ["Oui", "Parfois léger", "Difficultés"],
+    key: "sommeil"
+  },
+  {
+    text: "Avez-vous remarqué des changements au niveau de la peau ou des cheveux ?",
+    type: "choice",
+    choices: ["Non", "Un peu secs", "Très secs"],
+    key: "peau"
+  },
+  {
+    text: "Comment est votre transit intestinal ?",
+    type: "choice",
+    choices: ["Régulier", "Parfois lent", "Constipation"],
+    key: "transit"
+  },
+  {
+    text: "Avez-vous des gonflements du visage ou des mains le matin ?",
+    type: "choice",
+    choices: ["Non", "Parfois", "Oui"],
+    key: "gonflement"
+  },
+  {
+    text: "Avez-vous des difficultés de concentration ?",
+    type: "choice",
+    choices: ["Non", "Légères", "Brouillard mental"],
+    key: "concentration"
+  },
+  {
+    text: "Avez-vous constaté un changement de libido ?",
+    type: "choice",
+    choices: ["Aucun", "Variable", "Très basse"],
+    key: "libido"
+  },
+  {
+    text: "Merci {prenom}. Quelle est votre adresse e-mail pour recevoir vos résultats personnalisés ?",
+    type: "open",
+    key: "email"
+  }
 ];
+
 
 function getQuizState(messages) {
   let step = -1, answers = {};
