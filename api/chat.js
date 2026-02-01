@@ -2231,14 +2231,15 @@ DONNÉES DES CURES:
 ${DATA_CURES}
 
 INSTRUCTIONS:
-Génère un JSON avec 4 blocs de texte séparés par "===BLOCK===":
+Génère un JSON avec 5 blocs de texte séparés par "===BLOCK===":
 
-{"type":"resultat","text":"[BLOC1]===BLOCK===[BLOC2]===BLOCK===[BLOC3]===BLOCK===[BLOC4]","meta":{"mode":"A"}}
+{"type":"resultat","text":"[BLOC1]===BLOCK===[BLOC2]===BLOCK===[BLOC3]===BLOCK===[BLOC4]===BLOCK===[BLOC5]","meta":{"mode":"A"}}
 
 BLOC 1: Salutation personnalisée + résumé des symptômes (2-3 phrases)
 BLOC 2: Cure principale recommandée avec URL EXACTE, composition et objectifs J+14/J+90
 BLOC 3: Cure de soutien si pertinent
 BLOC 4: Proposition de RDV: https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
+BLOC 5: Avez vous d'autre question ?
 
 IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
 
@@ -2249,7 +2250,7 @@ IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "gpt-4o-mini",
+            model: "gpt-5-mini",
             messages: [{ role: "system", content: prompt }],
             response_format: { type: "json_object" },
             temperature: 0.3,
