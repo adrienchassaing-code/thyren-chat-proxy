@@ -1910,7 +1910,7 @@ const QUIZ = [
     cond: a => a.condition !== "Tout va bien"
   },
   {
-    text: "{prenom}, qu’est-ce qui vous pèse le plus au quotidien en ce moment ?",
+    text: "Merci {prenom}, c'est noté, qu’est-ce qui vous pèse le plus au quotidien en ce moment ?",
     type: "open",
     key: "plainte"
   },
