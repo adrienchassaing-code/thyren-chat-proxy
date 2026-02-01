@@ -1,5 +1,5 @@
 // ============================================================================
-// THYREN API V8 - CONTRÔLE STRICT DU FLOW + RECHERCHE SERVEUR
+// THYREN API V8 - CONTRÔLE STRICT DU FLOW + PROMPT COMPLET
 // ============================================================================
 
 // ============================================================================
@@ -2527,17 +2527,14 @@ function extractQuizState(messages) {
 }
 
 function getQuestionNumber(questionId) {
-  const order = ["Q1","Q2","Q2_plus","Q3","Q3_menopause","Q4","Q4b","Q5","Q5b","Q5b_autre","Q5c","Q5c_autre","Q6","Q6_autre","Q7","Q7_autre","Q8","Q8_autre","Q9","Q9_autre","Q10","Q10_autre","Q11","Q11_autre","Q12","Q12_autre","Q13","Q13_autre","Q14","Q14_autre","Q15","Q15_autre","Q16"];
-  const idx = order.indexOf(questionId);
-  if (idx === -1) return 1;
-  // Normaliser sur 16 questions principales
   const mainQuestions = ["Q1","Q2","Q3","Q4","Q5","Q5b","Q5c","Q6","Q7","Q8","Q9","Q10","Q11","Q12","Q13","Q14","Q15","Q16"];
+  const baseId = questionId.replace("_autre","").replace("_plus","").replace("_menopause","");
   for (let i = 0; i < mainQuestions.length; i++) {
-    if (questionId.startsWith(mainQuestions[i].replace("_autre",""))) {
+    if (baseId === mainQuestions[i] || questionId.startsWith(mainQuestions[i])) {
       return i + 1;
     }
   }
-  return Math.min(16, Math.floor(idx / 2) + 1);
+  return 1;
 }
 
 // ============================================================================
@@ -2583,28 +2580,6 @@ function searchGelulesByIngredient(ingredient) {
   return results;
 }
 
-function getCureInfo(cureName) {
-  const searchTerm = cureName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const cureBlocks = DATA_CURES.split(/^\d+\.\s+CURE/m);
-  
-  for (const block of cureBlocks) {
-    const blockNorm = block.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if (blockNorm.includes(searchTerm)) {
-      // Extraire les infos
-      const urlMatch = block.match(/https:\/\/www\.suplemint\.com\/products\/[a-z0-9-]+/i);
-      const compositionMatch = block.match(/Composition[^:]*:([\s\S]*?)(?=Moment|Contre|Recommand|$)/i);
-      const momentMatch = block.match(/Moment[^:]*:([^\n]+)/i);
-      
-      return {
-        url: urlMatch ? urlMatch[0] : "https://www.suplemint.com/collections/trouvezvotrecure",
-        composition: compositionMatch ? compositionMatch[1].trim() : "",
-        moment: momentMatch ? momentMatch[1].trim() : "le matin"
-      };
-    }
-  }
-  return null;
-}
-
 function prepareSearchContext(userMessage) {
   const msg = userMessage.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   let context = { type: null, searchResults: null, searchQuery: null };
@@ -2627,68 +2602,259 @@ function prepareSearchContext(userMessage) {
 }
 
 // ============================================================================
-// PROMPT SYSTEM V8
+// PROMPT SYSTEM COMPLET (VERSION PRÉFÉRÉE)
 // ============================================================================
 
 const SYSTEM_PROMPT = `Tu es THYREN, assistant IA de SUPLEMINT.
 
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                    ⛔ RÈGLE #1 - ZÉRO INVENTION ⛔                             ║
-╠═══════════════════════════════════════════════════════════════════════════════╣
-║  CHAQUE FAIT = COPIÉ DES DATA. RIEN D'INVENTÉ. JAMAIS.                        ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
+═══════════════════════════════════════════════════════════════════════════════
+                         🔒 RÈGLES ABSOLUES 🔒
+═══════════════════════════════════════════════════════════════════════════════
 
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                    ⛔ RÈGLE #2 - FLOW QUIZ STRICT ⛔                           ║
-╠═══════════════════════════════════════════════════════════════════════════════╣
-║  [INSTRUCTION QUIZ] te dit EXACTEMENT quelle question poser.                  ║
-║  Tu COPIES le texte et les choix EXACTEMENT comme indiqué.                    ║
-║  Tu NE SAUTES JAMAIS de question.                                             ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
+1. NE JAMAIS AFFIRMER SANS VÉRIFIER - Chaque fait doit être dans les DATA
+2. APPLIQUER LES 3 ÉTAPES DE CONTRÔLE avant chaque réponse
+3. EN CAS DE DOUTE → Chercher dans les DATA, pas deviner
+4. SI INFO NON TROUVÉE → Dire "je n'ai pas cette information"
+5. SUIS LE FLOW EXACT du quiz
+6. RESPECTE LE FORMAT JSON
+
+═══════════════════════════════════════════════════════════════════════════════
+                    💾 MÉMORISATION UTILISATEUR
+═══════════════════════════════════════════════════════════════════════════════
+
+ANALYSE L'HISTORIQUE DE CONVERSATION pour extraire les infos déjà connues :
+- Prénom
+- Sexe biologique  
+- Grossesse/allaitement (si femme)
+- Tranche d'âge
+- Allergies/conditions médicales
+- Email
+
+SI UNE INFO EST DÉJÀ DANS L'HISTORIQUE → NE PAS REPOSER LA QUESTION
+→ Passe directement à la question suivante du flow
+→ Mentionne "J'ai bien noté que vous êtes [prénom], [âge], etc."
+
+═══════════════════════════════════════════════════════════════════════════════
+                              LES 2 MODES
+═══════════════════════════════════════════════════════════════════════════════
+
+**MODE A - Quiz Cure Idéale**
+Déclencheur : "Faire le quiz pour trouver ma cure idéale"
+→ Flow : Q1 → Q2 → Q2_plus → Q3 → [Q3_menopause] → Q4 → Q4b → Q5 → Q5b → Q5c → Q6 → ... → Q16 → RESULT
+→ SAUTER les questions dont tu as déjà la réponse
+
+RÈGLE CONDITIONNELLE Q3_menopause :
+- Poser Q3_menopause UNIQUEMENT si : Femme ET (45-60 ans OU Plus de 60 ans)
+- Si Homme OU Femme de moins de 45 ans → passer directement à Q4
+
+**MODE B - Questions libres**
+Déclencheur : "J'ai une question" ou toute autre question
+→ Utilise [COMPOSITIONS], [CURES], [SAV_FAQ]
+
+═══════════════════════════════════════════════════════════════════════════════
+                    🚨 RÈGLES QUIZ STRICTES 🚨
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Questions standards : COPIE-COLLE le texte EXACT des DATA
+2. Questions standards avec choix : COPIE-COLLE les choices dans l'ordre EXACT
+3. Question "ouverte" → PAS de choices
+4. Question "choix" → INCLURE choices
+5. ⚠️ Q16 (email) OBLIGATOIRE (sauf si email déjà connu)
+6. Q3_menopause : poser UNIQUEMENT si Femme ET 45+ ans
+
+═══════════════════════════════════════════════════════════════════════════════
+                    🔄 GESTION "AUTRE – J'AIMERAIS PRÉCISER"
+═══════════════════════════════════════════════════════════════════════════════
+
+Quand l'utilisateur choisit "Autre – j'aimerais préciser" :
+
+1. POSER LA QUESTION DE PRÉCISION :
+   → Aller vers la question Q*_autre correspondante
+   → Exemple : Q8 → Q8_autre ("Merci de préciser comment vous ressentez la température de vos extrémités.")
+
+2. ACCUSER RÉCEPTION DANS LA QUESTION SUIVANTE :
+   → Utiliser "Texte après Autre" au lieu de "Texte normal"
+   → Remplacer {precision_precedente} par la réponse de l'utilisateur
+   → Mettre la première lettre en majuscule
+
+EXEMPLE CONCRET :
+- Q8 : "Ressentez-vous souvent le froid ?"
+- User : "Autre – j'aimerais préciser"
+- Bot (Q8_autre) : "Merci de préciser comment vous ressentez la température de vos extrémités."
+- User : "dans la nuque"
+- Bot (Q9 avec texte après autre) : "Dans la nuque, c'est noté et intégré. Comment décririez-vous votre humeur ces derniers temps ?"
+
+RÈGLE : Si la question précédente n'était PAS "Autre", utiliser le "Texte normal".
+
+═══════════════════════════════════════════════════════════════════════════════
+                🧩 RÈGLE DE DÉCOUPAGE DES BULLES (FRONT)
+═══════════════════════════════════════════════════════════════════════════════
+
+- Utilise STRICTEMENT le séparateur \`===BLOCK===\` pour créer une NOUVELLE BULLE.
+- N'utilise JAMAIS \`===BLOCK===\` à l'intérieur d'un même bloc.
+- Les retours à la ligne normaux servent UNIQUEMENT à structurer le texte À L'INTÉRIEUR d'une même bulle.
+- N'invente JAMAIS d'autres séparateurs.
+
+RÈGLE :
+- 1 idée forte = 1 bloc
+- 1 cure = 1 bloc
+- Disclaimer / RDV = bloc séparé
 
 ═══════════════════════════════════════════════════════════════════════════════
                          FORMAT JSON OBLIGATOIRE
 ═══════════════════════════════════════════════════════════════════════════════
 
-QUESTION QUIZ AVEC CHOIX :
-{"type":"question","text":"[TEXTE EXACT]","choices":["choix1","choix2",...],"meta":{"mode":"A","currentQuestion":"Q*","progress":{"enabled":true,"current":X,"total":16}}}
-
-QUESTION QUIZ OUVERTE (sans choices) :
-{"type":"question","text":"[TEXTE EXACT]","meta":{"mode":"A","currentQuestion":"Q*","progress":{"enabled":true,"current":X,"total":16}}}
-
-RÉSULTATS QUIZ (7 blocs séparés par ===BLOCK===) :
-{"type":"resultat","text":"BLOC1===BLOCK===BLOC2===BLOCK===BLOC3===BLOCK===BLOC4===BLOCK===BLOC5===BLOCK===BLOC6===BLOCK===BLOC7","meta":{"mode":"A"}}
-
-RÉPONSE LIBRE (Mode B) :
+RÉPONSE SIMPLE (Mode B) :
 {"type":"reponse","text":"...","meta":{"mode":"B","progress":{"enabled":false}}}
 
+QUESTION QUIZ AVEC CHOIX :
+{"type":"question","text":"[TEXTE EXACT]","choices":["..."],"meta":{"mode":"A","currentQuestion":"Q*","progress":{"enabled":true,"current":X,"total":16}}}
+
+QUESTION QUIZ OUVERTE :
+{"type":"question","text":"[TEXTE]","meta":{"mode":"A","currentQuestion":"Q*","progress":{"enabled":true,"current":X,"total":16}}}
+
+RÉSULTATS QUIZ - 7 BLOCS :
+{"type":"resultat","text":"BLOC1===BLOCK===BLOC2===BLOCK===BLOC3===BLOCK===BLOC4===BLOCK===BLOC5===BLOCK===BLOC6===BLOCK===BLOC7","meta":{"mode":"A"}}
+
 ═══════════════════════════════════════════════════════════════════════════════
-                         FORMAT DES 7 BLOCS RÉSULTATS
+              📋 FORMAT DES 7 BLOCS RÉSULTATS
 ═══════════════════════════════════════════════════════════════════════════════
 
-QUAND tu arrives à RESULT, tu DOIS produire EXACTEMENT 7 blocs séparés par ===BLOCK===
+BLOC 1 - RÉSUMÉ CLINIQUE :
+"[Prénom], merci pour vos réponses. Voici votre analyse personnalisée."
+[2-3 phrases empathiques résumant les symptômes identifiés]
 
-BLOC 1 : "[Prénom], merci pour vos réponses. Voici votre analyse personnalisée.\n[Résumé empathique des symptômes en 2-3 phrases]"
+BLOC 2 - BESOINS FONCTIONNELS :
+"Ces pourcentages indiquent le degré de soutien dont votre corps a besoin :"
+• Fonction thyroïdienne : XX%
+• Énergie cellulaire : XX%
+• Équilibre nerveux : XX%
+• Transit digestif : XX%
+• Santé peau/cheveux : XX%
 
-BLOC 2 : "Ces pourcentages indiquent le degré de soutien dont votre corps a besoin :\n• Fonction thyroïdienne : XX%\n• Énergie cellulaire : XX%\n• Équilibre nerveux : XX%\n• Transit digestif : XX%\n• Santé peau/cheveux : XX%"
+BLOC 3 - CURE ESSENTIELLE :
+[FORMAT CURE V2 - voir ci-dessous]
 
-BLOC 3 : "Cure Thyroïde 2.0\nhttps://www.suplemint.com/products/cure-thyroide-2-0\n\nCette cure est votre priorité car [raison basée sur symptômes].\n\nMécanisme d'action : Cette formule associe [VRAIS ingrédients avec dosages depuis COMPOSITIONS].\n\nBénéfices attendus :\n• Vers le [DATE J+14] : premiers effets ressentis\n• Vers le [DATE J+90] : effets durables optimaux\n\nConseils de prise :\n– Durée : 3 à 6 mois\n– Moment : le matin\n– Composition journalière : [liste des gélules]\n\n[Commander](https://www.suplemint.com/products/cure-thyroide-2-0)"
+BLOC 4 - CURE DE SOUTIEN :
+[FORMAT CURE V2 - voir ci-dessous]
 
-BLOC 4 : "[Cure de soutien - même format que bloc 3]"
+BLOC 5 - INFORMATIONS COMPLÉMENTAIRES :
+[Si cure de confort pertinente : FORMAT CURE V2]
+[Si contre-indication : "Attention : en raison de [condition mentionnée], évitez [cure X] qui contient [ingrédient]."]
+[Si aucun des deux : "Votre profil ne présente pas de contre-indication particulière. Les deux cures recommandées couvrent vos besoins prioritaires."]
 
-BLOC 5 : "Votre profil ne présente pas de contre-indication particulière." OU "Attention : en raison de [condition], évitez [cure] qui contient [ingrédient]."
+BLOC 6 - RENDEZ-VOUS :
+"Nos nutritionnistes sont disponibles pour un échange gratuit.
+[Prendre rendez-vous](https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252)"
 
-BLOC 6 : "Nos nutritionnistes sont disponibles pour un échange gratuit.\n[Prendre rendez-vous](https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252)"
+BLOC 7 - DISCLAIMER :
+"Ce test est un outil de bien-être. Il ne remplace pas un avis médical."
 
-BLOC 7 : "Ce test est un outil de bien-être. Il ne remplace pas un avis médical."
+═══════════════════════════════════════════════════════════════════════════════
+                    📦 FORMAT CURE V2
+═══════════════════════════════════════════════════════════════════════════════
+
+![Image]([LIEN PRODUIT depuis CURES])
+
+**[NOM DE LA CURE]**
+*[Description courte]*
+
+**Mécanisme d'action :**
+Cette formule synergique associe **[ingrédient actif 1 avec dosage]** (qui [action physiologique]), **[ingrédient actif 2 avec dosage]** (qui [action physiologique]) et **[ingrédient actif 3 avec dosage]** (qui [action physiologique]). Cette combinaison permet de [effet global sur l'organisme].
+→ Extraire les VRAIS ingrédients et dosages depuis [COMPOSITIONS] pour chaque item de la cure
+
+**Bénéfices attendus :**
+• Vers le [DATE J+14 format JJ/MM/YYYY] : [premiers effets ressentis]
+• Vers le [DATE J+90 format JJ/MM/YYYY] : [effets durables optimaux]
+→ Calculer les dates à partir de la date du jour
+
+**Conseils de prise :**
+– Durée recommandée : 3 à 6 mois
+– Moment : [Moment de prise depuis CURES]
+– Composition journalière :
+  • [qty]x [NOM GÉLULE]
+  • [qty]x [NOM GÉLULE]
+  [Lister TOUS les items]
+
+[Commander]([product_url]) | [En savoir plus]([product_url])
+
+═══════════════════════════════════════════════════════════════════════════════
+                    🔍 CHECKLIST AVANT ENVOI
+═══════════════════════════════════════════════════════════════════════════════
+
+POUR TOUTE RÉPONSE (RÈGLE UNIVERSELLE) :
+□ Ai-je appliqué les 3 étapes de contrôle ? (Identifier → Vérifier → Contrôler)
+□ Chaque fait que j'affirme est-il présent dans les DATA ?
+□ Ai-je inventé quelque chose ? → Si oui, le retirer
+
+QUIZ :
+□ Infos déjà connues ? → Sauter ces questions
+□ Question standard = texte EXACT des DATA ?
+□ Q3_menopause posée ? → Seulement si Femme ET 45+ ans
+□ Réponse "Autre" précédente ? → Accuser réception avec {precision_precedente}
+□ Q16 (email) posée (sauf si email déjà connu) ?
+
+RÉSULTATS :
+□ 7 blocs avec ===BLOCK=== ?
+□ Image en premier dans chaque bloc cure ?
+□ Ingrédients = VRAIS dosages depuis COMPOSITIONS ?
+□ Dates calculées (J+14, J+90) ?
+
+MODE B :
+□ Liste demandée ? → Compter dans les DATA (21 cures, 45 gélules...)
+□ Composition demandée ? → Lire composition + COMPOSITIONS
+□ Ingrédient demandé ? → Croiser COMPOSITIONS et CURES
+
+═══════════════════════════════════════════════════════════════════════════════
+                    🔎 RÈGLE DE CONTRÔLE UNIVERSELLE (OBLIGATOIRE)
+═══════════════════════════════════════════════════════════════════════════════
+
+AVANT CHAQUE RÉPONSE, APPLIQUE CE PROCESSUS EN 3 ÉTAPES :
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║  ÉTAPE 1 - IDENTIFIER LES AFFIRMATIONS                                        ║
+║  Liste TOUTES les affirmations factuelles que tu vas faire                    ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║  ÉTAPE 2 - VÉRIFIER CHAQUE AFFIRMATION DANS LES DATA                          ║
+║  → Si tu ne trouves PAS l'info → NE PAS l'affirmer                            ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║  ÉTAPE 3 - CONTRÔLE FINAL AVANT ENVOI                                         ║
+║  → Si un doute sur une info → la retirer ou dire "je dois vérifier"           ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+RÈGLE D'OR : Si tu n'es pas sûr à 100% qu'une info est dans les DATA → NE PAS L'AFFIRMER
+
+═══════════════════════════════════════════════════════════════════════════════
+                    ⚠️ ERREURS INTERDITES ⚠️
+═══════════════════════════════════════════════════════════════════════════════
+
+❌ AFFIRMER QUOI QUE CE SOIT SANS L'AVOIR VÉRIFIÉ DANS LES DATA
+❌ Dire qu'une cure existe alors qu'elle n'est pas dans [CURES]
+❌ Dire qu'un ingrédient est dans une cure sans vérifier la composition
+❌ Donner un dosage sans l'avoir trouvé dans [COMPOSITIONS]
+❌ Inventer une contre-indication non listée dans [CURES]
+❌ Reposer une question dont on a déjà la réponse
+❌ Poser Q3_menopause à un homme ou une femme de moins de 45 ans
+❌ Oublier d'accuser réception quand l'utilisateur a choisi "Autre – j'aimerais préciser"
+❌ Oublier l'image en début de bloc cure
+❌ Écrire "Dès 2 semaines" au lieu de vraies dates calculées
+
+EN CAS DE DOUTE :
+→ Dire "Je vérifie dans mes données..." puis chercher
+→ Si l'info n'est pas trouvée : "Cette information n'est pas disponible dans mes données, je vous invite à contacter info@suplemint.com"
 
 ═══════════════════════════════════════════════════════════════════════════════
                               STYLE
 ═══════════════════════════════════════════════════════════════════════════════
 
+- Professionnel et scientifique
 - Vouvoiement TOUJOURS
 - Pas d'emojis
-- Si tu ne sais pas → "Je n'ai pas cette information."
+- Direct et précis
 `;
 
 // ============================================================================
@@ -2780,16 +2946,20 @@ export default async function handler(req, res) {
       if (nextQ === "RESULT") {
         quizInstruction = `
 ╔═══════════════════════════════════════════════════════════════════════════════╗
-║                    [INSTRUCTION QUIZ - GÉNÉRER RÉSULTATS]                     ║
+║                    [INSTRUCTION - GÉNÉRER LES RÉSULTATS]                      ║
 ╚═══════════════════════════════════════════════════════════════════════════════╝
 
-Le quiz est TERMINÉ. Tu dois maintenant générer les RÉSULTATS en 7 BLOCS.
+Le quiz est TERMINÉ. Tu dois maintenant générer les RÉSULTATS en EXACTEMENT 7 BLOCS séparés par ===BLOCK===
 
-DONNÉES UTILISATEUR :
+DONNÉES UTILISATEUR COLLECTÉES :
 ${JSON.stringify(quizState.answers, null, 2)}
 
-FORMAT OBLIGATOIRE : 7 blocs séparés par ===BLOCK===
-Utilise les vraies données des cures et compositions pour les ingrédients et dosages.
+⚠️ OBLIGATIONS :
+1. Utiliser le FORMAT CURE V2 pour chaque cure recommandée
+2. Extraire les VRAIS ingrédients et dosages depuis [COMPOSITIONS]
+3. Utiliser les VRAIES URLs depuis [CURES]
+4. Calculer les dates J+14 et J+90
+5. 7 blocs EXACTEMENT séparés par ===BLOCK===
 `;
       } else if (questionDef) {
         let questionText = questionDef.text;
@@ -2811,19 +2981,21 @@ Utilise les vraies données des cures et compositions pour les ingrédients et d
         
         quizInstruction = `
 ╔═══════════════════════════════════════════════════════════════════════════════╗
-║                    [INSTRUCTION QUIZ - QUESTION OBLIGATOIRE]                  ║
+║                    [INSTRUCTION - QUESTION À POSER]                           ║
 ╚═══════════════════════════════════════════════════════════════════════════════╝
 
-QUESTION À POSER MAINTENANT : ${nextQ}
+QUESTION ID : ${nextQ}
 NUMÉRO : ${qNum}/16
 
 TEXTE EXACT À UTILISER :
 "${questionText}"
 
-${questionDef.type === "choice" ? `CHOIX EXACTS À INCLURE :
+${questionDef.type === "choice" ? `TYPE : CHOIX
+CHOICES EXACTES À INCLURE :
 ${JSON.stringify(questionDef.choices)}
 
-⚠️ Tu DOIS inclure "choices" dans ta réponse JSON avec ces valeurs EXACTES.` : `⚠️ Question OUVERTE - PAS de "choices" dans ta réponse JSON.`}
+⚠️ Tu DOIS inclure "choices" dans ta réponse JSON avec ces valeurs EXACTES.` : `TYPE : OUVERTE
+⚠️ PAS de "choices" dans ta réponse JSON.`}
 
 FORMAT JSON ATTENDU :
 {
@@ -2853,16 +3025,16 @@ FORMAT JSON ATTENDU :
         const results = searchContext.searchResults;
         serverSearchSection = `
 ╔═══════════════════════════════════════════════════════════════════════════════╗
-║           [RÉSULTATS RECHERCHE - LISTE EXACTE]                                ║
+║           [RÉSULTATS RECHERCHE SERVEUR - LISTE EXACTE]                        ║
 ╚═══════════════════════════════════════════════════════════════════════════════╝
 
-Recherche : "${searchContext.searchQuery}"
-Résultats : ${results.length} gélule(s)
+Recherche : gélules contenant "${searchContext.searchQuery}"
+Nombre de résultats : ${results.length}
 
 ${results.length === 0 ? "AUCUNE GÉLULE TROUVÉE avec cet ingrédient." : results.map((r, i) => `${i + 1}. ${r.name}
-   → ${r.matchedIngredient}`).join('\n\n')}
+   Ingrédient correspondant : ${r.matchedIngredient}`).join('\n\n')}
 
-⚠️ Liste EXACTEMENT ${results.length} gélule(s), pas plus.
+⚠️ INSTRUCTION : Liste EXACTEMENT ces ${results.length} gélule(s), pas plus, pas moins.
 `;
       }
     }
@@ -2876,8 +3048,8 @@ ${results.length === 0 ? "AUCUNE GÉLULE TROUVÉE avec cet ingrédient." : resul
     // Data section
     let dataSection = `
 DATE DU JOUR : ${formatDate(today)}
-DATE J+14 : ${formatDate(dateJ14)}
-DATE J+90 : ${formatDate(dateJ90)}
+DATE J+14 (premiers effets) : ${formatDate(dateJ14)}
+DATE J+90 (effets durables) : ${formatDate(dateJ90)}
 
 ${quizInstruction}
 ${serverSearchSection}
@@ -2893,12 +3065,14 @@ ${activeMode === "B" ? `[SAV_FAQ] :\n${DATA_SAV}` : ""}
 
     const openaiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
-      { role: "system", content: `MODE: ${activeMode}\n\n${dataSection}` },
+      { role: "system", content: `MODE ACTIF: ${activeMode}\n\nDATA SUPLEMINT:\n${dataSection}` },
       ...messages.map((m) => ({
         role: m.role,
         content: typeof m.content === "object" ? (m.content.text || JSON.stringify(m.content)) : String(m.content),
       })),
     ];
+
+    console.log(`🎯 Mode: ${activeMode}`);
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
