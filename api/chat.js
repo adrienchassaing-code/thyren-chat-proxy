@@ -1,5 +1,5 @@
 // ============================================================================
-// THYREN V13 FINALE - QUIZ SERVEUR + RECHERCHE EXACTE
+// THYREN V15 - RÉSULTATS PROPRES
 // ============================================================================
 
 const DATA_COMPOSITIONS = `================================================================================
@@ -1710,11 +1710,7 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 ================================================================================
 `;
 
-console.log("✅ THYREN V13");
-
-// ============================================================================
-// PARSING
-// ============================================================================
+console.log("✅ THYREN V15");
 
 function normalize(str) {
   return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[®+\s_-]/g, '');
@@ -1763,7 +1759,7 @@ function parseCures() {
     if (t.toLowerCase().includes('composition')) inComp = true;
     if (current && inComp && t.match(/•\s*\d*x?\s*[A-Z]/)) {
       const g = t.match(/•\s*(\d*)x?\s*([A-Z0-9_+]+)/i);
-      if (g) current.composition.push({ name: g[2].trim(), nameNorm: normalize(g[2].trim()) });
+      if (g) current.composition.push({ name: g[2].trim(), nameNorm: normalize(g[2].trim()), qty: parseInt(g[1]) || 1 });
     }
     if (current && t.toLowerCase().includes('contre-indic')) {
       inComp = false;
@@ -1779,10 +1775,6 @@ function parseCures() {
 let _gel = null, _cur = null;
 function getGelules() { if (!_gel) _gel = parseGelules(); return _gel; }
 function getCures() { if (!_cur) _cur = parseCures(); return _cur; }
-
-// ============================================================================
-// RECHERCHE
-// ============================================================================
 
 function findGelulesWithIngredient(ingredient) {
   const term = normalize(ingredient);
@@ -1827,32 +1819,30 @@ function findCuresWithIngredient(ingredient) {
   return results;
 }
 
-function findContraindicatedCures(cond) {
-  const term = normalize(cond);
-  const terms = [term];
-  if (term.includes('diabet')) terms.push('diabete', 'glycemie');
-  if (term.includes('poisson')) terms.push('omega', 'krill', 'marin');
-  const results = [];
-  for (const cure of getCures()) {
-    const ct = cure.contraindications.join(' ');
-    if (terms.some(t => ct.includes(t))) results.push({ cure: cure.name, reason: cure.contraindications.find(c => terms.some(t => c.includes(t))) || cond });
-  }
-  return results;
-}
-
-function findCuresWithSeafood() {
-  const s = new Set();
-  for (const i of ['omega', 'krill', 'poisson']) for (const c of findCuresWithIngredient(i)) s.add(c.cure);
-  return Array.from(s);
-}
-
 function findCompatibleCures(conditions) {
   const excluded = new Set();
   for (const cond of conditions) {
-    for (const c of findContraindicatedCures(cond)) excluded.add(c.cure);
-    if (cond.includes('poisson') || cond.includes('omega')) for (const c of findCuresWithSeafood()) excluded.add(c);
+    const term = normalize(cond);
+    for (const cure of getCures()) {
+      if (cure.contraindications.some(c => c.includes(term))) excluded.add(cure.name);
+    }
+    if (cond.includes('poisson') || cond.includes('omega')) {
+      for (const i of ['omega', 'krill', 'poisson']) {
+        for (const c of findCuresWithIngredient(i)) excluded.add(c.cure);
+      }
+    }
   }
   return { compatible: getCures().filter(c => !excluded.has(c.name)).map(c => ({ cure: c.name, url: c.url })), excluded: Array.from(excluded) };
+}
+
+// Récupérer info d'une cure
+function getCureInfo(cureName) {
+  for (const cure of getCures()) {
+    if (cure.name.toLowerCase().includes(cureName.toLowerCase())) {
+      return cure;
+    }
+  }
+  return null;
 }
 
 // ============================================================================
@@ -1860,129 +1850,28 @@ function findCompatibleCures(conditions) {
 // ============================================================================
 
 const QUIZ = [
-  {
-    text: "Parfait, trouvons ensemble la cure idéale. Quel est votre prénom ?",
-    type: "open",
-    key: "prenom"
-  },
-  {
-    text: "Merci {prenom}. Quel est votre âge ?",
-    type: "choice",
-    choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"],
-    key: "age"
-  },
-  {
-    text: "Le fonctionnement hormonal et thyroïdien diffère selon le sexe biologique. Quel est le vôtre ?",
-    type: "choice",
-    choices: ["Femme", "Homme"],
-    key: "sexe"
-  },
-  {
-    text: "Êtes-vous enceinte ou allaitante ?",
-    type: "choice",
-    choices: ["Oui", "Non"],
-    key: "enceinte",
-    cond: a => a.sexe === "Femme"
-  },
-  {
-    text: "Concernant votre cycle hormonal, où en êtes-vous actuellement ?",
-    type: "choice",
-    choices: ["Ménopausée", "Symptômes préménopause", "Pas de symptômes"],
-    key: "menopause",
-    cond: a =>
-      a.sexe === "Femme" &&
-      (a.age === "45-60 ans" || a.age === "Plus de 60 ans")
-  },
-  {
-    text: "Avez-vous une condition médicale, une allergie ou un traitement à signaler ?",
-    type: "choice",
-    choices: ["Tout va bien", "Oui, à signaler"],
-    key: "condition"
-  },
-  {
-    text: "Merci de préciser votre condition afin de vérifier les contre-indications.",
-    type: "open",
-    key: "condition_detail",
-    cond: a => a.condition !== "Tout va bien"
-  },
-  {
-    text: "{prenom}, qu’est-ce qui vous pèse le plus au quotidien en ce moment ?",
-    type: "open",
-    key: "plainte"
-  },
-  {
-  text: "Merci {prenom}. J’ai bien noté ce que vous avez décrit : « {plainte} ». Je l’intègre à mon analyse.\n\nContinuons. Comment décririez-vous votre niveau d’énergie ?",
-  type: "choice",
-  choices: ["Bonne", "Fatigue légère", "Fatigue constante"],
-  key: "energie"
-  },
-  {
-    text: "Comment décririez-vous votre niveau d’énergie ?",
-    type: "choice",
-    choices: ["Bonne", "Fatigue légère", "Fatigue constante"],
-    key: "energie"
-  },
-  {
-    text: "Avez-vous constaté une prise de poids sans changement alimentaire ?",
-    type: "choice",
-    choices: ["Non", "Légère", "Importante"],
-    key: "poids"
-  },
-  {
-    text: "Êtes-vous sensible au froid (mains ou pieds froids) ?",
-    type: "choice",
-    choices: ["Non", "Parfois", "Souvent"],
-    key: "froid"
-  },
-  {
-    text: "Comment décririez-vous votre humeur ces derniers temps ?",
-    type: "choice",
-    choices: ["Stable", "Fluctuante", "Moral bas"],
-    key: "humeur"
-  },
-  {
-    text: "Votre sommeil est-il réparateur ?",
-    type: "choice",
-    choices: ["Oui", "Parfois léger", "Difficultés"],
-    key: "sommeil"
-  },
-  {
-    text: "Avez-vous remarqué des changements au niveau de la peau ou des cheveux ?",
-    type: "choice",
-    choices: ["Non", "Un peu secs", "Très secs"],
-    key: "peau"
-  },
-  {
-    text: "Comment est votre transit intestinal ?",
-    type: "choice",
-    choices: ["Régulier", "Parfois lent", "Constipation"],
-    key: "transit"
-  },
-  {
-    text: "Avez-vous des gonflements du visage ou des mains le matin ?",
-    type: "choice",
-    choices: ["Non", "Parfois", "Oui"],
-    key: "gonflement"
-  },
-  {
-    text: "Avez-vous des difficultés de concentration ?",
-    type: "choice",
-    choices: ["Non", "Légères", "Brouillard mental"],
-    key: "concentration"
-  },
-  {
-    text: "Avez-vous constaté un changement de libido ?",
-    type: "choice",
-    choices: ["Aucun", "Variable", "Très basse"],
-    key: "libido"
-  },
-  {
-    text: "Merci {prenom}. Quelle est votre adresse e-mail pour recevoir vos résultats personnalisés ?",
-    type: "open",
-    key: "email"
-  }
+  { text: "Parfait, trouvons ensemble la cure idéale. Quel est votre prénom ?", type: "open", key: "prenom" },
+  { text: "Bonjour {prenom}, votre sexe biologique ?", type: "choice", choices: ["Femme", "Homme"], key: "sexe" },
+  { text: "Êtes-vous enceinte ou allaitante ?", type: "choice", choices: ["Oui", "Non"], key: "enceinte", cond: a => a.sexe === "Femme" },
+  { text: "Votre âge ?", type: "choice", choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"], key: "age" },
+  { text: "Concernant votre cycle hormonal ?", type: "choice", choices: ["Ménopausée", "Symptômes préménopause", "Pas de symptômes"], key: "menopause", cond: a => a.sexe === "Femme" && (a.age === "45-60 ans" || a.age === "Plus de 60 ans") },
+  { text: "Condition médicale, allergie ou traitement ?", type: "choice", choices: ["Tout va bien", "Oui, à signaler"], key: "condition" },
+  { text: "Précisez votre condition.", type: "open", key: "condition_detail", cond: a => a.condition !== "Tout va bien" },
+  { text: "{prenom}, qu'est-ce qui vous pèse au quotidien ?", type: "open", key: "plainte" },
+  { text: "Depuis combien de temps ?", type: "choice", choices: ["< 1 mois", "1-6 mois", "6-12 mois", "> 1 an"], key: "duree" },
+  { text: "Impact sur votre quotidien ?", type: "choice", choices: ["Léger", "Modéré", "Important", "Sévère"], key: "impact" },
+  { text: "Niveau d'énergie ?", type: "choice", choices: ["Bonne", "Fatigue légère", "Fatigue constante"], key: "energie" },
+  { text: "Prise de poids inexpliquée ?", type: "choice", choices: ["Non", "Légère", "Importante"], key: "poids" },
+  { text: "Sensibilité au froid ?", type: "choice", choices: ["Non", "Parfois", "Souvent"], key: "froid" },
+  { text: "Votre humeur ?", type: "choice", choices: ["Stable", "Fluctuante", "Moral bas"], key: "humeur" },
+  { text: "Sommeil réparateur ?", type: "choice", choices: ["Oui", "Parfois léger", "Difficultés"], key: "sommeil" },
+  { text: "Changements peau/cheveux ?", type: "choice", choices: ["Non", "Un peu secs", "Très secs"], key: "peau" },
+  { text: "Transit intestinal ?", type: "choice", choices: ["Régulier", "Parfois lent", "Constipation"], key: "transit" },
+  { text: "Gonflement visage/mains le matin ?", type: "choice", choices: ["Non", "Parfois", "Oui"], key: "gonflement" },
+  { text: "Difficultés de concentration ?", type: "choice", choices: ["Non", "Légères", "Brouillard mental"], key: "concentration" },
+  { text: "Changement de libido ?", type: "choice", choices: ["Aucun", "Variable", "Très basse"], key: "libido" },
+  { text: "Merci {prenom}. Votre email pour les résultats ?", type: "open", key: "email" }
 ];
-
 
 function getQuizState(messages) {
   let step = -1, answers = {};
@@ -2040,21 +1929,96 @@ export default async function handler(req, res) {
       const state = getQuizState(messages);
       if (state.step >= 0 && QUIZ[state.step]) state.answers[QUIZ[state.step].key] = userText.trim();
       const next = state.step < 0 ? 0 : nextStep(state.step, state.answers);
-      console.log(`📋 Quiz: ${state.step}→${next}`);
+      console.log('📋 Quiz:', state.step, '→', next);
 
+      // RÉSULTATS
       if (next >= QUIZ.length) {
+        console.log('🎯 Generating results...');
         const today = new Date();
         const fmt = d => d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear();
-        const prompt = `Tu es Dr THYREN. Génère 7 BLOCS (===BLOCK===)
-UTILISATEUR: ${JSON.stringify(state.answers)}
-DATES: ${fmt(today)}, J+14=${fmt(new Date(today.getTime()+14*86400000))}, J+90=${fmt(new Date(today.getTime()+90*86400000))}
-B1:Analyse empathique B2:Besoins% B3:Cure principale(URL,ingrédients VRAIS,dates) B4:Cure soutien B5:Contre-indications B6:RDV(https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252) B7:Disclaimer
-JSON:{"type":"resultat","text":"B1===BLOCK===B2===BLOCK===...","meta":{"mode":"A"}}`;
-        const r = await fetch('https://api.openai.com/v1/chat/completions', { method: 'POST', headers: { Authorization: `Bearer ${KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'system', content: prompt }, { role: 'system', content: '[CURES]:\n'+DATA_CURES+'\n[COMPOSITIONS]:\n'+DATA_COMPOSITIONS }], response_format: { type: 'json_object' }, temperature: 0.3, max_tokens: 3500 }) });
-        if (!r.ok) return res.status(500).json({ error: 'OpenAI error' });
-        let reply; try { reply = JSON.parse((await r.json()).choices?.[0]?.message?.content || '{}'); } catch { reply = { type: 'resultat', text: 'Erreur.', meta: { mode: 'A' } }; }
+        const j14 = fmt(new Date(today.getTime()+14*86400000));
+        const j90 = fmt(new Date(today.getTime()+90*86400000));
+        const a = state.answers;
+        
+        // Construire le prompt avec EXEMPLE CONCRET du format attendu
+        const prompt = `Tu es Dr THYREN. Génère les résultats du quiz.
+
+RÉPONSES UTILISATEUR:
+- Prénom: ${a.prenom}
+- Sexe: ${a.sexe}
+- Âge: ${a.age}
+- Condition: ${a.condition} ${a.condition_detail || ''}
+- Plainte: ${a.plainte}
+- Durée: ${a.duree}
+- Impact: ${a.impact}
+- Énergie: ${a.energie}
+- Poids: ${a.poids}
+- Froid: ${a.froid}
+- Humeur: ${a.humeur}
+- Sommeil: ${a.sommeil}
+- Peau: ${a.peau}
+- Transit: ${a.transit}
+- Gonflement: ${a.gonflement}
+- Concentration: ${a.concentration}
+- Libido: ${a.libido}
+
+DATES: J+14 = ${j14}, J+90 = ${j90}
+
+LOGIQUE DE RECOMMANDATION:
+- Fatigue + froid + poids + moral bas → CURE THYROÏDE
+- Stress + humeur → CURE ZÉNITUDE  
+- Sommeil difficile → CURE SOMMEIL
+- Transit → CURE INTESTIN
+- Femme ménopause → CURE MÉNOPAUSE
+- Homme + libido → CURE HOMME+
+
+GÉNÈRE EXACTEMENT CE FORMAT JSON (remplace [...] par le contenu):
+
+{
+  "type": "resultat",
+  "text": "[PARAGRAPHE 1: Salutation + résumé empathique des symptômes en 2-3 phrases]===BLOCK===[PARAGRAPHE 2: Analyse besoins avec bullet points: Thyroïde XX%, Énergie XX%, etc.]===BLOCK===[PARAGRAPHE 3: CURE PRINCIPALE - nom, pourquoi elle convient, composition, ingrédients clés, bénéfices J+14 et J+90, lien Commander avec VRAIE URL]===BLOCK===[PARAGRAPHE 4: CURE DE SOUTIEN - même format]===BLOCK===[PARAGRAPHE 5: Contre-indications ou 'Aucune contre-indication particulière']===BLOCK===[PARAGRAPHE 6: RDV nutritionniste avec lien https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252]===BLOCK===[PARAGRAPHE 7: Disclaimer médical]",
+  "meta": {"mode": "A"}
+}
+
+IMPORTANT:
+- Utilise les VRAIES URLs depuis [CURES] (ex: https://www.suplemint.com/products/cure-thyroide)
+- Liste les VRAIS ingrédients depuis [COMPOSITIONS]
+- Sépare les 7 paragraphes UNIQUEMENT par ===BLOCK===
+- PAS de "B1", "B2", "BLOC 1" etc. dans le texte!`;
+
+        const r = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [
+              { role: 'system', content: prompt },
+              { role: 'user', content: '[CURES]:\n' + DATA_CURES + '\n\n[COMPOSITIONS]:\n' + DATA_COMPOSITIONS }
+            ],
+            response_format: { type: 'json_object' },
+            temperature: 0.3,
+            max_tokens: 4000
+          })
+        });
+        
+        if (!r.ok) {
+          console.error('❌ OpenAI error');
+          return res.status(500).json({ error: 'OpenAI error' });
+        }
+        
+        const data = await r.json();
+        let reply;
+        try {
+          reply = JSON.parse(data.choices?.[0]?.message?.content || '{}');
+        } catch (e) {
+          console.error('❌ Parse error');
+          reply = { type: 'resultat', text: 'Erreur génération.', meta: { mode: 'A' } };
+        }
+        
         return res.status(200).json({ reply, conversationId, mode: 'A' });
       }
+
+      // QUESTION
       return res.status(200).json({ reply: buildQuestion(next, state.answers), conversationId, mode: 'A' });
     }
 
@@ -2064,39 +2028,59 @@ JSON:{"type":"resultat","text":"B1===BLOCK===B2===BLOCK===...","meta":{"mode":"A
     const t = userText.toLowerCase();
     let search = '';
 
-    // Cures avec ingrédient
     let m = t.match(/(?:quelle|quelles|dans quelle).*cure.*(?:trouver|contien|avec)\s+(?:de\s+l[a']?|du|des|de)?\s*(\w+)/i) || t.match(/cure.*(?:contien|avec)\s+(?:de\s+)?(\w+)/i);
     if (m) {
       const r = findCuresWithIngredient(m[1]);
-      search = `[EXACT] Cures avec "${m[1]}": ${r.length}\n${r.map((x,i)=>`${i+1}. ${x.cure} (via ${x.gelule})`).join('\n')}\n⚠️ UNIQUEMENT ces ${r.length} cure(s).`;
-      console.log('🔍 Cures+'+m[1]+':',r.map(x=>x.cure));
+      search = '[EXACT] Cures avec "' + m[1] + '": ' + r.length + '\n' + r.map((x,i) => (i+1) + '. ' + x.cure + ' (via ' + x.gelule + ')').join('\n') + '\n⚠️ Liste UNIQUEMENT ces ' + r.length + ' cure(s).';
+      console.log('🔍 Cures+' + m[1] + ':', r.map(x => x.cure));
     }
 
-    // Gélules avec ingrédient
     if (!search) {
       m = t.match(/(?:quelle|quelles).*(?:gelule|gélule).*(?:contien|avec)\s+(?:de\s+)?(\w+)/i);
       if (m) {
         const r = findGelulesWithIngredient(m[1]);
-        search = `[EXACT] Gélules avec "${m[1]}": ${r.length}\n${r.map((x,i)=>`${i+1}. ${x.gelule}`).join('\n')}\n⚠️ UNIQUEMENT ces ${r.length} gélule(s).`;
+        search = '[EXACT] Gélules avec "' + m[1] + '": ' + r.length + '\n' + r.map((x,i) => (i+1) + '. ' + x.gelule).join('\n') + '\n⚠️ Liste UNIQUEMENT ces ' + r.length + ' gélule(s).';
       }
     }
 
-    // Compatible
     if (!search && (t.includes('allergique') || t.includes('diabetique')) && t.includes('cure')) {
       const conds = [];
       if (t.includes('poisson')) conds.push('poisson');
       if (t.includes('diabet')) conds.push('diabete');
       if (conds.length) {
         const r = findCompatibleCures(conds);
-        search = `[EXACT] Conditions: ${conds.join(', ')}\nEXCLUES: ${r.excluded.join(', ')}\nCOMPATIBLES (${r.compatible.length}): ${r.compatible.map(x=>x.cure).join(', ')}\n⚠️ Recommande UNIQUEMENT parmi les compatibles.`;
+        search = '[EXACT] Conditions: ' + conds.join(', ') + '\nEXCLUES: ' + r.excluded.join(', ') + '\nCOMPATIBLES (' + r.compatible.length + '): ' + r.compatible.map(x => x.cure).join(', ') + '\n⚠️ Recommande UNIQUEMENT parmi compatibles.';
       }
     }
 
-    const sys = `Tu es Dr THYREN.${search ? '\n'+search+'\n' : ''}\nRÈGLES: Si EXACT fourni→utilise-le. Ne jamais inventer. Concis. Vouvoiement.\nJSON:{"type":"reponse","text":"...","meta":{"mode":"B","progress":{"enabled":false}}}`;
-    const r = await fetch('https://api.openai.com/v1/chat/completions', { method: 'POST', headers: { Authorization: `Bearer ${KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'system', content: sys }, { role: 'system', content: '[SAV]:'+DATA_SAV.substring(0,5000) }, ...messages.slice(-4).map(m => ({ role: m.role, content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) }))], response_format: { type: 'json_object' }, temperature: 0.2, max_tokens: 800 }) });
+    const sys = 'Tu es Dr THYREN.' + (search ? '\n' + search + '\n' : '') + '\nConcis (2-3 phrases). Vouvoiement. JSON:{"type":"reponse","text":"...","meta":{"mode":"B","progress":{"enabled":false}}}';
+    
+    const r = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: sys },
+          { role: 'user', content: '[SAV]:' + DATA_SAV.substring(0, 5000) + '\n\nQuestion: ' + userText }
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.2,
+        max_tokens: 800
+      })
+    });
+
     if (!r.ok) return res.status(500).json({ error: 'OpenAI error' });
-    let reply; try { reply = JSON.parse((await r.json()).choices?.[0]?.message?.content || '{}'); } catch { reply = { type: 'reponse', text: 'Erreur.', meta: { mode: 'B', progress: { enabled: false } } }; }
+    
+    const data = await r.json();
+    let reply;
+    try { reply = JSON.parse(data.choices?.[0]?.message?.content || '{}'); }
+    catch { reply = { type: 'reponse', text: 'Erreur.', meta: { mode: 'B', progress: { enabled: false } } }; }
+    
     return res.status(200).json({ reply, conversationId, mode: 'B' });
 
-  } catch (err) { console.error('❌', err); return res.status(500).json({ error: 'Server error' }); }
+  } catch (err) {
+    console.error('❌', err);
+    return res.status(500).json({ error: 'Server error' });
+  }
 }
