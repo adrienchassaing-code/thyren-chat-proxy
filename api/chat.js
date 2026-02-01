@@ -1797,21 +1797,33 @@ const QUIZ = [
     cond: a => a.condition !== "Tout va bien"
   },
 
-  // Q6 (plainte)
+  // Q6 (Objectif)
   {
-    id: "Q6_plainte",
-    text: "{prenom}, qu’est-ce qui vous pèse le plus au quotidien en ce moment ?",
-    type: "open",
-    key: "plainte"
-  },
-
+  id: "Q6_objectif",
+  text: "Bien noté {prenom}, quel est votre objectif principal avec une cure ?",
+  type: "choice",
+  choices: [
+    "Retrouver de l’énergie",
+    "Perdre du poids / relancer le métabolisme",
+    "Mieux dormir",
+    "Réduire le stress / l’anxiété",
+    "Améliorer ma digestion / transit",
+    "Améliorer mon équilibre hormonal",
+    "Autre – j’aimerais préciser"
+  ],
+  key: "objectif"
+},
+{
+  id: "Q6_objectif_autre",
+  text: "Merci de préciser votre objectif en une phrase.",
+  type: "open",
+  key: "plainte",
+  cond: a => a.objectif?.startsWith("Autre")
+}
   // Q7 (ENERGIE) — intègre la plainte juste avant
   {
     id: "Q7_energie",
-    text: "Bien noté {prenom}. Je l’intègre à mon raisonnement. Maintenant, comment décririez-vous votre niveau d’énergie au quotidien ?",
-    // option si ton moteur sait injecter la plainte dans le texte :
-    textWithPlainte:
-      "Bien noté {prenom} : « {plainte} ». Je l’intègre à mon raisonnement. Maintenant, comment décririez-vous votre niveau d’énergie au quotidien ?",
+    text: "Comment décririez-vous votre niveau d’énergie au quotidien ?",
     type: "choice",
     choices: [
       "Bonne énergie tout au long de la journée",
@@ -2156,113 +2168,95 @@ export default async function handler(req, res) {
       // FIN DU QUIZ - Générer les résultats
       // ═══════════════════════════════════════════════════════════════════
       if (next >= QUIZ.length) {
-  const today = new Date();
-  const fmt = d =>
-    d.getDate().toString().padStart(2, '0') +
-    '/' +
-    (d.getMonth() + 1).toString().padStart(2, '0') +
-    '/' +
-    d.getFullYear();
+        const today = new Date();
+        const fmt = d => d.getDate().toString().padStart(2,'0') + '/' + (d.getMonth()+1).toString().padStart(2,'0') + '/' + d.getFullYear();
+        const j14 = fmt(new Date(today.getTime() + 14 * 86400000));
+        const j90 = fmt(new Date(today.getTime() + 90 * 86400000));
+        const a = state.answers;
+        
+        const prompt = `Tu es Dr THYREN, expert en micronutrition chez SUPLEMINT.
 
-  const j14 = fmt(new Date(today.getTime() + 14 * 86400000));
-  const j90 = fmt(new Date(today.getTime() + 90 * 86400000));
-  const a = state.answers;
+PROFIL UTILISATEUR:
+- Prénom: ${a.prenom}
+- Sexe: ${a.sexe}
+- Âge: ${a.age}
+- Condition: ${a.condition} ${a.condition_detail || ''}
+- Plainte principale: ${a.plainte}
+- Durée: ${a.duree}
+- Impact: ${a.impact}
 
-  const systemMsg = `Tu es Dr THYREN, expert en micronutrition chez SUPLEMINT.
-Tu suis STRICTEMENT les instructions de format. Tu ne fabriques aucune information.`;
+SYMPTÔMES:
+- Énergie: ${a.energie}
+- Poids: ${a.poids}
+- Froid: ${a.froid}
+- Humeur: ${a.humeur}
+- Sommeil: ${a.sommeil}
+- Peau/cheveux: ${a.peau}
+- Transit: ${a.transit}
+- Gonflement: ${a.gonflement}
+- Concentration: ${a.concentration}
+- Libido: ${a.libido}
 
-  const userMsg = `RÈGLES ABSOLUES (OBLIGATOIRES) :
-1) N'invente AUCUNE information. Tout doit provenir des DONNÉES fournies (CURES + COMPOSITIONS).
-2) Si une info n'existe pas dans les DONNÉES → écrire exactement : INFORMATION_MANQUANTE.
-3) La sortie DOIT être un JSON valide, et rien d'autre.
-4) Le champ "text" DOIT contenir EXACTEMENT 8 blocs séparés par "===BLOCK===".
-5) Les blocs 3, 4 et 5 (cures) doivent respecter EXACTEMENT le format 5.6 en 14 lignes.
-6) Ne JAMAIS afficher de titre "Bloc 1", "Bloc 2", etc. (interdit).
-7) Ton : factuel, expert, chaleureux, rassurant. Aucun diagnostic médical direct.
-
-PROFIL UTILISATEUR :
-- Prénom: ${a.prenom || ""}
-- Sexe: ${a.sexe || ""}
-- Âge: ${a.age || ""}
-- Condition: ${(a.condition || "")} ${(a.condition_detail || "")}
-- Plainte principale: ${a.plainte || ""}
-
-SYMPTÔMES (quiz) :
-- Énergie: ${a.energie || ""} ${a.energie_detail || ""}
-- Poids: ${a.poids || ""} ${a.poids_detail || ""}
-- Froid: ${a.froid || ""} ${a.froid_detail || ""}
-- Humeur: ${a.humeur || ""} ${a.humeur_detail || ""}
-- Sommeil: ${a.sommeil || ""} ${a.sommeil_detail || ""}
-- Peau/cheveux: ${a.peau || ""} ${a.peau_detail || ""}
-- Transit: ${a.transit || ""} ${a.transit_detail || ""}
-- Gonflement: ${a.gonflement || ""} ${a.gonflement_detail || ""}
-- Concentration: ${a.concentration || ""} ${a.concentration_detail || ""}
-- Libido: ${a.libido || ""} ${a.libido_detail || ""}
-
-DATES IMPORTANTES :
+DATES IMPORTANTES:
 - J+14: ${j14}
 - J+90: ${j90}
 
-RÈGLES DE RECOMMANDATION (PRIORITÉS SUPLEMINT) :
-Priorité 1 : CURE THYROÏDE si profil typique (fatigue + froid + prise de poids + moral bas).
-Priorité 2 : CURE ÉNERGIE si fatigue (même légère) + besoin d'élan + concentration.
-Priorité 3 : CURE INTESTIN si transit lent/constipation/digestion difficile (terrain).
-Priorité 4 : CURE POIDS si prise de poids légère/importante OU inexpliquée (surtout si transit lent ou fatigue).
-Autres selon dominance :
-- Stress / humeur fluctuante → CURE ZÉNITUDE
-- Sommeil perturbé → CURE SOMMEIL
-- Femme 45+ + symptômes hormonaux → CURE MÉNOPAUSE
+RÈGLES DE RECOMMANDATION:
+- Fatigue + froid + poids + moral bas → CURE THYROÏDE (prioritaire)
+- Stress + humeur fluctuante → CURE ZÉNITUDE
+- Problèmes de sommeil → CURE SOMMEIL
+- Transit lent → CURE INTESTIN
+- Femme 45-60 ans + symptômes hormonaux → CURE MÉNOPAUSE
 - Homme + fatigue + baisse motivation → CURE HOMME+
 
-CONTRE-INDICATIONS :
-- Respecte STRICTEMENT les contre-indications listées dans DONNÉES DES CURES.
-- Si une cure pertinente est contre-indiquée, ne pas la recommander.
-
-DONNÉES DES CURES (source unique) :
+DONNÉES DES CURES:
 ${DATA_CURES}
 
-DONNÉES COMPOSITIONS (source unique) :
-${DATA_COMPOSITIONS || ""}
+INSTRUCTIONS:
+Génère un JSON avec 7 blocs de texte séparés par "===BLOCK===":
 
-SORTIE ATTENDUE — JSON FINAL OBLIGATOIRE :
-{"type":"resultat","text":"[BLOC1]===BLOCK===[BLOC2]===BLOCK===[BLOC3]===BLOCK===[BLOC4]===BLOCK===[BLOC5]===BLOCK===[BLOC6]===BLOCK===[BLOC7]===BLOCK===[BLOC8]","meta":{"mode":"A"}}
+{"type":"resultat","text":"[BLOC1]===BLOCK===[BLOC2]===BLOCK===[BLOC3]===BLOCK===[BLOC4],"meta":{"mode":"A"}}
 
-IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte !
+BLOC 1: Salutation personnalisée + résumé des symptômes (2-3 phrases)
+BLOC 2: Cure principale recommandée avec URL EXACTE, composition et objectifs J+14/J+90
+BLOC 3: Cure de soutien si pertinent
+BLOC 4: Proposition de RDV: https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
 
-(Ensuite, applique STRICTEMENT toute la section 7.3.2 + format 5.6 déjà défini dans ce prompt.)`;
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': 'Bearer ' + KEY,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemMsg },
-        { role: 'user', content: userMsg }
-      ],
-      response_format: { type: 'json_object' },
-      temperature: 0.3,
-      max_tokens: 4000
-    })
-  });
+IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
 
-  if (!response.ok) {
-    return res.status(500).json({ error: 'OpenAI error' });
-  }
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { 
+            'Authorization': 'Bearer ' + KEY, 
+            'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [
+              { role: 'system', content: prompt }
+            ],
+            response_format: { type: 'json_object' },
+            temperature: 0.3,
+            max_tokens: 4000
+          })
+        });
+        
+        if (!response.ok) {
+          return res.status(500).json({ error: 'OpenAI error' });
+        }
+        
+        let reply;
+        try {
+          const data = await response.json();
+          reply = JSON.parse(data.choices?.[0]?.message?.content || '{}');
+        } catch {
+          reply = { type: 'resultat', text: 'Erreur lors de la génération des résultats.', meta: { mode: 'A' } };
+        }
+        
+        return res.status(200).json({ reply, conversationId, mode: 'A' });
+      }
 
-  let reply;
-  try {
-    const data = await response.json();
-    reply = JSON.parse(data.choices?.[0]?.message?.content || '{}');
-  } catch {
-    reply = { type: 'resultat', text: 'Erreur lors de la génération des résultats.', meta: { mode: 'A' } };
-  }
-
-  return res.status(200).json({ reply, conversationId, mode: 'A' });
-}
       // Question suivante du quiz
       return res.status(200).json({
         reply: buildQuestion(next, state.answers),
