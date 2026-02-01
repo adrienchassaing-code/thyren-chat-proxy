@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 // ============================================================================
-// LECTURE DES 4 FICHIERS DATA (QUESTION_ALL.json retiré)
+// LECTURE DES 4 FICHIERS DATA
 // ============================================================================
 
 const loadJson = (filename) => {
@@ -39,7 +39,140 @@ const DATA_QUIZ_TEXT = formatData(QUIZ);
 const DATA_SAV_TEXT = formatData(SAV_FAQ);
 
 // ============================================================================
-// PROMPT SYSTEM V3.0 - SIMPLIFIÉ 2 MODES
+// 🔍 FONCTIONS DE RECHERCHE CÔTÉ SERVEUR (EXACTES ET RAPIDES)
+// ============================================================================
+
+const normalize = (str) => str?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") || "";
+
+// Chercher toutes les cures contenant un ingrédient
+function findCuresByIngredient(keyword) {
+  const kw = normalize(keyword);
+  const results = [];
+  
+  if (!CURES?.cures || !COMPOSITIONS?.capsules) return results;
+  
+  const matchingCapsules = [];
+  for (const [capsuleId, capsule] of Object.entries(COMPOSITIONS.capsules)) {
+    const capsuleName = normalize(capsule.name || capsuleId);
+    const ingredients = (capsule.ingredients || []).map(i => normalize(i.name || "")).join(" ");
+    
+    if (capsuleName.includes(kw) || ingredients.includes(kw)) {
+      matchingCapsules.push(capsuleId);
+    }
+  }
+  
+  for (const cure of CURES.cures) {
+    const items = cure.composition_intake || [];
+    for (const item of items) {
+      if (matchingCapsules.includes(item.item)) {
+        results.push({
+          name: cure.name,
+          id: cure.id,
+          capsule_match: item.item,
+          product_url: cure.links?.product_url || ""
+        });
+        break;
+      }
+    }
+  }
+  
+  return results;
+}
+
+// Chercher une cure par nom
+function findCureByName(name) {
+  const kw = normalize(name);
+  if (!CURES?.cures) return null;
+  return CURES.cures.find(c => normalize(c.name).includes(kw) || normalize(c.id).includes(kw));
+}
+
+// Obtenir la composition complète d'une cure
+function getCureComposition(cureName) {
+  const cure = findCureByName(cureName);
+  if (!cure) return null;
+  
+  const composition = [];
+  for (const item of (cure.composition_intake || [])) {
+    const capsule = COMPOSITIONS?.capsules?.[item.item];
+    if (capsule) {
+      composition.push({
+        name: capsule.name || item.item,
+        qty: item.qty,
+        ingredients: (capsule.ingredients || []).map(i => ({
+          name: i.name,
+          amount: i.amount,
+          unit: i.unit
+        }))
+      });
+    }
+  }
+  
+  return { cure: cure.name, timing: cure.timing, links: cure.links, composition };
+}
+
+// Lister toutes les cures
+function listAllCures() {
+  if (!CURES?.cures) return [];
+  return CURES.cures.map(c => ({
+    name: c.name,
+    id: c.id,
+    short_description: c.short_description,
+    product_url: c.links?.product_url
+  }));
+}
+
+// Lister toutes les capsules
+function listAllCapsules() {
+  if (!COMPOSITIONS?.capsules) return [];
+  return Object.entries(COMPOSITIONS.capsules).map(([id, c]) => ({
+    id,
+    name: c.name || id
+  }));
+}
+
+// Chercher dans la FAQ
+function searchFAQ(keyword) {
+  const kw = normalize(keyword);
+  if (!SAV_FAQ?.questions) return [];
+  return SAV_FAQ.questions.filter(q => 
+    normalize(q.question).includes(kw) || normalize(q.answer).includes(kw)
+  );
+}
+
+// Détection du type de question pour Mode B
+function detectQueryType(message) {
+  const msg = normalize(message);
+  
+  const ingredientMatch = msg.match(/cure.*(?:avec|contenant|contient|contiennent)\s+(?:du|de la|des|le|la|l')?\s*(\w+)/i) ||
+                          msg.match(/(\w+).*(?:dans|presente|contenu).*cure/i) ||
+                          msg.match(/(?:quelles?|les)\s+cures?.*(\w+)/i);
+  if (ingredientMatch) {
+    return { type: "ingredient_search", keyword: ingredientMatch[1] };
+  }
+  
+  const compositionMatch = msg.match(/composition.*(?:cure|de)\s+(\w+)/i) ||
+                           msg.match(/(?:cure)\s+(\w+).*(?:composition|contient|ingredients)/i);
+  if (compositionMatch) {
+    return { type: "cure_composition", keyword: compositionMatch[1] };
+  }
+  
+  if ((msg.includes("liste") && msg.includes("cure")) || (msg.includes("combien") && msg.includes("cure")) || msg.includes("toutes les cures")) {
+    return { type: "list_cures" };
+  }
+  
+  if ((msg.includes("liste") && (msg.includes("capsule") || msg.includes("gelule"))) || (msg.includes("combien") && (msg.includes("capsule") || msg.includes("gelule")))) {
+    return { type: "list_capsules" };
+  }
+  
+  if (msg.includes("livraison") || msg.includes("retour") || msg.includes("paiement") || msg.includes("abonnement")) {
+    return { type: "faq_search", keyword: msg };
+  }
+  
+  return { type: "general" };
+}
+
+// ============================================================================
+// PROMPT SYSTEM COMPLET
 // ============================================================================
 
 const SYSTEM_PROMPT = `Tu es THYREN, assistant IA de SUPLEMINT.
@@ -86,7 +219,8 @@ RÈGLE CONDITIONNELLE Q3_menopause :
 
 **MODE B - Questions libres**
 Déclencheur : "J'ai une question" ou toute autre question
-→ Utilise [COMPOSITIONS], [CURES], [SAV_FAQ]
+→ Utilise les DONNÉES PRÉ-CALCULÉES fournies (recherches déjà effectuées côté serveur)
+→ Liste TOUS les résultats fournis, n'en oublie AUCUN
 
 ═══════════════════════════════════════════════════════════════════════════════
                     🚨 RÈGLES QUIZ STRICTES 🚨
@@ -133,7 +267,7 @@ RÉPONSE SIMPLE (Mode B) :
 QUESTION QUIZ AVEC CHOIX :
 {"type":"question","text":"[TEXTE EXACT]","choices":["..."],"meta":{"mode":"A","progress":{"enabled":true,"current":X,"total":16}}}
 
-QUESTION QUIZ OUVERTE (incluant Q5, Q5b, Q5c) :
+QUESTION QUIZ OUVERTE :
 {"type":"question","text":"[TEXTE]","meta":{"mode":"A","progress":{"enabled":true,"current":X,"total":16}}}
 
 RÉSULTATS QUIZ - 7 BLOCS :
@@ -224,9 +358,9 @@ RÉSULTATS :
 □ Dates calculées (J+14, J+90) ?
 
 MODE B :
-□ Liste demandée ? → Compter dans les DATA (21 cures, 45 gélules...)
-□ Composition demandée ? → Lire composition_intake + COMPOSITIONS
-□ Ingrédient demandé ? → Croiser COMPOSITIONS et CURES
+□ DONNÉES PRÉ-CALCULÉES fournies ? → Les utiliser TOUTES
+□ Liste demandée ? → Lister TOUS les éléments fournis
+□ Ne rien inventer, utiliser uniquement les données fournies
 
 ═══════════════════════════════════════════════════════════════════════════════
                     🔎 RÈGLE DE CONTRÔLE UNIVERSELLE (OBLIGATOIRE)
@@ -265,6 +399,7 @@ RÈGLE D'OR : Si tu n'es pas sûr à 100% qu'une info est dans les DATA → NE P
 ❌ Oublier d'accuser réception quand l'utilisateur a choisi "Autre – j'aimerais préciser"
 ❌ Oublier l'image en début de bloc cure
 ❌ Écrire "Dès 2 semaines" au lieu de vraies dates calculées
+❌ OUBLIER DES ÉLÉMENTS dans une liste (si 7 cures trouvées → lister les 7)
 
 EN CAS DE DOUTE :
 → Dire "Je vérifie dans mes données..." puis chercher
@@ -281,25 +416,20 @@ EN CAS DE DOUTE :
 `;
 
 // ============================================================================
-// DÉTECTION DU MODE (SIMPLIFIÉ - 2 MODES)
+// DÉTECTION DU MODE
 // ============================================================================
 
 function detectMode(message, history) {
   const msg = message.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-  // Mode A - Quiz
   if (msg.includes("quiz") || msg.includes("cure ideale") || msg.includes("cure idéale")) return "A";
   if (msg.includes("trouver ma cure") || msg.includes("quelle cure")) return "A";
-  
-  // Anciens déclencheurs thyroïde redirigés vers le quiz unifié
   if (msg.includes("thyroide fonctionne") || msg.includes("thyroïde fonctionne")) return "A";
   if (msg.includes("thyro") && (msg.includes("probleme") || msg.includes("normale") || msg.includes("test"))) return "A";
 
-  // Vérifier l'historique
   const hist = String(history || "").toLowerCase();
   if (hist.includes("quiz") || hist.includes("mode a")) return "A";
 
-  // Mode B par défaut
   return "B";
 }
 
@@ -335,7 +465,6 @@ function extractUserInfo(messages) {
     return typeof content === "object" ? (content.text || JSON.stringify(content)) : String(content);
   }).join(" ");
 
-  // Patterns simples pour extraire les infos
   const prenomMatch = fullHistory.match(/(?:prénom|prenom|m'appelle|je suis)\s*:?\s*([A-Z][a-zéèêëàâäùûüôöîï]+)/i);
   if (prenomMatch) info.prenom = prenomMatch[1];
 
@@ -384,7 +513,6 @@ export default async function handler(req, res) {
     const detectedMode = detectMode(userText, historyText);
     const activeMode = historyMode || detectedMode;
 
-    // Extraire les infos utilisateur déjà connues
     const userInfo = extractUserInfo(messages);
     const userInfoText = Object.entries(userInfo)
       .filter(([k, v]) => v !== null)
@@ -393,7 +521,6 @@ export default async function handler(req, res) {
 
     console.log(`🎯 Mode: ${activeMode} | User info: ${userInfoText || "aucune"}`);
 
-    // Date du jour pour le calcul des bénéfices
     const today = new Date();
     const dateJ14 = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000);
     const dateJ90 = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000);
@@ -405,14 +532,16 @@ DATE J+14 (premiers effets) : ${formatDate(dateJ14)}
 DATE J+90 (effets durables) : ${formatDate(dateJ90)}
 `;
 
-    // Infos utilisateur connues
     const userContext = userInfoText ? `
 INFOS UTILISATEUR DÉJÀ CONNUES (ne pas reposer ces questions) :
 ${userInfoText}
 ` : "";
 
-    // Construire les DATA selon le mode
     let dataSection = "";
+
+    // ========================================================================
+    // MODE A : QUIZ - Données complètes
+    // ========================================================================
     if (activeMode === "A") {
       dataSection = `
 ${dateContext}
@@ -427,18 +556,121 @@ ${DATA_CURES_TEXT}
 [COMPOSITIONS] - Ingrédients avec dosages :
 ${DATA_COMPOSITIONS_TEXT}
 `;
-    } else {
-      dataSection = `
-${dateContext}
+    } 
+    // ========================================================================
+    // MODE B : QUESTIONS LIBRES - Recherches pré-calculées côté serveur
+    // ========================================================================
+    else {
+      const queryType = detectQueryType(userText);
+      let preCalculatedData = "";
+      
+      console.log(`🔍 Query type: ${queryType.type}, keyword: ${queryType.keyword || "N/A"}`);
+      
+      switch (queryType.type) {
+        case "ingredient_search": {
+          const results = findCuresByIngredient(queryType.keyword);
+          preCalculatedData = `
+══════════════════════════════════════════════════════════════
+RECHERCHE PRÉ-CALCULÉE (100% EXACTE - NE RIEN AJOUTER/RETIRER)
+══════════════════════════════════════════════════════════════
+Recherche : Cures contenant "${queryType.keyword}"
+Nombre de résultats : ${results.length} cures
 
-[CURES] - 21 CURES :
+LISTE COMPLÈTE DES CURES TROUVÉES :
+${results.map((r, i) => `${i+1}. ${r.name} (via ${r.capsule_match})`).join("\n") || "Aucune cure trouvée avec cet ingrédient."}
+
+⚠️ INSTRUCTION : Liste EXACTEMENT ces ${results.length} cures, ni plus ni moins.
+══════════════════════════════════════════════════════════════`;
+          break;
+        }
+        
+        case "cure_composition": {
+          const comp = getCureComposition(queryType.keyword);
+          if (comp) {
+            preCalculatedData = `
+══════════════════════════════════════════════════════════════
+COMPOSITION PRÉ-CALCULÉE (100% EXACTE)
+══════════════════════════════════════════════════════════════
+Cure : ${comp.cure}
+Moment de prise : ${comp.timing?.when || "Non spécifié"}
+Lien : ${comp.links?.product_url || ""}
+
+COMPOSITION DÉTAILLÉE :
+${comp.composition.map(c => `
+${c.qty}x ${c.name} :
+${c.ingredients.map(i => `  - ${i.name}: ${i.amount}${i.unit}`).join("\n")}`).join("\n")}
+══════════════════════════════════════════════════════════════`;
+          } else {
+            preCalculatedData = `Cure "${queryType.keyword}" non trouvée.`;
+          }
+          break;
+        }
+        
+        case "list_cures": {
+          const cures = listAllCures();
+          preCalculatedData = `
+══════════════════════════════════════════════════════════════
+LISTE COMPLÈTE PRÉ-CALCULÉE (100% EXACTE)
+══════════════════════════════════════════════════════════════
+Nombre total : ${cures.length} cures
+
+TOUTES LES CURES :
+${cures.map((c, i) => `${i+1}. ${c.name} - ${c.short_description || ""}`).join("\n")}
+
+⚠️ INSTRUCTION : Liste les ${cures.length} cures.
+══════════════════════════════════════════════════════════════`;
+          break;
+        }
+        
+        case "list_capsules": {
+          const capsules = listAllCapsules();
+          preCalculatedData = `
+══════════════════════════════════════════════════════════════
+LISTE COMPLÈTE PRÉ-CALCULÉE (100% EXACTE)
+══════════════════════════════════════════════════════════════
+Nombre total : ${capsules.length} capsules/gélules
+
+TOUTES LES CAPSULES :
+${capsules.map((c, i) => `${i+1}. ${c.name}`).join("\n")}
+
+⚠️ INSTRUCTION : Liste les ${capsules.length} capsules.
+══════════════════════════════════════════════════════════════`;
+          break;
+        }
+        
+        case "faq_search": {
+          const faqResults = searchFAQ(queryType.keyword);
+          preCalculatedData = `
+══════════════════════════════════════════════════════════════
+FAQ PRÉ-CALCULÉE
+══════════════════════════════════════════════════════════════
+${faqResults.slice(0, 5).map(q => `Q: ${q.question}\nR: ${q.answer}`).join("\n\n") || "Aucune FAQ trouvée pour cette recherche."}
+══════════════════════════════════════════════════════════════`;
+          break;
+        }
+        
+        default:
+          // Question générale - fournir toutes les données
+          preCalculatedData = `
+Données disponibles :
+- ${CURES?.cures?.length || 0} cures
+- ${Object.keys(COMPOSITIONS?.capsules || {}).length} capsules
+
+[CURES] :
 ${DATA_CURES_TEXT}
 
-[COMPOSITIONS] - 45 gélules :
+[COMPOSITIONS] :
 ${DATA_COMPOSITIONS_TEXT}
 
 [SAV_FAQ] :
 ${DATA_SAV_TEXT}
+`;
+      }
+      
+      dataSection = `
+${dateContext}
+
+${preCalculatedData}
 `;
     }
 
