@@ -2049,7 +2049,6 @@ const QUIZ = [
   }
 ];
 
-
 // ============================================================================
 // QUIZ - Fonctions utilitaires
 // ============================================================================
@@ -2057,14 +2056,15 @@ const QUIZ = [
 function getQuizState(messages) {
   let step = -1;
   let answers = {};
-  
+
   for (const msg of messages) {
-    const content = typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content);
-    
-    if (msg.role === 'assistant') {
+    const content =
+      typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content);
+
+    if (msg.role === "assistant") {
       try {
         const parsed = JSON.parse(content);
-        if (typeof parsed.meta?.quizStep === 'number') {
+        if (typeof parsed.meta?.quizStep === "number") {
           step = parsed.meta.quizStep;
         }
         if (parsed.meta?.answers) {
@@ -2072,12 +2072,12 @@ function getQuizState(messages) {
         }
       } catch {}
     }
-    
-    if (msg.role === 'user' && step >= 0 && QUIZ[step]) {
+
+    if (msg.role === "user" && step >= 0 && QUIZ[step]) {
       answers[QUIZ[step].key] = content.trim();
     }
   }
-  
+
   return { step, answers };
 }
 
@@ -2091,27 +2091,27 @@ function nextStep(step, answers) {
 
 function buildQuestion(step, answers) {
   const q = QUIZ[step];
-  const text = q.text.replace(/{prenom}/g, answers.prenom || '');
-  
+  const text = q.text.replace(/{prenom}/g, answers.prenom || "");
+
   const response = {
-    type: 'question',
+    type: "question",
     text: text,
     meta: {
-      mode: 'A',
+      mode: "A",
       quizStep: step,
       answers: answers,
       progress: {
         enabled: true,
         current: step + 1,
-        total: QUIZ.length
-      }
-    }
+        total: QUIZ.length,
+      },
+    },
   };
-  
-  if (q.type === 'choice') {
+
+  if (q.type === "choice") {
     response.choices = q.choices;
   }
-  
+
   return response;
 }
 
@@ -2121,32 +2121,45 @@ function buildQuestion(step, answers) {
 
 export default async function handler(req, res) {
   // CORS
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
-  if (req.method === 'OPTIONS') return res.status(204).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
+  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") return res.status(204).end();
+  if (req.method !== "POST")
+    return res.status(405).json({ error: "Method Not Allowed" });
 
   try {
     const { messages, conversationId } = req.body || {};
-    if (!Array.isArray(messages)) return res.status(400).json({ error: 'messages required' });
-    
+    if (!Array.isArray(messages))
+      return res.status(400).json({ error: "messages required" });
+
     const KEY = process.env.OPENAI_API_KEY;
-    if (!KEY) return res.status(500).json({ error: 'API key missing' });
+    if (!KEY) return res.status(500).json({ error: "API key missing" });
 
     // Récupérer le dernier message utilisateur
-    const lastMsg = messages.filter(m => m.role === 'user').pop()?.content || '';
-    const userText = typeof lastMsg === 'object' ? lastMsg.text || '' : String(lastMsg);
+    const lastMsg = messages.filter((m) => m.role === "user").pop()?.content || "";
+    const userText = typeof lastMsg === "object" ? lastMsg.text || "" : String(lastMsg);
+    const lower = userText.toLowerCase();
 
-    // Détecter si on est en mode quiz
-    let isQuiz = userText.toLowerCase().match(/quiz|cure ideale|trouver ma cure/);
-    
-    // Vérifier si on était déjà dans le quiz
+    // ────────────────────────────────────────────────────────────────
+    // Détection : quiz vs question libre
+    // ────────────────────────────────────────────────────────────────
+    const isQuizTrigger = /(^|\b)(quiz|cure ideale|cure idéale|trouver ma cure|trouver ma cure idéale)(\b|$)/i.test(
+      userText
+    );
+
+    // (Optionnel mais utile) : détecter explicitement "j'ai une question"
+    const isQuestionTrigger = /(^|\b)(j'ai une question|jai une question|question|peux-tu|peux tu|comment|pourquoi|combien|quand|où)(\b|$)/i.test(
+      lower
+    );
+
+    // Si on était déjà en quiz, on reste en quiz
+    let isQuiz = isQuizTrigger;
     for (const m of messages) {
       try {
-        const parsed = JSON.parse(typeof m.content === 'string' ? m.content : '{}');
-        if (parsed.meta?.mode === 'A') isQuiz = true;
+        const parsed = JSON.parse(typeof m.content === "string" ? m.content : "{}");
+        if (parsed.meta?.mode === "A") isQuiz = true;
       } catch {}
     }
 
@@ -2155,12 +2168,12 @@ export default async function handler(req, res) {
     // ═══════════════════════════════════════════════════════════════════
     if (isQuiz) {
       const state = getQuizState(messages);
-      
+
       // Enregistrer la réponse actuelle
       if (state.step >= 0 && QUIZ[state.step]) {
         state.answers[QUIZ[state.step].key] = userText.trim();
       }
-      
+
       // Calculer la prochaine étape
       const next = state.step < 0 ? 0 : nextStep(state.step, state.answers);
 
@@ -2169,21 +2182,26 @@ export default async function handler(req, res) {
       // ═══════════════════════════════════════════════════════════════════
       if (next >= QUIZ.length) {
         const today = new Date();
-        const fmt = d => d.getDate().toString().padStart(2,'0') + '/' + (d.getMonth()+1).toString().padStart(2,'0') + '/' + d.getFullYear();
+        const fmt = (d) =>
+          d.getDate().toString().padStart(2, "0") +
+          "/" +
+          (d.getMonth() + 1).toString().padStart(2, "0") +
+          "/" +
+          d.getFullYear();
+
         const j14 = fmt(new Date(today.getTime() + 14 * 86400000));
         const j90 = fmt(new Date(today.getTime() + 90 * 86400000));
         const a = state.answers;
-        
+
+        // ✅ CORRECTION : JSON d’exemple valide (pas de virgule après BLOC4)
         const prompt = `Tu es Dr THYREN, expert en micronutrition chez SUPLEMINT.
 
 PROFIL UTILISATEUR:
 - Prénom: ${a.prenom}
 - Sexe: ${a.sexe}
 - Âge: ${a.age}
-- Condition: ${a.condition} ${a.condition_detail || ''}
+- Condition: ${a.condition} ${a.condition_detail || ""}
 - Plainte principale: ${a.plainte}
-- Durée: ${a.duree}
-- Impact: ${a.impact}
 
 SYMPTÔMES:
 - Énergie: ${a.energie}
@@ -2215,71 +2233,140 @@ ${DATA_CURES}
 INSTRUCTIONS:
 Génère un JSON avec 4 blocs de texte séparés par "===BLOCK===":
 
-{"type":"resultat","text":"[BLOC1]===BLOCK===[BLOC2]===BLOCK===[BLOC3]===BLOCK===[BLOC4],"meta":{"mode":"A"}}
+{"type":"resultat","text":"[BLOC1]===BLOCK===[BLOC2]===BLOCK===[BLOC3]===BLOCK===[BLOC4]","meta":{"mode":"A"}}
 
 BLOC 1: Salutation personnalisée + résumé des symptômes (2-3 phrases)
 BLOC 2: Cure principale recommandée avec URL EXACTE, composition et objectifs J+14/J+90
 BLOC 3: Cure de soutien si pertinent
 BLOC 4: Proposition de RDV: https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
 
-
 IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
 
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: { 
-            'Authorization': 'Bearer ' + KEY, 
-            'Content-Type': 'application/json' 
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + KEY,
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: 'gpt-4o-mini',
-            messages: [
-              { role: 'system', content: prompt }
-            ],
-            response_format: { type: 'json_object' },
+            model: "gpt-4o-mini",
+            messages: [{ role: "system", content: prompt }],
+            response_format: { type: "json_object" },
             temperature: 0.3,
-            max_tokens: 4000
-          })
+            max_tokens: 2000,
+          }),
         });
-        
+
         if (!response.ok) {
-          return res.status(500).json({ error: 'OpenAI error' });
+          return res.status(500).json({ error: "OpenAI error" });
         }
-        
+
         let reply;
         try {
           const data = await response.json();
-          reply = JSON.parse(data.choices?.[0]?.message?.content || '{}');
+          reply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
         } catch {
-          reply = { type: 'resultat', text: 'Erreur lors de la génération des résultats.', meta: { mode: 'A' } };
+          reply = {
+            type: "resultat",
+            text: "Erreur lors de la génération des résultats.",
+            meta: { mode: "A" },
+          };
         }
-        
-        return res.status(200).json({ reply, conversationId, mode: 'A' });
+
+        return res.status(200).json({ reply, conversationId, mode: "A" });
       }
 
       // Question suivante du quiz
       return res.status(200).json({
         reply: buildQuestion(next, state.answers),
         conversationId,
-        mode: 'A'
+        mode: "A",
       });
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // HORS QUIZ - Message simple
+    // MODE B - QUESTION LIBRE (BASE DE DONNÉES, ZÉRO INVENTION)
     // ═══════════════════════════════════════════════════════════════════
-    return res.status(200).json({
-      reply: {
-        type: 'reponse',
-        text: "Bonjour ! Je suis THYREN, votre assistant SUPLEMINT. Pour trouver la cure idéale pour vous, tapez 'quiz' ou 'trouver ma cure'.",
-        meta: { mode: 'B', progress: { enabled: false } }
+    // Ici : dès qu’on n’est pas en quiz, on répond en mode “KB” (même sans trigger),
+    // pour éviter le message “tapez quiz”.
+    const kbSystem = `
+Tu es Dr THYREN, assistant de SUPLEMINT.
+
+RÈGLE ABSOLUE: tu réponds UNIQUEMENT avec les informations présentes dans les DONNÉES fournies.
+INTERDIT d'inventer, d'estimer, de compléter, de supposer.
+Si une info n'est pas dans les données, réponds exactement:
+"Je n’ai pas cette information dans nos données."
+
+Style: très concis, direct, 1 à 6 phrases maximum.
+Si la question porte sur un "combien", donne un chiffre si présent dans les données, sinon la phrase ci-dessus.
+Si la question demande un diagnostic médical ou un avis médical: rappelle que tu ne remplaces pas un médecin et propose un RDV.
+`;
+
+    const kbUser = `
+QUESTION CLIENT:
+${userText}
+
+DONNÉES COMPOSITIONS:
+${DATA_COMPOSITIONS}
+
+DONNÉES CURES:
+${DATA_CURES}
+
+FAQ / SAV:
+${DATA_SAV}
+
+INSTRUCTION DE SORTIE:
+Retourne un JSON valide:
+{"type":"reponse","text":"...","meta":{"mode":"B","source":"kb_only"}}
+`;
+
+    const kbResponse = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + KEY,
+        "Content-Type": "application/json",
       },
-      conversationId,
-      mode: 'B'
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: kbSystem },
+          { role: "user", content: kbUser },
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0, // ✅ important: réduit énormément les inventions
+        max_tokens: 800,
+      }),
     });
 
+    if (!kbResponse.ok) {
+      return res.status(500).json({ error: "OpenAI error" });
+    }
+
+    let reply;
+    try {
+      const data = await kbResponse.json();
+      reply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
+    } catch {
+      reply = {
+        type: "reponse",
+        text: "Je n’ai pas cette information dans nos données.",
+        meta: { mode: "B", source: "kb_only" },
+      };
+    }
+
+    // ✅ garde-fou minimal
+    if (!reply?.text || typeof reply.text !== "string") {
+      reply = {
+        type: "reponse",
+        text: "Je n’ai pas cette information dans nos données.",
+        meta: { mode: "B", source: "kb_only" },
+      };
+    }
+
+    return res.status(200).json({ reply, conversationId, mode: "B" });
   } catch (err) {
-    console.error('❌ Erreur:', err);
-    return res.status(500).json({ error: 'Server error' });
+    console.error("❌ Erreur:", err);
+    return res.status(500).json({ error: "Server error" });
   }
 }
+
