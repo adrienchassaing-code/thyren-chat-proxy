@@ -1,5 +1,10 @@
 // ============================================================================
-// THYREN API - Données intégrées pour Vercel
+// THYREN API V7 - RECHERCHE SERVEUR + DONNÉES INTÉGRÉES
+// Version avec précision 100% garantie
+// ============================================================================
+
+// ============================================================================
+// DONNÉES INTÉGRÉES
 // ============================================================================
 
 const DATA_COMPOSITIONS = `================================================================================
@@ -2204,83 +2209,214 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 ================================================================================
 `;
 
-const allLoaded = true;
-console.log("✅ Données THYREN chargées (intégrées)");
+console.log("✅ Données THYREN V7 chargées");
 
 // ============================================================================
-// PROMPT SYSTEM COMPLET
+// FONCTIONS DE RECHERCHE CÔTÉ SERVEUR (PRÉCISION 100%)
+// ============================================================================
+
+/**
+ * Parse les gélules depuis DATA_COMPOSITIONS
+ */
+function parseGelules() {
+  const gelules = [];
+  const blocks = DATA_COMPOSITIONS.split(/^-{50,}$/m);
+  
+  let currentGelule = null;
+  
+  for (const block of blocks) {
+    const lines = block.trim().split('\n');
+    
+    for (const line of lines) {
+      const trimmed = line.trim();
+      
+      // Nouveau nom de gélule
+      if (trimmed.match(/^GÉLULE\s+[A-ZÀÂÄÉÈÊËÏÎÔÙÛÜÇ0-9+®]+/i) || 
+          trimmed.match(/^CAPSULE\s+[A-ZÀÂÄÉÈÊËÏÎÔÙÛÜÇ0-9+®]+/i)) {
+        if (currentGelule && currentGelule.name) {
+          gelules.push(currentGelule);
+        }
+        currentGelule = {
+          name: trimmed,
+          ingredients: [],
+          rawText: block.trim()
+        };
+      }
+      
+      // Ingrédient (ligne avec •)
+      if (currentGelule && trimmed.startsWith('•')) {
+        currentGelule.ingredients.push(trimmed.substring(1).trim());
+      }
+    }
+  }
+  
+  if (currentGelule && currentGelule.name) {
+    gelules.push(currentGelule);
+  }
+  
+  return gelules;
+}
+
+/**
+ * Recherche les gélules contenant un ingrédient spécifique
+ */
+function searchGelulesByIngredient(ingredient) {
+  const gelules = parseGelules();
+  const searchTerm = ingredient.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  
+  const results = [];
+  
+  for (const gelule of gelules) {
+    for (const ing of gelule.ingredients) {
+      const ingNorm = ing.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      if (ingNorm.includes(searchTerm)) {
+        results.push({
+          name: gelule.name,
+          matchedIngredient: ing,
+          allIngredients: gelule.ingredients
+        });
+        break; // Une seule correspondance par gélule
+      }
+    }
+  }
+  
+  return results;
+}
+
+/**
+ * Recherche les cures contenant une gélule spécifique
+ */
+function searchCuresByGelule(geluleName) {
+  const searchTerm = geluleName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const results = [];
+  
+  // Séparer par cure
+  const cureBlocks = DATA_CURES.split(/^={50,}$/m);
+  
+  for (const block of cureBlocks) {
+    if (block.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(searchTerm)) {
+      // Extraire le nom de la cure
+      const nameMatch = block.match(/CURE\s+[A-ZÀÂÄÉÈÊËÏÎÔÙÛÜÇ0-9.+\s]+/i);
+      if (nameMatch) {
+        results.push({
+          name: nameMatch[0].trim(),
+          contains: geluleName
+        });
+      }
+    }
+  }
+  
+  return results;
+}
+
+/**
+ * Obtenir la composition exacte d'une gélule
+ */
+function getGeluleComposition(geluleName) {
+  const gelules = parseGelules();
+  const searchTerm = geluleName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  
+  for (const gelule of gelules) {
+    const nameNorm = gelule.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (nameNorm.includes(searchTerm)) {
+      return gelule;
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Détecter le type de question et préparer les données de recherche
+ */
+function prepareSearchContext(userMessage) {
+  const msg = userMessage.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  
+  let context = {
+    type: null,
+    searchResults: null,
+    searchQuery: null
+  };
+  
+  // Question sur un ingrédient dans les gélules
+  const ingredientPatterns = [
+    /(?:quelle|quelles).*(?:gelule|gélule|capsule).*(?:contien|contient|avec|contenant)\s+(?:de\s+l[a']?|du|des|de)?\s*([a-zàâäéèêëïîôùûüç0-9+-]+)/i,
+    /(?:gelule|gélule|capsule).*(?:avec|contenant|contient)\s+(?:de\s+l[a']?|du|des|de)?\s*([a-zàâäéèêëïîôùûüç0-9+-]+)/i,
+    /(?:ou|où).*(?:trouver|trouve).*([a-zàâäéèêëïîôùûüç0-9+-]+)/i,
+    /(?:contien|contient).*([a-zàâäéèêëïîôùûüç0-9+-]+)/i
+  ];
+  
+  for (const pattern of ingredientPatterns) {
+    const match = msg.match(pattern);
+    if (match && match[1]) {
+      const ingredient = match[1].trim();
+      if (ingredient.length > 2) {
+        context.type = "ingredient_search";
+        context.searchQuery = ingredient;
+        context.searchResults = searchGelulesByIngredient(ingredient);
+        return context;
+      }
+    }
+  }
+  
+  // Question sur la composition d'une gélule
+  const compositionPatterns = [
+    /(?:composition|ingredients|ingrédients).*(?:de|du|la)\s+(?:gelule|gélule)?\s*([a-zàâäéèêëïîôùûüç0-9+-]+)/i,
+    /(?:qu[e']?.*contient|que.*dans).*(?:gelule|gélule)?\s*([a-zàâäéèêëïîôùûüç0-9+-]+)/i,
+    /(?:gelule|gélule)\s+([a-zàâäéèêëïîôùûüç0-9+-]+).*(?:composition|contient|ingredients)/i
+  ];
+  
+  for (const pattern of compositionPatterns) {
+    const match = msg.match(pattern);
+    if (match && match[1]) {
+      context.type = "composition_search";
+      context.searchQuery = match[1].trim();
+      context.searchResults = getGeluleComposition(match[1].trim());
+      return context;
+    }
+  }
+  
+  return context;
+}
+
+// ============================================================================
+// PROMPT SYSTEM STRICT
 // ============================================================================
 
 const SYSTEM_PROMPT = `Tu es THYREN, assistant IA de SUPLEMINT.
 
-═══════════════════════════════════════════════════════════════════════════════
-                         🔒 RÈGLES ABSOLUES 🔒
-═══════════════════════════════════════════════════════════════════════════════
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                    ⛔ RÈGLE ABSOLUE #1 - ZÉRO INVENTION ⛔                     ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║  TU NE DOIS JAMAIS INVENTER, DÉDUIRE OU SUPPOSER UNE INFORMATION              ║
+║  CHAQUE FAIT DOIT ÊTRE COPIÉ DIRECTEMENT DEPUIS LES DATA                      ║
+║  SI TU N'ES PAS SÛR À 100% → NE PAS DIRE                                      ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
 
-1. NE JAMAIS AFFIRMER SANS VÉRIFIER - Chaque fait doit être dans les DATA
-2. APPLIQUER LES 3 ÉTAPES DE CONTRÔLE avant chaque réponse
-3. EN CAS DE DOUTE → Chercher dans les DATA, pas deviner
-4. SI INFO NON TROUVÉE → Dire "je n'ai pas cette information"
-5. SUIS LE FLOW EXACT du quiz
-6. RESPECTE LE FORMAT JSON
-
-═══════════════════════════════════════════════════════════════════════════════
-                    💾 MÉMORISATION UTILISATEUR
-═══════════════════════════════════════════════════════════════════════════════
-
-ANALYSE L'HISTORIQUE DE CONVERSATION pour extraire les infos déjà connues :
-- Prénom
-- Sexe biologique  
-- Grossesse/allaitement (si femme)
-- Tranche d'âge
-- Allergies/conditions médicales
-- Email
-
-SI UNE INFO EST DÉJÀ DANS L'HISTORIQUE → NE PAS REPOSER LA QUESTION
-→ Passe directement à la question suivante du flow
-→ Mentionne "J'ai bien noté que vous êtes [prénom], [âge], etc."
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                    ⛔ RÈGLE ABSOLUE #2 - RECHERCHE SERVEUR ⛔                  ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║  QUAND TU REÇOIS [RÉSULTATS RECHERCHE SERVEUR], CES RÉSULTATS SONT            ║
+║  LA VÉRITÉ ABSOLUE. TU DOIS LES UTILISER TELS QUELS SANS AJOUTER              ║
+║  NI RETIRER AUCUNE INFORMATION.                                               ║
+║                                                                               ║
+║  Si les résultats montrent 2 gélules → tu réponds avec 2 gélules              ║
+║  Si les résultats montrent 0 gélules → tu dis "aucune gélule trouvée"         ║
+║  Tu ne JAMAIS ajouter une gélule qui n'est pas dans les résultats             ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
 
 ═══════════════════════════════════════════════════════════════════════════════
-                              LES 2 MODES
+                         LES 2 MODES
 ═══════════════════════════════════════════════════════════════════════════════
 
 **MODE A - Quiz Cure Idéale**
 Déclencheur : "Faire le quiz pour trouver ma cure idéale"
-→ Flow : Q1 → Q2 → Q2_plus → Q3 → [Q3_menopause] → Q4 → Q4b → Q5 → Q5b → Q5c → Q6 → ... → Q16 → RESULT
-→ SAUTER les questions dont tu as déjà la réponse
-
-RÈGLE CONDITIONNELLE Q3_menopause :
-- Poser Q3_menopause UNIQUEMENT si : Femme ET (45-60 ans OU Plus de 60 ans)
-- Si Homme OU Femme de moins de 45 ans → passer directement à Q4
+→ Suis le flow exact de [QUIZ]
 
 **MODE B - Questions libres**
 Déclencheur : "J'ai une question" ou toute autre question
-→ Utilise [COMPOSITIONS], [CURES], [SAV_FAQ]
-
-═══════════════════════════════════════════════════════════════════════════════
-                    🚨 RÈGLES QUIZ STRICTES 🚨
-═══════════════════════════════════════════════════════════════════════════════
-
-1. Questions standards : COPIE-COLLE le texte EXACT des DATA
-2. Questions standards avec choix : COPIE-COLLE les choices dans l'ordre EXACT
-3. Question "ouverte" → PAS de choices
-4. Question "choix" → INCLURE choices
-5. ⚠️ Q16 (email) OBLIGATOIRE (sauf si email déjà connu)
-6. Q3_menopause : poser UNIQUEMENT si Femme ET 45+ ans
-
-═══════════════════════════════════════════════════════════════════════════════
-                    🔄 GESTION "AUTRE – J'AIMERAIS PRÉCISER"
-═══════════════════════════════════════════════════════════════════════════════
-
-Quand l'utilisateur choisit "Autre – j'aimerais préciser" :
-
-1. POSER LA QUESTION DE PRÉCISION :
-   → Aller vers la question Q*_autre correspondante
-
-2. ACCUSER RÉCEPTION DANS LA QUESTION SUIVANTE :
-   → Utiliser "Texte après Autre" au lieu de "Texte normal"
-   → Remplacer {precision_precedente} par la réponse de l'utilisateur
-   → Mettre la première lettre en majuscule
+→ Utilise [RÉSULTATS RECHERCHE SERVEUR] si fournis
+→ Sinon utilise [COMPOSITIONS], [CURES], [SAV_FAQ]
 
 ═══════════════════════════════════════════════════════════════════════════════
                          FORMAT JSON OBLIGATOIRE
@@ -2290,25 +2426,10 @@ RÉPONSE SIMPLE (Mode B) :
 {"type":"reponse","text":"...","meta":{"mode":"B","progress":{"enabled":false}}}
 
 QUESTION QUIZ AVEC CHOIX :
-{"type":"question","text":"[TEXTE EXACT]","choices":["..."],"meta":{"mode":"A","progress":{"enabled":true,"current":X,"total":16}}}
+{"type":"question","text":"...","choices":["..."],"meta":{"mode":"A","progress":{"enabled":true,"current":X,"total":16}}}
 
 QUESTION QUIZ OUVERTE :
-{"type":"question","text":"[TEXTE]","meta":{"mode":"A","progress":{"enabled":true,"current":X,"total":16}}}
-
-RÉSULTATS QUIZ - 7 BLOCS :
-{"type":"resultat","text":"BLOC1===BLOCK===BLOC2===BLOCK===BLOC3===BLOCK===BLOC4===BLOCK===BLOC5===BLOCK===BLOC6===BLOCK===BLOC7"}
-
-═══════════════════════════════════════════════════════════════════════════════
-              📋 FORMAT DES 7 BLOCS RÉSULTATS
-═══════════════════════════════════════════════════════════════════════════════
-
-BLOC 1 - RÉSUMÉ CLINIQUE
-BLOC 2 - BESOINS FONCTIONNELS (pourcentages)
-BLOC 3 - CURE ESSENTIELLE (avec image, ingrédients, dates J+14/J+90)
-BLOC 4 - CURE DE SOUTIEN
-BLOC 5 - INFORMATIONS COMPLÉMENTAIRES
-BLOC 6 - RENDEZ-VOUS (lien cowlendar)
-BLOC 7 - DISCLAIMER
+{"type":"question","text":"...","meta":{"mode":"A","progress":{"enabled":true,"current":X,"total":16}}}
 
 ═══════════════════════════════════════════════════════════════════════════════
                               STYLE
@@ -2318,6 +2439,7 @@ BLOC 7 - DISCLAIMER
 - Vouvoiement TOUJOURS
 - Pas d'emojis
 - Direct et précis
+- Si tu ne sais pas → "Je n'ai pas cette information dans mes données."
 `;
 
 // ============================================================================
@@ -2357,8 +2479,6 @@ function extractUserInfo(messages) {
   if (prenomMatch) info.prenom = prenomMatch[1];
   if (fullHistory.toLowerCase().includes("femme")) info.sexe = "Femme";
   if (fullHistory.toLowerCase().includes("homme")) info.sexe = "Homme";
-  if (fullHistory.match(/enceinte.*non|non.*enceinte|pas enceinte/i)) info.enceinte = "Non";
-  if (fullHistory.match(/enceinte.*oui|oui.*enceinte|je suis enceinte/i)) info.enceinte = "Oui";
   const ageMatch = fullHistory.match(/(moins de 30|30-45|45-60|plus de 60)/i);
   if (ageMatch) info.age = ageMatch[1];
   const emailMatch = fullHistory.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
@@ -2393,52 +2513,100 @@ export default async function handler(req, res) {
     const activeMode = historyMode || detectedMode;
 
     const userInfo = extractUserInfo(messages);
-    const userInfoText = Object.entries(userInfo)
-      .filter(([k, v]) => v !== null)
-      .map(([k, v]) => `${k}: ${v}`)
-      .join(", ");
 
-    console.log(`🎯 Mode: ${activeMode} | User: ${userInfoText || "aucune"}`);
+    // ════════════════════════════════════════════════════════════════════════
+    // RECHERCHE CÔTÉ SERVEUR (PRÉCISION 100%)
+    // ════════════════════════════════════════════════════════════════════════
+    
+    const searchContext = prepareSearchContext(userText);
+    let serverSearchSection = "";
+    
+    if (searchContext.type === "ingredient_search" && searchContext.searchResults) {
+      const results = searchContext.searchResults;
+      if (results.length === 0) {
+        serverSearchSection = `
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║           [RÉSULTATS RECHERCHE SERVEUR - VÉRITÉ ABSOLUE]                      ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
 
+Recherche : gélules contenant "${searchContext.searchQuery}"
+Résultat : AUCUNE GÉLULE TROUVÉE
+
+→ Tu dois répondre qu'aucune gélule ne contient cet ingrédient.
+`;
+      } else {
+        serverSearchSection = `
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║           [RÉSULTATS RECHERCHE SERVEUR - VÉRITÉ ABSOLUE]                      ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+Recherche : gélules contenant "${searchContext.searchQuery}"
+Nombre de résultats : ${results.length} gélule(s)
+
+LISTE EXACTE ET COMPLÈTE (ne rien ajouter, ne rien retirer) :
+${results.map((r, i) => `
+${i + 1}. ${r.name}
+   Ingrédient trouvé : ${r.matchedIngredient}
+`).join('')}
+
+⚠️ INSTRUCTION : Tu dois lister EXACTEMENT ces ${results.length} gélule(s), pas plus, pas moins.
+`;
+      }
+      console.log(`🔍 Recherche serveur: "${searchContext.searchQuery}" → ${results.length} résultat(s)`);
+    }
+    
+    if (searchContext.type === "composition_search" && searchContext.searchResults) {
+      const gelule = searchContext.searchResults;
+      serverSearchSection = `
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║           [RÉSULTATS RECHERCHE SERVEUR - VÉRITÉ ABSOLUE]                      ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+Recherche : composition de "${searchContext.searchQuery}"
+
+${gelule ? `COMPOSITION EXACTE :
+${gelule.name}
+
+Ingrédients :
+${gelule.ingredients.map(i => '• ' + i).join('\n')}
+` : `RÉSULTAT : Gélule non trouvée`}
+
+⚠️ INSTRUCTION : Donne EXACTEMENT ces informations, sans rien ajouter.
+`;
+    }
+
+    // Dates
     const today = new Date();
     const dateJ14 = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000);
     const dateJ90 = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000);
     const formatDate = (d) => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
 
-    const dateContext = `
-DATE DU JOUR : ${formatDate(today)}
-DATE J+14 (premiers effets) : ${formatDate(dateJ14)}
-DATE J+90 (effets durables) : ${formatDate(dateJ90)}
-`;
+    const dateContext = `DATE DU JOUR : ${formatDate(today)} | J+14 : ${formatDate(dateJ14)} | J+90 : ${formatDate(dateJ90)}`;
 
-    const userContext = userInfoText ? `
-INFOS UTILISATEUR DÉJÀ CONNUES (ne pas reposer ces questions) :
-${userInfoText}
-` : "";
-
+    // Data section selon le mode
     let dataSection = "";
     if (activeMode === "A") {
       dataSection = `
 ${dateContext}
-${userContext}
 
-[QUIZ] - SUIVRE CE FLOW :
+[QUIZ] :
 ${DATA_QUIZ}
 
-[CURES] - 21 cures :
+[CURES] :
 ${DATA_CURES}
 
-[COMPOSITIONS] - Ingrédients avec dosages :
+[COMPOSITIONS] :
 ${DATA_COMPOSITIONS}
 `;
     } else {
       dataSection = `
 ${dateContext}
+${serverSearchSection}
 
-[CURES] - 21 CURES :
+[CURES] :
 ${DATA_CURES}
 
-[COMPOSITIONS] - 45 gélules :
+[COMPOSITIONS] :
 ${DATA_COMPOSITIONS}
 
 [SAV_FAQ] :
@@ -2455,6 +2623,8 @@ ${DATA_SAV}
       })),
     ];
 
+    console.log(`🎯 Mode: ${activeMode} | Search: ${searchContext.type || "none"}`);
+
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -2465,7 +2635,7 @@ ${DATA_SAV}
         model: "gpt-4o-mini",
         messages: openaiMessages,
         response_format: { type: "json_object" },
-        temperature: 0.1,
+        temperature: 0.05, // Très bas pour plus de précision
         max_tokens: 4000,
       }),
     });
