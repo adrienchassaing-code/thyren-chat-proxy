@@ -114,6 +114,21 @@ EXEMPLE CONCRET :
 RÈGLE : Si la question précédente n'était PAS "Autre", utiliser le "Texte normal".
 
 ═══════════════════════════════════════════════════════════════════════════════
+                🧩 RÈGLE DE DÉCOUPAGE DES BULLES (FRONT)
+═══════════════════════════════════════════════════════════════════════════════
+
+- Utilise STRICTEMENT le séparateur `===BLOCK===` pour créer une NOUVELLE BULLE.
+- N’utilise JAMAIS `===BLOCK===` à l’intérieur d’un même bloc.
+- Les retours à la ligne normaux (`\n`) servent UNIQUEMENT à structurer le texte
+  À L’INTÉRIEUR d’une même bulle.
+- N’invente JAMAIS d’autres séparateurs (ex : n/n, O/O, ---).
+
+RÈGLE :
+- 1 idée forte = 1 bloc
+- 1 cure = 1 bloc
+- Disclaimer / RDV = bloc séparé
+
+═══════════════════════════════════════════════════════════════════════════════
                          FORMAT JSON OBLIGATOIRE
 ═══════════════════════════════════════════════════════════════════════════════
 
