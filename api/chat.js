@@ -1,9 +1,5 @@
 // ============================================================================
-// THYREN API V8 - CONTRÔLE STRICT DU FLOW + PROMPT COMPLET
-// ============================================================================
-
-// ============================================================================
-// DONNÉES INTÉGRÉES
+// THYREN API V10 - DR THYREN + OPTIMISATIONS VITESSE
 // ============================================================================
 
 const DATA_COMPOSITIONS = `================================================================================
@@ -846,7 +842,6 @@ Alias : LACTOP, LACTOP®
                               FIN DU DOCUMENT
 ================================================================================
 `;
-
 const DATA_CURES = `================================================================================
                            LES CURES SUPLEMINT
                               Version 0.9.0
@@ -1397,7 +1392,6 @@ Les cures suivantes contiennent des ingrédients d'origine marine (poisson/crust
                               FIN DU DOCUMENT
 ================================================================================
 `;
-
 const DATA_QUIZ = `================================================================================
                          QUIZ THYREN UNIFIÉ V4
                     "Faire le quiz pour trouver ma cure idéale"
@@ -1889,7 +1883,6 @@ Si l'utilisateur dit l'une de ces phrases, recommencer le quiz depuis Q1 :
                               FIN DU DOCUMENT
 ================================================================================
 `;
-
 const DATA_SAV = `================================================================================
                          FAQ & SAV SUPLEMINT
                               Version 1.0.0
@@ -2208,371 +2201,68 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 ================================================================================
 `;
 
-console.log("✅ THYREN V8 chargé");
+console.log("✅ THYREN V10 chargé");
 
 // ============================================================================
-// DÉFINITION EXACTE DES QUESTIONS DU QUIZ
-// ============================================================================
-
-const QUIZ_QUESTIONS = {
-  Q1: {
-    id: "Q1",
-    type: "open",
-    text: "Parfait, trouvons ensemble la cure idéale pour vous. Pour commencer, quel est votre prénom ?",
-    capture: "prenom",
-    next: "Q2"
-  },
-  Q2: {
-    id: "Q2",
-    type: "choice",
-    text: "Bonjour {prenom}, quel est votre sexe biologique ?",
-    choices: ["Femme", "Homme"],
-    capture: "sexe",
-    next: (answers) => answers.sexe === "Femme" ? "Q2_plus" : "Q3"
-  },
-  Q2_plus: {
-    id: "Q2_plus",
-    type: "choice",
-    text: "Êtes-vous enceinte ou allaitante ?",
-    choices: ["Oui", "Non"],
-    capture: "enceinte",
-    next: "Q3"
-  },
-  Q3: {
-    id: "Q3",
-    type: "choice",
-    text: "Quel est votre âge ?",
-    choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"],
-    capture: "age",
-    next: (answers) => {
-      if (answers.sexe === "Femme" && (answers.age === "45-60 ans" || answers.age === "Plus de 60 ans")) {
-        return "Q3_menopause";
-      }
-      return "Q4";
-    }
-  },
-  Q3_menopause: {
-    id: "Q3_menopause",
-    type: "choice",
-    text: "Concernant votre cycle hormonal, où en êtes-vous ?",
-    choices: ["Oui, je suis ménopausée", "Oui, j'ai des symptômes de préménopause ou ménopause", "Non, je n'ai pas de symptômes particuliers", "Autre – j'aimerais préciser"],
-    capture: "menopause",
-    next: "Q4"
-  },
-  Q4: {
-    id: "Q4",
-    type: "choice",
-    text: "Avez-vous une condition médicale, une allergie, ou prenez-vous actuellement un traitement médical ou des compléments alimentaires ?",
-    choices: ["Tout va bien", "J'ai une allergie, une condition médicale ou je prends un traitement / complément"],
-    capture: "condition",
-    next: (answers) => answers.condition === "Tout va bien" ? "Q5" : "Q4b"
-  },
-  Q4b: {
-    id: "Q4b",
-    type: "open",
-    text: "Merci de préciser votre allergie ou votre condition médicale.",
-    capture: "condition_detail",
-    next: "Q5"
-  },
-  Q5: {
-    id: "Q5",
-    type: "open",
-    text: "{prenom}, j'aimerais mieux vous connaître. Qu'est-ce qui vous pèse le plus au quotidien en ce moment ? Décrivez-moi librement ce que vous ressentez et ce que vous aimeriez améliorer.",
-    capture: "plainte",
-    next: "Q5b"
-  },
-  Q5b: {
-    id: "Q5b",
-    type: "choice",
-    text: "Depuis combien de temps ressentez-vous ces désagréments ?",
-    choices: ["Moins d'un mois", "Entre 1 et 6 mois", "Entre 6 mois et 1 an", "Plus d'un an", "Autre – j'aimerais préciser"],
-    capture: "duree",
-    next: (answers) => answers.duree === "Autre – j'aimerais préciser" ? "Q5b_autre" : "Q5c"
-  },
-  Q5b_autre: {
-    id: "Q5b_autre",
-    type: "open",
-    text: "Merci de préciser depuis quand vous ressentez ces symptômes.",
-    capture: "duree_detail",
-    next: "Q5c"
-  },
-  Q5c: {
-    id: "Q5c",
-    type: "choice",
-    text: "Comment évalueriez-vous l'impact de ces symptômes sur votre quotidien ?",
-    textAfterAutre: "{precision}, c'est noté. Comment évalueriez-vous l'impact de ces symptômes sur votre quotidien ?",
-    choices: ["Impact léger, ça reste gérable", "Impact modéré, ça me gêne régulièrement", "Impact important, ça affecte ma qualité de vie", "Impact sévère, c'est difficile au quotidien", "Autre – j'aimerais préciser"],
-    capture: "impact",
-    next: (answers) => answers.impact === "Autre – j'aimerais préciser" ? "Q5c_autre" : "Q6"
-  },
-  Q5c_autre: {
-    id: "Q5c_autre",
-    type: "open",
-    text: "Merci de préciser l'impact sur votre quotidien.",
-    capture: "impact_detail",
-    next: "Q6"
-  },
-  Q6: {
-    id: "Q6",
-    type: "choice",
-    text: "Comment décririez-vous votre niveau d'énergie au quotidien ?",
-    textAfterAutre: "{precision}, c'est noté et intégré. Comment décririez-vous votre niveau d'énergie au quotidien ?",
-    choices: ["Bonne énergie tout au long de la journée.", "Fatigue légère ou passagère.", "Fatigue constante malgré le repos.", "Autre – j'aimerais préciser."],
-    capture: "energie",
-    next: (answers) => answers.energie === "Autre – j'aimerais préciser." ? "Q6_autre" : "Q7"
-  },
-  Q6_autre: {
-    id: "Q6_autre",
-    type: "open",
-    text: "Merci de préciser comment vous décririez votre niveau d'énergie.",
-    capture: "energie_detail",
-    next: "Q7"
-  },
-  Q7: {
-    id: "Q7",
-    type: "choice",
-    text: "Avez-vous pris du poids sans changer votre alimentation ?",
-    textAfterAutre: "{precision}, c'est noté et intégré. Avez-vous pris du poids sans changer votre alimentation ?",
-    choices: ["Non, mon poids est stable.", "Oui, une légère prise de poids.", "Oui, une prise de poids importante ou inexpliquée malgré plusieurs régimes.", "Autre – j'aimerais préciser."],
-    capture: "poids",
-    next: (answers) => answers.poids === "Autre – j'aimerais préciser." ? "Q7_autre" : "Q8"
-  },
-  Q7_autre: {
-    id: "Q7_autre",
-    type: "open",
-    text: "Merci de préciser votre situation concernant le poids.",
-    capture: "poids_detail",
-    next: "Q8"
-  },
-  Q8: {
-    id: "Q8",
-    type: "choice",
-    text: "Ressentez-vous souvent le froid (mains ou pieds froids) ?",
-    textAfterAutre: "{precision}, c'est noté et intégré. Ressentez-vous souvent le froid (mains ou pieds froids) ?",
-    choices: ["Non, température normale.", "Parfois, mains ou pieds froids.", "Souvent froid, même quand il fait bon.", "Autre – j'aimerais préciser."],
-    capture: "froid",
-    next: (answers) => answers.froid === "Autre – j'aimerais préciser." ? "Q8_autre" : "Q9"
-  },
-  Q8_autre: {
-    id: "Q8_autre",
-    type: "open",
-    text: "Merci de préciser comment vous ressentez la température de vos extrémités.",
-    capture: "froid_detail",
-    next: "Q9"
-  },
-  Q9: {
-    id: "Q9",
-    type: "choice",
-    text: "Comment décririez-vous votre humeur ces derniers temps ?",
-    textAfterAutre: "{precision}, c'est noté et intégré. Comment décririez-vous votre humeur ces derniers temps ?",
-    choices: ["Moral stable, bonne humeur.", "Humeur fluctuante ou baisse légère.", "Moral bas, tristesse ou perte de motivation.", "Autre – j'aimerais préciser."],
-    capture: "humeur",
-    next: (answers) => answers.humeur === "Autre – j'aimerais préciser." ? "Q9_autre" : "Q10"
-  },
-  Q9_autre: {
-    id: "Q9_autre",
-    type: "open",
-    text: "Merci de préciser comment vous décririez votre humeur.",
-    capture: "humeur_detail",
-    next: "Q10"
-  },
-  Q10: {
-    id: "Q10",
-    type: "choice",
-    text: "Votre sommeil est-il réparateur ?",
-    textAfterAutre: "{precision}, c'est noté et intégré. Votre sommeil est-il réparateur ?",
-    choices: ["Oui, je dors bien et me réveille reposé(e).", "Sommeil parfois léger ou agité.", "Difficultés à dormir ou fatigue au réveil.", "Autre – j'aimerais préciser."],
-    capture: "sommeil",
-    next: (answers) => answers.sommeil === "Autre – j'aimerais préciser." ? "Q10_autre" : "Q11"
-  },
-  Q10_autre: {
-    id: "Q10_autre",
-    type: "open",
-    text: "Merci de préciser comment se passe votre sommeil.",
-    capture: "sommeil_detail",
-    next: "Q11"
-  },
-  Q11: {
-    id: "Q11",
-    type: "choice",
-    text: "Avez-vous remarqué des changements de la peau ou des cheveux (sécheresse, chute, cheveux ternes) ?",
-    textAfterAutre: "{precision}, c'est noté et intégré. Avez-vous remarqué des changements de la peau ou des cheveux ?",
-    choices: ["Non, tout est normal.", "Peau un peu sèche ou cheveux ternes.", "Peau très sèche, cheveux cassants ou perte importante.", "Autre – j'aimerais préciser."],
-    capture: "peau_cheveux",
-    next: (answers) => answers.peau_cheveux === "Autre – j'aimerais préciser." ? "Q11_autre" : "Q12"
-  },
-  Q11_autre: {
-    id: "Q11_autre",
-    type: "open",
-    text: "Merci de préciser les changements que vous avez remarqués.",
-    capture: "peau_cheveux_detail",
-    next: "Q12"
-  },
-  Q12: {
-    id: "Q12",
-    type: "choice",
-    text: "Comment est votre transit intestinal ?",
-    textAfterAutre: "{precision}, c'est noté et intégré. Comment est votre transit intestinal ?",
-    choices: ["Transit régulier.", "Parfois un peu lent.", "Constipation ou digestion difficile.", "Autre – j'aimerais préciser."],
-    capture: "transit",
-    next: (answers) => answers.transit === "Autre – j'aimerais préciser." ? "Q12_autre" : "Q13"
-  },
-  Q12_autre: {
-    id: "Q12_autre",
-    type: "open",
-    text: "Merci de préciser comment se passe votre transit.",
-    capture: "transit_detail",
-    next: "Q13"
-  },
-  Q13: {
-    id: "Q13",
-    type: "choice",
-    text: "Avez-vous remarqué un gonflement du visage ou des mains le matin ?",
-    textAfterAutre: "{precision}, c'est noté et intégré. Avez-vous remarqué un gonflement du visage ou des mains le matin ?",
-    choices: ["Non, jamais.", "Parfois, gonflement léger.", "Oui, gonflement visible chaque matin.", "Autre – j'aimerais préciser."],
-    capture: "gonflement",
-    next: (answers) => answers.gonflement === "Autre – j'aimerais préciser." ? "Q13_autre" : "Q14"
-  },
-  Q13_autre: {
-    id: "Q13_autre",
-    type: "open",
-    text: "Merci de préciser ce que vous avez remarqué concernant les gonflements.",
-    capture: "gonflement_detail",
-    next: "Q14"
-  },
-  Q14: {
-    id: "Q14",
-    type: "choice",
-    text: "Avez-vous parfois l'esprit confus ou des difficultés de concentration ?",
-    textAfterAutre: "{precision}, c'est noté et intégré. Avez-vous parfois l'esprit confus ou des difficultés de concentration ?",
-    choices: ["Concentration normale.", "Légère distraction, oublis occasionnels.", "Brouillard mental, difficulté à se concentrer.", "Autre – j'aimerais préciser."],
-    capture: "concentration",
-    next: (answers) => answers.concentration === "Autre – j'aimerais préciser." ? "Q14_autre" : "Q15"
-  },
-  Q14_autre: {
-    id: "Q14_autre",
-    type: "open",
-    text: "Merci de préciser vos difficultés de concentration.",
-    capture: "concentration_detail",
-    next: "Q15"
-  },
-  Q15: {
-    id: "Q15",
-    type: "choice",
-    text: "Avez-vous remarqué un changement de votre libido ?",
-    textAfterAutre: "{precision}, c'est noté et intégré. Avez-vous remarqué un changement de votre libido ?",
-    choices: ["Aucun changement notable.", "Libido variable.", "Libido très basse.", "Autre – j'aimerais préciser."],
-    capture: "libido",
-    next: (answers) => answers.libido === "Autre – j'aimerais préciser." ? "Q15_autre" : "Q16"
-  },
-  Q15_autre: {
-    id: "Q15_autre",
-    type: "open",
-    text: "Merci de préciser les changements que vous avez remarqués.",
-    capture: "libido_detail",
-    next: "Q16"
-  },
-  Q16: {
-    id: "Q16",
-    type: "open",
-    text: "Merci pour toutes vos réponses {prenom}. Pouvez-vous indiquer votre adresse e-mail pour recevoir le récapitulatif de vos résultats ?",
-    textAfterAutre: "{precision}, c'est noté. Merci pour toutes vos réponses {prenom}. Pouvez-vous indiquer votre adresse e-mail pour recevoir le récapitulatif de vos résultats ?",
-    capture: "email",
-    next: "RESULT"
-  }
-};
-
-// ============================================================================
-// FONCTIONS DE TRACKING DU QUIZ
-// ============================================================================
-
-function extractQuizState(messages) {
-  const state = {
-    currentQuestion: null,
-    answers: {},
-    lastPrecision: null,
-    isComplete: false
-  };
-  
-  for (const msg of messages) {
-    const content = typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content);
-    
-    if (msg.role === "assistant") {
-      try {
-        const parsed = JSON.parse(content);
-        if (parsed.meta?.currentQuestion) {
-          state.currentQuestion = parsed.meta.currentQuestion;
-        }
-        if (parsed.meta?.answers) {
-          state.answers = { ...state.answers, ...parsed.meta.answers };
-        }
-      } catch {}
-    }
-    
-    // Extraire le prénom
-    if (msg.role === "user" && !state.answers.prenom) {
-      const text = content.toLowerCase();
-      if (!text.includes("quiz") && !text.includes("cure") && content.length < 30) {
-        const match = content.match(/^([A-ZÀ-Ÿ][a-zà-ÿ]+)$/);
-        if (match) state.answers.prenom = match[1];
-      }
-    }
-    
-    // Extraire email
-    const emailMatch = content.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
-    if (emailMatch) state.answers.email = emailMatch[1];
-  }
-  
-  return state;
-}
-
-function getQuestionNumber(questionId) {
-  const mainQuestions = ["Q1","Q2","Q3","Q4","Q5","Q5b","Q5c","Q6","Q7","Q8","Q9","Q10","Q11","Q12","Q13","Q14","Q15","Q16"];
-  const baseId = questionId.replace("_autre","").replace("_plus","").replace("_menopause","");
-  for (let i = 0; i < mainQuestions.length; i++) {
-    if (baseId === mainQuestions[i] || questionId.startsWith(mainQuestions[i])) {
-      return i + 1;
-    }
-  }
-  return 1;
-}
-
-// ============================================================================
-// FONCTIONS DE RECHERCHE
+// PARSING & RECHERCHE (INCHANGÉ)
 // ============================================================================
 
 function parseGelules() {
   const gelules = [];
   const blocks = DATA_COMPOSITIONS.split(/^-{50,}$/m);
   let currentGelule = null;
-  
   for (const block of blocks) {
     const lines = block.trim().split('\n');
     for (const line of lines) {
       const trimmed = line.trim();
-      if (trimmed.match(/^(GÉLULE|CAPSULE)\s+[A-ZÀÂÄÉÈÊËÏÎÔÙÛÜÇ0-9+®]+/i)) {
+      if (trimmed.match(/^(GÉLULE|CAPSULE)\s+[A-ZÀÂÄÉÈÊËÏÎÔÙÛÜÇ0-9+®\s]+$/i)) {
         if (currentGelule && currentGelule.name) gelules.push(currentGelule);
-        currentGelule = { name: trimmed, ingredients: [], rawText: block.trim() };
+        currentGelule = { name: trimmed.replace(/^(GÉLULE|CAPSULE)\s+/i, '').trim(), fullName: trimmed, ingredients: [], rawText: block.trim() };
       }
-      if (currentGelule && trimmed.startsWith('•')) {
-        currentGelule.ingredients.push(trimmed.substring(1).trim());
-      }
+      if (currentGelule && trimmed.startsWith('•')) currentGelule.ingredients.push(trimmed.substring(1).trim());
     }
   }
   if (currentGelule && currentGelule.name) gelules.push(currentGelule);
   return gelules;
 }
 
+function parseCures() {
+  const cures = [];
+  const blocks = DATA_CURES.split(/(?=^\d+\.\s+CURE)/m);
+  for (const block of blocks) {
+    if (!block.trim() || !block.match(/^\d+\.\s+CURE/)) continue;
+    const nameMatch = block.match(/^\d+\.\s+(CURE\s+[A-ZÀÂÄÉÈÊËÏÎÔÙÛÜÇ0-9.+\s]+)/i);
+    if (!nameMatch) continue;
+    const cure = { name: nameMatch[1].trim(), composition: [], contraindications: [], url: "", rawText: block.trim() };
+    const urlMatch = block.match(/https:\/\/www\.suplemint\.com\/products\/[a-z0-9-]+/i);
+    if (urlMatch) cure.url = urlMatch[0];
+    const compMatch = block.match(/Composition[^:]*:([\s\S]*?)(?=Moment|Contre-indic|Recommand|URL|$)/i);
+    if (compMatch) {
+      const compLines = compMatch[1].split('\n');
+      for (const line of compLines) {
+        const gelMatch = line.match(/\d+x?\s*([A-ZÀÂÄÉÈÊËÏÎÔÙÛÜÇ0-9+®_\s]+)/i);
+        if (gelMatch) cure.composition.push(gelMatch[1].trim().toUpperCase());
+      }
+    }
+    const contraMatch = block.match(/Contre-indic[^:]*:([\s\S]*?)(?=Recommand|URL|Note|$)/i);
+    if (contraMatch) cure.contraindications = contraMatch[1].split(/[,;•\n]/).map(s => s.trim().toLowerCase()).filter(s => s.length > 3);
+    cures.push(cure);
+  }
+  return cures;
+}
+
+let _cachedGelules = null, _cachedCures = null;
+function getGelules() { if (!_cachedGelules) _cachedGelules = parseGelules(); return _cachedGelules; }
+function getCures() { if (!_cachedCures) _cachedCures = parseCures(); return _cachedCures; }
+
 function searchGelulesByIngredient(ingredient) {
-  const gelules = parseGelules();
-  const searchTerm = ingredient.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const gelules = getGelules();
+  const term = ingredient.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const results = [];
-  
-  for (const gelule of gelules) {
-    for (const ing of gelule.ingredients) {
-      const ingNorm = ing.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      if (ingNorm.includes(searchTerm)) {
-        results.push({ name: gelule.name, matchedIngredient: ing, allIngredients: gelule.ingredients });
+  for (const g of gelules) {
+    for (const ing of g.ingredients) {
+      if (ing.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(term)) {
+        results.push({ name: g.name, fullName: g.fullName, matchedIngredient: ing });
         break;
       }
     }
@@ -2580,303 +2270,266 @@ function searchGelulesByIngredient(ingredient) {
   return results;
 }
 
-function prepareSearchContext(userMessage) {
-  const msg = userMessage.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  let context = { type: null, searchResults: null, searchQuery: null };
-  
-  const ingredientPatterns = [
-    /(?:quelle|quelles).*(?:gelule|gélule|capsule).*(?:contien|contient|avec|contenant)\s+(?:de\s+l[a']?|du|des|de)?\s*([a-zàâäéèêëïîôùûüç0-9+-]+)/i,
-    /(?:gelule|gélule|capsule).*(?:avec|contenant|contient)\s+(?:de\s+l[a']?|du|des|de)?\s*([a-zàâäéèêëïîôùûüç0-9+-]+)/i,
-  ];
-  
-  for (const pattern of ingredientPatterns) {
-    const match = msg.match(pattern);
-    if (match && match[1] && match[1].length > 2) {
-      context.type = "ingredient_search";
-      context.searchQuery = match[1].trim();
-      context.searchResults = searchGelulesByIngredient(match[1].trim());
-      return context;
+function searchCuresByIngredient(ingredient) {
+  const cures = getCures();
+  const gelules = getGelules();
+  const term = ingredient.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const gelulesWithIng = new Set();
+  for (const g of gelules) {
+    for (const ing of g.ingredients) {
+      if (ing.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(term)) {
+        gelulesWithIng.add(g.name.toUpperCase());
+        gelulesWithIng.add(g.name.toUpperCase().replace(/[®+]/g, ''));
+        break;
+      }
     }
   }
-  return context;
+  const results = [];
+  for (const cure of cures) {
+    for (const comp of cure.composition) {
+      const compNorm = comp.toUpperCase().replace(/[®+]/g, '');
+      for (const gelName of gelulesWithIng) {
+        if (compNorm.includes(gelName) || gelName.includes(compNorm)) {
+          results.push({ name: cure.name, url: cure.url, matchedGelule: comp });
+          break;
+        }
+      }
+      if (results.find(r => r.name === cure.name)) break;
+    }
+  }
+  return results;
+}
+
+function searchCuresWithContraindication(condition) {
+  const cures = getCures();
+  const term = condition.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const terms = [term];
+  if (term.includes("diabet")) terms.push("diabete", "diabétique", "glycemie");
+  if (term.includes("poisson")) terms.push("omega", "oméga", "marin", "krill");
+  if (term.includes("enceint")) terms.push("grossesse", "allaitement");
+  const results = [];
+  for (const cure of cures) {
+    const contraText = cure.contraindications.join(' ').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    for (const t of terms) {
+      if (contraText.includes(t)) {
+        results.push({ name: cure.name, url: cure.url, reason: cure.contraindications.find(c => c.includes(t)) || condition });
+        break;
+      }
+    }
+  }
+  return results;
+}
+
+function searchCompatibleCures(conditions) {
+  const cures = getCures();
+  const excluded = new Set();
+  for (const cond of conditions) {
+    for (const c of searchCuresWithContraindication(cond)) excluded.add(c.name);
+  }
+  if (conditions.some(c => c.includes("poisson") || c.includes("omega"))) {
+    for (const c of [...searchCuresByIngredient("omega"), searchCuresByIngredient("krill")]) excluded.add(c.name);
+  }
+  return {
+    compatible: cures.filter(c => !excluded.has(c.name)).map(c => ({ name: c.name, url: c.url })),
+    excluded: Array.from(excluded)
+  };
+}
+
+function prepareSearchContext(userMessage) {
+  const msg = userMessage.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  let ctx = { type: null, searchResults: null, searchQuery: null };
+  
+  if ((msg.includes("cure") && (msg.includes("peux prendre") || msg.includes("compatible"))) || (msg.includes("allergique") && msg.includes("cure")) || (msg.includes("diabetique") && msg.includes("cure"))) {
+    const conditions = [];
+    if (msg.includes("poisson") || msg.includes("omega")) conditions.push("poisson");
+    if (msg.includes("diabet")) conditions.push("diabète");
+    if (msg.includes("enceint")) conditions.push("enceinte");
+    if (conditions.length > 0) { ctx.type = "compatible_cures"; ctx.searchQuery = conditions; ctx.searchResults = searchCompatibleCures(conditions); return ctx; }
+  }
+  
+  let match = msg.match(/(?:quelle|quelles|toute|toutes).*cure.*(?:contien|avec|contenant)\s+(?:de\s+l[a']?|du|des|de)?\s*([a-z0-9+-]+)/i);
+  if (match && match[1]?.length > 2) { ctx.type = "cures_by_ingredient"; ctx.searchQuery = match[1]; ctx.searchResults = searchCuresByIngredient(match[1]); return ctx; }
+  
+  match = msg.match(/cure.*contre[- ]?indiqu.*(?:pour|si)\s+(?:les?\s+)?([a-z\s]+)/i);
+  if (match && match[1]?.length > 2) { ctx.type = "contraindicated_cures"; ctx.searchQuery = match[1]; ctx.searchResults = searchCuresWithContraindication(match[1]); return ctx; }
+  
+  match = msg.match(/(?:quelle|quelles).*(?:gelule|gélule).*(?:contien|avec)\s+(?:de\s+l[a']?|du|des|de)?\s*([a-z0-9+-]+)/i);
+  if (match && match[1]?.length > 2) { ctx.type = "gelules_by_ingredient"; ctx.searchQuery = match[1]; ctx.searchResults = searchGelulesByIngredient(match[1]); return ctx; }
+  
+  return ctx;
 }
 
 // ============================================================================
-// PROMPT SYSTEM COMPLET (VERSION PRÉFÉRÉE)
+// QUIZ QUESTIONS
 // ============================================================================
 
-const SYSTEM_PROMPT = `Tu es THYREN, assistant IA de SUPLEMINT.
+const QUIZ_QUESTIONS = {
+  Q1: { id: "Q1", type: "open", text: "Parfait, trouvons ensemble la cure idéale pour vous. Pour commencer, quel est votre prénom ?", capture: "prenom", next: "Q2" },
+  Q2: { id: "Q2", type: "choice", text: "Bonjour {prenom}, quel est votre sexe biologique ?", choices: ["Femme", "Homme"], capture: "sexe", next: (a) => a.sexe === "Femme" ? "Q2_plus" : "Q3" },
+  Q2_plus: { id: "Q2_plus", type: "choice", text: "Êtes-vous enceinte ou allaitante ?", choices: ["Oui", "Non"], capture: "enceinte", next: "Q3" },
+  Q3: { id: "Q3", type: "choice", text: "Quel est votre âge ?", choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"], capture: "age", next: (a) => (a.sexe === "Femme" && (a.age === "45-60 ans" || a.age === "Plus de 60 ans")) ? "Q3_menopause" : "Q4" },
+  Q3_menopause: { id: "Q3_menopause", type: "choice", text: "Concernant votre cycle hormonal, où en êtes-vous ?", choices: ["Oui, je suis ménopausée", "Oui, j'ai des symptômes de préménopause ou ménopause", "Non, je n'ai pas de symptômes particuliers", "Autre – j'aimerais préciser"], capture: "menopause", next: "Q4" },
+  Q4: { id: "Q4", type: "choice", text: "Avez-vous une condition médicale, une allergie, ou prenez-vous actuellement un traitement médical ou des compléments alimentaires ?", choices: ["Tout va bien", "J'ai une allergie, une condition médicale ou je prends un traitement / complément"], capture: "condition", next: (a) => a.condition === "Tout va bien" ? "Q5" : "Q4b" },
+  Q4b: { id: "Q4b", type: "open", text: "Merci de préciser votre allergie ou votre condition médicale.", capture: "condition_detail", next: "Q5" },
+  Q5: { id: "Q5", type: "open", text: "{prenom}, j'aimerais mieux vous connaître. Qu'est-ce qui vous pèse le plus au quotidien en ce moment ?", capture: "plainte", next: "Q5b" },
+  Q5b: { id: "Q5b", type: "choice", text: "Depuis combien de temps ressentez-vous ces désagréments ?", choices: ["Moins d'un mois", "Entre 1 et 6 mois", "Entre 6 mois et 1 an", "Plus d'un an", "Autre – j'aimerais préciser"], capture: "duree", next: (a) => a.duree === "Autre – j'aimerais préciser" ? "Q5b_autre" : "Q5c" },
+  Q5b_autre: { id: "Q5b_autre", type: "open", text: "Merci de préciser.", capture: "duree_detail", next: "Q5c" },
+  Q5c: { id: "Q5c", type: "choice", text: "Comment évalueriez-vous l'impact sur votre quotidien ?", choices: ["Impact léger", "Impact modéré", "Impact important", "Impact sévère", "Autre – j'aimerais préciser"], capture: "impact", next: (a) => a.impact === "Autre – j'aimerais préciser" ? "Q5c_autre" : "Q6" },
+  Q5c_autre: { id: "Q5c_autre", type: "open", text: "Merci de préciser.", capture: "impact_detail", next: "Q6" },
+  Q6: { id: "Q6", type: "choice", text: "Comment décririez-vous votre niveau d'énergie ?", choices: ["Bonne énergie", "Fatigue légère", "Fatigue constante", "Autre – j'aimerais préciser"], capture: "energie", next: (a) => a.energie === "Autre – j'aimerais préciser" ? "Q6_autre" : "Q7" },
+  Q6_autre: { id: "Q6_autre", type: "open", text: "Merci de préciser.", capture: "energie_detail", next: "Q7" },
+  Q7: { id: "Q7", type: "choice", text: "Avez-vous pris du poids sans changer votre alimentation ?", choices: ["Non, poids stable", "Légère prise de poids", "Prise importante", "Autre – j'aimerais préciser"], capture: "poids", next: (a) => a.poids === "Autre – j'aimerais préciser" ? "Q7_autre" : "Q8" },
+  Q7_autre: { id: "Q7_autre", type: "open", text: "Merci de préciser.", capture: "poids_detail", next: "Q8" },
+  Q8: { id: "Q8", type: "choice", text: "Ressentez-vous souvent le froid (mains ou pieds froids) ?", choices: ["Non", "Parfois", "Souvent froid", "Autre – j'aimerais préciser"], capture: "froid", next: (a) => a.froid === "Autre – j'aimerais préciser" ? "Q8_autre" : "Q9" },
+  Q8_autre: { id: "Q8_autre", type: "open", text: "Merci de préciser.", capture: "froid_detail", next: "Q9" },
+  Q9: { id: "Q9", type: "choice", text: "Comment décririez-vous votre humeur ?", choices: ["Moral stable", "Humeur fluctuante", "Moral bas", "Autre – j'aimerais préciser"], capture: "humeur", next: (a) => a.humeur === "Autre – j'aimerais préciser" ? "Q9_autre" : "Q10" },
+  Q9_autre: { id: "Q9_autre", type: "open", text: "Merci de préciser.", capture: "humeur_detail", next: "Q10" },
+  Q10: { id: "Q10", type: "choice", text: "Votre sommeil est-il réparateur ?", choices: ["Oui, bon sommeil", "Parfois léger", "Difficultés", "Autre – j'aimerais préciser"], capture: "sommeil", next: (a) => a.sommeil === "Autre – j'aimerais préciser" ? "Q10_autre" : "Q11" },
+  Q10_autre: { id: "Q10_autre", type: "open", text: "Merci de préciser.", capture: "sommeil_detail", next: "Q11" },
+  Q11: { id: "Q11", type: "choice", text: "Des changements peau/cheveux ?", choices: ["Non", "Un peu secs", "Très secs/cassants", "Autre – j'aimerais préciser"], capture: "peau", next: (a) => a.peau === "Autre – j'aimerais préciser" ? "Q11_autre" : "Q12" },
+  Q11_autre: { id: "Q11_autre", type: "open", text: "Merci de préciser.", capture: "peau_detail", next: "Q12" },
+  Q12: { id: "Q12", type: "choice", text: "Comment est votre transit ?", choices: ["Régulier", "Parfois lent", "Constipation", "Autre – j'aimerais préciser"], capture: "transit", next: (a) => a.transit === "Autre – j'aimerais préciser" ? "Q12_autre" : "Q13" },
+  Q12_autre: { id: "Q12_autre", type: "open", text: "Merci de préciser.", capture: "transit_detail", next: "Q13" },
+  Q13: { id: "Q13", type: "choice", text: "Gonflement visage/mains le matin ?", choices: ["Non", "Parfois", "Oui, visible", "Autre – j'aimerais préciser"], capture: "gonflement", next: (a) => a.gonflement === "Autre – j'aimerais préciser" ? "Q13_autre" : "Q14" },
+  Q13_autre: { id: "Q13_autre", type: "open", text: "Merci de préciser.", capture: "gonflement_detail", next: "Q14" },
+  Q14: { id: "Q14", type: "choice", text: "Difficultés de concentration ?", choices: ["Normale", "Légère distraction", "Brouillard mental", "Autre – j'aimerais préciser"], capture: "concentration", next: (a) => a.concentration === "Autre – j'aimerais préciser" ? "Q14_autre" : "Q15" },
+  Q14_autre: { id: "Q14_autre", type: "open", text: "Merci de préciser.", capture: "concentration_detail", next: "Q15" },
+  Q15: { id: "Q15", type: "choice", text: "Changement de libido ?", choices: ["Aucun changement", "Variable", "Très basse", "Autre – j'aimerais préciser"], capture: "libido", next: (a) => a.libido === "Autre – j'aimerais préciser" ? "Q15_autre" : "Q16" },
+  Q15_autre: { id: "Q15_autre", type: "open", text: "Merci de préciser.", capture: "libido_detail", next: "Q16" },
+  Q16: { id: "Q16", type: "open", text: "Merci pour toutes vos réponses {prenom}. Pouvez-vous indiquer votre adresse e-mail pour recevoir le récapitulatif ?", capture: "email", next: "RESULT" }
+};
+
+function extractQuizState(messages) {
+  const state = { currentQuestion: null, answers: {} };
+  for (const msg of messages) {
+    const content = typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content);
+    if (msg.role === "assistant") {
+      try {
+        const parsed = JSON.parse(content);
+        if (parsed.meta?.currentQuestion) state.currentQuestion = parsed.meta.currentQuestion;
+        if (parsed.meta?.answers) state.answers = { ...state.answers, ...parsed.meta.answers };
+      } catch {}
+    }
+    if (msg.role === "user" && !state.answers.prenom && content.length < 30 && !content.toLowerCase().includes("quiz")) {
+      const match = content.match(/^([A-ZÀ-Ÿ][a-zà-ÿ]+)$/);
+      if (match) state.answers.prenom = match[1];
+    }
+    const emailMatch = content.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+    if (emailMatch) state.answers.email = emailMatch[1];
+  }
+  return state;
+}
+
+function getQuestionNumber(qId) {
+  const main = ["Q1","Q2","Q3","Q4","Q5","Q5b","Q5c","Q6","Q7","Q8","Q9","Q10","Q11","Q12","Q13","Q14","Q15","Q16"];
+  const base = qId.replace(/_autre|_plus|_menopause/g, "");
+  const idx = main.indexOf(base);
+  return idx >= 0 ? idx + 1 : 1;
+}
+
+// ============================================================================
+// PROMPT DR THYREN
+// ============================================================================
+
+const SYSTEM_PROMPT = `Tu es Dr THYREN, expert en médecine fonctionnelle et micronutrition chez SUPLEMINT®.
+Tu penses et communiques comme un vrai médecin fonctionnel passionné.
 
 ═══════════════════════════════════════════════════════════════════════════════
-                         🔒 RÈGLES ABSOLUES 🔒
+                         🧬 TON APPROCHE CLINIQUE
 ═══════════════════════════════════════════════════════════════════════════════
 
-1. NE JAMAIS AFFIRMER SANS VÉRIFIER - Chaque fait doit être dans les DATA
-2. APPLIQUER LES 3 ÉTAPES DE CONTRÔLE avant chaque réponse
-3. EN CAS DE DOUTE → Chercher dans les DATA, pas deviner
-4. SI INFO NON TROUVÉE → Dire "je n'ai pas cette information"
-5. SUIS LE FLOW EXACT du quiz
-6. RESPECTE LE FORMAT JSON
+- Tu PENSES en symptômes, anatomie et physiopathologie
+- Tu cherches les CAUSES : macroscopiques (manque de sommeil, ménopause, diabète...) et microscopiques (déséquilibre mitochondrial, axe HHS, perméabilité intestinale, ralentissement thyroïdien...)
+- Tu expliques les CHAÎNES BIOLOGIQUES : symptômes → mécanisme → solution
+- Tu utilises biochimie, sémiologie, physiologie, naturopathie et micronutrition
+- Tu ÉDUQUES avec des micro-tips sur les ingrédients et leur action
+- Tu es CONCIS : 2-3 phrases max par intervention (sauf résultats)
 
 ═══════════════════════════════════════════════════════════════════════════════
-                    💾 MÉMORISATION UTILISATEUR
+                         💬 TON TON
 ═══════════════════════════════════════════════════════════════════════════════
 
-ANALYSE L'HISTORIQUE DE CONVERSATION pour extraire les infos déjà connues :
-- Prénom
-- Sexe biologique  
-- Grossesse/allaitement (si femme)
-- Tranche d'âge
-- Allergies/conditions médicales
-- Email
-
-SI UNE INFO EST DÉJÀ DANS L'HISTORIQUE → NE PAS REPOSER LA QUESTION
-→ Passe directement à la question suivante du flow
-→ Mentionne "J'ai bien noté que vous êtes [prénom], [âge], etc."
+- Chaleureux, empathique, curieux, intéressé
+- Tu vouvoies naturellement
+- Tu ÉCOUTES : chaque réponse modifie ton analyse
+- Tu peux valider ("Je comprends, c'est frustrant...") ou rassurer ("Ce que vous décrivez est très cohérent avec...")
+- Phrases dynamiques, faciles à lire, CONCISES
+- JAMAIS d'emojis
+- Tu utilises "des symptômes pouvant faire penser à une hypothyroïdie fonctionnelle (thyroïde paresseuse)", jamais "fruste", jamais de diagnostic direct
 
 ═══════════════════════════════════════════════════════════════════════════════
-                              LES 2 MODES
+                         🎯 TON OBJECTIF
 ═══════════════════════════════════════════════════════════════════════════════
 
-**MODE A - Quiz Cure Idéale**
-Déclencheur : "Faire le quiz pour trouver ma cure idéale"
-→ Flow : Q1 → Q2 → Q2_plus → Q3 → [Q3_menopause] → Q4 → Q4b → Q5 → Q5b → Q5c → Q6 → ... → Q16 → RESULT
-→ SAUTER les questions dont tu as déjà la réponse
-
-RÈGLE CONDITIONNELLE Q3_menopause :
-- Poser Q3_menopause UNIQUEMENT si : Femme ET (45-60 ans OU Plus de 60 ans)
-- Si Homme OU Femme de moins de 45 ans → passer directement à Q4
-
-**MODE B - Questions libres**
-Déclencheur : "J'ai une question" ou toute autre question
-→ Utilise [COMPOSITIONS], [CURES], [SAV_FAQ]
+- Comprendre le TERRAIN fonctionnel et médical
+- Identifier l'AXE DYSFONCTIONNEL prioritaire
+- Proposer LA cure SUPLEMINT® qui cible précisément cet axe
+- Expliquer POURQUOI cette cure fonctionne (mécanisme d'action des ingrédients)
+- Dire QUAND l'utilisateur peut espérer voir des effets
+- Faire sentir qu'il parle avec un expert qui l'écoute vraiment
+- CONVERTIR : chaque présentation doit donner envie d'acheter
 
 ═══════════════════════════════════════════════════════════════════════════════
-                    🚨 RÈGLES QUIZ STRICTES 🚨
+                         ⚖️ TES LIMITES DÉONTOLOGIQUES
 ═══════════════════════════════════════════════════════════════════════════════
 
-1. Questions standards : COPIE-COLLE le texte EXACT des DATA
-2. Questions standards avec choix : COPIE-COLLE les choices dans l'ordre EXACT
-3. Question "ouverte" → PAS de choices
-4. Question "choix" → INCLURE choices
-5. ⚠️ Q16 (email) OBLIGATOIRE (sauf si email déjà connu)
-6. Q3_menopause : poser UNIQUEMENT si Femme ET 45+ ans
+- Tu ne poses JAMAIS de diagnostic médical
+- Tu parles de "soutien micronutritionnel", jamais de "traitement"
+- En cas de doute → encourager RDV nutritionniste + professionnel de santé
+- Tu informes, tu analyses, tu proposes, mais tu ne remplaces pas un médecin
 
 ═══════════════════════════════════════════════════════════════════════════════
-                    🔄 GESTION "AUTRE – J'AIMERAIS PRÉCISER"
+                         📋 RÈGLES QUIZ
 ═══════════════════════════════════════════════════════════════════════════════
 
-Quand l'utilisateur choisit "Autre – j'aimerais préciser" :
-
-1. POSER LA QUESTION DE PRÉCISION :
-   → Aller vers la question Q*_autre correspondante
-   → Exemple : Q8 → Q8_autre ("Merci de préciser comment vous ressentez la température de vos extrémités.")
-
-2. ACCUSER RÉCEPTION DANS LA QUESTION SUIVANTE :
-   → Utiliser "Texte après Autre" au lieu de "Texte normal"
-   → Remplacer {precision_precedente} par la réponse de l'utilisateur
-   → Mettre la première lettre en majuscule
-
-EXEMPLE CONCRET :
-- Q8 : "Ressentez-vous souvent le froid ?"
-- User : "Autre – j'aimerais préciser"
-- Bot (Q8_autre) : "Merci de préciser comment vous ressentez la température de vos extrémités."
-- User : "dans la nuque"
-- Bot (Q9 avec texte après autre) : "Dans la nuque, c'est noté et intégré. Comment décririez-vous votre humeur ces derniers temps ?"
-
-RÈGLE : Si la question précédente n'était PAS "Autre", utiliser le "Texte normal".
+- Suis [INSTRUCTION QUIZ] pour la question exacte
+- Questions avec choices → inclure choices
+- Questions ouvertes → pas de choices
+- Q16 (email) OBLIGATOIRE avant résultats
 
 ═══════════════════════════════════════════════════════════════════════════════
-                🧩 RÈGLE DE DÉCOUPAGE DES BULLES (FRONT)
+                         📋 FORMAT RÉSULTATS (7 BLOCS)
 ═══════════════════════════════════════════════════════════════════════════════
 
-- Utilise STRICTEMENT le séparateur \`===BLOCK===\` pour créer une NOUVELLE BULLE.
-- N'utilise JAMAIS \`===BLOCK===\` à l'intérieur d'un même bloc.
-- Les retours à la ligne normaux servent UNIQUEMENT à structurer le texte À L'INTÉRIEUR d'une même bulle.
-- N'invente JAMAIS d'autres séparateurs.
+BLOC 1 : Résumé empathique et analyse des symptômes (ton Dr THYREN)
+BLOC 2 : Pourcentages besoins fonctionnels
+BLOC 3 : Cure essentielle avec mécanisme d'action détaillé, ingrédients VRAIS, dates J+14/J+90, URL
+BLOC 4 : Cure de soutien (même format)
+BLOC 5 : Contre-indications ou infos complémentaires
+BLOC 6 : Lien RDV : https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
+BLOC 7 : Disclaimer
 
-RÈGLE :
-- 1 idée forte = 1 bloc
-- 1 cure = 1 bloc
-- Disclaimer / RDV = bloc séparé
-
-═══════════════════════════════════════════════════════════════════════════════
-                         FORMAT JSON OBLIGATOIRE
-═══════════════════════════════════════════════════════════════════════════════
-
-RÉPONSE SIMPLE (Mode B) :
-{"type":"reponse","text":"...","meta":{"mode":"B","progress":{"enabled":false}}}
-
-QUESTION QUIZ AVEC CHOIX :
-{"type":"question","text":"[TEXTE EXACT]","choices":["..."],"meta":{"mode":"A","currentQuestion":"Q*","progress":{"enabled":true,"current":X,"total":16}}}
-
-QUESTION QUIZ OUVERTE :
-{"type":"question","text":"[TEXTE]","meta":{"mode":"A","currentQuestion":"Q*","progress":{"enabled":true,"current":X,"total":16}}}
-
-RÉSULTATS QUIZ - 7 BLOCS :
-{"type":"resultat","text":"BLOC1===BLOCK===BLOC2===BLOCK===BLOC3===BLOCK===BLOC4===BLOCK===BLOC5===BLOCK===BLOC6===BLOCK===BLOC7","meta":{"mode":"A"}}
+Séparateur entre blocs : ===BLOCK===
 
 ═══════════════════════════════════════════════════════════════════════════════
-              📋 FORMAT DES 7 BLOCS RÉSULTATS
+                         📋 FORMAT JSON
 ═══════════════════════════════════════════════════════════════════════════════
 
-BLOC 1 - RÉSUMÉ CLINIQUE :
-"[Prénom], merci pour vos réponses. Voici votre analyse personnalisée."
-[2-3 phrases empathiques résumant les symptômes identifiés]
+QUESTION : {"type":"question","text":"...","choices":[...],"meta":{"mode":"A","currentQuestion":"Q*","progress":{"enabled":true,"current":X,"total":16}}}
 
-BLOC 2 - BESOINS FONCTIONNELS :
-"Ces pourcentages indiquent le degré de soutien dont votre corps a besoin :"
-• Fonction thyroïdienne : XX%
-• Énergie cellulaire : XX%
-• Équilibre nerveux : XX%
-• Transit digestif : XX%
-• Santé peau/cheveux : XX%
+RÉSULTATS : {"type":"resultat","text":"BLOC1===BLOCK===BLOC2===BLOCK===...===BLOCK===BLOC7","meta":{"mode":"A"}}
 
-BLOC 3 - CURE ESSENTIELLE :
-[FORMAT CURE V2 - voir ci-dessous]
-
-BLOC 4 - CURE DE SOUTIEN :
-[FORMAT CURE V2 - voir ci-dessous]
-
-BLOC 5 - INFORMATIONS COMPLÉMENTAIRES :
-[Si cure de confort pertinente : FORMAT CURE V2]
-[Si contre-indication : "Attention : en raison de [condition mentionnée], évitez [cure X] qui contient [ingrédient]."]
-[Si aucun des deux : "Votre profil ne présente pas de contre-indication particulière. Les deux cures recommandées couvrent vos besoins prioritaires."]
-
-BLOC 6 - RENDEZ-VOUS :
-"Nos nutritionnistes sont disponibles pour un échange gratuit.
-[Prendre rendez-vous](https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252)"
-
-BLOC 7 - DISCLAIMER :
-"Ce test est un outil de bien-être. Il ne remplace pas un avis médical."
-
-═══════════════════════════════════════════════════════════════════════════════
-                    📦 FORMAT CURE V2
-═══════════════════════════════════════════════════════════════════════════════
-
-![Image]([LIEN PRODUIT depuis CURES])
-
-**[NOM DE LA CURE]**
-*[Description courte]*
-
-**Mécanisme d'action :**
-Cette formule synergique associe **[ingrédient actif 1 avec dosage]** (qui [action physiologique]), **[ingrédient actif 2 avec dosage]** (qui [action physiologique]) et **[ingrédient actif 3 avec dosage]** (qui [action physiologique]). Cette combinaison permet de [effet global sur l'organisme].
-→ Extraire les VRAIS ingrédients et dosages depuis [COMPOSITIONS] pour chaque item de la cure
-
-**Bénéfices attendus :**
-• Vers le [DATE J+14 format JJ/MM/YYYY] : [premiers effets ressentis]
-• Vers le [DATE J+90 format JJ/MM/YYYY] : [effets durables optimaux]
-→ Calculer les dates à partir de la date du jour
-
-**Conseils de prise :**
-– Durée recommandée : 3 à 6 mois
-– Moment : [Moment de prise depuis CURES]
-– Composition journalière :
-  • [qty]x [NOM GÉLULE]
-  • [qty]x [NOM GÉLULE]
-  [Lister TOUS les items]
-
-[Commander]([product_url]) | [En savoir plus]([product_url])
-
-═══════════════════════════════════════════════════════════════════════════════
-                    🔍 CHECKLIST AVANT ENVOI
-═══════════════════════════════════════════════════════════════════════════════
-
-POUR TOUTE RÉPONSE (RÈGLE UNIVERSELLE) :
-□ Ai-je appliqué les 3 étapes de contrôle ? (Identifier → Vérifier → Contrôler)
-□ Chaque fait que j'affirme est-il présent dans les DATA ?
-□ Ai-je inventé quelque chose ? → Si oui, le retirer
-
-QUIZ :
-□ Infos déjà connues ? → Sauter ces questions
-□ Question standard = texte EXACT des DATA ?
-□ Q3_menopause posée ? → Seulement si Femme ET 45+ ans
-□ Réponse "Autre" précédente ? → Accuser réception avec {precision_precedente}
-□ Q16 (email) posée (sauf si email déjà connu) ?
-
-RÉSULTATS :
-□ 7 blocs avec ===BLOCK=== ?
-□ Image en premier dans chaque bloc cure ?
-□ Ingrédients = VRAIS dosages depuis COMPOSITIONS ?
-□ Dates calculées (J+14, J+90) ?
-
-MODE B :
-□ Liste demandée ? → Compter dans les DATA (21 cures, 45 gélules...)
-□ Composition demandée ? → Lire composition + COMPOSITIONS
-□ Ingrédient demandé ? → Croiser COMPOSITIONS et CURES
-
-═══════════════════════════════════════════════════════════════════════════════
-                    🔎 RÈGLE DE CONTRÔLE UNIVERSELLE (OBLIGATOIRE)
-═══════════════════════════════════════════════════════════════════════════════
-
-AVANT CHAQUE RÉPONSE, APPLIQUE CE PROCESSUS EN 3 ÉTAPES :
-
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║  ÉTAPE 1 - IDENTIFIER LES AFFIRMATIONS                                        ║
-║  Liste TOUTES les affirmations factuelles que tu vas faire                    ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
-
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║  ÉTAPE 2 - VÉRIFIER CHAQUE AFFIRMATION DANS LES DATA                          ║
-║  → Si tu ne trouves PAS l'info → NE PAS l'affirmer                            ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
-
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║  ÉTAPE 3 - CONTRÔLE FINAL AVANT ENVOI                                         ║
-║  → Si un doute sur une info → la retirer ou dire "je dois vérifier"           ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
-
-RÈGLE D'OR : Si tu n'es pas sûr à 100% qu'une info est dans les DATA → NE PAS L'AFFIRMER
-
-═══════════════════════════════════════════════════════════════════════════════
-                    ⚠️ ERREURS INTERDITES ⚠️
-═══════════════════════════════════════════════════════════════════════════════
-
-❌ AFFIRMER QUOI QUE CE SOIT SANS L'AVOIR VÉRIFIÉ DANS LES DATA
-❌ Dire qu'une cure existe alors qu'elle n'est pas dans [CURES]
-❌ Dire qu'un ingrédient est dans une cure sans vérifier la composition
-❌ Donner un dosage sans l'avoir trouvé dans [COMPOSITIONS]
-❌ Inventer une contre-indication non listée dans [CURES]
-❌ Reposer une question dont on a déjà la réponse
-❌ Poser Q3_menopause à un homme ou une femme de moins de 45 ans
-❌ Oublier d'accuser réception quand l'utilisateur a choisi "Autre – j'aimerais préciser"
-❌ Oublier l'image en début de bloc cure
-❌ Écrire "Dès 2 semaines" au lieu de vraies dates calculées
-
-EN CAS DE DOUTE :
-→ Dire "Je vérifie dans mes données..." puis chercher
-→ Si l'info n'est pas trouvée : "Cette information n'est pas disponible dans mes données, je vous invite à contacter info@suplemint.com"
-
-═══════════════════════════════════════════════════════════════════════════════
-                              STYLE
-═══════════════════════════════════════════════════════════════════════════════
-
-- Professionnel et scientifique
-- Vouvoiement TOUJOURS
-- Pas d'emojis
-- Direct et précis
+RÉPONSE LIBRE : {"type":"reponse","text":"...","meta":{"mode":"B","progress":{"enabled":false}}}
 `;
 
 // ============================================================================
-// DÉTECTION DU MODE
+// DÉTECTION MODE
 // ============================================================================
 
-function detectMode(message, history) {
-  const msg = message.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  if (msg.includes("quiz") || msg.includes("cure ideale") || msg.includes("cure idéale")) return "A";
-  if (msg.includes("trouver ma cure") || msg.includes("quelle cure")) return "A";
-  const hist = String(history || "").toLowerCase();
-  if (hist.includes("quiz") || hist.includes("mode a")) return "A";
+function detectMode(msg, hist) {
+  const m = msg.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  if (m.includes("quiz") || m.includes("cure ideale") || m.includes("trouver ma cure")) return "A";
+  if (String(hist).toLowerCase().includes('"currentQuestion"')) return "A";
   return "B";
 }
 
 function getModeFromHistory(messages) {
   for (let i = messages.length - 1; i >= 0; i--) {
-    const msg = messages[i];
-    if (msg.role === "assistant") {
+    if (messages[i].role === "assistant") {
       try {
-        const content = typeof msg.content === "string" ? JSON.parse(msg.content) : msg.content;
-        if (content?.meta?.mode) return content.meta.mode;
+        const p = JSON.parse(typeof messages[i].content === "string" ? messages[i].content : "{}");
+        if (p?.meta?.mode) return p.meta.mode;
+        if (p?.meta?.currentQuestion) return "A";
       } catch {}
     }
   }
@@ -2901,192 +2554,141 @@ export default async function handler(req, res) {
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     if (!OPENAI_API_KEY) return res.status(500).json({ error: "API key missing" });
 
-    const lastUserMsg = messages.filter((m) => m.role === "user").pop()?.content || "";
+    const lastUserMsg = messages.filter(m => m.role === "user").pop()?.content || "";
     const userText = typeof lastUserMsg === "object" ? lastUserMsg.text || "" : String(lastUserMsg);
-    const historyText = messages.map((m) => typeof m.content === "object" ? m.content.text || "" : String(m.content)).join("\n");
+    const historyText = messages.map(m => typeof m.content === "object" ? m.content.text || "" : String(m.content)).join("\n");
 
     const historyMode = getModeFromHistory(messages);
     const detectedMode = detectMode(userText, historyText);
     const activeMode = historyMode || detectedMode;
 
     // ════════════════════════════════════════════════════════════════════════
-    // QUIZ FLOW CONTROL (Mode A)
+    // RECHERCHE SERVEUR
     // ════════════════════════════════════════════════════════════════════════
-    
+    let serverSearch = "";
+    const ctx = prepareSearchContext(userText);
+    if (ctx.type && ctx.searchResults) {
+      console.log(`🔍 Search: ${ctx.type}`);
+      if (ctx.type === "compatible_cures") {
+        const { compatible, excluded } = ctx.searchResults;
+        serverSearch = `[RÉSULTATS] Cures compatibles pour ${ctx.searchQuery.join("+")}:\nEXCLUES: ${excluded.join(", ")}\nCOMPATIBLES: ${compatible.map(c=>c.name).join(", ")}\n→ Liste EXACTEMENT ces ${compatible.length} cures.`;
+      } else if (ctx.type === "cures_by_ingredient") {
+        serverSearch = `[RÉSULTATS] Cures avec "${ctx.searchQuery}": ${ctx.searchResults.length} trouvées\n${ctx.searchResults.map((r,i)=>`${i+1}. ${r.name}`).join("\n")}\n→ Liste EXACTEMENT ces ${ctx.searchResults.length} cures.`;
+      } else if (ctx.type === "gelules_by_ingredient") {
+        serverSearch = `[RÉSULTATS] Gélules avec "${ctx.searchQuery}": ${ctx.searchResults.length} trouvées\n${ctx.searchResults.map((r,i)=>`${i+1}. ${r.fullName} → ${r.matchedIngredient}`).join("\n")}\n→ Liste EXACTEMENT ces ${ctx.searchResults.length} gélules.`;
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // QUIZ FLOW
+    // ════════════════════════════════════════════════════════════════════════
     let quizInstruction = "";
+    let isGeneratingResults = false;
     const quizState = extractQuizState(messages);
     
     if (activeMode === "A") {
-      // Déterminer la question actuelle
       let nextQ = quizState.currentQuestion || "Q1";
       
-      // Si c'est le début du quiz
-      if (!quizState.currentQuestion && (userText.toLowerCase().includes("quiz") || userText.toLowerCase().includes("cure"))) {
+      if (!quizState.currentQuestion && userText.toLowerCase().match(/quiz|cure/)) {
         nextQ = "Q1";
+      } else if (quizState.currentQuestion && QUIZ_QUESTIONS[quizState.currentQuestion]) {
+        const curQ = QUIZ_QUESTIONS[quizState.currentQuestion];
+        if (curQ.capture) quizState.answers[curQ.capture] = userText;
+        nextQ = typeof curQ.next === "function" ? curQ.next(quizState.answers) : curQ.next;
       }
-      // Si on a une réponse de l'utilisateur, passer à la suivante
-      else if (quizState.currentQuestion && QUIZ_QUESTIONS[quizState.currentQuestion]) {
-        const currentQ = QUIZ_QUESTIONS[quizState.currentQuestion];
-        
-        // Capturer la réponse
-        if (currentQ.capture) {
-          quizState.answers[currentQ.capture] = userText;
-        }
-        
-        // Déterminer la prochaine question
-        if (typeof currentQ.next === "function") {
-          nextQ = currentQ.next(quizState.answers);
-        } else {
-          nextQ = currentQ.next;
-        }
-      }
-      
-      const questionDef = QUIZ_QUESTIONS[nextQ];
       
       if (nextQ === "RESULT") {
-        quizInstruction = `
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                    [INSTRUCTION - GÉNÉRER LES RÉSULTATS]                      ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
+        isGeneratingResults = true;
+        quizInstruction = `[GÉNÉRER RÉSULTATS]
+Utilisateur: ${JSON.stringify(quizState.answers)}
 
-Le quiz est TERMINÉ. Tu dois maintenant générer les RÉSULTATS en EXACTEMENT 7 BLOCS séparés par ===BLOCK===
+Génère 7 BLOCS séparés par ===BLOCK===
+- BLOC 1: Analyse empathique Dr THYREN des symptômes
+- BLOC 2: Pourcentages besoins
+- BLOC 3: Cure principale (URL + ingrédients VRAIS + mécanisme + dates)
+- BLOC 4: Cure soutien
+- BLOC 5: Contre-indications ou infos
+- BLOC 6: Lien RDV
+- BLOC 7: Disclaimer
 
-DONNÉES UTILISATEUR COLLECTÉES :
-${JSON.stringify(quizState.answers, null, 2)}
-
-⚠️ OBLIGATIONS :
-1. Utiliser le FORMAT CURE V2 pour chaque cure recommandée
-2. Extraire les VRAIS ingrédients et dosages depuis [COMPOSITIONS]
-3. Utiliser les VRAIES URLs depuis [CURES]
-4. Calculer les dates J+14 et J+90
-5. 7 blocs EXACTEMENT séparés par ===BLOCK===
-`;
-      } else if (questionDef) {
-        let questionText = questionDef.text;
-        
-        // Remplacer les placeholders
-        if (quizState.answers.prenom) {
-          questionText = questionText.replace(/{prenom}/g, quizState.answers.prenom);
-        }
-        
-        // Utiliser textAfterAutre si applicable
-        if (questionDef.textAfterAutre && quizState.lastPrecision) {
-          questionText = questionDef.textAfterAutre.replace(/{precision}/g, quizState.lastPrecision);
-          if (quizState.answers.prenom) {
-            questionText = questionText.replace(/{prenom}/g, quizState.answers.prenom);
-          }
-        }
-        
+IMPORTANT: Utilise les VRAIES données de [CURES] et [COMPOSITIONS].`;
+      } else if (QUIZ_QUESTIONS[nextQ]) {
+        const qDef = QUIZ_QUESTIONS[nextQ];
+        const qText = qDef.text.replace(/{prenom}/g, quizState.answers.prenom || "");
         const qNum = getQuestionNumber(nextQ);
-        
-        quizInstruction = `
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                    [INSTRUCTION - QUESTION À POSER]                           ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
+        quizInstruction = `[QUESTION ${nextQ}] (${qNum}/16)
+Texte: "${qText}"
+${qDef.type === "choice" ? `Choices: ${JSON.stringify(qDef.choices)}` : "Type: ouverte"}
 
-QUESTION ID : ${nextQ}
-NUMÉRO : ${qNum}/16
-
-TEXTE EXACT À UTILISER :
-"${questionText}"
-
-${questionDef.type === "choice" ? `TYPE : CHOIX
-CHOICES EXACTES À INCLURE :
-${JSON.stringify(questionDef.choices)}
-
-⚠️ Tu DOIS inclure "choices" dans ta réponse JSON avec ces valeurs EXACTES.` : `TYPE : OUVERTE
-⚠️ PAS de "choices" dans ta réponse JSON.`}
-
-FORMAT JSON ATTENDU :
-{
-  "type": "question",
-  "text": "${questionText}",
-  ${questionDef.type === "choice" ? `"choices": ${JSON.stringify(questionDef.choices)},` : ""}
-  "meta": {
-    "mode": "A",
-    "currentQuestion": "${nextQ}",
-    "progress": {"enabled": true, "current": ${qNum}, "total": 16}
-  }
-}
-`;
-      }
-      
-      console.log(`📋 Quiz: ${quizState.currentQuestion || "START"} → ${nextQ}`);
-    }
-
-    // ════════════════════════════════════════════════════════════════════════
-    // RECHERCHE SERVEUR (Mode B)
-    // ════════════════════════════════════════════════════════════════════════
-    
-    let serverSearchSection = "";
-    if (activeMode === "B") {
-      const searchContext = prepareSearchContext(userText);
-      if (searchContext.type === "ingredient_search" && searchContext.searchResults) {
-        const results = searchContext.searchResults;
-        serverSearchSection = `
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║           [RÉSULTATS RECHERCHE SERVEUR - LISTE EXACTE]                        ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
-
-Recherche : gélules contenant "${searchContext.searchQuery}"
-Nombre de résultats : ${results.length}
-
-${results.length === 0 ? "AUCUNE GÉLULE TROUVÉE avec cet ingrédient." : results.map((r, i) => `${i + 1}. ${r.name}
-   Ingrédient correspondant : ${r.matchedIngredient}`).join('\n\n')}
-
-⚠️ INSTRUCTION : Liste EXACTEMENT ces ${results.length} gélule(s), pas plus, pas moins.
-`;
+Réponds UNIQUEMENT avec ce JSON:
+{"type":"question","text":"${qText}"${qDef.type === "choice" ? `,"choices":${JSON.stringify(qDef.choices)}` : ""},"meta":{"mode":"A","currentQuestion":"${nextQ}","progress":{"enabled":true,"current":${qNum},"total":16}}}`;
       }
     }
 
-    // Dates
+    // ════════════════════════════════════════════════════════════════════════
+    // OPTIMISATION: Données limitées selon contexte
+    // ════════════════════════════════════════════════════════════════════════
     const today = new Date();
-    const dateJ14 = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000);
-    const dateJ90 = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000);
-    const formatDate = (d) => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+    const formatDate = d => `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+    const dateJ14 = formatDate(new Date(today.getTime() + 14*24*60*60*1000));
+    const dateJ90 = formatDate(new Date(today.getTime() + 90*24*60*60*1000));
 
-    // Data section
-    let dataSection = `
-DATE DU JOUR : ${formatDate(today)}
-DATE J+14 (premiers effets) : ${formatDate(dateJ14)}
-DATE J+90 (effets durables) : ${formatDate(dateJ90)}
+    let dataSection = "";
+    
+    if (isGeneratingResults) {
+      // Pour les résultats: toutes les données nécessaires
+      dataSection = `DATE: ${formatDate(today)} | J+14: ${dateJ14} | J+90: ${dateJ90}
 
 ${quizInstruction}
-${serverSearchSection}
 
-[CURES] :
+[CURES]:
 ${DATA_CURES}
 
-[COMPOSITIONS] :
+[COMPOSITIONS]:
+${DATA_COMPOSITIONS}`;
+    } else if (activeMode === "A") {
+      // Pour les questions: juste l'instruction
+      dataSection = `${quizInstruction}`;
+    } else {
+      // Mode B: données selon la recherche
+      dataSection = `DATE: ${formatDate(today)}
+
+${serverSearch}
+
+[CURES]:
+${DATA_CURES}
+
+[COMPOSITIONS]:
 ${DATA_COMPOSITIONS}
 
-${activeMode === "B" ? `[SAV_FAQ] :\n${DATA_SAV}` : ""}
-`;
+[SAV_FAQ]:
+${DATA_SAV}`;
+    }
+
+    // Limiter l'historique pour la vitesse
+    const limitedMessages = messages.slice(-10);
 
     const openaiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
-      { role: "system", content: `MODE ACTIF: ${activeMode}\n\nDATA SUPLEMINT:\n${dataSection}` },
-      ...messages.map((m) => ({
-        role: m.role,
-        content: typeof m.content === "object" ? (m.content.text || JSON.stringify(m.content)) : String(m.content),
-      })),
+      { role: "system", content: `MODE: ${activeMode}\n\n${dataSection}` },
+      ...limitedMessages.map(m => ({ role: m.role, content: typeof m.content === "object" ? (m.content.text || JSON.stringify(m.content)) : String(m.content) }))
     ];
 
-    console.log(`🎯 Mode: ${activeMode}`);
+    // max_tokens adaptatif
+    const maxTokens = isGeneratingResults ? 4000 : (activeMode === "A" ? 500 : 2000);
+
+    console.log(`🎯 Mode: ${activeMode} | Results: ${isGeneratingResults} | Tokens: ${maxTokens}`);
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: openaiMessages,
-        response_format: { type: "json_object" },
-        temperature: 0.05,
-        max_tokens: 4000,
-      }),
+      headers: { Authorization: `Bearer ${OPENAI_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        model: "gpt-4o-mini", 
+        messages: openaiMessages, 
+        response_format: { type: "json_object" }, 
+        temperature: 0.1, 
+        max_tokens: maxTokens 
+      })
     });
 
     if (!response.ok) {
@@ -3099,10 +2701,11 @@ ${activeMode === "B" ? `[SAV_FAQ] :\n${DATA_SAV}` : ""}
     const replyText = data.choices?.[0]?.message?.content || "";
 
     let reply;
-    try {
-      reply = JSON.parse(replyText);
-    } catch {
-      reply = { type: "reponse", text: replyText, meta: { mode: activeMode, progress: { enabled: false } } };
+    try { 
+      reply = JSON.parse(replyText); 
+    } catch { 
+      console.error("❌ JSON parse error:", replyText.substring(0, 200));
+      reply = { type: "reponse", text: replyText, meta: { mode: activeMode, progress: { enabled: false } } }; 
     }
 
     if (!reply.type) reply.type = "reponse";
