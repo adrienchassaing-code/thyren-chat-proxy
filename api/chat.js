@@ -1723,28 +1723,320 @@ console.log("✅ THYREN V18 - Version Simple (Quiz uniquement)");
 // ============================================================================
 
 const QUIZ = [
-  { text: "Parfait, trouvons ensemble la cure idéale. Quel est votre prénom ?", type: "open", key: "prenom" },
-  { text: "Bonjour {prenom}, votre sexe biologique ?", type: "choice", choices: ["Femme", "Homme"], key: "sexe" },
-  { text: "Êtes-vous enceinte ou allaitante ?", type: "choice", choices: ["Oui", "Non"], key: "enceinte", cond: a => a.sexe === "Femme" },
-  { text: "Votre âge ?", type: "choice", choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"], key: "age" },
-  { text: "Concernant votre cycle hormonal ?", type: "choice", choices: ["Ménopausée", "Symptômes préménopause", "Pas de symptômes"], key: "menopause", cond: a => a.sexe === "Femme" && (a.age === "45-60 ans" || a.age === "Plus de 60 ans") },
-  { text: "Avez-vous une condition médicale, une allergie ou prenez-vous un traitement ou des compléments ?", type: "choice", choices: ["Tout va bien", "Oui, à signaler"], key: "condition" },
-  { text: "Précisez votre condition.", type: "open", key: "condition_detail", cond: a => a.condition !== "Tout va bien" },
-  { text: "{prenom}, qu'est-ce qui vous pèse au quotidien ?", type: "open", key: "plainte" },
-  { text: "Depuis combien de temps ?", type: "choice", choices: ["< 1 mois", "1-6 mois", "6-12 mois", "> 1 an"], key: "duree" },
-  { text: "Impact sur votre quotidien ?", type: "choice", choices: ["Léger", "Modéré", "Important", "Sévère"], key: "impact" },
-  { text: "Niveau d'énergie ?", type: "choice", choices: ["Bonne", "Fatigue légère", "Fatigue constante"], key: "energie" },
-  { text: "Prise de poids inexpliquée ?", type: "choice", choices: ["Non", "Légère", "Importante"], key: "poids" },
-  { text: "Sensibilité au froid ?", type: "choice", choices: ["Non", "Parfois", "Souvent"], key: "froid" },
-  { text: "Votre humeur ?", type: "choice", choices: ["Stable", "Fluctuante", "Moral bas"], key: "humeur" },
-  { text: "Sommeil réparateur ?", type: "choice", choices: ["Oui", "Parfois léger", "Difficultés"], key: "sommeil" },
-  { text: "Changements peau/cheveux ?", type: "choice", choices: ["Non", "Un peu secs", "Très secs"], key: "peau" },
-  { text: "Transit intestinal ?", type: "choice", choices: ["Régulier", "Parfois lent", "Constipation"], key: "transit" },
-  { text: "Gonflement visage/mains le matin ?", type: "choice", choices: ["Non", "Parfois", "Oui"], key: "gonflement" },
-  { text: "Difficultés de concentration ?", type: "choice", choices: ["Non", "Légères", "Brouillard mental"], key: "concentration" },
-  { text: "Changement de libido ?", type: "choice", choices: ["Aucun", "Variable", "Très basse"], key: "libido" },
-  { text: "Merci {prenom}. Votre email pour les résultats ?", type: "open", key: "email" }
+  // Q1
+  {
+    id: "Q1",
+    text: "Parfait, trouvons ensemble la cure idéale. Pour commencer, quel est votre prénom ?",
+    type: "open",
+    key: "prenom"
+  },
+
+  // Q2 (AGE AVANT SEXE)
+  {
+    id: "Q2",
+    text: "Quel est votre âge ?",
+    type: "choice",
+    choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"],
+    key: "age"
+  },
+
+  // Q3 (SEXE)
+  {
+    id: "Q3",
+    text: "Bonjour {prenom}, quel est votre sexe biologique ?",
+    type: "choice",
+    choices: ["Femme", "Homme"],
+    key: "sexe"
+  },
+
+  // Q3_plus (Grossesse/Allaitement si femme)
+  {
+    id: "Q3_plus",
+    text: "Êtes-vous enceinte ou allaitante ?",
+    type: "choice",
+    choices: ["Oui", "Non"],
+    key: "enceinte",
+    cond: a => a.sexe === "Femme"
+  },
+
+  // Q4 (Ménopause si femme 45+)
+  {
+    id: "Q4_menopause",
+    text: "Concernant votre cycle hormonal, où en êtes-vous ?",
+    type: "choice",
+    choices: [
+      "Oui, je suis ménopausée",
+      "Oui, j’ai des symptômes de préménopause ou ménopause",
+      "Non, je n’ai pas de symptômes particuliers",
+      "Autre – j’aimerais préciser"
+    ],
+    key: "menopause",
+    cond: a =>
+      a.sexe === "Femme" &&
+      (a.age === "45-60 ans" || a.age === "Plus de 60 ans")
+  },
+
+  // Q5 (conditions)
+  {
+    id: "Q5",
+    text: "Avez-vous une condition médicale, une allergie ou prenez-vous un traitement ou des compléments ?",
+    type: "choice",
+    choices: [
+      "Tout va bien",
+      "Oui, j’ai une condition / allergie / traitement"
+    ],
+    key: "condition"
+  },
+
+  // Q5b (détail condition)
+  {
+    id: "Q5b",
+    text: "Merci de préciser votre condition, allergie ou traitement.",
+    type: "open",
+    key: "condition_detail",
+    cond: a => a.condition !== "Tout va bien"
+  },
+
+  // Q6 (plainte)
+  {
+    id: "Q6_plainte",
+    text: "{prenom}, qu’est-ce qui vous pèse le plus au quotidien en ce moment ?",
+    type: "open",
+    key: "plainte"
+  },
+
+  // Q7 (ENERGIE) — intègre la plainte juste avant
+  {
+    id: "Q7_energie",
+    text: "Bien noté {prenom}. Je l’intègre à mon raisonnement. Maintenant, comment décririez-vous votre niveau d’énergie au quotidien ?",
+    // option si ton moteur sait injecter la plainte dans le texte :
+    textWithPlainte:
+      "Bien noté {prenom} : « {plainte} ». Je l’intègre à mon raisonnement. Maintenant, comment décririez-vous votre niveau d’énergie au quotidien ?",
+    type: "choice",
+    choices: [
+      "Bonne énergie tout au long de la journée",
+      "Fatigue légère ou passagère",
+      "Fatigue constante malgré le repos",
+      "Autre – j’aimerais préciser"
+    ],
+    key: "energie"
+  },
+
+  {
+    id: "Q7_energie_autre",
+    text: "Merci de préciser comment vous décririez votre niveau d’énergie.",
+    type: "open",
+    key: "energie_detail",
+    cond: a => a.energie?.startsWith("Autre")
+  },
+
+  // Q8 poids
+  {
+    id: "Q8_poids",
+    text: "Avez-vous pris du poids sans changer votre alimentation ?",
+    type: "choice",
+    choices: [
+      "Non, mon poids est stable",
+      "Oui, une légère prise de poids",
+      "Oui, une prise de poids importante ou inexpliquée",
+      "Autre – j’aimerais préciser"
+    ],
+    key: "poids"
+  },
+
+  {
+    id: "Q8_poids_autre",
+    text: "Merci de préciser votre situation concernant le poids.",
+    type: "open",
+    key: "poids_detail",
+    cond: a => a.poids?.startsWith("Autre")
+  },
+
+  // Q9 froid
+  {
+    id: "Q9_froid",
+    text: "Ressentez-vous souvent le froid (mains ou pieds froids) ?",
+    type: "choice",
+    choices: [
+      "Non, température normale",
+      "Parfois",
+      "Souvent, même quand il fait bon",
+      "Autre – j’aimerais préciser"
+    ],
+    key: "froid"
+  },
+
+  {
+    id: "Q9_froid_autre",
+    text: "Merci de préciser comment vous ressentez le froid.",
+    type: "open",
+    key: "froid_detail",
+    cond: a => a.froid?.startsWith("Autre")
+  },
+
+  // Q10 humeur
+  {
+    id: "Q10_humeur",
+    text: "Comment décririez-vous votre humeur ces derniers temps ?",
+    type: "choice",
+    choices: [
+      "Moral stable",
+      "Humeur fluctuante",
+      "Moral bas",
+      "Autre – j’aimerais préciser"
+    ],
+    key: "humeur"
+  },
+
+  {
+    id: "Q10_humeur_autre",
+    text: "Merci de préciser votre humeur.",
+    type: "open",
+    key: "humeur_detail",
+    cond: a => a.humeur?.startsWith("Autre")
+  },
+
+  // Q11 sommeil
+  {
+    id: "Q11_sommeil",
+    text: "Votre sommeil est-il réparateur ?",
+    type: "choice",
+    choices: [
+      "Oui, je dors bien",
+      "Sommeil parfois léger ou agité",
+      "Difficultés à dormir ou fatigue au réveil",
+      "Autre – j’aimerais préciser"
+    ],
+    key: "sommeil"
+  },
+
+  {
+    id: "Q11_sommeil_autre",
+    text: "Merci de préciser comment se passe votre sommeil.",
+    type: "open",
+    key: "sommeil_detail",
+    cond: a => a.sommeil?.startsWith("Autre")
+  },
+
+  // Q12 peau/cheveux
+  {
+    id: "Q12_peau",
+    text: "Avez-vous remarqué des changements de la peau ou des cheveux ?",
+    type: "choice",
+    choices: [
+      "Non, tout est normal",
+      "Peau un peu sèche ou cheveux ternes",
+      "Peau très sèche ou cheveux cassants",
+      "Autre – j’aimerais préciser"
+    ],
+    key: "peau"
+  },
+
+  {
+    id: "Q12_peau_autre",
+    text: "Merci de préciser les changements observés.",
+    type: "open",
+    key: "peau_detail",
+    cond: a => a.peau?.startsWith("Autre")
+  },
+
+  // Q13 transit
+  {
+    id: "Q13_transit",
+    text: "Comment est votre transit intestinal ?",
+    type: "choice",
+    choices: [
+      "Transit régulier",
+      "Parfois un peu lent",
+      "Constipation ou digestion difficile",
+      "Autre – j’aimerais préciser"
+    ],
+    key: "transit"
+  },
+
+  {
+    id: "Q13_transit_autre",
+    text: "Merci de préciser votre transit.",
+    type: "open",
+    key: "transit_detail",
+    cond: a => a.transit?.startsWith("Autre")
+  },
+
+  // Q14 gonflement
+  {
+    id: "Q14_gonflement",
+    text: "Avez-vous remarqué un gonflement du visage ou des mains le matin ?",
+    type: "choice",
+    choices: [
+      "Non",
+      "Parfois",
+      "Oui, visible chaque matin",
+      "Autre – j’aimerais préciser"
+    ],
+    key: "gonflement"
+  },
+
+  {
+    id: "Q14_gonflement_autre",
+    text: "Merci de préciser les gonflements observés.",
+    type: "open",
+    key: "gonflement_detail",
+    cond: a => a.gonflement?.startsWith("Autre")
+  },
+
+  // Q15 concentration
+  {
+    id: "Q15_concentration",
+    text: "Avez-vous parfois l’esprit confus ou des difficultés de concentration ?",
+    type: "choice",
+    choices: [
+      "Concentration normale",
+      "Légère distraction",
+      "Brouillard mental",
+      "Autre – j’aimerais préciser"
+    ],
+    key: "concentration"
+  },
+
+  {
+    id: "Q15_concentration_autre",
+    text: "Merci de préciser vos difficultés de concentration.",
+    type: "open",
+    key: "concentration_detail",
+    cond: a => a.concentration?.startsWith("Autre")
+  },
+
+  // Q16 libido
+  {
+    id: "Q16_libido",
+    text: "Avez-vous remarqué un changement de votre libido ?",
+    type: "choice",
+    choices: [
+      "Aucun changement notable",
+      "Libido variable",
+      "Libido très basse",
+      "Autre – j’aimerais préciser"
+    ],
+    key: "libido"
+  },
+
+  {
+    id: "Q16_libido_autre",
+    text: "Merci de préciser les changements de libido.",
+    type: "open",
+    key: "libido_detail",
+    cond: a => a.libido?.startsWith("Autre")
+  },
+
+  // Q17 email
+  {
+    id: "Q17_email",
+    text: "Merci {prenom}. Pouvez-vous indiquer votre adresse e-mail pour recevoir vos résultats ?",
+    type: "open",
+    key: "email"
+  }
 ];
+
 
 // ============================================================================
 // QUIZ - Fonctions utilitaires
@@ -1911,15 +2203,13 @@ ${DATA_CURES}
 INSTRUCTIONS:
 Génère un JSON avec 7 blocs de texte séparés par "===BLOCK===":
 
-{"type":"resultat","text":"[BLOC1]===BLOCK===[BLOC2]===BLOCK===[BLOC3]===BLOCK===[BLOC4]===BLOCK===[BLOC5]===BLOCK===[BLOC6]===BLOCK===[BLOC7]","meta":{"mode":"A"}}
+{"type":"resultat","text":"[BLOC1]===BLOCK===[BLOC2]===BLOCK===[BLOC3]===BLOCK===[BLOC4],"meta":{"mode":"A"}}
 
 BLOC 1: Salutation personnalisée + résumé des symptômes (2-3 phrases)
-BLOC 2: Analyse des besoins en % (thyroïde, énergie, système nerveux, transit, peau)
-BLOC 3: Cure principale recommandée avec URL EXACTE, composition et objectifs J+14/J+90
-BLOC 4: Cure de soutien si pertinent
-BLOC 5: Contre-indications à vérifier
-BLOC 6: Proposition de RDV: https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
-BLOC 7: Disclaimer (compléments ≠ médicaments)
+BLOC 2: Cure principale recommandée avec URL EXACTE, composition et objectifs J+14/J+90
+BLOC 3: Cure de soutien si pertinent
+BLOC 4: Proposition de RDV: https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
+
 
 IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
 
