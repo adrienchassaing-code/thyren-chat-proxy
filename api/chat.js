@@ -453,12 +453,12 @@ ${DATA_SAV}
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: openaiMessages,
-        response_format: { type: "json_object" },
-        temperature: 0.1,
-        max_tokens: 4000,
-      }),
+  model: "gpt-4o-mini",
+  messages: openaiMessages,
+  temperature: 0.1,
+  max_tokens: 1200
+}),
+
     });
 
     if (!response.ok) {
