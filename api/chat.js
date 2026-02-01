@@ -1,5 +1,5 @@
 // ============================================================================
-// THYREN V15 - RÉSULTATS PROPRES
+// THYREN V16 FIXED - NORMALISATION ACCENTS
 // ============================================================================
 
 const DATA_COMPOSITIONS = `================================================================================
@@ -1710,184 +1710,153 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 ================================================================================
 `;
 
-console.log("✅ THYREN V15");
+console.log("✅ THYREN V16");
 
-function normalize(str) {
-  return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[®+\s_-]/g, '');
+// Normaliser les accents ET les caractères spéciaux
+function norm(str) {
+  return str.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[®+\s_-]/g, '');
 }
 
-function parseGelules() {
-  const gelules = [];
-  const lines = DATA_COMPOSITIONS.split('\n');
-  let current = null;
-  for (const line of lines) {
-    const t = line.trim();
-    if (t.match(/^(GÉLULE|CAPSULE)\s+/i)) {
-      if (current) gelules.push(current);
-      const name = t.replace(/^(GÉLULE|CAPSULE)\s+/i, '').trim();
-      current = { name, nameNorm: normalize(name), ingredients: [], aliases: [] };
-    }
-    if (current && (t.startsWith('•') || t.startsWith('-'))) {
-      current.ingredients.push(t.replace(/^[•-]\s*/, '').trim());
-    }
-    if (current && t.startsWith('Alias')) {
-      const parts = t.split(':')[1];
-      if (parts) current.aliases = parts.split(',').map(a => normalize(a.trim()));
-    }
-  }
-  if (current) gelules.push(current);
-  return gelules;
-}
-
-function parseCures() {
-  const cures = [];
-  const lines = DATA_CURES.split('\n');
-
-  let current = null;
-  let inComp = false;
-  let inContra = false;
-
-  for (const line of lines) {
-    const t = line.trim();
-
-    // Nouveau bloc cure
-    const m = t.match(/^CURE\s+\d+\s*:\s*CURE\s+(.+)$/i);
-    if (m) {
-      if (current) cures.push(current);
-      current = {
-        name: 'CURE ' + m[1].trim(),
-        composition: [],
-        contraindications: [],
-        url: ''
-      };
-      inComp = false;
-      inContra = false;
-      continue;
-    }
-
-    if (!current) continue;
-
-    // URL
-    if (t.includes('suplemint.com/products/')) {
-      const u = t.match(/(https?:\/\/[^\s]+)/);
-      if (u) current.url = u[1];
-    }
-
-    // Début/fin composition
-    if (/^Composition journali[èe]re\s*:/i.test(t)) {
-      inComp = true;
-      inContra = false;
-      continue;
-    }
-    if (/^Contre-?indications\s*:/i.test(t)) {
-      inContra = true;
-      inComp = false;
-      continue;
-    }
-
-    // Lire composition (ex: • 1x MAGNESIUM_PLUS)
-    if (inComp) {
-      const g = t.match(/^•\s*(\d+)\s*x?\s*([A-Z0-9_+]+)\s*$/i);
-      if (g) {
-        current.composition.push({
-          name: g[2].trim(),
-          nameNorm: normalize(g[2].trim()),
-          qty: parseInt(g[1], 10) || 1
-        });
-        continue;
-      }
-      // stop si on sort du bloc bullets
-      if (t === '' || /^[A-Z]/.test(t)) inComp = false;
-    }
-
-    // Lire contre-indications multi-lignes (❌ / ⚠️)
-    if (inContra) {
-      const c = t.replace(/^[❌⚠️]\s*/u, '').trim();
-      if (c.length >= 3 && (t.startsWith('❌') || t.startsWith('⚠️'))) {
-        current.contraindications.push(normalize(c));
-        continue;
-      }
-      // stop si on quitte le bloc
-      if (t === '' || t.startsWith('Notes') || t.startsWith('---')) inContra = false;
-    }
-  }
-
-  if (current) cures.push(current);
-  return cures;
-}
-
-
-let _gel = null, _cur = null;
-function getGelules() { if (!_gel) _gel = parseGelules(); return _gel; }
-function getCures() { if (!_cur) _cur = parseCures(); return _cur; }
+// ============================================================================
+// RECHERCHE GÉLULES
+// ============================================================================
 
 function findGelulesWithIngredient(ingredient) {
-  const term = normalize(ingredient);
+  const term = norm(ingredient);
   const results = [];
-  for (const gel of getGelules()) {
-    if (gel.nameNorm.includes(term) || gel.aliases.some(a => a.includes(term))) {
-      results.push({ gelule: gel.name, geluleNorm: gel.nameNorm, aliases: gel.aliases });
-      continue;
-    }
-    for (const ing of gel.ingredients) {
-      if (normalize(ing).includes(term)) {
-        results.push({ gelule: gel.name, geluleNorm: gel.nameNorm, aliases: gel.aliases, ingredient: ing });
-        break;
+  let currentGelule = null;
+  let currentBlock = '';
+  
+  for (const line of DATA_COMPOSITIONS.split('\n')) {
+    const match = line.match(/^(GÉLULE|CAPSULE)\s+(.+)$/i);
+    if (match) {
+      if (currentGelule && norm(currentBlock).includes(term)) {
+        results.push(currentGelule);
       }
+      currentGelule = match[2].replace(/®/g, '').trim();
+      currentBlock = line;
+    } else if (currentGelule) {
+      currentBlock += '\n' + line;
     }
   }
+  if (currentGelule && norm(currentBlock).includes(term)) {
+    results.push(currentGelule);
+  }
+  
+  console.log('🔍 Gélules avec "' + ingredient + '":', results);
   return results;
 }
 
-function findCuresWithGelule(gel) {
+// ============================================================================
+// RECHERCHE CURES
+// ============================================================================
+
+function findCuresWithGelule(geluleName) {
   const results = [];
-  for (const cure of getCures()) {
-    for (const comp of cure.composition) {
-      if (comp.nameNorm === gel.geluleNorm || comp.nameNorm.includes(gel.geluleNorm) || gel.geluleNorm.includes(comp.nameNorm) ||
-          gel.aliases.includes(comp.nameNorm) || gel.aliases.some(a => comp.nameNorm.includes(a) || a.includes(comp.nameNorm))) {
-        results.push({ cure: cure.name, url: cure.url });
-        break;
+  let currentCure = null;
+  let currentUrl = '';
+  
+  // Normaliser le nom de base
+  const baseNorm = norm(geluleName);
+  
+  for (const line of DATA_CURES.split('\n')) {
+    const cureMatch = line.match(/^CURE\s+\d+\s*:\s*CURE\s+(.+)$/i);
+    if (cureMatch) {
+      currentCure = 'CURE ' + cureMatch[1].trim();
+      currentUrl = '';
+    }
+    
+    if (currentCure && line.includes('suplemint.com/products/')) {
+      const urlMatch = line.match(/(https?:\/\/[^\s]+)/);
+      if (urlMatch) currentUrl = urlMatch[1];
+    }
+    
+    if (currentCure && line.includes('•')) {
+      // Normaliser la ligne et comparer
+      const lineNorm = norm(line);
+      if (lineNorm.includes(baseNorm) || baseNorm.includes(lineNorm.replace(/[0-9x]/g, ''))) {
+        if (!results.find(r => r.cure === currentCure)) {
+          results.push({ cure: currentCure, url: currentUrl, gelule: geluleName });
+        }
       }
     }
   }
+  
   return results;
 }
+
+// ============================================================================
+// FONCTION PRINCIPALE
+// ============================================================================
 
 function findCuresWithIngredient(ingredient) {
-  const gels = findGelulesWithIngredient(ingredient);
-  const seen = new Set(), results = [];
-  for (const gel of gels) {
-    for (const c of findCuresWithGelule(gel)) {
-      if (!seen.has(c.cure)) { seen.add(c.cure); results.push({ ...c, gelule: gel.gelule }); }
-    }
-  }
-  return results;
-}
-
-function findCompatibleCures(conditions) {
-  const excluded = new Set();
-  for (const cond of conditions) {
-    const term = normalize(cond);
-    for (const cure of getCures()) {
-      if (cure.contraindications.some(c => c.includes(term))) excluded.add(cure.name);
-    }
-    if (cond.includes('poisson') || cond.includes('omega')) {
-      for (const i of ['omega', 'krill', 'poisson']) {
-        for (const c of findCuresWithIngredient(i)) excluded.add(c.cure);
+  const gelules = findGelulesWithIngredient(ingredient);
+  const allCures = [];
+  const seen = new Set();
+  
+  for (const gel of gelules) {
+    const cures = findCuresWithGelule(gel);
+    for (const c of cures) {
+      if (!seen.has(c.cure)) {
+        seen.add(c.cure);
+        allCures.push({ cure: c.cure, url: c.url, viaGelule: gel });
       }
     }
   }
-  return { compatible: getCures().filter(c => !excluded.has(c.name)).map(c => ({ cure: c.name, url: c.url })), excluded: Array.from(excluded) };
+  
+  console.log('🔍 Cures avec "' + ingredient + '":', allCures.map(c => c.cure));
+  return allCures;
 }
 
-// Récupérer info d'une cure
-function getCureInfo(cureName) {
-  for (const cure of getCures()) {
-    if (cure.name.toLowerCase().includes(cureName.toLowerCase())) {
-      return cure;
+// ============================================================================
+// CURES COMPATIBLES
+// ============================================================================
+
+function findCompatibleCures(conditions) {
+  const allCures = [];
+  let cur = null;
+  
+  for (const line of DATA_CURES.split('\n')) {
+    const m = line.match(/^CURE\s+\d+\s*:\s*CURE\s+(.+)$/i);
+    if (m) {
+      if (cur) allCures.push(cur);
+      cur = { name: 'CURE ' + m[1].trim(), url: '', contra: '' };
+    }
+    if (cur && line.includes('suplemint.com')) {
+      const u = line.match(/(https?:\/\/[^\s]+)/);
+      if (u) cur.url = u[1];
+    }
+    if (cur && line.toLowerCase().includes('contre-indic')) {
+      cur.contra = line.toLowerCase();
     }
   }
-  return null;
+  if (cur) allCures.push(cur);
+  
+  const excluded = new Set();
+  
+  for (const cond of conditions) {
+    const term = norm(cond);
+    for (const c of allCures) {
+      if (norm(c.contra).includes(term)) excluded.add(c.name);
+    }
+    if (term.includes('poisson') || term.includes('omega')) {
+      for (const c of findCuresWithIngredient('omega')) excluded.add(c.cure);
+      for (const c of findCuresWithIngredient('krill')) excluded.add(c.cure);
+      for (const c of findCuresWithIngredient('poisson')) excluded.add(c.cure);
+    }
+    if (term.includes('diabet')) {
+      for (const c of allCures) {
+        if (norm(c.contra).includes('diabet') || norm(c.contra).includes('glyc')) excluded.add(c.name);
+      }
+    }
+  }
+  
+  return {
+    compatible: allCures.filter(c => !excluded.has(c.name)).map(c => ({ cure: c.name, url: c.url })),
+    excluded: Array.from(excluded)
+  };
 }
 
 // ============================================================================
@@ -1895,28 +1864,124 @@ function getCureInfo(cureName) {
 // ============================================================================
 
 const QUIZ = [
-  { text: "Parfait, trouvons ensemble la cure idéale. Quel est votre prénom ?", type: "open", key: "prenom" },
-  { text: "Bonjour {prenom}, votre sexe biologique ?", type: "choice", choices: ["Femme", "Homme"], key: "sexe" },
-  { text: "Êtes-vous enceinte ou allaitante ?", type: "choice", choices: ["Oui", "Non"], key: "enceinte", cond: a => a.sexe === "Femme" },
-  { text: "Votre âge ?", type: "choice", choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"], key: "age" },
-  { text: "Concernant votre cycle hormonal ?", type: "choice", choices: ["Ménopausée", "Symptômes préménopause", "Pas de symptômes"], key: "menopause", cond: a => a.sexe === "Femme" && (a.age === "45-60 ans" || a.age === "Plus de 60 ans") },
-  { text: "Condition médicale, allergie ou traitement ?", type: "choice", choices: ["Tout va bien", "Oui, à signaler"], key: "condition" },
-  { text: "Précisez votre condition.", type: "open", key: "condition_detail", cond: a => a.condition !== "Tout va bien" },
-  { text: "{prenom}, qu'est-ce qui vous pèse au quotidien ?", type: "open", key: "plainte" },
-  { text: "Depuis combien de temps ?", type: "choice", choices: ["< 1 mois", "1-6 mois", "6-12 mois", "> 1 an"], key: "duree" },
-  { text: "Impact sur votre quotidien ?", type: "choice", choices: ["Léger", "Modéré", "Important", "Sévère"], key: "impact" },
-  { text: "Niveau d'énergie ?", type: "choice", choices: ["Bonne", "Fatigue légère", "Fatigue constante"], key: "energie" },
-  { text: "Prise de poids inexpliquée ?", type: "choice", choices: ["Non", "Légère", "Importante"], key: "poids" },
-  { text: "Sensibilité au froid ?", type: "choice", choices: ["Non", "Parfois", "Souvent"], key: "froid" },
-  { text: "Votre humeur ?", type: "choice", choices: ["Stable", "Fluctuante", "Moral bas"], key: "humeur" },
-  { text: "Sommeil réparateur ?", type: "choice", choices: ["Oui", "Parfois léger", "Difficultés"], key: "sommeil" },
-  { text: "Changements peau/cheveux ?", type: "choice", choices: ["Non", "Un peu secs", "Très secs"], key: "peau" },
-  { text: "Transit intestinal ?", type: "choice", choices: ["Régulier", "Parfois lent", "Constipation"], key: "transit" },
-  { text: "Gonflement visage/mains le matin ?", type: "choice", choices: ["Non", "Parfois", "Oui"], key: "gonflement" },
-  { text: "Difficultés de concentration ?", type: "choice", choices: ["Non", "Légères", "Brouillard mental"], key: "concentration" },
-  { text: "Changement de libido ?", type: "choice", choices: ["Aucun", "Variable", "Très basse"], key: "libido" },
-  { text: "Merci {prenom}. Votre email pour les résultats ?", type: "open", key: "email" }
+  {
+    text: "Parfait, trouvons ensemble la cure idéale. Quel est votre prénom ?",
+    type: "open",
+    key: "prenom"
+  },
+  {
+    text: "Merci {prenom}. Quel est votre âge ?",
+    type: "choice",
+    choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"],
+    key: "age"
+  },
+  {
+    text: "Le fonctionnement hormonal et thyroïdien diffère selon le sexe biologique. Quel est le vôtre ?",
+    type: "choice",
+    choices: ["Femme", "Homme"],
+    key: "sexe"
+  },
+  {
+    text: "Êtes-vous enceinte ou allaitante ?",
+    type: "choice",
+    choices: ["Oui", "Non"],
+    key: "enceinte",
+    cond: a => a.sexe === "Femme"
+  },
+  {
+    text: "Concernant votre cycle hormonal, où en êtes-vous actuellement ?",
+    type: "choice",
+    choices: ["Ménopausée", "Symptômes préménopause", "Pas de symptômes"],
+    key: "menopause",
+    cond: a =>
+      a.sexe === "Femme" &&
+      (a.age === "45-60 ans" || a.age === "Plus de 60 ans")
+  },
+  {
+    text: "Avez-vous une condition médicale, une allergie ou un traitement à signaler ?",
+    type: "choice",
+    choices: ["Tout va bien", "Oui, à signaler"],
+    key: "condition"
+  },
+  {
+    text: "Merci de préciser votre condition afin de vérifier les contre-indications.",
+    type: "open",
+    key: "condition_detail",
+    cond: a => a.condition !== "Tout va bien"
+  },
+  {
+    text: "{prenom}, qu’est-ce qui vous pèse le plus au quotidien en ce moment ?",
+    type: "open",
+    key: "plainte"
+  },
+  {
+    text:
+      "Merci {prenom}. J’ai bien noté ce que vous avez décrit : « {plainte} ». Je l’intègre à mon analyse.\n\nContinuons. Comment décririez-vous votre niveau d’énergie ?",
+    type: "choice",
+    choices: ["Bonne", "Fatigue légère", "Fatigue constante"],
+    key: "energie"
+  },
+  {
+    text: "Avez-vous constaté une prise de poids sans changement alimentaire ?",
+    type: "choice",
+    choices: ["Non", "Légère", "Importante"],
+    key: "poids"
+  },
+  {
+    text: "Êtes-vous sensible au froid (mains ou pieds froids) ?",
+    type: "choice",
+    choices: ["Non", "Parfois", "Souvent"],
+    key: "froid"
+  },
+  {
+    text: "Comment décririez-vous votre humeur ces derniers temps ?",
+    type: "choice",
+    choices: ["Stable", "Fluctuante", "Moral bas"],
+    key: "humeur"
+  },
+  {
+    text: "Votre sommeil est-il réparateur ?",
+    type: "choice",
+    choices: ["Oui", "Parfois léger", "Difficultés"],
+    key: "sommeil"
+  },
+  {
+    text: "Avez-vous remarqué des changements au niveau de la peau ou des cheveux ?",
+    type: "choice",
+    choices: ["Non", "Un peu secs", "Très secs"],
+    key: "peau"
+  },
+  {
+    text: "Comment est votre transit intestinal ?",
+    type: "choice",
+    choices: ["Régulier", "Parfois lent", "Constipation"],
+    key: "transit"
+  },
+  {
+    text: "Avez-vous des gonflements du visage ou des mains le matin ?",
+    type: "choice",
+    choices: ["Non", "Parfois", "Oui"],
+    key: "gonflement"
+  },
+  {
+    text: "Avez-vous des difficultés de concentration ?",
+    type: "choice",
+    choices: ["Non", "Légères", "Brouillard mental"],
+    key: "concentration"
+  },
+  {
+    text: "Avez-vous constaté un changement de libido ?",
+    type: "choice",
+    choices: ["Aucun", "Variable", "Très basse"],
+    key: "libido"
+  },
+  {
+    text: "Merci {prenom}. Quelle est votre adresse e-mail pour recevoir vos résultats personnalisés ?",
+    type: "open",
+    key: "email"
+  }
 ];
+
 
 function getQuizState(messages) {
   let step = -1, answers = {};
@@ -1974,154 +2039,102 @@ export default async function handler(req, res) {
       const state = getQuizState(messages);
       if (state.step >= 0 && QUIZ[state.step]) state.answers[QUIZ[state.step].key] = userText.trim();
       const next = state.step < 0 ? 0 : nextStep(state.step, state.answers);
-      console.log('📋 Quiz:', state.step, '→', next);
 
-      // RÉSULTATS
       if (next >= QUIZ.length) {
-        console.log('🎯 Generating results...');
         const today = new Date();
         const fmt = d => d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear();
         const j14 = fmt(new Date(today.getTime()+14*86400000));
         const j90 = fmt(new Date(today.getTime()+90*86400000));
         const a = state.answers;
         
-        // Construire le prompt avec EXEMPLE CONCRET du format attendu
-        const prompt = `Tu es Dr THYREN. Génère les résultats du quiz.
+        const prompt = `Tu es Dr THYREN. Génère les résultats.
 
-RÉPONSES UTILISATEUR:
-- Prénom: ${a.prenom}
-- Sexe: ${a.sexe}
-- Âge: ${a.age}
-- Condition: ${a.condition} ${a.condition_detail || ''}
-- Plainte: ${a.plainte}
-- Durée: ${a.duree}
-- Impact: ${a.impact}
-- Énergie: ${a.energie}
-- Poids: ${a.poids}
-- Froid: ${a.froid}
-- Humeur: ${a.humeur}
-- Sommeil: ${a.sommeil}
-- Peau: ${a.peau}
-- Transit: ${a.transit}
-- Gonflement: ${a.gonflement}
-- Concentration: ${a.concentration}
-- Libido: ${a.libido}
+UTILISATEUR: ${a.prenom}, ${a.sexe}, ${a.age}
+Condition: ${a.condition} ${a.condition_detail || ''}
+Plainte: ${a.plainte}
+Symptômes: Énergie=${a.energie}, Poids=${a.poids}, Froid=${a.froid}, Humeur=${a.humeur}, Sommeil=${a.sommeil}, Peau=${a.peau}, Transit=${a.transit}, Concentration=${a.concentration}, Libido=${a.libido}
 
-DATES: J+14 = ${j14}, J+90 = ${j90}
+DATES: J+14=${j14}, J+90=${j90}
 
-LOGIQUE DE RECOMMANDATION:
-- Fatigue + froid + poids + moral bas → CURE THYROÏDE
-- Stress + humeur → CURE ZÉNITUDE  
-- Sommeil difficile → CURE SOMMEIL
+LOGIQUE:
+- Fatigue+froid+poids+moral bas → CURE THYROÏDE
+- Stress+humeur → CURE ZÉNITUDE  
+- Sommeil → CURE SOMMEIL
 - Transit → CURE INTESTIN
-- Femme ménopause → CURE MÉNOPAUSE
-- Homme + libido → CURE HOMME+
 
-GÉNÈRE EXACTEMENT CE FORMAT JSON (remplace [...] par le contenu):
+Génère JSON avec 7 paragraphes séparés par ===BLOCK===:
+{"type":"resultat","text":"[P1]===BLOCK===[P2]===BLOCK===[P3]===BLOCK===[P4]===BLOCK===[P5]===BLOCK===[P6]===BLOCK===[P7]","meta":{"mode":"A"}}
 
-{
-  "type": "resultat",
-  "text": "[PARAGRAPHE 1: Salutation + résumé empathique des symptômes en 2-3 phrases]===BLOCK===[PARAGRAPHE 2: Analyse besoins avec bullet points: Thyroïde XX%, Énergie XX%, etc.]===BLOCK===[PARAGRAPHE 3: CURE PRINCIPALE - nom, pourquoi elle convient, composition, ingrédients clés, bénéfices J+14 et J+90, lien Commander avec VRAIE URL]===BLOCK===[PARAGRAPHE 4: CURE DE SOUTIEN - même format]===BLOCK===[PARAGRAPHE 5: Contre-indications ou 'Aucune contre-indication particulière']===BLOCK===[PARAGRAPHE 6: RDV nutritionniste avec lien https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252]===BLOCK===[PARAGRAPHE 7: Disclaimer médical]",
-  "meta": {"mode": "A"}
-}
+P1: Salutation + résumé symptômes
+P2: Besoins en % (thyroïde, énergie, nerveux, transit, peau)
+P3: Cure principale (URL VRAIE, composition, J+14/J+90)
+P4: Cure soutien
+P5: Contre-indications
+P6: RDV https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
+P7: Disclaimer
 
-IMPORTANT:
-- Utilise les VRAIES URLs depuis [CURES] (ex: https://www.suplemint.com/products/cure-thyroide)
-- Liste les VRAIS ingrédients depuis [COMPOSITIONS]
-- Sépare les 7 paragraphes UNIQUEMENT par ===BLOCK===
-- PAS de "B1", "B2", "BLOC 1" etc. dans le texte!`;
+PAS de "B1:", "BLOC:" etc dans le texte!`;
 
         const r = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: { Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: 'gpt-4o-mini',
-            messages: [
-              { role: 'system', content: prompt },
-              { role: 'user', content: '[CURES]:\n' + DATA_CURES + '\n\n[COMPOSITIONS]:\n' + DATA_COMPOSITIONS }
-            ],
-            response_format: { type: 'json_object' },
-            temperature: 0.3,
-            max_tokens: 4000
-          })
+          body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'system', content: prompt }, { role: 'user', content: '[CURES]:\n' + DATA_CURES + '\n\n[COMPOSITIONS]:\n' + DATA_COMPOSITIONS }], response_format: { type: 'json_object' }, temperature: 0.3, max_tokens: 4000 })
         });
         
-        if (!r.ok) {
-          console.error('❌ OpenAI error');
-          return res.status(500).json({ error: 'OpenAI error' });
-        }
-        
-        const data = await r.json();
-        let reply;
-        try {
-          reply = JSON.parse(data.choices?.[0]?.message?.content || '{}');
-        } catch (e) {
-          console.error('❌ Parse error');
-          reply = { type: 'resultat', text: 'Erreur génération.', meta: { mode: 'A' } };
-        }
-        
+        if (!r.ok) return res.status(500).json({ error: 'OpenAI error' });
+        let reply; try { reply = JSON.parse((await r.json()).choices?.[0]?.message?.content || '{}'); } catch { reply = { type: 'resultat', text: 'Erreur.', meta: { mode: 'A' } }; }
         return res.status(200).json({ reply, conversationId, mode: 'A' });
       }
 
-      // QUESTION
       return res.status(200).json({ reply: buildQuestion(next, state.answers), conversationId, mode: 'A' });
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // MODE B
+    // MODE B - RÉPONSE DIRECTE
     // ═══════════════════════════════════════════════════════════════════
     const t = userText.toLowerCase();
-    let search = '';
 
+    // Cures avec ingrédient
     let m = t.match(/(?:quelle|quelles|dans quelle).*cure.*(?:trouver|contien|avec)\s+(?:de\s+l[a']?|du|des|de)?\s*(\w+)/i) || t.match(/cure.*(?:contien|avec)\s+(?:de\s+)?(\w+)/i);
     if (m) {
-      const r = findCuresWithIngredient(m[1]);
-      search = '[EXACT] Cures avec "' + m[1] + '": ' + r.length + '\n' + r.map((x,i) => (i+1) + '. ' + x.cure + ' (via ' + x.gelule + ')').join('\n') + '\n⚠️ Liste UNIQUEMENT ces ' + r.length + ' cure(s).';
-      console.log('🔍 Cures+' + m[1] + ':', r.map(x => x.cure));
+      const results = findCuresWithIngredient(m[1]);
+      const text = results.length > 0
+        ? `Les cures contenant du ${m[1]} sont:\n${results.map((c,i) => `${i+1}. ${c.cure} (via ${c.viaGelule})`).join('\n')}`
+        : `Je n'ai pas trouvé de cure contenant du ${m[1]}.`;
+      return res.status(200).json({ reply: { type: 'reponse', text, meta: { mode: 'B', progress: { enabled: false } } }, conversationId, mode: 'B' });
     }
 
-    if (!search) {
-      m = t.match(/(?:quelle|quelles).*(?:gelule|gélule).*(?:contien|avec)\s+(?:de\s+)?(\w+)/i);
-      if (m) {
-        const r = findGelulesWithIngredient(m[1]);
-        search = '[EXACT] Gélules avec "' + m[1] + '": ' + r.length + '\n' + r.map((x,i) => (i+1) + '. ' + x.gelule).join('\n') + '\n⚠️ Liste UNIQUEMENT ces ' + r.length + ' gélule(s).';
-      }
+    // Gélules avec ingrédient
+    m = t.match(/(?:quelle|quelles).*(?:gelule|gélule).*(?:contien|avec)\s+(?:de\s+)?(\w+)/i);
+    if (m) {
+      const results = findGelulesWithIngredient(m[1]);
+      const text = results.length > 0
+        ? `Les gélules contenant du ${m[1]} sont:\n${results.map((g,i) => `${i+1}. ${g}`).join('\n')}`
+        : `Je n'ai pas trouvé de gélule contenant du ${m[1]}.`;
+      return res.status(200).json({ reply: { type: 'reponse', text, meta: { mode: 'B', progress: { enabled: false } } }, conversationId, mode: 'B' });
     }
 
-    if (!search && (t.includes('allergique') || t.includes('diabetique')) && t.includes('cure')) {
+    // Cures compatibles
+    if ((t.includes('allergique') || t.includes('diabétique') || t.includes('diabetique')) && t.includes('cure')) {
       const conds = [];
       if (t.includes('poisson')) conds.push('poisson');
       if (t.includes('diabet')) conds.push('diabete');
       if (conds.length) {
         const r = findCompatibleCures(conds);
-        search = '[EXACT] Conditions: ' + conds.join(', ') + '\nEXCLUES: ' + r.excluded.join(', ') + '\nCOMPATIBLES (' + r.compatible.length + '): ' + r.compatible.map(x => x.cure).join(', ') + '\n⚠️ Recommande UNIQUEMENT parmi compatibles.';
+        const text = `Avec vos conditions (${conds.join(', ')}), voici les cures compatibles:\n${r.compatible.map((c,i) => `${i+1}. ${c.cure}`).join('\n')}\n\nCures à éviter: ${r.excluded.join(', ')}`;
+        return res.status(200).json({ reply: { type: 'reponse', text, meta: { mode: 'B', progress: { enabled: false } } }, conversationId, mode: 'B' });
       }
     }
 
-    const sys = 'Tu es Dr THYREN.' + (search ? '\n' + search + '\n' : '') + '\nConcis (2-3 phrases). Vouvoiement. JSON:{"type":"reponse","text":"...","meta":{"mode":"B","progress":{"enabled":false}}}';
-    
+    // Autres questions -> LLM
+    const sys = 'Tu es Dr THYREN. Concis (2-3 phrases). Vouvoiement. JSON:{"type":"reponse","text":"...","meta":{"mode":"B","progress":{"enabled":false}}}';
     const r = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: { Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: sys },
-          { role: 'user', content: '[SAV]:' + DATA_SAV.substring(0, 5000) + '\n\nQuestion: ' + userText }
-        ],
-        response_format: { type: 'json_object' },
-        temperature: 0.2,
-        max_tokens: 800
-      })
+      body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'system', content: sys }, { role: 'user', content: '[SAV]:' + DATA_SAV.substring(0, 5000) + '\n\nQuestion: ' + userText }], response_format: { type: 'json_object' }, temperature: 0.2, max_tokens: 800 })
     });
-
     if (!r.ok) return res.status(500).json({ error: 'OpenAI error' });
-    
-    const data = await r.json();
-    let reply;
-    try { reply = JSON.parse(data.choices?.[0]?.message?.content || '{}'); }
-    catch { reply = { type: 'reponse', text: 'Erreur.', meta: { mode: 'B', progress: { enabled: false } } }; }
-    
+    let reply; try { reply = JSON.parse((await r.json()).choices?.[0]?.message?.content || '{}'); } catch { reply = { type: 'reponse', text: 'Erreur.', meta: { mode: 'B', progress: { enabled: false } } }; }
     return res.status(200).json({ reply, conversationId, mode: 'B' });
 
   } catch (err) {
