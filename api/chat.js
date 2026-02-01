@@ -1876,7 +1876,7 @@ const QUIZ = [
     key: "age"
   },
   {
-    text: "Le fonctionnement hormonal et thyroïdien diffère selon le sexe biologique. Quel est le vôtre ?",
+    text: "Quel est le vôtre sexe biologique?",
     type: "choice",
     choices: ["Femme", "Homme"],
     key: "sexe"
@@ -1916,7 +1916,7 @@ const QUIZ = [
   },
   {
     text:
-      "Merci {prenom}. J’ai bien noté ce que vous avez décrit : « {plainte} ». Je l’intègre à mon analyse.\n\nContinuons. Comment décririez-vous votre niveau d’énergie ?",
+      "Merci {prenom}. J’ai bien noté ce que vous avez décrit, je l’intègre à mon analyse.\n\nContinuons. Comment décririez-vous votre niveau d’énergie ?",
     type: "choice",
     choices: ["Bonne", "Fatigue légère", "Fatigue constante"],
     key: "energie"
@@ -2078,7 +2078,7 @@ PAS de "B1:", "BLOC:" etc dans le texte!`;
         const r = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: { Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'system', content: prompt }, { role: 'user', content: '[CURES]:\n' + DATA_CURES + '\n\n[COMPOSITIONS]:\n' + DATA_COMPOSITIONS }], response_format: { type: 'json_object' }, temperature: 0.3, max_tokens: 4000 })
+          body: JSON.stringify({ model: 'gpt-5-mini', messages: [{ role: 'system', content: prompt }, { role: 'user', content: '[CURES]:\n' + DATA_CURES + '\n\n[COMPOSITIONS]:\n' + DATA_COMPOSITIONS }], response_format: { type: 'json_object' }, temperature: 0.3, max_tokens: 4000 })
         });
         
         if (!r.ok) return res.status(500).json({ error: 'OpenAI error' });
