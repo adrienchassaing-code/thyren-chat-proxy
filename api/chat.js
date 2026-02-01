@@ -23,7 +23,7 @@ const DATA_CURES = loadTxt("LES_CURES_ALL.txt");
 const DATA_QUIZ = loadTxt("QUESTION_THYROIDE.txt");
 const DATA_SAV = loadTxt("SAV_FAQ.txt");
 
-const allLoaded = DATA_COMPOSITIONS && DATA_CURES && DATA_QUIZ && DATA_SAV;
+const allLoaded = DATA_COMPOSITIONS && DATA_CURES && DATA_QUIZ;
 if (allLoaded) {
   console.log(`✅ Toutes les données TXT chargées`);
 }
