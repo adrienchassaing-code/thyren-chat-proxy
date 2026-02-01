@@ -1,5 +1,5 @@
 // ============================================================================
-// THYREN V16 FIXED - NORMALISATION ACCENTS
+// THYREN V17 - RÉPONSES DIRECTES + DONNÉES EXHAUSTIVES
 // ============================================================================
 
 const DATA_COMPOSITIONS = `================================================================================
@@ -1710,18 +1710,816 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 ================================================================================
 `;
 
-console.log("✅ THYREN V16");
+console.log("✅ THYREN V17 - Données exhaustives");
 
-// Normaliser les accents ET les caractères spéciaux
+// ============================================================================
+// DONNÉES PRÉ-EXTRAITES
+// ============================================================================
+
+const CURES_LIST = [
+  {
+    "num": "1",
+    "name": "CURE THYROÏDE",
+    "url": "https://www.suplemint.com/products/cure-thyroide",
+    "composition": [
+      "ADRENO_PLUS",
+      "MULTI_VIT",
+      "THYROIDE_PLUS",
+      "L_TYRO_ACTIV"
+    ],
+    "description": "Optimise le fonctionnement de ta thyroïde."
+  },
+  {
+    "num": "2",
+    "name": "CURE INTESTIN",
+    "url": "https://www.suplemint.com/products/cure-intestin",
+    "composition": [
+      "GASTRATOP",
+      "ENZYM_PLUS",
+      "TRANSITEAM"
+    ],
+    "description": "Améliore ton transit et ta digestion."
+  },
+  {
+    "num": "3",
+    "name": "CURE ÉNERGIE",
+    "url": "https://www.suplemint.com/products/cure-energie",
+    "composition": [
+      "VITAMINE_C",
+      "COQ10",
+      "OMEGA3",
+      "L_TYRO_ACTIV",
+      "MAGNESIUM_PLUS"
+    ],
+    "description": "Retrouve vitalité et tonus."
+  },
+  {
+    "num": "4",
+    "name": "CURE POIDS",
+    "url": "https://www.suplemint.com/products/cure-poids",
+    "composition": [
+      "COQ10",
+      "OMEGA3",
+      "BERBERINE_ACTIV",
+      "ACETYL_CARN"
+    ],
+    "description": "Facilite ta perte de poids naturellement."
+  },
+  {
+    "num": "5",
+    "name": "CURE IMMUNITÉ",
+    "url": "https://www.suplemint.com/products/cure-immunite",
+    "composition": [
+      "IMMUNO",
+      "BIO_ACTIV"
+    ],
+    "description": "Renforce vos défenses naturelles."
+  },
+  {
+    "num": "6",
+    "name": "CURE SENIOR",
+    "url": "https://www.suplemint.com/products/cure-senior",
+    "composition": [
+      "COQ10",
+      "OMEGA3",
+      "MULTI_VIT",
+      "BETA_ALANINE",
+      "L_CARNOSINE"
+    ],
+    "description": "Accompagne le vieillissement en douceur."
+  },
+  {
+    "num": "7",
+    "name": "CURE SOMMEIL",
+    "url": "https://www.suplemint.com/products/cure-sommeil",
+    "composition": [
+      "MELATOP",
+      "ASHWAGANDHA",
+      "MAGNESIUM_PLUS"
+    ],
+    "description": "Favorise un sommeil réparateur."
+  },
+  {
+    "num": "8",
+    "name": "CURE COMPLÈTE",
+    "url": "https://www.suplemint.com/products/cure-complete",
+    "composition": [
+      "MULTI_VIT",
+      "MAG_TOP",
+      "PHENOL_PLUS",
+      "ANTIOX"
+    ],
+    "description": "Couvre l'ensemble des besoins essentiels."
+  },
+  {
+    "num": "9",
+    "name": "CURE HOMME+",
+    "url": "https://www.suplemint.com/products/cure-homme",
+    "composition": [
+      "COQ10",
+      "OMEGA3",
+      "STIM_PLUS",
+      "MACA"
+    ],
+    "description": "Soutient la vitalité masculine et la libido."
+  },
+  {
+    "num": "10",
+    "name": "CURE ZÉNITUDE",
+    "url": "https://www.suplemint.com/products/cure-zenitude",
+    "composition": [
+      "ASHWAGANDHA",
+      "MG_MALATE",
+      "RELAX_PLUS"
+    ],
+    "description": "Aide à réduire le stress et l'anxiété."
+  },
+  {
+    "num": "11",
+    "name": "CURE DÉTOX",
+    "url": "https://www.suplemint.com/products/cure-detox",
+    "composition": [
+      "HEPATOP",
+      "RENATOP"
+    ],
+    "description": "Purifie le foie et les reins."
+  },
+  {
+    "num": "12",
+    "name": "CURE ARTICULATION",
+    "url": "https://www.suplemint.com/products/cure-articulation",
+    "composition": [
+      "OMEGA3",
+      "CURCUM_ARTI"
+    ],
+    "description": "Protège et renforce vos articulations."
+  },
+  {
+    "num": "13",
+    "name": "CURE PEAU",
+    "url": "https://www.suplemint.com/products/cure-peau",
+    "composition": [
+      "ONAGRE_B",
+      "PHENOL_PLUS",
+      "SKIN_ACTIV"
+    ],
+    "description": "Améliore l'aspect et la santé de ta peau."
+  },
+  {
+    "num": "14",
+    "name": "CURE MÉNOPAUSE",
+    "url": "https://www.suplemint.com/products/cure-menopause",
+    "composition": [
+      "YAM",
+      "OESTROBOOST",
+      "ONAGRE_B",
+      "MULTI_VIT",
+      "ENZYM_PLUS"
+    ],
+    "description": "Accompagne l'équilibre hormonal."
+  },
+  {
+    "num": "15",
+    "name": "CURE SPORT",
+    "url": "https://www.suplemint.com/products/cure-sport",
+    "composition": [
+      "KLAMATH",
+      "RECUP_PLUS",
+      "L_TYRO_ACTIV",
+      "BETA_ALANINE",
+      "L_CARNOSINE"
+    ],
+    "description": "Soutient l'endurance et la récupération."
+  },
+  {
+    "num": "16",
+    "name": "CURE MÉMOIRE",
+    "url": "https://www.suplemint.com/products/cure-memoire",
+    "composition": [
+      "KRILL",
+      "MULTI_VIT",
+      "MAG_TOP",
+      "KLAMATH"
+    ],
+    "description": "Stimule la concentration et la clarté mentale."
+  },
+  {
+    "num": "17",
+    "name": "CURE ADDICT FREE",
+    "url": "https://www.suplemint.com/products/cure-addicfree",
+    "composition": [
+      "OMEGA3",
+      "L_TYRO_ACTIV",
+      "KLAMATH",
+      "GUDZU"
+    ],
+    "description": "Aide à arrêter de fumer."
+  },
+  {
+    "num": "18",
+    "name": "CURE CONCEPTION",
+    "url": "https://www.suplemint.com/products/cure-conception",
+    "composition": [
+      "COQ10",
+      "OMEGA3",
+      "B9_4FOLIC",
+      "MG_MALATE",
+      "MULTI_VIT"
+    ],
+    "description": "Optimise la fertilité."
+  },
+  {
+    "num": "19",
+    "name": "CURE ALLAITEMENT",
+    "url": "https://www.suplemint.com/products/cure-allaitement",
+    "composition": [
+      "OMEGA3",
+      "MULTI_VIT",
+      "LACTOP",
+      "MG_MALATE"
+    ],
+    "description": "Soutient la production de lait et l'énergie post-partum."
+  },
+  {
+    "num": "20",
+    "name": "CURE ANTIOXYDANT",
+    "url": "https://www.suplemint.com/products/cure-antioxydant",
+    "composition": [
+      "PHENOL_PLUS",
+      "VITAMINE_C",
+      "QUERCETINE",
+      "TEA_ACTIV"
+    ],
+    "description": "Protège du vieillissement cellulaire."
+  },
+  {
+    "num": "21",
+    "name": "CURE CARDIO",
+    "url": "https://www.suplemint.com/products/cure-cardio",
+    "composition": [
+      "OMEGA3",
+      "ACETYL_CARN",
+      "CARDIO_PLUS",
+      "COQ10"
+    ],
+    "description": "Favorise la santé cardiaque et circulatoire."
+  }
+];
+
+const GELULES_LIST = [
+  {
+    "type": "GÉLULE",
+    "name": "YAM",
+    "ingredients": [
+      "Extrait de Yam (Dioscorea opposita)",
+      "Pullulane"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "ADRENO+",
+    "ingredients": [
+      "Poudre d'algue Klamath (Aphanizomenon flos-aquae)",
+      "Extrait de Bacopa monnieri",
+      "Poudre de ginseng HRG80™",
+      "Extrait de Panax ginseng CA Meyer",
+      "Extrait de Ginkgo biloba",
+      "L-Tyrosine",
+      "Oryza sativa L."
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "OESTROBOOST",
+    "ingredients": [
+      "Extrait de houblon (Humulus lupulus)",
+      "Extrait de houblon (Lifenol®)",
+      "Extrait de sauge sclarée (Salvia sclarea)",
+      "Extrait de sauge officinale (Salvia officinalis)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "BOURRACHE + ONAGRE",
+    "ingredients": [
+      "Huile de bourrache (Borago officinalis L.)",
+      "Huile d'onagre (Oenothera biennis L.)",
+      "d-α tocophérol (vitamine E)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "MULTI VIT",
+    "ingredients": [
+      "Bisglycinate de zinc",
+      "Vitamine B3 (nicotinamide)",
+      "Co-enzyme Q10 (ubiquinone)",
+      "Bio-flavonoïdes d'agrumes (Citrus sinensis)",
+      "N-AcétylCystéine",
+      "Quercétine",
+      "Acide alpha-lipoïque",
+      "Myrtille (Vaccinium myrtillus L.)",
+      "Vitamine C (acide L-ascorbique)",
+      "Levure de sélénium",
+      "Vitamine B5 (D-Pantothénate de calcium)",
+      "Vitamine E naturelle (Vitaphérole®)",
+      "Rutine",
+      "Vitamine B1 (chlorhydrate de thiamine)",
+      "Lycopène",
+      "Vitamine B2 (riboflavine)",
+      "Oléorésine astaxanthine (Haematococcus pluvialis)",
+      "Lutéine",
+      "Vitamine B6 (pyridoxal phosphate)",
+      "Bêta-carotène",
+      "Vitamine B8 (D-biotine)",
+      "Zéaxanthine",
+      "Vitamine B9 (Quatrefolic®)",
+      "Iodure de potassium",
+      "Vitamine K2 (ménaquinone)",
+      "Vitamine D3 (cholécalciférol)",
+      "Vitamine B12 (méthylcobalamine)",
+      "Vitamine B12 (hydroxycobalamine)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "ENZYM+",
+    "ingredients": [
+      "Bromélaïne",
+      "Papaïne",
+      "Gingembre (Zingiber officinale)",
+      "Amylase",
+      "Lipase",
+      "Protéase (Ficus carica)",
+      "Trypsine"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "THYROÏDE+",
+    "ingredients": [
+      "Guggul (Commiphora mukul)",
+      "Ashwagandha (KSM-66®) (Withania somnifera)",
+      "L-tyrosine",
+      "Fucus vésiculeux (Fucus vesiculosus)",
+      "Bisglycinate de zinc",
+      "Levure de sélénium",
+      "Gluconate de manganèse",
+      "Méthylcobalamine (Vitamine B12)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "L-TYRO TOP",
+    "ingredients": [
+      "L-Tyrosine",
+      "Acide ascorbique (Vitamine C)",
+      "Nicotinamide (Vitamine B3)",
+      "Riboflavine (Vitamine B2)",
+      "Chlorhydrate de pyridoxine (Vitamine B6)",
+      "Quatrefolic® (Vitamine B9)",
+      "Méthylcobalamine (Vitamine B12)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "L-TYRO ACTIV",
+    "ingredients": [
+      "L-Tyrosine"
+    ]
+  },
+  {
+    "type": "CAPSULE",
+    "name": "MAG TOP",
+    "ingredients": [
+      "Bisglycinate de magnésium",
+      "Glycérophosphate de magnésium",
+      "Malate de magnésium"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "PHENOL+",
+    "ingredients": [
+      "Extrait de romarin (Rosmarinus officinalis)",
+      "MitoActiv™ (cassis + groseille)",
+      "Extrait de Sophora japonica",
+      "Extrait de pépin de raisin (Vitis vinifera)",
+      "Extrait de cacao (Theobroma cacao)",
+      "Extrait de grenade (Punica granatum)",
+      "Extrait d'orange (Citrus sinensis)",
+      "Extrait de feuille d'olivier (Olea europaea)",
+      "Extrait de myrtille (Vaccinium myrtillus)",
+      "Extrait d'écorce de pin sylvestre (Pinus sylvestris)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "ANTIOX",
+    "ingredients": [
+      "Acérola (Malpighia glabra L.)",
+      "Thé vert (Camellia sinensis)",
+      "Resvératrol",
+      "Co-enzyme Q10",
+      "Raisin (Vitis vinifera L.)"
+    ]
+  },
+  {
+    "type": "CAPSULE",
+    "name": "KRILL",
+    "ingredients": [
+      "Extrait lipidique de krill (Euphausia superba)"
+    ]
+  },
+  {
+    "type": "CAPSULE",
+    "name": "KLAMATH",
+    "ingredients": [
+      "Poudre d'algue Klamath (Aphanizomenon flos-aquae)"
+    ]
+  },
+  {
+    "type": "CAPSULE",
+    "name": "OMEGA 3",
+    "ingredients": [
+      "Huile de poisson (qualité EPAX)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "BIO ACTIV",
+    "ingredients": [
+      "Fibre d'acacia bio",
+      "Lactobacillus acidophilus",
+      "Lactobacillus rhamnosus",
+      "Bifidobacterium bifidum",
+      "Bifidobacterium longum",
+      "Bifidobacterium lactis",
+      "Streptococcus thermophilus"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "B9 4FOLIC",
+    "ingredients": [
+      "Fibre d'acacia BIO",
+      "Acide folique (Quatrefolic®)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "MG MALATE",
+    "ingredients": [
+      "Malate de magnésium"
+    ]
+  },
+  {
+    "type": "CAPSULE",
+    "name": "SVELT OMEGA 3",
+    "ingredients": [
+      "Huile de Calanus finmarchicus (crustacés)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "BERBERINE ACTIV",
+    "ingredients": [
+      "Berbérine HB®"
+    ]
+  },
+  {
+    "type": "CAPSULE",
+    "name": "COQ10",
+    "ingredients": [
+      "Co-enzyme Q10 LEO HB",
+      "Fibre d'acacia"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "ACETYL CARN",
+    "ingredients": [
+      "Acétyl-L-Carnitine"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "GASTRATOP",
+    "ingredients": [
+      "Gamma-Oryzanol",
+      "Fucus vésiculeux (Fucus vesiculosus)",
+      "Réglisse (Glycyrrhiza glabra) déglycyrrhizinée",
+      "Vitamine U (DL-Methionine Methylsulfonium Chloride)",
+      "L-Cystéine",
+      "Vitamine B1 (thiamine mononitrate)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "TRANSITEAM",
+    "ingredients": [
+      "Enveloppe de psyllium (Plantago ovata)",
+      "Gomme d'acacia bio",
+      "Lactobacillus acidophilus",
+      "Lactobacillus rhamnosus",
+      "Bifidobacterium bifidum",
+      "Bifidobacterium longum",
+      "Bifidobacterium lactis",
+      "Streptococcus thermophilus"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "VITAMINE C",
+    "ingredients": [
+      "Vitamine C (acide L-ascorbique)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "MAGNESIUM+",
+    "ingredients": [
+      "Glycérophosphate de magnésium",
+      "Bisglycinate de magnésium",
+      "Taurine",
+      "Nicotinamide (Vitamine B3)",
+      "Acide pantothénique (Vitamine B5)",
+      "Pyridoxine (Vitamine B6)",
+      "Thiamine (Vitamine B1)",
+      "Riboflavine (Vitamine B2)",
+      "D-biotine (Vitamine B8)",
+      "Acide folique (Vitamine B9)",
+      "Cholécalciférol (Vitamine D3)",
+      "Méthylcobalamine (Vitamine B12)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "MELATOP",
+    "ingredients": [
+      "Valériane (Valeriana officinalis L.)",
+      "Lavande (Lavandula angustifolia Mill.)",
+      "Passiflore (Passiflora incarnata L.)",
+      "Eschscholzia de Californie (Eschscholzia californica)",
+      "GABA",
+      "Aubépine (Crataegus monogyna Jacq.)",
+      "Safran (Crocus sativus)",
+      "Arginine",
+      "Nicotinamide (Vitamine B3)",
+      "Mélatonine"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "ASHWAGANDHA",
+    "ingredients": [
+      "Ashwagandha (KSM-66®) (Withania somnifera L.)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "L-CARNOSINE",
+    "ingredients": [
+      "L-Carnosine"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "BETA ALANINE",
+    "ingredients": [
+      "Bêta-alanine",
+      "Poudre de Spirulina platensis"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "MACA",
+    "ingredients": [
+      "Maca (Lepidium meyenii Walp)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "STIM+",
+    "ingredients": [
+      "Eleutherococcus",
+      "Ginseng rouge (Panax ginseng C.)",
+      "Damiana (Turnera diffusa W.)",
+      "Fenugrec (Trigonella foenum-graecum L.)",
+      "Extrait d'écorce de pin sylvestre (Pinus sylvestris)",
+      "Nicotinamide (Vitamine B3)",
+      "KaempMax (Kaempferia parviflora)",
+      "Bisglycinate de zinc",
+      "Safran (Crocus sativus L.)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "RELAX+",
+    "ingredients": [
+      "Lavande (Lavandula angustifolia)",
+      "Passiflore (Passiflora incarnata L.)",
+      "Valériane (Valeriana officinalis L.)",
+      "Mélisse (Melissa officinalis)",
+      "Aubépine (Crataegus laevigata)",
+      "Eschscholtzia californica Cham.",
+      "GABA (acide gamma aminobutyrique)",
+      "Nicotinamide (Vitamine B3)",
+      "Safran (Crocus sativus)",
+      "L-arginine"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "RECUP+",
+    "ingredients": [
+      "Citrate de potassium anhydre",
+      "Citrate de magnésium anhydre"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "CURCUM ARTI",
+    "ingredients": [
+      "Acujoint™",
+      "Curcuma (Cureit®)",
+      "Extrait de Boswellia serrata"
+    ]
+  },
+  {
+    "type": "CAPSULE",
+    "name": "ONAGRE B",
+    "ingredients": [
+      "Huile de bourrache (Borago officinalis L.)",
+      "Huile d'onagre (Oenothera biennis L.)",
+      "Vitamine E naturelle"
+    ]
+  },
+  {
+    "type": "CAPSULE",
+    "name": "SKIN ACTIV",
+    "ingredients": [
+      "Extrait de blé concentré en phytocéramides",
+      "Oxyde de zinc",
+      "Extrait de romarin",
+      "Huile de graines de tournesol"
+    ]
+  },
+  {
+    "type": "CAPSULE",
+    "name": "HEPATOP",
+    "ingredients": [
+      "Triméthylglycine",
+      "Phosphatidylcholine",
+      "Chlorella pyrenoidosa",
+      "Extrait de radis noir (Raphanus sativus)",
+      "Extrait d'artichaut (Cynara scolymus)",
+      "Extrait de chardon-marie (Silybum marianum)",
+      "N-acétyl-L-cystéine"
+    ]
+  },
+  {
+    "type": "CAPSULE",
+    "name": "RENATOP",
+    "ingredients": [
+      "Extrait de feuille de pissenlit (Taraxacum officinale)",
+      "Extrait de fleur de piloselle (Hieracium pilosella)",
+      "Poudre d'Hibiscus sabdariffa"
+    ]
+  },
+  {
+    "type": "CAPSULE",
+    "name": "IMMUNO",
+    "ingredients": [
+      "Quercétine",
+      "Ginseng (Panax ginseng C.)",
+      "Reishi (Ganoderma lucidum)",
+      "Shiitake (Lentinula edodes)",
+      "Cordyceps sinensis",
+      "Propolis Bio",
+      "Vitamine C",
+      "Betavia™ (Euglena gracilis)",
+      "Bisglycinate de Zinc",
+      "Vitamine D3 (cholécalciférol)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "QUERCÉTINE",
+    "ingredients": [
+      "Quercétine"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "TEA ACTIV",
+    "ingredients": [
+      "Extrait de thé vert (Camellia sinensis)"
+    ]
+  },
+  {
+    "type": "CAPSULE",
+    "name": "CARDIO+",
+    "ingredients": [
+      "Oméga-3 (EPA + DHA)",
+      "Co-enzyme Q10"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "GUDZU",
+    "ingredients": [
+      "Kudzu (Pueraria lobata)"
+    ]
+  },
+  {
+    "type": "GÉLULE",
+    "name": "LACTOP",
+    "ingredients": [
+      "Lactase"
+    ]
+  }
+];
+
+const LISTE_CURES_TEXT = `Voici la liste complète des 21 cures SUPLEMINT :
+
+1. CURE THYROÏDE - Optimise le fonctionnement de ta thyroïde.
+2. CURE INTESTIN - Améliore ton transit et ta digestion.
+3. CURE ÉNERGIE - Retrouve vitalité et tonus.
+4. CURE POIDS - Facilite ta perte de poids naturellement.
+5. CURE IMMUNITÉ - Renforce vos défenses naturelles.
+6. CURE SENIOR - Accompagne le vieillissement en douceur.
+7. CURE SOMMEIL - Favorise un sommeil réparateur.
+8. CURE COMPLÈTE - Couvre l'ensemble des besoins essentiels.
+9. CURE HOMME+ - Soutient la vitalité masculine et la libido.
+10. CURE ZÉNITUDE - Aide à réduire le stress et l'anxiété.
+11. CURE DÉTOX - Purifie le foie et les reins.
+12. CURE ARTICULATION - Protège et renforce vos articulations.
+13. CURE PEAU - Améliore l'aspect et la santé de ta peau.
+14. CURE MÉNOPAUSE - Accompagne l'équilibre hormonal.
+15. CURE SPORT - Soutient l'endurance et la récupération.
+16. CURE MÉMOIRE - Stimule la concentration et la clarté mentale.
+17. CURE ADDICT FREE - Aide à arrêter de fumer.
+18. CURE CONCEPTION - Optimise la fertilité.
+19. CURE ALLAITEMENT - Soutient la production de lait et l'énergie post-partum.
+20. CURE ANTIOXYDANT - Protège du vieillissement cellulaire.
+21. CURE CARDIO - Favorise la santé cardiaque et circulatoire.`;
+
+const LISTE_GELULES_TEXT = `Voici la liste complète des 45 gélules/capsules SUPLEMINT :
+
+1. GÉLULE YAM
+2. GÉLULE ADRENO+
+3. GÉLULE OESTROBOOST
+4. GÉLULE BOURRACHE + ONAGRE
+5. GÉLULE MULTI VIT
+6. GÉLULE ENZYM+
+7. GÉLULE THYROÏDE+
+8. GÉLULE L-TYRO TOP
+9. GÉLULE L-TYRO ACTIV
+10. CAPSULE MAG TOP
+11. GÉLULE PHENOL+
+12. GÉLULE ANTIOX
+13. CAPSULE KRILL
+14. CAPSULE KLAMATH
+15. CAPSULE OMEGA 3
+16. GÉLULE BIO ACTIV
+17. GÉLULE B9 4FOLIC
+18. GÉLULE MG MALATE
+19. CAPSULE SVELT OMEGA 3
+20. GÉLULE BERBERINE ACTIV
+21. CAPSULE COQ10
+22. GÉLULE ACETYL CARN
+23. GÉLULE GASTRATOP
+24. GÉLULE TRANSITEAM
+25. GÉLULE VITAMINE C
+26. GÉLULE MAGNESIUM+
+27. GÉLULE MELATOP
+28. GÉLULE ASHWAGANDHA
+29. GÉLULE L-CARNOSINE
+30. GÉLULE BETA ALANINE
+31. GÉLULE MACA
+32. GÉLULE STIM+
+33. GÉLULE RELAX+
+34. GÉLULE RECUP+
+35. GÉLULE CURCUM ARTI
+36. CAPSULE ONAGRE B
+37. CAPSULE SKIN ACTIV
+38. CAPSULE HEPATOP
+39. CAPSULE RENATOP
+40. CAPSULE IMMUNO
+41. GÉLULE QUERCÉTINE
+42. GÉLULE TEA ACTIV
+43. CAPSULE CARDIO+
+44. GÉLULE GUDZU
+45. GÉLULE LACTOP`;
+
+// ============================================================================
+// FONCTIONS DE RECHERCHE
+// ============================================================================
+
 function norm(str) {
-  return str.toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/[®+\s_-]/g, '');
+  return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[®+\s_-]/g, '');
 }
-
-// ============================================================================
-// RECHERCHE GÉLULES
-// ============================================================================
 
 function findGelulesWithIngredient(ingredient) {
   const term = norm(ingredient);
@@ -1744,21 +2542,13 @@ function findGelulesWithIngredient(ingredient) {
   if (currentGelule && norm(currentBlock).includes(term)) {
     results.push(currentGelule);
   }
-  
-  console.log('🔍 Gélules avec "' + ingredient + '":', results);
   return results;
 }
-
-// ============================================================================
-// RECHERCHE CURES
-// ============================================================================
 
 function findCuresWithGelule(geluleName) {
   const results = [];
   let currentCure = null;
   let currentUrl = '';
-  
-  // Normaliser le nom de base
   const baseNorm = norm(geluleName);
   
   for (const line of DATA_CURES.split('\n')) {
@@ -1767,14 +2557,11 @@ function findCuresWithGelule(geluleName) {
       currentCure = 'CURE ' + cureMatch[1].trim();
       currentUrl = '';
     }
-    
     if (currentCure && line.includes('suplemint.com/products/')) {
       const urlMatch = line.match(/(https?:\/\/[^\s]+)/);
       if (urlMatch) currentUrl = urlMatch[1];
     }
-    
     if (currentCure && line.includes('•')) {
-      // Normaliser la ligne et comparer
       const lineNorm = norm(line);
       if (lineNorm.includes(baseNorm) || baseNorm.includes(lineNorm.replace(/[0-9x]/g, ''))) {
         if (!results.find(r => r.cure === currentCure)) {
@@ -1783,13 +2570,8 @@ function findCuresWithGelule(geluleName) {
       }
     }
   }
-  
   return results;
 }
-
-// ============================================================================
-// FONCTION PRINCIPALE
-// ============================================================================
 
 function findCuresWithIngredient(ingredient) {
   const gelules = findGelulesWithIngredient(ingredient);
@@ -1805,183 +2587,157 @@ function findCuresWithIngredient(ingredient) {
       }
     }
   }
-  
-  console.log('🔍 Cures avec "' + ingredient + '":', allCures.map(c => c.cure));
   return allCures;
 }
 
-// ============================================================================
-// CURES COMPATIBLES
-// ============================================================================
+function getCureDetails(cureName) {
+  const term = norm(cureName);
+  for (const cure of CURES_LIST) {
+    if (norm(cure.name).includes(term) || term.includes(norm(cure.name))) {
+      return cure;
+    }
+  }
+  return null;
+}
 
-function findCompatibleCures(conditions) {
-  const allCures = [];
-  let cur = null;
-  
-  for (const line of DATA_CURES.split('\n')) {
-    const m = line.match(/^CURE\s+\d+\s*:\s*CURE\s+(.+)$/i);
-    if (m) {
-      if (cur) allCures.push(cur);
-      cur = { name: 'CURE ' + m[1].trim(), url: '', contra: '' };
-    }
-    if (cur && line.includes('suplemint.com')) {
-      const u = line.match(/(https?:\/\/[^\s]+)/);
-      if (u) cur.url = u[1];
-    }
-    if (cur && line.toLowerCase().includes('contre-indic')) {
-      cur.contra = line.toLowerCase();
+function getGeluleDetails(geluleName) {
+  const term = norm(geluleName);
+  for (const gel of GELULES_LIST) {
+    if (norm(gel.name).includes(term)) {
+      return gel;
     }
   }
-  if (cur) allCures.push(cur);
-  
-  const excluded = new Set();
-  
-  for (const cond of conditions) {
-    const term = norm(cond);
-    for (const c of allCures) {
-      if (norm(c.contra).includes(term)) excluded.add(c.name);
-    }
-    if (term.includes('poisson') || term.includes('omega')) {
-      for (const c of findCuresWithIngredient('omega')) excluded.add(c.cure);
-      for (const c of findCuresWithIngredient('krill')) excluded.add(c.cure);
-      for (const c of findCuresWithIngredient('poisson')) excluded.add(c.cure);
-    }
-    if (term.includes('diabet')) {
-      for (const c of allCures) {
-        if (norm(c.contra).includes('diabet') || norm(c.contra).includes('glyc')) excluded.add(c.name);
-      }
-    }
-  }
-  
-  return {
-    compatible: allCures.filter(c => !excluded.has(c.name)).map(c => ({ cure: c.name, url: c.url })),
-    excluded: Array.from(excluded)
-  };
+  return null;
 }
 
 // ============================================================================
-// QUIZ
+// DÉTECTION DES QUESTIONS ET RÉPONSES DIRECTES
+// ============================================================================
+
+function detectQuestionType(text) {
+  const t = text.toLowerCase();
+  
+  // Questions de LISTE DES CURES
+  if ((t.includes('liste') || t.includes('combien') || t.includes('toutes') || t.includes('tous') || t.includes('complète') || t.includes('complete') || t.includes('total')) && t.includes('cure')) {
+    return { type: 'liste_cures' };
+  }
+  
+  // Questions de LISTE DES GÉLULES
+  if ((t.includes('liste') || t.includes('combien') || t.includes('toutes') || t.includes('tous')) && (t.includes('gélule') || t.includes('gelule') || t.includes('capsule'))) {
+    return { type: 'liste_gelules' };
+  }
+  
+  // Questions sur les INGRÉDIENTS dans les cures
+  const ingredientKeywords = ['magnésium', 'magnesium', 'omega', 'zinc', 'ashwagandha', 'vitamine', 'fer', 'iode', 'sélénium', 'selenium', 'coq10', 'curcuma', 'probiotique', 'collagène', 'biotine'];
+  for (const ing of ingredientKeywords) {
+    if (t.includes(ing) && t.includes('cure')) {
+      return { type: 'cures_ingredient', ingredient: ing };
+    }
+  }
+  
+  // Pattern plus général pour ingrédients
+  let m = t.match(/cure.*(?:contien|avec|trouver).*(?:de\s+l[a']?|du|des|de)?\s*([a-zéèêëàâäùûüïîôç]+)\s*\??$/i);
+  if (m && m[1].length > 2) return { type: 'cures_ingredient', ingredient: m[1] };
+  
+  m = t.match(/(?:dans quelle|quelle).*cure.*(?:trouver|contien).*(?:de\s+l[a']?|du|des|de)?\s*([a-zéèêëàâäùûüïîôç]+)/i);
+  if (m && m[1].length > 2) return { type: 'cures_ingredient', ingredient: m[1] };
+  
+  // Questions sur une CURE spécifique
+  const cureNames = ['thyroïde', 'thyroide', 'énergie', 'energie', 'sommeil', 'poids', 'intestin', 'senior', 'homme', 'zénitude', 'zenitude', 'détox', 'detox', 'peau', 'ménopause', 'menopause', 'sport', 'mémoire', 'memoire', 'cardio', 'immunité', 'immunite', 'articulation', 'antioxydant', 'conception', 'allaitement', 'addict', 'complète', 'complete'];
+  for (const name of cureNames) {
+    if (t.includes('cure') && t.includes(name)) {
+      return { type: 'info_cure', cureName: name };
+    }
+  }
+  
+  // Allergies / compatibilité
+  if ((t.includes('allergique') || t.includes('diabétique') || t.includes('diabetique') || t.includes('enceinte')) && t.includes('cure')) {
+    const conds = [];
+    if (t.includes('poisson') || t.includes('fruits de mer') || t.includes('omega')) conds.push('poisson');
+    if (t.includes('diabet')) conds.push('diabete');
+    if (t.includes('enceinte') || t.includes('grossesse')) conds.push('grossesse');
+    if (conds.length) return { type: 'compatible', conditions: conds };
+  }
+  
+  return { type: 'other' };
+}
+
+function generateDirectAnswer(qType) {
+  switch (qType.type) {
+    case 'liste_cures':
+      return LISTE_CURES_TEXT;
+      
+    case 'liste_gelules':
+      return LISTE_GELULES_TEXT;
+      
+    case 'cures_ingredient': {
+      const results = findCuresWithIngredient(qType.ingredient);
+      if (results.length > 0) {
+        return `Les cures contenant du ${qType.ingredient} sont (${results.length} au total):\n\n${results.map((c,i) => `${i+1}. ${c.cure} (via ${c.viaGelule})`).join('\n')}`;
+      }
+      return `Je n'ai pas trouvé de cure contenant du ${qType.ingredient} dans la base de données SUPLEMINT.`;
+    }
+    
+    case 'gelules_ingredient': {
+      const results = findGelulesWithIngredient(qType.ingredient);
+      if (results.length > 0) {
+        return `Les gélules contenant du ${qType.ingredient} sont (${results.length} au total):\n\n${results.map((g,i) => `${i+1}. ${g}`).join('\n')}`;
+      }
+      return `Je n'ai pas trouvé de gélule contenant du ${qType.ingredient} dans la base de données SUPLEMINT.`;
+    }
+    
+    case 'info_cure': {
+      const cure = getCureDetails(qType.cureName);
+      if (cure) {
+        return `**${cure.name}**\n\n${cure.description ? 'Description : ' + cure.description + '\n\n' : ''}Composition : ${cure.composition.join(', ')}\n\nLien : ${cure.url}`;
+      }
+      return `Je n'ai pas trouvé de cure "${qType.cureName}" dans la base de données SUPLEMINT.\n\nVoici les cures disponibles :\n${CURES_LIST.map(c => '• ' + c.name).join('\n')}`;
+    }
+    
+    case 'compatible': {
+      const excluded = new Set();
+      for (const cond of qType.conditions) {
+        if (cond.includes('poisson') || cond.includes('omega')) {
+          for (const c of findCuresWithIngredient('omega')) excluded.add(c.cure);
+          for (const c of findCuresWithIngredient('krill')) excluded.add(c.cure);
+        }
+      }
+      const compatible = CURES_LIST.filter(c => !excluded.has(c.name));
+      return `Avec vos conditions (${qType.conditions.join(', ')}), voici les cures compatibles (${compatible.length}):\n\n${compatible.map((c,i) => `${i+1}. ${c.name}`).join('\n')}\n\nCures à éviter : ${Array.from(excluded).join(', ') || 'Aucune'}`;
+    }
+    
+    default:
+      return null;
+  }
+}
+
+// ============================================================================
+// QUIZ (inchangé)
 // ============================================================================
 
 const QUIZ = [
-  {
-    text: "Parfait, trouvons ensemble la cure idéale. Quel est votre prénom ?",
-    type: "open",
-    key: "prenom"
-  },
-  {
-    text: "Merci {prenom}. Quel est votre âge ?",
-    type: "choice",
-    choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"],
-    key: "age"
-  },
-  {
-    text: "Quel est le vôtre sexe biologique?",
-    type: "choice",
-    choices: ["Femme", "Homme"],
-    key: "sexe"
-  },
-  {
-    text: "Êtes-vous enceinte ou allaitante ?",
-    type: "choice",
-    choices: ["Oui", "Non"],
-    key: "enceinte",
-    cond: a => a.sexe === "Femme"
-  },
-  {
-    text: "Concernant votre cycle hormonal, où en êtes-vous actuellement ?",
-    type: "choice",
-    choices: ["Ménopausée", "Symptômes préménopause", "Pas de symptômes"],
-    key: "menopause",
-    cond: a =>
-      a.sexe === "Femme" &&
-      (a.age === "45-60 ans" || a.age === "Plus de 60 ans")
-  },
-  {
-    text: "Avez-vous une condition médicale, une allergie ou un traitement à signaler ?",
-    type: "choice",
-    choices: ["Tout va bien", "Oui, à signaler"],
-    key: "condition"
-  },
-  {
-    text: "Merci de préciser votre condition afin de vérifier les contre-indications.",
-    type: "open",
-    key: "condition_detail",
-    cond: a => a.condition !== "Tout va bien"
-  },
-  {
-    text: "Merci {prenom}, c'est noté, qu’est-ce qui vous pèse le plus au quotidien en ce moment ?",
-    type: "open",
-    key: "plainte"
-  },
-  {
-    text:
-      "Merci {prenom}. J’ai bien noté ce que vous avez décrit, je l’intègre à mon analyse.\n\nContinuons. Comment décririez-vous votre niveau d’énergie ?",
-    type: "choice",
-    choices: ["Bonne", "Fatigue légère", "Fatigue constante"],
-    key: "energie"
-  },
-  {
-    text: "Avez-vous constaté une prise de poids sans changement alimentaire ?",
-    type: "choice",
-    choices: ["Non", "Légère", "Importante"],
-    key: "poids"
-  },
-  {
-    text: "Êtes-vous sensible au froid (mains ou pieds froids) ?",
-    type: "choice",
-    choices: ["Non", "Parfois", "Souvent"],
-    key: "froid"
-  },
-  {
-    text: "Comment décririez-vous votre humeur ces derniers temps ?",
-    type: "choice",
-    choices: ["Stable", "Fluctuante", "Moral bas"],
-    key: "humeur"
-  },
-  {
-    text: "Votre sommeil est-il réparateur ?",
-    type: "choice",
-    choices: ["Oui", "Parfois léger", "Difficultés"],
-    key: "sommeil"
-  },
-  {
-    text: "Avez-vous remarqué des changements au niveau de la peau ou des cheveux ?",
-    type: "choice",
-    choices: ["Non", "Un peu secs", "Très secs"],
-    key: "peau"
-  },
-  {
-    text: "Comment est votre transit intestinal ?",
-    type: "choice",
-    choices: ["Régulier", "Parfois lent", "Constipation"],
-    key: "transit"
-  },
-  {
-    text: "Avez-vous des gonflements du visage ou des mains le matin ?",
-    type: "choice",
-    choices: ["Non", "Parfois", "Oui"],
-    key: "gonflement"
-  },
-  {
-    text: "Avez-vous des difficultés de concentration ?",
-    type: "choice",
-    choices: ["Non", "Légères", "Brouillard mental"],
-    key: "concentration"
-  },
-  {
-    text: "Avez-vous constaté un changement de libido ?",
-    type: "choice",
-    choices: ["Aucun", "Variable", "Très basse"],
-    key: "libido"
-  },
-  {
-    text: "Merci {prenom}. Quelle est votre adresse e-mail pour recevoir vos résultats personnalisés ?",
-    type: "open",
-    key: "email"
-  }
+  { text: "Parfait, trouvons ensemble la cure idéale. Quel est votre prénom ?", type: "open", key: "prenom" },
+  { text: "Bonjour {prenom}, votre sexe biologique ?", type: "choice", choices: ["Femme", "Homme"], key: "sexe" },
+  { text: "Êtes-vous enceinte ou allaitante ?", type: "choice", choices: ["Oui", "Non"], key: "enceinte", cond: a => a.sexe === "Femme" },
+  { text: "Votre âge ?", type: "choice", choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"], key: "age" },
+  { text: "Concernant votre cycle hormonal ?", type: "choice", choices: ["Ménopausée", "Symptômes préménopause", "Pas de symptômes"], key: "menopause", cond: a => a.sexe === "Femme" && (a.age === "45-60 ans" || a.age === "Plus de 60 ans") },
+  { text: "Condition médicale, allergie ou traitement ?", type: "choice", choices: ["Tout va bien", "Oui, à signaler"], key: "condition" },
+  { text: "Précisez votre condition.", type: "open", key: "condition_detail", cond: a => a.condition !== "Tout va bien" },
+  { text: "{prenom}, qu'est-ce qui vous pèse au quotidien ?", type: "open", key: "plainte" },
+  { text: "Depuis combien de temps ?", type: "choice", choices: ["< 1 mois", "1-6 mois", "6-12 mois", "> 1 an"], key: "duree" },
+  { text: "Impact sur votre quotidien ?", type: "choice", choices: ["Léger", "Modéré", "Important", "Sévère"], key: "impact" },
+  { text: "Niveau d'énergie ?", type: "choice", choices: ["Bonne", "Fatigue légère", "Fatigue constante"], key: "energie" },
+  { text: "Prise de poids inexpliquée ?", type: "choice", choices: ["Non", "Légère", "Importante"], key: "poids" },
+  { text: "Sensibilité au froid ?", type: "choice", choices: ["Non", "Parfois", "Souvent"], key: "froid" },
+  { text: "Votre humeur ?", type: "choice", choices: ["Stable", "Fluctuante", "Moral bas"], key: "humeur" },
+  { text: "Sommeil réparateur ?", type: "choice", choices: ["Oui", "Parfois léger", "Difficultés"], key: "sommeil" },
+  { text: "Changements peau/cheveux ?", type: "choice", choices: ["Non", "Un peu secs", "Très secs"], key: "peau" },
+  { text: "Transit intestinal ?", type: "choice", choices: ["Régulier", "Parfois lent", "Constipation"], key: "transit" },
+  { text: "Gonflement visage/mains le matin ?", type: "choice", choices: ["Non", "Parfois", "Oui"], key: "gonflement" },
+  { text: "Difficultés de concentration ?", type: "choice", choices: ["Non", "Légères", "Brouillard mental"], key: "concentration" },
+  { text: "Changement de libido ?", type: "choice", choices: ["Aucun", "Variable", "Très basse"], key: "libido" },
+  { text: "Merci {prenom}. Votre email pour les résultats ?", type: "open", key: "email" }
 ];
-
 
 function getQuizState(messages) {
   let step = -1, answers = {};
@@ -2047,7 +2803,7 @@ export default async function handler(req, res) {
         const j90 = fmt(new Date(today.getTime()+90*86400000));
         const a = state.answers;
         
-        const prompt = `Tu es Dr THYREN. Génère les résultats.
+        const prompt = `Tu es Dr THYREN. Génère les résultats du quiz.
 
 UTILISATEUR: ${a.prenom}, ${a.sexe}, ${a.age}
 Condition: ${a.condition} ${a.condition_detail || ''}
@@ -2056,7 +2812,7 @@ Symptômes: Énergie=${a.energie}, Poids=${a.poids}, Froid=${a.froid}, Humeur=${
 
 DATES: J+14=${j14}, J+90=${j90}
 
-LOGIQUE:
+RECOMMANDATION selon symptômes:
 - Fatigue+froid+poids+moral bas → CURE THYROÏDE
 - Stress+humeur → CURE ZÉNITUDE  
 - Sommeil → CURE SOMMEIL
@@ -2065,9 +2821,9 @@ LOGIQUE:
 Génère JSON avec 7 paragraphes séparés par ===BLOCK===:
 {"type":"resultat","text":"[P1]===BLOCK===[P2]===BLOCK===[P3]===BLOCK===[P4]===BLOCK===[P5]===BLOCK===[P6]===BLOCK===[P7]","meta":{"mode":"A"}}
 
-P1: Salutation + résumé symptômes
+P1: Salutation + résumé symptômes (2-3 phrases)
 P2: Besoins en % (thyroïde, énergie, nerveux, transit, peau)
-P3: Cure principale (URL VRAIE, composition, J+14/J+90)
+P3: Cure principale (URL VRAIE depuis [CURES], composition, J+14/J+90)
 P4: Cure soutien
 P5: Contre-indications
 P6: RDV https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
@@ -2078,7 +2834,7 @@ PAS de "B1:", "BLOC:" etc dans le texte!`;
         const r = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: { Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model: 'gpt-5-mini', messages: [{ role: 'system', content: prompt }, { role: 'user', content: '[CURES]:\n' + DATA_CURES + '\n\n[COMPOSITIONS]:\n' + DATA_COMPOSITIONS }], response_format: { type: 'json_object' }, temperature: 0.3, max_tokens: 4000 })
+          body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'system', content: prompt }, { role: 'user', content: '[CURES]:\n' + DATA_CURES + '\n\n[COMPOSITIONS]:\n' + DATA_COMPOSITIONS }], response_format: { type: 'json_object' }, temperature: 0.3, max_tokens: 4000 })
         });
         
         if (!r.ok) return res.status(500).json({ error: 'OpenAI error' });
@@ -2090,49 +2846,61 @@ PAS de "B1:", "BLOC:" etc dans le texte!`;
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // MODE B - RÉPONSE DIRECTE
+    // MODE B - QUESTIONS LIBRES AVEC RÉPONSES DIRECTES
     // ═══════════════════════════════════════════════════════════════════
-    const t = userText.toLowerCase();
-
-    // Cures avec ingrédient
-    let m = t.match(/(?:quelle|quelles|dans quelle).*cure.*(?:trouver|contien|avec)\s+(?:de\s+l[a']?|du|des|de)?\s*(\w+)/i) || t.match(/cure.*(?:contien|avec)\s+(?:de\s+)?(\w+)/i);
-    if (m) {
-      const results = findCuresWithIngredient(m[1]);
-      const text = results.length > 0
-        ? `Les cures contenant du ${m[1]} sont:\n${results.map((c,i) => `${i+1}. ${c.cure} (via ${c.viaGelule})`).join('\n')}`
-        : `Je n'ai pas trouvé de cure contenant du ${m[1]}.`;
-      return res.status(200).json({ reply: { type: 'reponse', text, meta: { mode: 'B', progress: { enabled: false } } }, conversationId, mode: 'B' });
+    
+    // 1. Détecter le type de question
+    const qType = detectQuestionType(userText);
+    console.log('🔍 Question type:', qType.type);
+    
+    // 2. Générer une réponse directe si possible
+    const directAnswer = generateDirectAnswer(qType);
+    
+    if (directAnswer) {
+      // Réponse directe SANS LLM
+      console.log('✅ Réponse directe générée');
+      return res.status(200).json({
+        reply: { type: 'reponse', text: directAnswer, meta: { mode: 'B', progress: { enabled: false } } },
+        conversationId,
+        mode: 'B'
+      });
     }
 
-    // Gélules avec ingrédient
-    m = t.match(/(?:quelle|quelles).*(?:gelule|gélule).*(?:contien|avec)\s+(?:de\s+)?(\w+)/i);
-    if (m) {
-      const results = findGelulesWithIngredient(m[1]);
-      const text = results.length > 0
-        ? `Les gélules contenant du ${m[1]} sont:\n${results.map((g,i) => `${i+1}. ${g}`).join('\n')}`
-        : `Je n'ai pas trouvé de gélule contenant du ${m[1]}.`;
-      return res.status(200).json({ reply: { type: 'reponse', text, meta: { mode: 'B', progress: { enabled: false } } }, conversationId, mode: 'B' });
-    }
+    // 3. Si pas de réponse directe, passer au LLM AVEC les données
+    const sys = `Tu es Dr THYREN, expert en micronutrition chez SUPLEMINT.
 
-    // Cures compatibles
-    if ((t.includes('allergique') || t.includes('diabétique') || t.includes('diabetique')) && t.includes('cure')) {
-      const conds = [];
-      if (t.includes('poisson')) conds.push('poisson');
-      if (t.includes('diabet')) conds.push('diabete');
-      if (conds.length) {
-        const r = findCompatibleCures(conds);
-        const text = `Avec vos conditions (${conds.join(', ')}), voici les cures compatibles:\n${r.compatible.map((c,i) => `${i+1}. ${c.cure}`).join('\n')}\n\nCures à éviter: ${r.excluded.join(', ')}`;
-        return res.status(200).json({ reply: { type: 'reponse', text, meta: { mode: 'B', progress: { enabled: false } } }, conversationId, mode: 'B' });
-      }
-    }
+DONNÉES DISPONIBLES (utilise-les OBLIGATOIREMENT) :
 
-    // Autres questions -> LLM
-    const sys = 'Tu es Dr THYREN. Concis (2-3 phrases). Vouvoiement. JSON:{"type":"reponse","text":"...","meta":{"mode":"B","progress":{"enabled":false}}}';
+LISTE DES ${CURES_LIST.length} CURES :
+${CURES_LIST.map(c => '• ' + c.name + (c.description ? ' - ' + c.description : '')).join('\n')}
+
+RÈGLES ABSOLUES :
+1. Tu ne dis JAMAIS "consultez le site" - tu as TOUTES les données ici
+2. Tu donnes TOUJOURS des réponses précises et complètes
+3. Si on te demande une liste, tu la donnes EN ENTIER
+4. Si on te demande "combien", tu comptes et donnes le NOMBRE EXACT
+5. Tu utilises les données ci-dessus, JAMAIS d'invention
+
+Réponds de façon concise (2-4 phrases max sauf si liste demandée).
+Vouvoiement.
+
+JSON: {"type":"reponse","text":"...","meta":{"mode":"B","progress":{"enabled":false}}}`;
+    
     const r = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: { Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'system', content: sys }, { role: 'user', content: '[SAV]:' + DATA_SAV.substring(0, 5000) + '\n\nQuestion: ' + userText }], response_format: { type: 'json_object' }, temperature: 0.2, max_tokens: 800 })
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: sys },
+          { role: 'user', content: '[SAV]:\n' + DATA_SAV.substring(0, 8000) + '\n\nQuestion: ' + userText }
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.2,
+        max_tokens: 1500
+      })
     });
+    
     if (!r.ok) return res.status(500).json({ error: 'OpenAI error' });
     let reply; try { reply = JSON.parse((await r.json()).choices?.[0]?.message?.content || '{}'); } catch { reply = { type: 'reponse', text: 'Erreur.', meta: { mode: 'B', progress: { enabled: false } } }; }
     return res.status(200).json({ reply, conversationId, mode: 'B' });
