@@ -2250,7 +2250,7 @@ IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "gpt-5-mini",
+            model: "gpt-4o-mini",
             messages: [{ role: "system", content: prompt }],
             response_format: { type: "json_object" },
             temperature: 0.3,
