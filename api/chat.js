@@ -1,11 +1,3 @@
-// ============================================================================
-// THYREN V18 - VERSION SIMPLE (QUIZ UNIQUEMENT)
-// ============================================================================
-
-// ============================================================================
-// DONNÉES
-// ============================================================================
-
 const DATA_COMPOSITIONS = `================================================================================
                          COMPOSITIONS SUPLEMINT
                               Version 0.9.0
@@ -890,15 +882,15 @@ Recommandée pour :
   - Difficulté de concentration
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ❌ Interdiction traitement contre le diabète.
-  ❌ Interdiction des traitements anticoagulant coumariniques.
-  ❌ Interdiction en cas d'hyperthyroïdie.
-  ⚠️ Déconseillé en cas de maladies auto-immunes.
-  ⚠️ Déconseillé aux personnes sous traitement antidépresseur.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
-  ⚠️ Déconseillé en cas d'épilepsie.
-  ⚠️ Déconseillé en cas d'acte interventionnel invasif programmé.
+  - Interdiction de grossesse ou d'allaitement.
+  - Interdiction traitement contre le diabète.
+  - Interdiction des traitements anticoagulant coumariniques.
+  - Interdiction en cas d'hyperthyroïdie.
+  - Déconseillé en cas de maladies auto-immunes.
+  - Déconseillé aux personnes sous traitement antidépresseur.
+  - Déconseillé aux enfants de moins de 12 ans.
+  - Déconseillé en cas d'épilepsie.
+  - Déconseillé en cas d'acte interventionnel invasif programmé.
 
 Notes :
   → La cure essentielle et principale de chez SUPLEMINT, peut résoudre 70% des problématiques exprimées dans le questionnaire QUESTION THYREN donc la proposer si ≥ deux réponses positives.
@@ -922,9 +914,9 @@ Recommandée pour :
   - Peau terne ou sèche
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
-  ❌ Interdiction traitement anticoagulant coumariniques.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction traitement anticoagulant coumariniques.
 
 Notes :
   → Cette cure en plus de son action sur la digestion et le transit est parfaite pour préparer le terrain pour la cure thyroïde.
@@ -949,8 +941,8 @@ Recommandée pour :
   - Difficulté de concentration
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
 
 Notes :
   → Cette cure est parfaite pour avoir un effet 'Waouh' boost immédiat.
@@ -974,9 +966,9 @@ Recommandée pour :
   - Fatigue constante
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
-  ❌ Interdiction traitement contre le diabète.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction traitement contre le diabète.
 
 Notes :
   → Cette cure a de super résultats si elle est prise à la suite d'INTESTIN et THYROIDE.
@@ -998,9 +990,9 @@ Recommandée pour :
   - Transit perturbé
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
-  ❌ Interdiction traitement contre le diabète.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction traitement contre le diabète.
 
 --------------------------------------------------------------------------------
 CURE 6 : CURE SENIOR
@@ -1022,11 +1014,11 @@ Recommandée pour :
   - Peau/cheveux fragiles
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
-  ❌ Interdiction traitement contre le diabète.
-  ❌ Interdiction des traitements anticoagulant coumariniques.
-  ❌ Interdiction problèmes rénaux (goutte, calculs).
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction traitement contre le diabète.
+  - Interdiction des traitements anticoagulant coumariniques.
+  - Interdiction problèmes rénaux (goutte, calculs).
 
 --------------------------------------------------------------------------------
 CURE 7 : CURE SOMMEIL
@@ -1045,9 +1037,9 @@ Recommandée pour :
   - Humeur fluctuante
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
-  ⚠️ Déconseillé aux personnes sous traitement antidépresseur.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
+  - Déconseillé aux personnes sous traitement antidépresseur.
 
 --------------------------------------------------------------------------------
 CURE 8 : CURE COMPLÈTE
@@ -1066,12 +1058,12 @@ Recommandée pour :
   - Toutes réponses légèrement positives sans pathologie marquée
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
-  ❌ Interdiction traitement contre le diabète.
-  ❌ Interdiction des traitements anticoagulant coumariniques.
-  ❌ Interdiction problèmes rénaux (goutte, calculs).
-  ⚠️ Déconseillé en cas de maladies auto-immunes.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction traitement contre le diabète.
+  - Interdiction des traitements anticoagulant coumariniques.
+  - Interdiction problèmes rénaux (goutte, calculs).
+  - Déconseillé en cas de maladies auto-immunes.
 
 --------------------------------------------------------------------------------
 CURE 9 : CURE HOMME+
@@ -1092,10 +1084,10 @@ Recommandée pour :
   - Baisse motivation
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
-  ❌ Interdiction traitement contre le diabète.
-  ⚠️ Déconseillé aux personnes sous traitement antidépresseur.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction traitement contre le diabète.
+  - Déconseillé aux personnes sous traitement antidépresseur.
 
 --------------------------------------------------------------------------------
 CURE 10 : CURE ZÉNITUDE
@@ -1115,9 +1107,9 @@ Recommandée pour :
   - Difficulté de concentration
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
-  ⚠️ Déconseillé aux personnes sous traitement antidépresseur.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
+  - Déconseillé aux personnes sous traitement antidépresseur.
 
 --------------------------------------------------------------------------------
 CURE 11 : CURE DÉTOX
@@ -1137,8 +1129,8 @@ Recommandée pour :
   - Gonflement visage/mains
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
 
 --------------------------------------------------------------------------------
 CURE 12 : CURE ARTICULATION
@@ -1156,10 +1148,10 @@ Recommandée pour :
   - Douleurs articulaires éventuelles
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
-  ❌ Interdiction des traitements anticoagulant coumariniques.
-  ❌ Interdiction en cas d'ulcères gastrique ou duodénal ou de calculs biliaires.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction des traitements anticoagulant coumariniques.
+  - Interdiction en cas d'ulcères gastrique ou duodénal ou de calculs biliaires.
 
 --------------------------------------------------------------------------------
 CURE 13 : CURE PEAU
@@ -1178,8 +1170,8 @@ Recommandée pour :
   - Transit lent
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
 
 --------------------------------------------------------------------------------
 CURE 14 : CURE MÉNOPAUSE
@@ -1202,10 +1194,10 @@ Recommandée pour :
   - Sommeil perturbé
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
-  ⚠️ Déconseillé en cas d'antécédent personnel ou familial de cancers hormono-dépendants.
-  ❌ Interdiction des traitements anticoagulant coumariniques.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
+  - Déconseillé en cas d'antécédent personnel ou familial de cancers hormono-dépendants.
+  - Interdiction des traitements anticoagulant coumariniques.
 
 --------------------------------------------------------------------------------
 CURE 15 : CURE SPORT
@@ -1226,12 +1218,12 @@ Recommandée pour :
   - Pratique sportive régulière
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
-  ❌ Interdiction traitement contre le diabète.
-  ❌ Interdiction des traitements anticoagulant coumariniques.
-  ⚠️ Déconseillé en cas de maladies auto-immunes.
-  ⚠️ Déconseillé aux personnes sous traitement antidépresseur.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction traitement contre le diabète.
+  - Interdiction des traitements anticoagulant coumariniques.
+  - Déconseillé en cas de maladies auto-immunes.
+  - Déconseillé aux personnes sous traitement antidépresseur.
 
 --------------------------------------------------------------------------------
 CURE 16 : CURE MÉMOIRE
@@ -1251,12 +1243,12 @@ Recommandée pour :
   - Âge > 45 ans
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
-  ❌ Interdiction traitement contre le diabète.
-  ❌ Interdiction des traitements anticoagulant coumariniques.
-  ⚠️ Déconseillé en cas de maladies auto-immunes.
-  ⚠️ Déconseillé aux personnes sous traitement antidépresseur.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction traitement contre le diabète.
+  - Interdiction des traitements anticoagulant coumariniques.
+  - Déconseillé en cas de maladies auto-immunes.
+  - Déconseillé aux personnes sous traitement antidépresseur.
 
 --------------------------------------------------------------------------------
 CURE 17 : CURE ADDICT FREE
@@ -1277,8 +1269,8 @@ Recommandée pour :
   - Humeur fluctuante
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
 
 --------------------------------------------------------------------------------
 CURE 18 : CURE CONCEPTION
@@ -1300,12 +1292,12 @@ Recommandée pour :
   - Âge < 40
 
 Contre-indications :
-  ❌ Interdiction de grossesse plus de 7 mois ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
-  ❌ Interdiction traitement contre le diabète.
-  ❌ Interdiction des traitements anticoagulant coumariniques.
-  ⚠️ Déconseillé en cas de maladies auto-immunes.
-  ⚠️ Déconseillé aux personnes sous traitement antidépresseur.
+  - Interdiction de grossesse plus de 7 mois ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction traitement contre le diabète.
+  - Interdiction des traitements anticoagulant coumariniques.
+  - Déconseillé en cas de maladies auto-immunes.
+  - Déconseillé aux personnes sous traitement antidépresseur.
 
 --------------------------------------------------------------------------------
 CURE 19 : CURE ALLAITEMENT
@@ -1325,12 +1317,12 @@ Recommandée pour :
   - Fatigue post-partum
 
 Contre-indications :
-  ❌ Interdiction de grossesse.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
-  ❌ Interdiction traitement contre le diabète.
-  ❌ Interdiction des traitements anticoagulant coumariniques.
-  ⚠️ Déconseillé en cas de maladies auto-immunes.
-  ⚠️ Déconseillé aux personnes sous traitement antidépresseur.
+  - Interdiction de grossesse.
+  - Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction traitement contre le diabète.
+  - Interdiction des traitements anticoagulant coumariniques.
+  - Déconseillé en cas de maladies auto-immunes.
+  - Déconseillé aux personnes sous traitement antidépresseur.
 
 --------------------------------------------------------------------------------
 CURE 20 : CURE ANTIOXYDANT
@@ -1351,8 +1343,8 @@ Recommandée pour :
   - Peau terne
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
 
 --------------------------------------------------------------------------------
 CURE 21 : CURE CARDIO
@@ -1373,8 +1365,8 @@ Recommandée pour :
   - Gonflement
 
 Contre-indications :
-  ❌ Interdiction de grossesse ou d'allaitement.
-  ⚠️ Déconseillé aux enfants de moins de 12 ans.
+  - Interdiction de grossesse ou d'allaitement.
+  - Déconseillé aux enfants de moins de 12 ans.
 
 ================================================================================
                        RÉSUMÉ : CURES CONTENANT DU POISSON
@@ -2221,11 +2213,16 @@ DATES IMPORTANTES:
 
 RÈGLES DE RECOMMANDATION:
 - Fatigue + froid + poids + moral bas → CURE THYROÏDE (prioritaire)
-- Stress + humeur fluctuante → CURE ZÉNITUDE
+- Transit lent + poids + thyroide → CURE INTESTIN (tres bonne cure à associé au autre) 
+- Fatigue + moral bas + baisse motivation → CURE ÉNERGIE (cure tres efficace rapidement)
+- poids + Transit lent → CURE POIDS ( cure sur le long term)
 - Problèmes de sommeil → CURE SOMMEIL
-- Transit lent → CURE INTESTIN
+- Stress + humeur fluctuante → CURE ZÉNITUDE
 - Femme 45-60 ans + symptômes hormonaux → CURE MÉNOPAUSE
 - Homme + fatigue + baisse motivation → CURE HOMME+
+- Age + Fatigue → CURE SENIOR
+
+Pour les autre cure voir réponse de l'utilisateur si spécifique.
 
 DONNÉES DES CURES:
 ${DATA_CURES}
@@ -2236,9 +2233,9 @@ Génère un JSON avec 5 blocs de texte séparés par "===BLOCK===":
 {"type":"resultat","text":"[BLOC1]===BLOCK===[BLOC2]===BLOCK===[BLOC3]===BLOCK===[BLOC4]===BLOCK===[BLOC5]","meta":{"mode":"A"}}
 
 BLOC 1: Salutation personnalisée + résumé des symptômes (2-3 phrases)
-BLOC 2: Cure principale recommandée avec URL EXACTE, composition et objectifs J+14/J+90
-BLOC 3: Cure de soutien si pertinent
-BLOC 4: Proposition de RDV: https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
+BLOC 2: Cure principale recommandée avec URL EXACTE, Pourquoi, composition et objectifs J+14/J+90
+BLOC 3: Cure de soutien si pertinent avec URL EXACTE, Pourquoi, composition et objectifs J+14/J+90
+BLOC 4: Proposition de RDV mensuelle offert avec une de nos nutritioniste : https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
 BLOC 5: Avez vous d'autre question ?
 
 IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
@@ -2291,7 +2288,7 @@ if (!isQuiz && isQuestionTrigger && userText.trim().length < 25) {
   return res.status(200).json({
     reply: {
       type: "reponse",
-      text: "Bien sûr 🙂 Quelle est votre question ?",
+      text: "Bien sûr ! Quelle est votre question ?",
       meta: { mode: "B" }
     },
     conversationId,
@@ -2307,13 +2304,12 @@ if (!isQuiz && isQuestionTrigger && userText.trim().length < 25) {
 Tu es Dr THYREN, assistant de SUPLEMINT.
 
 RÈGLE ABSOLUE: tu réponds UNIQUEMENT avec les informations présentes dans les DONNÉES fournies.
-INTERDIT d'inventer, d'estimer, de compléter, de supposer.
+INTERDIT stricte d'inventer, d'estimer, de compléter, de supposer.
 Si une info n'est pas dans les données, réponds exactement:
-"Je n’ai pas cette information dans nos données."
-
-Style: très concis, direct, 1 à 6 phrases maximum.
+"Helas je n’ai pas cette information dans nos données ou je n'ai pas bien compris , veuillez reformuler svp ?."
+Style: très concis, direct, en mode base de donné, 1 à 6 phrases maximum, liste les réponse si necessaire.
 Si la question porte sur un "combien", donne un chiffre si présent dans les données, sinon la phrase ci-dessus.
-Si la question demande un diagnostic médical ou un avis médical: rappelle que tu ne remplaces pas un médecin et propose un RDV.
+Si la question demande un diagnostic médical ou un avis médical: rappelle que tu ne remplaces pas un médecin et propose un RDV avec une de nos nutritioniste : https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
 `;
 
     const kbUser = `
@@ -2363,7 +2359,7 @@ Retourne un JSON valide:
     } catch {
       reply = {
         type: "reponse",
-        text: "Je n’ai pas cette information dans nos données.",
+        text: "Helas je n’ai pas cette information dans nos données ou je n'ai pas bien compris , veuillez reformuler svp ?.",
         meta: { mode: "B", source: "kb_only" },
       };
     }
@@ -2372,7 +2368,7 @@ Retourne un JSON valide:
     if (!reply?.text || typeof reply.text !== "string") {
       reply = {
         type: "reponse",
-        text: "Je n’ai pas cette information dans nos données.",
+        text: "Helas je n’ai pas cette information dans nos données ou je n'ai pas bien compris , veuillez reformuler svp ?.",
         meta: { mode: "B", source: "kb_only" },
       };
     }
