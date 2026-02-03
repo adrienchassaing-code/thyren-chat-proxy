@@ -2111,37 +2111,6 @@ function buildQuestion(step, answers) {
 // HANDLER PRINCIPAL
 // ============================================================================
 
-function isValidEmail(email){
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").trim());
-}
-
-async function pushEmailToShopifyNewsletter(email) {
-  email = String(email || "").trim().toLowerCase();
-  if (!isValidEmail(email)) return { ok: false, reason: "invalid_email" };
-
-  const shopDomain = process.env.SHOPIFY_STORE_DOMAIN; 
-  // ex: "www.suplemint.com"
-
-  if (!shopDomain) return { ok: false, reason: "missing_domain" };
-
-  const form = new URLSearchParams();
-  form.append("form_type", "customer");
-  form.append("utf8", "✓");
-  form.append("contact[email]", email);
-  form.append("contact[tags]", "newsletter,thyren_quiz,thyren_consent_yes");
-
-  const res = await fetch(`https://${shopDomain}/contact`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: form.toString(),
-    redirect: "manual" // Shopify renvoie souvent 302 -> ok
-  });
-
-  // Shopify répond souvent 302 (redirect) -> c'est BON
-  const ok = res.status === 200 || res.status === 302 || res.status === 303;
-  return { ok, status: res.status };
-}
-
 export default async function handler(req, res) {
   // CORS
   res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
@@ -2215,17 +2184,6 @@ export default async function handler(req, res) {
         const j14 = fmt(new Date(today.getTime() + 14 * 86400000));
         const j90 = fmt(new Date(today.getTime() + 90 * 86400000));
         const a = state.answers;
-
-        // ✅ Enregistre l'email dans Shopify newsletter
-         try {
-              if (a.email) {
-        const r = await pushEmailToShopifyNewsletter(a.email);
-        console.log("Newsletter push:", a.email, r);
-         }
-         } catch (e) {
-          console.error("Newsletter push failed:", e);
-         }
-
 
         // ✅ CORRECTION : JSON d’exemple valide (pas de virgule après BLOC4)
         const prompt = `Tu es Dr THYREN, expert en micronutrition chez SUPLEMINT.
