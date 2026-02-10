@@ -2227,40 +2227,37 @@ Pour les autre cure voir réponse de l'utilisateur si spécifique.
 DONNÉES DES CURES:
 ${DATA_CURES}
 
-INSTRUCTIONS:
-Génère un JSON avec 5 blocs de texte séparés par "===BLOCK===":
+INSTRUCTIONS (UI CRITIQUES):
+- Tu dois retourner un JSON valide EXACTEMENT sous cette forme:
+  {"type":"resultat","text":"<B1>===BLOCK===<B2>===BLOCK===<B3>===BLOCK===<B4>===BLOCK===<B5>","meta":{"mode":"A"}}
 
-{"type":"resultat","text":"[BLOC1]===BLOCK===[BLOC2]===BLOCK===[BLOC3]===BLOCK===[BLOC4]===BLOCK===[BLOC5]","meta":{"mode":"A"}}
+- Le champ text doit contenir EXACTEMENT 4 fois la chaîne "===BLOCK===" (donc 5 blocs).
+- Ne pas écrire "===BLOCK===" ailleurs que comme séparateur.
+- Ne jamais inclure "BLOC 1:", "BLOC 2:", etc.
+- Ne jamais copier/coller des séparateurs du type "====" ou "----" depuis les données.
+- BLOC 2 et BLOC 3: si tu recommandes une cure, la TOUTE PREMIÈRE ligne du bloc doit être un tag technique EXACT:
+  [[CURE:THYROIDE]] / [[CURE:ENERGIE]] / [[CURE:INTESTIN]] / [[CURE:POIDS]] / [[CURE:SOMMEIL]] / [[CURE:ZENITUDE]] / [[CURE:MENOPAUSE]] / [[CURE:HOMME]] / [[CURE:SENIOR]] / etc.
+  (un seul tag par bloc, une seule cure par bloc)
 
-BLOC 1: Salutation personnalisée + résumé des symptômes (2-3 phrases)
-BLOC 2: Cure principale recommandée.
+RÈGLES TEXTE:
+- Ne JAMAIS inclure de lien dans le texte (CTA gèrent les liens).
+- Ne JAMAIS écrire "J+14" ou "J+90". Écrire uniquement les dates exactes: ${j14} et ${j90}.
+- Utiliser uniquement les infos présentes dans DONNÉES DES CURES.
 
-- Commencer OBLIGATOIREMENT le bloc par un tag technique :
-  [[CURE:NOM_DE_LA_CURE]]
-  Exemples :
-  [[CURE:THYROIDE]]
-  [[CURE:ENERGIE]]
-  [[CURE:POIDS]]
-
-- Ne JAMAIS inclure de lien dans le texte.
-- Ne JAMAIS écrire "J+14" ou "J+90".
-- Utiliser uniquement les dates exactes ${j14} et ${j90}.
-- Format obligatoire :
-
-"Cure XXX®
+FORMAT OBLIGATOIRE (si cure):
+Cure XXX®
 [1–2 phrases pourquoi]
 Composition (par jour) :
-• …
+• ...
 Premiers effets possibles dès le ${j14}
-Effets plus durables vers le ${j90}"
+Effets plus durables vers le ${j90}
 
-BLOC 3: Cure de soutien si pertinent.
-
-- Même règle : commencer par [[CURE:NOM]]
-- Si aucune cure pertinente : une phrase simple sans tag.
-
-BLOC 4: Proposition de RDV mensuelle offert avec une de nos nutritioniste : https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
-BLOC 5: Avez vous d'autre question ?
+BLOC 1: salutation + résumé (2-3 phrases)
+BLOC 2: cure principale (obligatoirement tag en 1ère ligne)
+BLOC 3: cure de soutien si pertinent, sinon: "En complément, une deuxième cure peut renforcer vos résultats."
+BLOC 4: phrase unique (exactement):
+"Nous vous proposons un rendez-vous mensuel offert avec l'une de nos nutritionnistes pour un suivi personnalisé."
+BLOC 5: "Avez-vous d'autres questions ?"
 
 IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
 
