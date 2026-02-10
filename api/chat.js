@@ -2234,18 +2234,31 @@ Génère un JSON avec 5 blocs de texte séparés par "===BLOCK===":
 
 BLOC 1: Salutation personnalisée + résumé des symptômes (2-3 phrases)
 BLOC 2: Cure principale recommandée.
-- Ne JAMAIS inclure de lien dans le texte (les CTA gèrent le lien).
-- Ne JAMAIS écrire "J+14" ou "J+90". Écrire uniquement les dates exactes: ${j14} et ${j90}.
-- Format obligatoire:
-  "Cure XXX®
-   [1-2 phrases pourquoi]
-   Composition (par jour) : ...
-   Premiers effets possibles dès le ${j14}
-   Effets plus durables vers le ${j90}"
-- Utiliser uniquement les données présentes dans DONNÉES DES CURES.
 
-BLOC 3: Cure de soutien si pertinent (sinon une phrase: "En complément, une deuxième cure peut renforcer vos résultats.").
-- Même règles que BLOC 2 (pas de lien, pas de J+14/J+90, seulement ${j14}/${j90}).
+- Commencer OBLIGATOIREMENT le bloc par un tag technique :
+  [[CURE:NOM_DE_LA_CURE]]
+  Exemples :
+  [[CURE:THYROIDE]]
+  [[CURE:ENERGIE]]
+  [[CURE:POIDS]]
+
+- Ne JAMAIS inclure de lien dans le texte.
+- Ne JAMAIS écrire "J+14" ou "J+90".
+- Utiliser uniquement les dates exactes ${j14} et ${j90}.
+- Format obligatoire :
+
+"Cure XXX®
+[1–2 phrases pourquoi]
+Composition (par jour) :
+• …
+Premiers effets possibles dès le ${j14}
+Effets plus durables vers le ${j90}"
+
+BLOC 3: Cure de soutien si pertinent.
+
+- Même règle : commencer par [[CURE:NOM]]
+- Si aucune cure pertinente : une phrase simple sans tag.
+
 BLOC 4: Proposition de RDV mensuelle offert avec une de nos nutritioniste : https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
 BLOC 5: Avez vous d'autre question ?
 
