@@ -2113,21 +2113,30 @@ function buildQuestion(step, answers) {
 function normalize5Blocks(reply) {
   if (!reply?.text || typeof reply.text !== "string") return reply;
 
+  const B4 = "Nous vous proposons un rendez-vous mensuel offert avec l'une de nos nutritionnistes pour un suivi personnalisé.";
+  const B5 = "Avez-vous d'autres questions ?";
+
   let parts = reply.text.split("===BLOCK===");
 
-  // si le modèle n’a pas respecté les séparateurs -> on sauve l’UI
   if (parts.length !== 5) {
     const full = reply.text.trim();
-
-    // on met tout ce qu'il a généré dans BLOC1 pour ne rien perdre
     parts = [
       full,
-      "", // bloc2 vide (ton front peut fallback)
+      "",
       "En complément, une deuxième cure peut renforcer vos résultats.",
-      "Nous vous proposons un rendez-vous mensuel offert avec l'une de nos nutritionnistes pour un suivi personnalisé.",
-      "Avez-vous d'autres questions ?"
+      B4,
+      B5,
     ];
+  } else {
+    // ✅ force B4 et B5 même si le modèle a “un peu changé”
+    parts[3] = B4;
+    parts[4] = B5;
   }
+
+  reply.text = parts.map(p => String(p || "").trim()).join("===BLOCK===");
+  return reply;
+}
+
 
   reply.text = parts.map(p => String(p || "").trim()).join("===BLOCK===");
   return reply;
@@ -2291,12 +2300,26 @@ IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
           },
           body: JSON.stringify({
             model: "gpt-4o-mini",
-            messages: [{ role: "system", content: prompt }],
-            response_format: { type: "json_object" },
-            temperature: 0,
-            max_tokens: 2000,
-          }),
-        });
+           const system = "Tu es Dr THYREN. Tu dois renvoyer STRICTEMENT un JSON valide conforme aux instructions. Aucun texte hors JSON.";
+
+const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    Authorization: "Bearer " + KEY,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: system },
+      { role: "user", content: prompt }
+    ],
+    response_format: { type: "json_object" },
+    temperature: 0,        // ✅
+    max_tokens: 2000,
+  }),
+});
+
 
         if (!response.ok) {
           return res.status(500).json({ error: "OpenAI error" });
