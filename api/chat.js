@@ -2110,6 +2110,28 @@ function buildQuestion(step, answers) {
 // ============================================================================
 // HANDLER PRINCIPAL
 // ============================================================================
+function normalize5Blocks(reply) {
+  if (!reply?.text || typeof reply.text !== "string") return reply;
+
+  let parts = reply.text.split("===BLOCK===");
+
+  // si le modèle n’a pas respecté les séparateurs -> on sauve l’UI
+  if (parts.length !== 5) {
+    const full = reply.text.trim();
+
+    // on met tout ce qu'il a généré dans BLOC1 pour ne rien perdre
+    parts = [
+      full,
+      "", // bloc2 vide (ton front peut fallback)
+      "En complément, une deuxième cure peut renforcer vos résultats.",
+      "Nous vous proposons un rendez-vous mensuel offert avec l'une de nos nutritionnistes pour un suivi personnalisé.",
+      "Avez-vous d'autres questions ?"
+    ];
+  }
+
+  reply.text = parts.map(p => String(p || "").trim()).join("===BLOCK===");
+  return reply;
+}
 
 export default async function handler(req, res) {
   // CORS
@@ -2208,8 +2230,8 @@ SYMPTÔMES:
 - Libido: ${a.libido}
 
 DATES IMPORTANTES:
-- J+14: ${j14}
-- J+90: ${j90}
+- Date 14 jours: ${j14}
+- Date 90 jours: ${j90}
 
 RÈGLES DE RECOMMANDATION:
 - Fatigue + froid + poids + moral bas → CURE THYROÏDE (prioritaire)
@@ -2271,7 +2293,7 @@ IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
             model: "gpt-4o-mini",
             messages: [{ role: "system", content: prompt }],
             response_format: { type: "json_object" },
-            temperature: 0.3,
+            temperature: 0,
             max_tokens: 2000,
           }),
         });
@@ -2281,16 +2303,17 @@ IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
         }
 
         let reply;
-        try {
-          const data = await response.json();
-          reply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
-        } catch {
-          reply = {
-            type: "resultat",
-            text: "Erreur lors de la génération des résultats.",
-            meta: { mode: "A" },
-          };
-        }
+try {
+  const data = await response.json();
+  reply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
+  reply = normalize5Blocks(reply); // ✅ ICI
+} catch {
+  reply = {
+    type: "resultat",
+    text: "Erreur lors de la génération des résultats.",
+    meta: { mode: "A" },
+  };
+}
 
         return res.status(200).json({ reply, conversationId, mode: "A" });
       }
