@@ -1,18 +1,12 @@
-const DATA_COMPOSITIONS = `================================================================================
-                         COMPOSITIONS SUPLEMINT
-                              Version 0.9.0
-================================================================================
+const DATA_COMPOSITIONS = `
+COMPOSITIONS SUPLEMINT - Version 0.9.0
 
 Ce document contient la liste complète des gélules/capsules SUPLEMINT
 avec leurs ingrédients et dosages exacts.
 
-================================================================================
-                              LISTE DES CAPSULES
-================================================================================
+LISTE DES CAPSULES
 
---------------------------------------------------------------------------------
 GÉLULE YAM®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : yam
@@ -26,9 +20,7 @@ Allégations :
 
 Alias : YAM, Gélule YAM, YAM®
 
---------------------------------------------------------------------------------
 GÉLULE ADRENO+®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -44,9 +36,7 @@ Ingrédients :
 
 Alias : ADRENO+, ADRENO_PLUS, ADRENO+®
 
---------------------------------------------------------------------------------
 GÉLULE OESTROBOOST®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -64,9 +54,7 @@ Allégations :
 
 Alias : OESTROBOOST, OESTROBOOST®
 
---------------------------------------------------------------------------------
 GÉLULE BOURRACHE + ONAGRE®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : gélatine
 Allergènes : aucun
@@ -82,9 +70,7 @@ Allégations :
 
 Alias : BOURRACHE + ONAGRE, BOURRACHE_ONAGRE, BOURRACHE + ONAGRE®
 
---------------------------------------------------------------------------------
 GÉLULE MULTI VIT®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -126,9 +112,7 @@ Allégations :
 
 Alias : MULTI VIT, MULTI_VIT, MULTI VIT®
 
---------------------------------------------------------------------------------
 GÉLULE ENZYM+®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : DRcaps™ (HPMC) gastrorésistante
 Allergènes : aucun
@@ -147,9 +131,7 @@ Allégations :
 
 Alias : ENZYM+, ENZYM_PLUS, ENZYM+®
 
---------------------------------------------------------------------------------
 GÉLULE THYROÏDE+®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -172,9 +154,7 @@ Allégations :
 
 Alias : THYROÏDE+, THYROIDE_PLUS, THYROIDE+®
 
---------------------------------------------------------------------------------
 GÉLULE L-TYRO TOP®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -193,9 +173,7 @@ Allégations :
 
 Alias : L-TYRO TOP, L_TYRO_TOP, L-TYRO TOP®
 
---------------------------------------------------------------------------------
 GÉLULE L-TYRO ACTIV®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -208,9 +186,7 @@ Allégations :
 
 Alias : L-TYRO ACTIV, L_TYRO_ACTIV, L-TYRO ACTIV®
 
---------------------------------------------------------------------------------
 CAPSULE MAG TOP®
---------------------------------------------------------------------------------
 Forme : capsule
 Enveloppe : HPMC
 Allergènes : aucun
@@ -226,9 +202,7 @@ Allégations :
 
 Alias : MAG TOP, MAG_TOP, MAG TOP®
 
---------------------------------------------------------------------------------
 GÉLULE PHENOL+®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -251,9 +225,7 @@ Allégations :
 
 Alias : PHENOL+, PHENOL_PLUS, PHENOL+®
 
---------------------------------------------------------------------------------
 GÉLULE ANTIOX®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : trace de caféine
@@ -270,9 +242,7 @@ Allégations :
 
 Alias : ANTIOX, ANTIOX®
 
---------------------------------------------------------------------------------
 CAPSULE KRILL®
---------------------------------------------------------------------------------
 Forme : capsule
 Enveloppe : gélatine de poisson
 Allergènes : crustacés, poisson
@@ -286,9 +256,7 @@ Ingrédients :
 
 Alias : KRILL, KRILL®
 
---------------------------------------------------------------------------------
 CAPSULE KLAMATH®
---------------------------------------------------------------------------------
 Forme : capsule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -300,9 +268,7 @@ Ingrédients :
 
 Alias : KLAMATH, KLAMATH®
 
---------------------------------------------------------------------------------
 CAPSULE OMEGA 3®
---------------------------------------------------------------------------------
 Forme : capsule
 Enveloppe : gélatine de poisson
 Allergènes : poisson
@@ -317,9 +283,7 @@ Allégations :
 
 Alias : OMEGA 3, OMEGA3, OMEGA-3, OMEGA 3®
 
---------------------------------------------------------------------------------
 GÉLULE BIO ACTIV®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : DRcaps™ (HPMC) gastrorésistante
 Allergènes : aucun
@@ -335,9 +299,7 @@ Ingrédients :
 
 Alias : BIO ACTIV, BIO_ACTIV, BIO ACTIV®
 
---------------------------------------------------------------------------------
 GÉLULE B9 4FOLIC®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -351,9 +313,7 @@ Allégations :
 
 Alias : B94FOLIC, B9_4FOLIC, B9 4FOLIC®
 
---------------------------------------------------------------------------------
 GÉLULE MG MALATE®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : gélatine bovine
 Allergènes : gélatine bovine
@@ -366,9 +326,7 @@ Allégations :
 
 Alias : MG MALATE, MG_MALATE, MG MALATE®
 
---------------------------------------------------------------------------------
 CAPSULE SVELT OMEGA 3®
---------------------------------------------------------------------------------
 Forme : capsule
 Enveloppe : gélatine de poisson
 Allergènes : poisson, crustacés
@@ -381,9 +339,7 @@ Allégations :
 
 Alias : SVELT OMEGA 3, SVELT_OMEGA3, SVELT OMEGA3®
 
---------------------------------------------------------------------------------
 GÉLULE BERBERINE ACTIV®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -393,9 +349,7 @@ Ingrédients :
 
 Alias : BERBERINE ACTIV, BERBERINE_ACTIV, BERBERINE ACTIV®
 
---------------------------------------------------------------------------------
 CAPSULE COQ10®
---------------------------------------------------------------------------------
 Forme : capsule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -406,9 +360,7 @@ Ingrédients :
 
 Alias : COQ10, COQ10®
 
---------------------------------------------------------------------------------
 GÉLULE ACETYL CARN®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -418,9 +370,7 @@ Ingrédients :
 
 Alias : ACETYL CARN, ACETYL_CARN, ACETYL CARN®
 
---------------------------------------------------------------------------------
 GÉLULE GASTRATOP®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -436,9 +386,7 @@ Ingrédients :
 
 Alias : GASTRATOP, GASTRATOP®
 
---------------------------------------------------------------------------------
 GÉLULE TRANSITEAM®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -455,9 +403,7 @@ Ingrédients :
 
 Alias : TRANSITEAM, TRANSITEAM®
 
---------------------------------------------------------------------------------
 GÉLULE VITAMINE C®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -471,9 +417,7 @@ Allégations :
 
 Alias : VITAMINE C, VITAMINE_C, VITAMINE C®
 
---------------------------------------------------------------------------------
 GÉLULE MAGNESIUM+®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : HPMC
 Allergènes : aucun
@@ -498,9 +442,7 @@ Allégations :
 
 Alias : MAGNESIUM+, MAGNESIUM_PLUS, MAGNESIUM+®
 
---------------------------------------------------------------------------------
 GÉLULE MELATOP®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -523,9 +465,7 @@ Allégations :
 
 Alias : MELATOP, MELATOP®
 
---------------------------------------------------------------------------------
 GÉLULE ASHWAGANDHA®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -539,9 +479,7 @@ Allégations :
 
 Alias : ASHWAGANDHA, ASHWAGANDHA®
 
---------------------------------------------------------------------------------
 GÉLULE L-CARNOSINE®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -551,9 +489,7 @@ Ingrédients :
 
 Alias : L-CARNOSINE, L_CARNOSINE, L-CARNOSINE®
 
---------------------------------------------------------------------------------
 GÉLULE BETA ALANINE®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -564,9 +500,7 @@ Ingrédients :
 
 Alias : BETA ALANINE, BETA_ALANINE, BETA ALANINE®
 
---------------------------------------------------------------------------------
 GÉLULE MACA®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -579,9 +513,7 @@ Allégations :
 
 Alias : MACA, MACA®
 
---------------------------------------------------------------------------------
 GÉLULE STIM+®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -603,9 +535,7 @@ Allégations :
 
 Alias : STIM+, STIM_PLUS, STIM+®
 
---------------------------------------------------------------------------------
 GÉLULE RELAX+®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -628,9 +558,7 @@ Allégations :
 
 Alias : RELAX+, RELAX_PLUS, RELAX+®
 
---------------------------------------------------------------------------------
 GÉLULE RECUP+®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : gélatine bovine
 Allergènes : gélatine bovine
@@ -645,9 +573,7 @@ Allégations :
 
 Alias : RECUP+, RECUP_PLUS, RECUP+®
 
---------------------------------------------------------------------------------
 GÉLULE CURCUM ARTI®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -663,9 +589,7 @@ Allégations :
 
 Alias : CURCUM ARTI, CURCUM_ARTI, CURCUM ARTI®
 
---------------------------------------------------------------------------------
 CAPSULE ONAGRE B®
---------------------------------------------------------------------------------
 Forme : capsule
 Enveloppe : gélatine
 Allergènes : aucun
@@ -680,9 +604,7 @@ Allégations :
 
 Alias : ONAGRE B, ONAGRE_B, ONAGRE B®
 
---------------------------------------------------------------------------------
 CAPSULE SKIN ACTIV®
---------------------------------------------------------------------------------
 Forme : capsule
 Enveloppe : gélatine de bœuf
 Allergènes : gluten, gélatine bovine
@@ -698,9 +620,7 @@ Allégations :
 
 Alias : SKIN ACTIV, SKIN_ACTIV, SKIN ACTIV®
 
---------------------------------------------------------------------------------
 CAPSULE HEPATOP®
---------------------------------------------------------------------------------
 Forme : capsule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -720,9 +640,7 @@ Allégations :
 
 Alias : HEPATOP, HEPATOP®
 
---------------------------------------------------------------------------------
 CAPSULE RENATOP®
---------------------------------------------------------------------------------
 Forme : capsule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -738,9 +656,7 @@ Allégations :
 
 Alias : RENATOP, RENATOP®
 
---------------------------------------------------------------------------------
 CAPSULE IMMUNO®
---------------------------------------------------------------------------------
 Forme : capsule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -764,9 +680,7 @@ Allégations :
 
 Alias : IMMUNO, IMMUNO®
 
---------------------------------------------------------------------------------
 GÉLULE QUERCÉTINE®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -776,9 +690,7 @@ Ingrédients :
 
 Alias : QUERCETINE, QUERCÉTINE, QUERCETINE®
 
---------------------------------------------------------------------------------
 GÉLULE TEA ACTIV®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : trace de caféine
@@ -791,9 +703,7 @@ Allégations :
 
 Alias : TEA ACTIV, TEA_ACTIV, TEA ACTIV®
 
---------------------------------------------------------------------------------
 CAPSULE CARDIO+®
---------------------------------------------------------------------------------
 Forme : capsule
 Enveloppe : gélatine de poisson
 Allergènes : poisson
@@ -807,9 +717,7 @@ Allégations :
 
 Alias : CARDIO+, CARDIO_PLUS, CARDIO+®
 
---------------------------------------------------------------------------------
 GÉLULE GUDZU®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -819,9 +727,7 @@ Ingrédients :
 
 Alias : GUDZU, KUDZU, GUDZU®
 
---------------------------------------------------------------------------------
 GÉLULE LACTOP®
---------------------------------------------------------------------------------
 Forme : gélule
 Enveloppe : pullulane
 Allergènes : aucun
@@ -834,15 +740,11 @@ Allégations :
 
 Alias : LACTOP, LACTOP®
 
-================================================================================
-                              FIN DU DOCUMENT
-================================================================================
+FIN DU DOCUMENT COMPOSITIONS
 `;
 
-const DATA_CURES = `================================================================================
-                           LES CURES SUPLEMINT
-                              Version 0.9.0
-================================================================================
+const DATA_CURES = `
+LES CURES SUPLEMINT - Version 0.9.0
 
 RÈGLES GÉNÉRALES :
 - Durée d'une cure : 30 jours
@@ -851,13 +753,9 @@ RÈGLES GÉNÉRALES :
 - Maximum de cures simultanées : 3
 - Recommandation : 2 cures simultanées, idéalement CURE THYROÏDE + une autre
 
-================================================================================
-                           LISTE DES 21 CURES
-================================================================================
+LISTE DES 21 CURES
 
---------------------------------------------------------------------------------
 CURE 1 : CURE THYROÏDE
---------------------------------------------------------------------------------
 Description : Optimise le fonctionnement de ta thyroïde.
 Moment de prise : le matin à jeun juste avant le petit déjeuner
 Lien : https://www.suplemint.com/products/cure-thyroide
@@ -896,9 +794,7 @@ Notes :
   → La cure essentielle et principale de chez SUPLEMINT, peut résoudre 70% des problématiques exprimées dans le questionnaire QUESTION THYREN donc la proposer si ≥ deux réponses positives.
   → En cas de maladie auto-immune de la thyroïde (Hashimoto ou Basedow), la cure peut être recommandée d'après le Dr Stéphane Résimont. Toutefois, légalement, il est préférable de prendre rendez-vous avec l'une de nos expertes (Françoise) ou votre médecin traitant.
 
---------------------------------------------------------------------------------
 CURE 2 : CURE INTESTIN
---------------------------------------------------------------------------------
 Description : Améliore ton transit et ta digestion.
 Moment de prise : durant le repas le plus important
 Lien : https://www.suplemint.com/products/cure-intestin
@@ -921,9 +817,7 @@ Contre-indications :
 Notes :
   → Cette cure en plus de son action sur la digestion et le transit est parfaite pour préparer le terrain pour la cure thyroïde.
 
---------------------------------------------------------------------------------
 CURE 3 : CURE ÉNERGIE
---------------------------------------------------------------------------------
 Description : Retrouve vitalité et tonus.
 Moment de prise : le matin à jeun juste avant le petit déjeuner
 Lien : https://www.suplemint.com/products/cure-energie
@@ -947,9 +841,7 @@ Contre-indications :
 Notes :
   → Cette cure est parfaite pour avoir un effet 'Waouh' boost immédiat.
 
---------------------------------------------------------------------------------
 CURE 4 : CURE POIDS
---------------------------------------------------------------------------------
 Description : Facilite ta perte de poids naturellement.
 Moment de prise : le matin à jeun juste avant le petit déjeuner
 Lien : https://www.suplemint.com/products/cure-poids
@@ -973,9 +865,7 @@ Contre-indications :
 Notes :
   → Cette cure a de super résultats si elle est prise à la suite d'INTESTIN et THYROIDE.
 
---------------------------------------------------------------------------------
 CURE 5 : CURE IMMUNITÉ
---------------------------------------------------------------------------------
 Description : Renforce vos défenses naturelles.
 Moment de prise : le matin durant le petit déjeuner
 Lien : https://www.suplemint.com/products/cure-immunite
@@ -994,9 +884,7 @@ Contre-indications :
   - Déconseillé aux enfants de moins de 12 ans.
   - Interdiction traitement contre le diabète.
 
---------------------------------------------------------------------------------
 CURE 6 : CURE SENIOR
---------------------------------------------------------------------------------
 Description : Accompagne le vieillissement en douceur.
 Moment de prise : le matin durant le petit déjeuner
 Lien : https://www.suplemint.com/products/cure-senior
@@ -1020,9 +908,7 @@ Contre-indications :
   - Interdiction des traitements anticoagulant coumariniques.
   - Interdiction problèmes rénaux (goutte, calculs).
 
---------------------------------------------------------------------------------
 CURE 7 : CURE SOMMEIL
---------------------------------------------------------------------------------
 Description : Favorise un sommeil réparateur.
 Moment de prise : le soir au coucher
 Lien : https://www.suplemint.com/products/cure-sommeil
@@ -1041,9 +927,7 @@ Contre-indications :
   - Déconseillé aux enfants de moins de 12 ans.
   - Déconseillé aux personnes sous traitement antidépresseur.
 
---------------------------------------------------------------------------------
 CURE 8 : CURE COMPLÈTE
---------------------------------------------------------------------------------
 Description : Couvre l'ensemble des besoins essentiels.
 Moment de prise : le matin durant le petit déjeuner
 Lien : https://www.suplemint.com/products/cure-complete
@@ -1065,9 +949,7 @@ Contre-indications :
   - Interdiction problèmes rénaux (goutte, calculs).
   - Déconseillé en cas de maladies auto-immunes.
 
---------------------------------------------------------------------------------
 CURE 9 : CURE HOMME+
---------------------------------------------------------------------------------
 Description : Soutient la vitalité masculine et la libido.
 Moment de prise : le soir juste avant le dîner
 Lien : https://www.suplemint.com/products/cure-homme
@@ -1089,9 +971,7 @@ Contre-indications :
   - Interdiction traitement contre le diabète.
   - Déconseillé aux personnes sous traitement antidépresseur.
 
---------------------------------------------------------------------------------
 CURE 10 : CURE ZÉNITUDE
---------------------------------------------------------------------------------
 Description : Aide à réduire le stress et l'anxiété.
 Moment de prise : le matin durant le petit déjeuner
 Lien : https://www.suplemint.com/products/cure-zenitude
@@ -1111,9 +991,7 @@ Contre-indications :
   - Déconseillé aux enfants de moins de 12 ans.
   - Déconseillé aux personnes sous traitement antidépresseur.
 
---------------------------------------------------------------------------------
 CURE 11 : CURE DÉTOX
---------------------------------------------------------------------------------
 Description : Purifie le foie et les reins.
 Moment de prise :
   - Matin à jeun juste avant le petit déjeuner
@@ -1132,9 +1010,7 @@ Contre-indications :
   - Interdiction de grossesse ou d'allaitement.
   - Déconseillé aux enfants de moins de 12 ans.
 
---------------------------------------------------------------------------------
 CURE 12 : CURE ARTICULATION
---------------------------------------------------------------------------------
 Description : Protège et renforce vos articulations.
 Moment de prise : durant le repas le plus important
 Lien : https://www.suplemint.com/products/cure-articulation
@@ -1153,9 +1029,7 @@ Contre-indications :
   - Interdiction des traitements anticoagulant coumariniques.
   - Interdiction en cas d'ulcères gastrique ou duodénal ou de calculs biliaires.
 
---------------------------------------------------------------------------------
 CURE 13 : CURE PEAU
---------------------------------------------------------------------------------
 Description : Améliore l'aspect et la santé de ta peau.
 Moment de prise : durant le repas le plus important
 Lien : https://www.suplemint.com/products/cure-peau
@@ -1173,9 +1047,7 @@ Contre-indications :
   - Interdiction de grossesse ou d'allaitement.
   - Déconseillé aux enfants de moins de 12 ans.
 
---------------------------------------------------------------------------------
 CURE 14 : CURE MÉNOPAUSE
---------------------------------------------------------------------------------
 Description : Accompagne l'équilibre hormonal.
 Moment de prise : le matin durant le petit déjeuner
 Lien : https://www.suplemint.com/products/cure-menopause
@@ -1199,9 +1071,7 @@ Contre-indications :
   - Déconseillé en cas d'antécédent personnel ou familial de cancers hormono-dépendants.
   - Interdiction des traitements anticoagulant coumariniques.
 
---------------------------------------------------------------------------------
 CURE 15 : CURE SPORT
---------------------------------------------------------------------------------
 Description : Soutient l'endurance et la récupération.
 Moment de prise : juste avant l'activité sportive
 Lien : https://www.suplemint.com/products/cure-sport
@@ -1225,9 +1095,7 @@ Contre-indications :
   - Déconseillé en cas de maladies auto-immunes.
   - Déconseillé aux personnes sous traitement antidépresseur.
 
---------------------------------------------------------------------------------
 CURE 16 : CURE MÉMOIRE
---------------------------------------------------------------------------------
 Description : Stimule la concentration et la clarté mentale.
 Moment de prise : le matin durant le petit déjeuner
 Lien : https://www.suplemint.com/products/cure-memoire
@@ -1250,9 +1118,7 @@ Contre-indications :
   - Déconseillé en cas de maladies auto-immunes.
   - Déconseillé aux personnes sous traitement antidépresseur.
 
---------------------------------------------------------------------------------
 CURE 17 : CURE ADDICT FREE
---------------------------------------------------------------------------------
 Description : Aide à arrêter de fumer.
 Moment de prise : le matin à jeun juste avant le petit déjeuner
 Lien : https://www.suplemint.com/products/cure-addicfree
@@ -1272,9 +1138,7 @@ Contre-indications :
   - Interdiction de grossesse ou d'allaitement.
   - Déconseillé aux enfants de moins de 12 ans.
 
---------------------------------------------------------------------------------
 CURE 18 : CURE CONCEPTION
---------------------------------------------------------------------------------
 Description : Optimise la fertilité.
 Moment de prise : le matin durant le petit déjeuner
 Lien : https://www.suplemint.com/products/cure-conception
@@ -1299,9 +1163,7 @@ Contre-indications :
   - Déconseillé en cas de maladies auto-immunes.
   - Déconseillé aux personnes sous traitement antidépresseur.
 
---------------------------------------------------------------------------------
 CURE 19 : CURE ALLAITEMENT
---------------------------------------------------------------------------------
 Description : Soutient la production de lait et l'énergie post-partum.
 Moment de prise : le matin durant le petit déjeuner
 Lien : https://www.suplemint.com/products/cure-allaitement
@@ -1324,9 +1186,7 @@ Contre-indications :
   - Déconseillé en cas de maladies auto-immunes.
   - Déconseillé aux personnes sous traitement antidépresseur.
 
---------------------------------------------------------------------------------
 CURE 20 : CURE ANTIOXYDANT
---------------------------------------------------------------------------------
 Description : Protège du vieillissement cellulaire.
 Moment de prise : le matin durant le petit déjeuner
 Lien : https://www.suplemint.com/products/cure-antioxydant
@@ -1346,9 +1206,7 @@ Contre-indications :
   - Interdiction de grossesse ou d'allaitement.
   - Déconseillé aux enfants de moins de 12 ans.
 
---------------------------------------------------------------------------------
 CURE 21 : CURE CARDIO
---------------------------------------------------------------------------------
 Description : Favorise la santé cardiaque et circulatoire.
 Moment de prise : le matin durant le petit déjeuner
 Lien : https://www.suplemint.com/products/cure-cardio
@@ -1368,9 +1226,7 @@ Contre-indications :
   - Interdiction de grossesse ou d'allaitement.
   - Déconseillé aux enfants de moins de 12 ans.
 
-================================================================================
-                       RÉSUMÉ : CURES CONTENANT DU POISSON
-================================================================================
+RÉSUMÉ : CURES CONTENANT DU POISSON
 
 Les cures suivantes contiennent des ingrédients d'origine marine (poisson/crustacés) :
 
@@ -1385,19 +1241,13 @@ Les cures suivantes contiennent des ingrédients d'origine marine (poisson/crust
 9. CURE ALLAITEMENT (OMEGA3)
 10. CURE CARDIO (OMEGA3 + CARDIO_PLUS)
 
-================================================================================
-                              FIN DU DOCUMENT
-================================================================================
+FIN DU DOCUMENT CURES
 `;
 
-const DATA_SAV = `================================================================================
-                         FAQ & SAV SUPLEMINT
-                              Version 1.0.0
-================================================================================
+const DATA_SAV = `
+FAQ & SAV SUPLEMINT - Version 1.0.0
 
-================================================================================
-                         À PROPOS DE SUPLEMINT
-================================================================================
+À PROPOS DE SUPLEMINT
 
 Q: Suplemint est-elle une entreprise belge ?
 R: Oui. Suplemint est une entreprise 100% belge, fondée en 2021 par Adrien et Maïté Chassaing.
@@ -1406,18 +1256,14 @@ R: Oui. Suplemint est une entreprise 100% belge, fondée en 2021 par Adrien et M
    - Toute la gestion, conception, conditionnement et logistique sont pilotées depuis la Belgique
    - Succursales au Luxembourg et en France
 
----
-
 Q: Comment nous contacter ?
-R: 
+R:
    - Email : info@suplemint.com
    - Téléphone : +32 2 884 56 99 (lun-ven, 9h-19h)
    - Formulaire : www.suplemint.com/pages/contact
    - IA THYREN disponible 24/7
 
-================================================================================
-                         NOS PRODUITS & CURES
-================================================================================
+NOS PRODUITS & CURES
 
 Q: Quels types de cures proposez-vous ?
 R: Cures naturelles de micronutrition ciblée pour : thyroïde, énergie, sommeil, immunité, fertilité, digestion, ménopause, et plus.
@@ -1428,25 +1274,19 @@ R: Cures naturelles de micronutrition ciblée pour : thyroïde, énergie, sommei
    - Disponibles à l'unité (1 mois), en packs multi-mois, ou par abonnement flexible
    Lien : https://www.suplemint.com/collections/trouvezvotrecure
 
----
-
 Q: Vendez-vous les compléments seuls ?
 R: Oui. En plus des cures complètes, nous proposons certains compléments individuels :
    Melatop, CoQ10, Omega 3, Magnésium+, Vitamine C, Multivit
    Disponibles au mois, en plusieurs mois, ou par abonnement mensuel.
    Lien : https://www.suplemint.com/collections/trouvezvotrecure
 
----
-
 Q: Combien de temps avant de sentir des résultats ?
-R: 
+R:
    - Dès 1-2 semaines : premiers effets possibles (énergie, sommeil, confort digestif)
    - Après 1 mois : premiers bénéfices observables mais durée souvent courte pour action profonde
    - À partir de 3 mois : recommandation minimale pour action complète
    - 6 mois ou plus : résultats durables, surtout pour thyroïde et équilibre hormonal
    La régularité est plus importante que la perfection quotidienne.
-
----
 
 Q: Compatibilité avec un traitement médical ?
 R: Ça dépend du traitement et de la cure.
@@ -1455,10 +1295,8 @@ R: Ça dépend du traitement et de la cure.
    Toujours consulter les contre-indications sur chaque page produit.
    En cas de doute, demander l'avis d'un professionnel de santé.
 
----
-
 Q: Grossesse, allaitement et enfants ?
-R: 
+R:
    GROSSESSE :
    - Seule Cure Conception autorisée
    - Arrêt impératif avant le 7ème mois (oméga-3 fluidifient le sang)
@@ -1472,10 +1310,8 @@ R:
    - Cures non recommandées avant 12 ans
    - Par sécurité, utilisation préconisée à partir de 18 ans
 
----
-
 Q: Quand prendre mes compléments ?
-R: 
+R:
    - Compléments énergisants (énergie, thyroïde, métabolisme) : le matin
    - Compléments sommeil/relaxation : le soir
    - Certaines gélules au milieu ou fin de repas pour meilleure tolérance digestive
@@ -1488,9 +1324,7 @@ R:
 
    L'essentiel est la régularité.
 
-================================================================================
-                         CONSEILS GÉNÉRAUX
-================================================================================
+CONSEILS GÉNÉRAUX
 
 Q: Si j'oublie de prendre une dose ?
 R: Pas de panique.
@@ -1499,10 +1333,8 @@ R: Pas de panique.
    - En micronutrition, l'observance et l'endurance dans le temps sont clés
    - Un oubli ponctuel n'a aucun impact significatif
    - Si plus de 30-35% des prises oubliées, effet moins optimal
-   
-   Règle : Un oubli = aucun souci. Régularité = résultats. Durée = bénéfices durables.
 
----
+   Règle : Un oubli = aucun souci. Régularité = résultats. Durée = bénéfices durables.
 
 Q: Puis-je prendre d'autres compléments en plus ?
 R: En théorie oui, mais généralement pas nécessaire. Nos cures sont déjà hautement dosées et équilibrées.
@@ -1522,10 +1354,8 @@ R: En théorie oui, mais généralement pas nécessaire. Nos cures sont déjà h
    - Iode : max 150-200 µg/jour
    - Oméga-3 : max 3 g/jour sans avis médical
 
----
-
 Q: Qu'est-ce qui justifie le prix des cures ?
-R: 
+R:
    - Qualité des matières premières (actifs premium, biodisponibles, brevetés)
    - Complexité des formules (plusieurs compléments combinés pour action 360°)
    - Travail d'experts (médecins, pharmaciens, spécialistes médecine fonctionnelle)
@@ -1536,17 +1366,13 @@ R:
    - Pack Suplemint = 125€
    - Économie de 218€
 
-================================================================================
-                    ALLERGIES & TYPES D'ALIMENTATION
-================================================================================
+ALLERGIES & TYPES D'ALIMENTATION
 
 Q: Sans gluten et sans lactose ?
 R: Aucun gluten ni lactose ajoutés, SAUF Cure Peau (gélule SKIN ACTIV peut en contenir).
 
    Attention : fabrication dans installations multi-produits manipulant aussi blé, soja, lactose, maïs, oeuf, poisson, crustacés, fruits à coque, arachides, gluten. Contamination croisée possible.
    Si allergie sévère : consulter médecin et vérifier liste ingrédients.
-
----
 
 Q: Allergène poisson & dérivés marins ?
 R: Cures contenant poisson/dérivés marins (oméga-3, krill) :
@@ -1565,19 +1391,15 @@ R: Cures contenant poisson/dérivés marins (oméga-3, krill) :
    Aucune autre cure ne contient d'ingrédients marins.
    Avis médical indispensable si allergie poisson ou crustacés.
 
----
-
 Q: Végétarien ou végétalien ?
 R: Selon les formules : certaines cures végétariennes, d'autres contiennent oméga-3 issus d'huile de poisson (certifiés pêche durable).
    - Actuellement, aucune cure 100% végétalienne
    - Information végétarien/non végétarien précisée dans description produit
 
-================================================================================
-                              PAIEMENT
-================================================================================
+PAIEMENT
 
 Q: Moyens de paiement acceptés ?
-R: 
+R:
    En ligne :
    - Apple Pay
    - Carte de crédit
@@ -1592,10 +1414,8 @@ R:
 
    Tous paiements traités via solutions sécurisées conformes aux standards.
 
----
-
 Q: Comment utiliser un code promotionnel ?
-R: 
+R:
    1. Ajouter produits au panier
    2. Page de paiement
    3. Entrer code dans le champ prévu avant paiement
@@ -1606,8 +1426,6 @@ R:
    - -10% dès 2 produits
    - -15% dès 3 produits
 
----
-
 Q: Mon code ne fonctionne pas ?
 R: Possible si :
    - Code déjà utilisé
@@ -1615,12 +1433,10 @@ R: Possible si :
    - Code non applicable aux produits du panier
    Si code valide selon vous, contacter info@suplemint.com pour vérification.
 
-================================================================================
-                         COMMANDES & EXPÉDITIONS
-================================================================================
+COMMANDES & EXPÉDITIONS
 
 Q: Délais de livraison ?
-R: 
+R:
    - Benelux : 2-3 jours ouvrés (GLS)
    - France : 2-5 jours ouvrés (GLS)
    - Suisse (DAP) : 3-6 jours ouvrés (Bpost, aucun frais de douane)
@@ -1630,24 +1446,18 @@ R:
 
    En cas d'absence : dépôt en point relais le plus proche.
 
----
-
 Q: Comment vérifier le statut de ma commande ?
 R: Après commande : email de confirmation, puis emails de suivi (préparé, expédié, en cours de livraison, livré).
    Chaque email contient lien de suivi (tracking).
    Suivi Shopify et suivi transporteur peuvent différer légèrement, attendre 24h pour synchronisation.
 
----
-
 Q: Ma commande est en retard ?
-R: 
+R:
    1. Vérifier le tracking via lien email
    2. Vérifier spams/indésirables
-   
+
    Si retard prévisible connu (fêtes, etc.), nous informons par email.
    Si retard > 5 jours ouvrables : contacter info@suplemint.com avec numéro de commande, ou appeler +32 2 884 56 99.
-
----
 
 Q: Annuler ma commande ?
 R: Possible tant que colis non expédié.
@@ -1656,13 +1466,9 @@ R: Possible tant que colis non expédié.
    Contacter rapidement info@suplemint.com ou +32 2 884 56 99.
    Après expédition : retour possible sous 14 jours.
 
----
-
 Q: Modifier ma commande ?
 R: Possible avant expédition (ajouter/retirer produit, modifier cure).
    Contacter rapidement info@suplemint.com ou +32 2 884 56 99.
-
----
 
 Q: Mauvais produit ou produit endommagé ?
 R: Contacter info@suplemint.com ou +32 2 884 56 99 avec :
@@ -1670,12 +1476,10 @@ R: Contacter info@suplemint.com ou +32 2 884 56 99 avec :
    - Photo du produit reçu/endommagé
    Solution : remplacement ou renvoi.
 
-================================================================================
-                              ABONNEMENT
-================================================================================
+ABONNEMENT
 
 Q: Avantages de l'abonnement ?
-R: 
+R:
    - -15% sur le prix total
    - Livraison offerte
    - Pilulier offert (1ère commande)
@@ -1683,9 +1487,7 @@ R:
    - Envoi automatique tous les 30 jours
    - Sans engagement, annulable à tout moment
 
-================================================================================
-                         CODES PROMOTIONNELS ACTIFS
-================================================================================
+CODES PROMOTIONNELS ACTIFS
 
 Code : STANARNOW10
 Offre : -10% à l'inscription newsletter
@@ -1695,17 +1497,13 @@ Code : JANVIER30
 Offre : -30% sur chaque commande
 Conditions : Valable janvier 2026 uniquement
 
-================================================================================
-                    RENDEZ-VOUS & ACCOMPAGNEMENT
-================================================================================
+RENDEZ-VOUS & ACCOMPAGNEMENT
 
 Q: Comment prendre rendez-vous avec un expert ?
 R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalisé.
    Prendre rendez-vous via : https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
 
-================================================================================
-                              FIN DU DOCUMENT
-================================================================================
+FIN DU DOCUMENT SAV
 `;
 
 console.log("✅ THYREN V18 - Version Simple (Quiz uniquement)");
@@ -1715,15 +1513,12 @@ console.log("✅ THYREN V18 - Version Simple (Quiz uniquement)");
 // ============================================================================
 
 const QUIZ = [
-  // Q1
   {
     id: "Q1",
     text: "Parfait, trouvons ensemble la cure idéale. Pour commencer, quel est votre prénom ?",
     type: "open",
     key: "prenom"
   },
-
-  // Q2 (AGE AVANT SEXE)
   {
     id: "Q2",
     text: "Quel est votre âge ?",
@@ -1731,8 +1526,6 @@ const QUIZ = [
     choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"],
     key: "age"
   },
-
-  // Q3 (SEXE)
   {
     id: "Q3",
     text: "Bonjour {prenom}, quel est votre sexe biologique ?",
@@ -1740,8 +1533,6 @@ const QUIZ = [
     choices: ["Femme", "Homme"],
     key: "sexe"
   },
-
-  // Q3_plus (Grossesse/Allaitement si femme)
   {
     id: "Q3_plus",
     text: "Êtes-vous enceinte ou allaitante ?",
@@ -1750,37 +1541,31 @@ const QUIZ = [
     key: "enceinte",
     cond: a => a.sexe === "Femme"
   },
-
-  // Q4 (Ménopause si femme 45+)
   {
     id: "Q4_menopause",
     text: "Concernant votre cycle hormonal, où en êtes-vous ?",
     type: "choice",
     choices: [
       "Oui, je suis ménopausée",
-      "Oui, j’ai des symptômes de préménopause ou ménopause",
-      "Non, je n’ai pas de symptômes particuliers",
-      "Autre – j’aimerais préciser"
+      "Oui, j'ai des symptômes de préménopause ou ménopause",
+      "Non, je n'ai pas de symptômes particuliers",
+      "Autre – j'aimerais préciser"
     ],
     key: "menopause",
     cond: a =>
       a.sexe === "Femme" &&
       (a.age === "45-60 ans" || a.age === "Plus de 60 ans")
   },
-
-  // Q5 (conditions)
   {
     id: "Q5",
     text: "Avez-vous une condition médicale, une allergie ou prenez-vous un traitement ou des compléments ?",
     type: "choice",
     choices: [
       "Tout va bien",
-      "Oui, j’ai une condition / allergie / traitement"
+      "Oui, j'ai une condition / allergie / traitement"
     ],
     key: "condition"
   },
-
-  // Q5b (détail condition)
   {
     id: "Q5b",
     text: "Merci de préciser votre condition, allergie ou traitement.",
@@ -1788,53 +1573,47 @@ const QUIZ = [
     key: "condition_detail",
     cond: a => a.condition !== "Tout va bien"
   },
-
-  // Q6 (Objectif)
   {
-  id: "Q6_objectif",
-  text: "Bien noté {prenom}, quel est votre objectif principal avec une cure ?",
-  type: "choice",
-  choices: [
-    "Retrouver de l’énergie",
-    "Perdre du poids / relancer le métabolisme",
-    "Mieux dormir",
-    "Réduire le stress / l’anxiété",
-    "Améliorer ma digestion / transit",
-    "Améliorer mon équilibre hormonal",
-    "Autre – j’aimerais préciser"
-  ],
-  key: "objectif"
-},
-{
-  id: "Q6_objectif_autre",
-  text: "Merci de préciser votre objectif en une phrase.",
-  type: "open",
-  key: "plainte",
-  cond: a => a.objectif?.startsWith("Autre")
-},
-  // Q7 (ENERGIE) — intègre la plainte juste avant
+    id: "Q6_objectif",
+    text: "Bien noté {prenom}, quel est votre objectif principal avec une cure ?",
+    type: "choice",
+    choices: [
+      "Retrouver de l'énergie",
+      "Perdre du poids / relancer le métabolisme",
+      "Mieux dormir",
+      "Réduire le stress / l'anxiété",
+      "Améliorer ma digestion / transit",
+      "Améliorer mon équilibre hormonal",
+      "Autre – j'aimerais préciser"
+    ],
+    key: "objectif"
+  },
+  {
+    id: "Q6_objectif_autre",
+    text: "Merci de préciser votre objectif en une phrase.",
+    type: "open",
+    key: "plainte",
+    cond: a => a.objectif?.startsWith("Autre")
+  },
   {
     id: "Q7_energie",
-    text: "Comment décririez-vous votre niveau d’énergie au quotidien ?",
+    text: "Comment décririez-vous votre niveau d'énergie au quotidien ?",
     type: "choice",
     choices: [
       "Bonne énergie tout au long de la journée",
       "Fatigue légère ou passagère",
       "Fatigue constante malgré le repos",
-      "Autre – j’aimerais préciser"
+      "Autre – j'aimerais préciser"
     ],
     key: "energie"
   },
-
   {
     id: "Q7_energie_autre",
-    text: "Merci de préciser comment vous décririez votre niveau d’énergie.",
+    text: "Merci de préciser comment vous décririez votre niveau d'énergie.",
     type: "open",
     key: "energie_detail",
     cond: a => a.energie?.startsWith("Autre")
   },
-
-  // Q8 poids
   {
     id: "Q8_poids",
     text: "Avez-vous pris du poids sans changer votre alimentation ?",
@@ -1843,11 +1622,10 @@ const QUIZ = [
       "Non, mon poids est stable",
       "Oui, une légère prise de poids",
       "Oui, une prise de poids importante ou inexpliquée",
-      "Autre – j’aimerais préciser"
+      "Autre – j'aimerais préciser"
     ],
     key: "poids"
   },
-
   {
     id: "Q8_poids_autre",
     text: "Merci de préciser votre situation concernant le poids.",
@@ -1855,8 +1633,6 @@ const QUIZ = [
     key: "poids_detail",
     cond: a => a.poids?.startsWith("Autre")
   },
-
-  // Q9 froid
   {
     id: "Q9_froid",
     text: "Ressentez-vous souvent le froid (mains ou pieds froids) ?",
@@ -1865,11 +1641,10 @@ const QUIZ = [
       "Non, température normale",
       "Parfois",
       "Souvent, même quand il fait bon",
-      "Autre – j’aimerais préciser"
+      "Autre – j'aimerais préciser"
     ],
     key: "froid"
   },
-
   {
     id: "Q9_froid_autre",
     text: "Merci de préciser comment vous ressentez le froid.",
@@ -1877,8 +1652,6 @@ const QUIZ = [
     key: "froid_detail",
     cond: a => a.froid?.startsWith("Autre")
   },
-
-  // Q10 humeur
   {
     id: "Q10_humeur",
     text: "Comment décririez-vous votre humeur ces derniers temps ?",
@@ -1887,11 +1660,10 @@ const QUIZ = [
       "Moral stable",
       "Humeur fluctuante",
       "Moral bas",
-      "Autre – j’aimerais préciser"
+      "Autre – j'aimerais préciser"
     ],
     key: "humeur"
   },
-
   {
     id: "Q10_humeur_autre",
     text: "Merci de préciser votre humeur.",
@@ -1899,8 +1671,6 @@ const QUIZ = [
     key: "humeur_detail",
     cond: a => a.humeur?.startsWith("Autre")
   },
-
-  // Q11 sommeil
   {
     id: "Q11_sommeil",
     text: "Votre sommeil est-il réparateur ?",
@@ -1909,11 +1679,10 @@ const QUIZ = [
       "Oui, je dors bien",
       "Sommeil parfois léger ou agité",
       "Difficultés à dormir ou fatigue au réveil",
-      "Autre – j’aimerais préciser"
+      "Autre – j'aimerais préciser"
     ],
     key: "sommeil"
   },
-
   {
     id: "Q11_sommeil_autre",
     text: "Merci de préciser comment se passe votre sommeil.",
@@ -1921,8 +1690,6 @@ const QUIZ = [
     key: "sommeil_detail",
     cond: a => a.sommeil?.startsWith("Autre")
   },
-
-  // Q12 peau/cheveux
   {
     id: "Q12_peau",
     text: "Avez-vous remarqué des changements de la peau ou des cheveux ?",
@@ -1931,11 +1698,10 @@ const QUIZ = [
       "Non, tout est normal",
       "Peau un peu sèche ou cheveux ternes",
       "Peau très sèche ou cheveux cassants",
-      "Autre – j’aimerais préciser"
+      "Autre – j'aimerais préciser"
     ],
     key: "peau"
   },
-
   {
     id: "Q12_peau_autre",
     text: "Merci de préciser les changements observés.",
@@ -1943,8 +1709,6 @@ const QUIZ = [
     key: "peau_detail",
     cond: a => a.peau?.startsWith("Autre")
   },
-
-  // Q13 transit
   {
     id: "Q13_transit",
     text: "Comment est votre transit intestinal ?",
@@ -1953,11 +1717,10 @@ const QUIZ = [
       "Transit régulier",
       "Parfois un peu lent",
       "Constipation ou digestion difficile",
-      "Autre – j’aimerais préciser"
+      "Autre – j'aimerais préciser"
     ],
     key: "transit"
   },
-
   {
     id: "Q13_transit_autre",
     text: "Merci de préciser votre transit.",
@@ -1965,8 +1728,6 @@ const QUIZ = [
     key: "transit_detail",
     cond: a => a.transit?.startsWith("Autre")
   },
-
-  // Q14 gonflement
   {
     id: "Q14_gonflement",
     text: "Avez-vous remarqué un gonflement du visage ou des mains le matin ?",
@@ -1975,11 +1736,10 @@ const QUIZ = [
       "Non",
       "Parfois",
       "Oui, visible chaque matin",
-      "Autre – j’aimerais préciser"
+      "Autre – j'aimerais préciser"
     ],
     key: "gonflement"
   },
-
   {
     id: "Q14_gonflement_autre",
     text: "Merci de préciser les gonflements observés.",
@@ -1987,21 +1747,18 @@ const QUIZ = [
     key: "gonflement_detail",
     cond: a => a.gonflement?.startsWith("Autre")
   },
-
-  // Q15 concentration
   {
     id: "Q15_concentration",
-    text: "Avez-vous parfois l’esprit confus ou des difficultés de concentration ?",
+    text: "Avez-vous parfois l'esprit confus ou des difficultés de concentration ?",
     type: "choice",
     choices: [
       "Concentration normale",
       "Légère distraction",
       "Brouillard mental",
-      "Autre – j’aimerais préciser"
+      "Autre – j'aimerais préciser"
     ],
     key: "concentration"
   },
-
   {
     id: "Q15_concentration_autre",
     text: "Merci de préciser vos difficultés de concentration.",
@@ -2009,8 +1766,6 @@ const QUIZ = [
     key: "concentration_detail",
     cond: a => a.concentration?.startsWith("Autre")
   },
-
-  // Q16 libido
   {
     id: "Q16_libido",
     text: "Avez-vous remarqué un changement de votre libido ?",
@@ -2019,11 +1774,10 @@ const QUIZ = [
       "Aucun changement notable",
       "Libido variable",
       "Libido très basse",
-      "Autre – j’aimerais préciser"
+      "Autre – j'aimerais préciser"
     ],
     key: "libido"
   },
-
   {
     id: "Q16_libido_autre",
     text: "Merci de préciser les changements de libido.",
@@ -2031,8 +1785,6 @@ const QUIZ = [
     key: "libido_detail",
     cond: a => a.libido?.startsWith("Autre")
   },
-
-  // Q17 email
   {
     id: "Q17_email",
     text: "Merci {prenom}. Pouvez-vous indiquer votre adresse e-mail pour recevoir vos résultats ?",
@@ -2110,6 +1862,7 @@ function buildQuestion(step, answers) {
 // ============================================================================
 // HANDLER PRINCIPAL
 // ============================================================================
+
 function normalize5Blocks(reply) {
   if (!reply?.text || typeof reply.text !== "string") return reply;
 
@@ -2128,15 +1881,9 @@ function normalize5Blocks(reply) {
       B5,
     ];
   } else {
-    // ✅ force B4 et B5 même si le modèle a “un peu changé”
     parts[3] = B4;
     parts[4] = B5;
   }
-
-  reply.text = parts.map(p => String(p || "").trim()).join("===BLOCK===");
-  return reply;
-}
-
 
   reply.text = parts.map(p => String(p || "").trim()).join("===BLOCK===");
   return reply;
@@ -2165,14 +1912,11 @@ export default async function handler(req, res) {
     const userText = typeof lastMsg === "object" ? lastMsg.text || "" : String(lastMsg);
     const lower = userText.toLowerCase();
 
-    // ────────────────────────────────────────────────────────────────
     // Détection : quiz vs question libre
-    // ────────────────────────────────────────────────────────────────
     const isQuizTrigger = /(^|\b)(quiz|cure ideale|cure idéale|trouver ma cure|trouver ma cure idéale)(\b|$)/i.test(
       userText
     );
 
-    // (Optionnel mais utile) : détecter explicitement "j'ai une question"
     const isQuestionTrigger = /(^|\b)(j'ai une question|jai une question|question|peux-tu|peux tu|comment|pourquoi|combien|quand|où)(\b|$)/i.test(
       lower
     );
@@ -2200,9 +1944,7 @@ export default async function handler(req, res) {
       // Calculer la prochaine étape
       const next = state.step < 0 ? 0 : nextStep(state.step, state.answers);
 
-      // ═══════════════════════════════════════════════════════════════════
       // FIN DU QUIZ - Générer les résultats
-      // ═══════════════════════════════════════════════════════════════════
       if (next >= QUIZ.length) {
         const today = new Date();
         const fmt = (d) =>
@@ -2216,7 +1958,6 @@ export default async function handler(req, res) {
         const j90 = fmt(new Date(today.getTime() + 90 * 86400000));
         const a = state.answers;
 
-        // ✅ CORRECTION : JSON d’exemple valide (pas de virgule après BLOC4)
         const prompt = `Tu es Dr THYREN, expert en micronutrition chez SUPLEMINT.
 
 PROFIL UTILISATEUR:
@@ -2244,7 +1985,7 @@ DATES IMPORTANTES:
 
 RÈGLES DE RECOMMANDATION:
 - Fatigue + froid + poids + moral bas → CURE THYROÏDE (prioritaire)
-- Transit lent + poids + thyroide → CURE INTESTIN (tres bonne cure à associé au autre) 
+- Transit lent + poids + thyroide → CURE INTESTIN (tres bonne cure à associé au autre)
 - Fatigue + moral bas + baisse motivation → CURE ÉNERGIE (cure tres efficace rapidement)
 - poids + Transit lent → CURE POIDS ( cure sur le long term)
 - Problèmes de sommeil → CURE SOMMEIL
@@ -2292,6 +2033,8 @@ BLOC 5: "Avez-vous d'autres questions ?"
 
 IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
 
+        const system = "Tu es Dr THYREN. Tu dois renvoyer STRICTEMENT un JSON valide conforme aux instructions. Aucun texte hors JSON.";
+
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
           headers: {
@@ -2300,43 +2043,32 @@ IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
           },
           body: JSON.stringify({
             model: "gpt-4o-mini",
-           const system = "Tu es Dr THYREN. Tu dois renvoyer STRICTEMENT un JSON valide conforme aux instructions. Aucun texte hors JSON.";
-
-const response = await fetch("https://api.openai.com/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    Authorization: "Bearer " + KEY,
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    model: "gpt-4o-mini",
-    messages: [
-      { role: "system", content: system },
-      { role: "user", content: prompt }
-    ],
-    response_format: { type: "json_object" },
-    temperature: 0,        // ✅
-    max_tokens: 2000,
-  }),
-});
-
+            messages: [
+              { role: "system", content: system },
+              { role: "user", content: prompt }
+            ],
+            response_format: { type: "json_object" },
+            temperature: 0,
+            max_tokens: 2000,
+          }),
+        });
 
         if (!response.ok) {
           return res.status(500).json({ error: "OpenAI error" });
         }
 
         let reply;
-try {
-  const data = await response.json();
-  reply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
-  reply = normalize5Blocks(reply); // ✅ ICI
-} catch {
-  reply = {
-    type: "resultat",
-    text: "Erreur lors de la génération des résultats.",
-    meta: { mode: "A" },
-  };
-}
+        try {
+          const data = await response.json();
+          reply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
+          reply = normalize5Blocks(reply);
+        } catch {
+          reply = {
+            type: "resultat",
+            text: "Erreur lors de la génération des résultats.",
+            meta: { mode: "A" },
+          };
+        }
 
         return res.status(200).json({ reply, conversationId, mode: "A" });
       }
@@ -2348,32 +2080,30 @@ try {
         mode: "A",
       });
     }
-// ────────────────────────────────────────────────────────────────
-// CAS : "j'ai une question" sans contenu
-// ────────────────────────────────────────────────────────────────
-if (!isQuiz && isQuestionTrigger && userText.trim().length < 25) {
-  return res.status(200).json({
-    reply: {
-      type: "reponse",
-      text: "Bien sûr ! Quelle est votre question ?",
-      meta: { mode: "B" }
-    },
-    conversationId,
-    mode: "B"
-  });
-}
+
+    // CAS : "j'ai une question" sans contenu
+    if (!isQuiz && isQuestionTrigger && userText.trim().length < 25) {
+      return res.status(200).json({
+        reply: {
+          type: "reponse",
+          text: "Bien sûr ! Quelle est votre question ?",
+          meta: { mode: "B" }
+        },
+        conversationId,
+        mode: "B"
+      });
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // MODE B - QUESTION LIBRE (BASE DE DONNÉES, ZÉRO INVENTION)
     // ═══════════════════════════════════════════════════════════════════
-    // Ici : dès qu’on n’est pas en quiz, on répond en mode “KB” (même sans trigger),
-    // pour éviter le message “tapez quiz”.
     const kbSystem = `
 Tu es Dr THYREN, assistant de SUPLEMINT.
 
 RÈGLE ABSOLUE: tu réponds UNIQUEMENT avec les informations présentes dans les DONNÉES fournies.
 INTERDIT stricte d'inventer, d'estimer, de compléter, de supposer.
 Si une info n'est pas dans les données, réponds exactement:
-"Helas je n’ai pas cette information dans nos données ou je n'ai pas bien compris , veuillez reformuler svp ?."
+"Helas je n'ai pas cette information dans nos données ou je n'ai pas bien compris , veuillez reformuler svp ?."
 Style: très concis, direct, en mode base de donné, 1 à 6 phrases maximum, liste les réponse si necessaire.
 Si la question porte sur un "combien", donne un chiffre si présent dans les données, sinon la phrase ci-dessus.
 Si la question demande un diagnostic médical ou un avis médical: rappelle que tu ne remplaces pas un médecin et propose un RDV avec une de nos nutritioniste : https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
@@ -2410,7 +2140,7 @@ Retourne un JSON valide:
           { role: "user", content: kbUser },
         ],
         response_format: { type: "json_object" },
-        temperature: 0, // ✅ important: réduit énormément les inventions
+        temperature: 0,
         max_tokens: 800,
       }),
     });
@@ -2426,16 +2156,15 @@ Retourne un JSON valide:
     } catch {
       reply = {
         type: "reponse",
-        text: "Helas je n’ai pas cette information dans nos données ou je n'ai pas bien compris , veuillez reformuler svp ?.",
+        text: "Helas je n'ai pas cette information dans nos données ou je n'ai pas bien compris , veuillez reformuler svp ?.",
         meta: { mode: "B", source: "kb_only" },
       };
     }
 
-    // ✅ garde-fou minimal
     if (!reply?.text || typeof reply.text !== "string") {
       reply = {
         type: "reponse",
-        text: "Helas je n’ai pas cette information dans nos données ou je n'ai pas bien compris , veuillez reformuler svp ?.",
+        text: "Helas je n'ai pas cette information dans nos données ou je n'ai pas bien compris , veuillez reformuler svp ?.",
         meta: { mode: "B", source: "kb_only" },
       };
     }
