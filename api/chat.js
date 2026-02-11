@@ -1509,7 +1509,7 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 FIN DU DOCUMENT
 `;
 
-console.log("✅ THYREN V20 - Version corrigée avec CTA et formats");
+console.log("✅ THYREN V21 - Corrections finales : BLOC1 équilibré + BLOC5 visible + compteur 17/17");
 
 function validateEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1989,20 +1989,20 @@ export default async function handler(req, res) {
 
       const next = state.step < 0 ? 0 : nextStep(state.step, state.answers);
 
-      if (next >= QUIZ.length) {
-        const today = new Date();
-        const fmt = (d) =>
-          d.getDate().toString().padStart(2, "0") +
-          "/" +
-          (d.getMonth() + 1).toString().padStart(2, "0") +
-          "/" +
-          d.getFullYear();
+        if (next >= QUIZ.length) {
+    const today = new Date();
+    const fmt = (d) =>
+      d.getDate().toString().padStart(2, "0") +
+      "/" +
+      (d.getMonth() + 1).toString().padStart(2, "0") +
+      "/" +
+      d.getFullYear();
 
-        const j14 = fmt(new Date(today.getTime() + 14 * 86400000));
-        const j90 = fmt(new Date(today.getTime() + 90 * 86400000));
-        const a = state.answers;
+    const j14 = fmt(new Date(today.getTime() + 14 * 86400000));
+    const j90 = fmt(new Date(today.getTime() + 90 * 86400000));
+    const a = state.answers;
 
-        const prompt = `Tu es Dr THYREN, expert médical en micronutrition chez SUPLEMINT.
+    const prompt = `Tu es Dr THYREN, expert médical en micronutrition chez SUPLEMINT.
 
 PROFIL COMPLET:
 - Prénom: ${a.prenom}
@@ -2038,8 +2038,10 @@ Tu dois IMPÉRATIVEMENT produire un JSON avec EXACTEMENT ce format (5 blocs sép
 
 STRUCTURE OBLIGATOIRE DES BLOCS:
 
-BLOC 1 - DIAGNOSTIC MÉDICAL (1-2 phrases MAX, TRÈS synthétique):
-Bonjour ${a.prenom}, votre profil révèle [synthèse en UNE phrase des mécanismes physio, sans lister les symptômes].
+BLOC 1 - DIAGNOSTIC MÉDICAL (3-4 phrases, équilibré et médical):
+Bonjour ${a.prenom}, votre profil révèle [mécanisme physiopathologique principal en 1 phrase]. [Lien entre 2-3 symptômes clés montrant interconnexion]. [Impact concret sur le quotidien]. Cette situation est réversible avec une approche micronutritionnelle ciblée.
+
+Exemple : "Bonjour Marie, votre profil révèle un ralentissement métabolique typique d'une fonction thyroïdienne sous-optimale. Votre fatigue constante, frilosité et prise de poids inexpliquée forment un tableau cohérent qui suggère que votre métabolisme de base fonctionne au ralenti. Cela impacte directement votre énergie quotidienne et votre capacité à maintenir un poids stable. Cette situation est réversible avec une approche micronutritionnelle ciblée."
 
 BLOC 2 - CURE PRINCIPALE (FORMAT EXACT):
 Cure [NOM EXACT]®
@@ -2078,76 +2080,64 @@ La vraie force d'une cure réside dans sa personnalisation. Nos nutritionnistes 
 
 [Je réserve mon rendez-vous](https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252)
 
-BLOC 5 - QUESTION FINALE AVEC CHOIX (TOUJOURS avec 2 options de réponse):
-{"type":"question","text":"[Question personnalisée au profil]","choices":["Oui, j'aimerais en savoir plus","Non merci, c'est parfait"]}
+BLOC 5 - QUESTION FINALE PERSONNALISÉE (format texte simple avec 2 choix):
+[Question personnalisée au profil de ${a.prenom}]
+
+CHOIX:
+- Oui, j'aimerais en savoir plus
+- Non merci, c'est parfait
+
+Exemple de BLOC 5:
+"Souhaitez-vous en savoir plus sur l'optimisation de votre métabolisme thyroïdien et comment maintenir ces résultats sur le long terme ?
+
+CHOIX:
+- Oui, j'aimerais en savoir plus
+- Non merci, c'est parfait"
 
 RÈGLES CRITIQUES:
-- BLOC 1 : MAX 1-2 phrases, sans liste de symptômes
+- BLOC 1 : EXACTEMENT 3-4 phrases (ni plus, ni moins)
 - BLOCS 2 & 3 : TOUJOURS inclure l'URL complète + 3 CTA texte brut
 - BLOC 4 : TOUJOURS inclure le lien markdown cliquable
-- BLOC 5 : TOUJOURS format question avec choices (array de 2 choix)
+- BLOC 5 : Format texte simple avec "CHOIX:" suivi de 2 options avec tiret
 - Utiliser les noms EXACTS des cures (avec ®)
 - Utiliser les noms EXACTS des gélules
 - JAMAIS inventer de composition
 - Structure: EXACTEMENT 5 blocs séparés par ===BLOCK===
 - Ne JAMAIS écrire "BLOC1:", "BLOC 2:", etc dans le texte final`;
 
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            Authorization: "Bearer " + KEY,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "gpt-4o",
-            messages: [{ role: "system", content: prompt }],
-            response_format: { type: "json_object" },
-            temperature: 0.4,
-            max_tokens: 3000,
-          }),
-        });
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4o",
+        messages: [{ role: "system", content: prompt }],
+        response_format: { type: "json_object" },
+        temperature: 0.4,
+        max_tokens: 3000,
+      }),
+    });
 
-        if (!response.ok) {
-          return res.status(500).json({ error: "OpenAI error" });
-        }
+    if (!response.ok) {
+      return res.status(500).json({ error: "OpenAI error" });
+    }
 
-        let reply;
-        try {
-          const data = await response.json();
-          const rawReply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
-          
-          if (rawReply.text && rawReply.text.indexOf("===BLOCK===") !== -1) {
-            const blocks = rawReply.text.split("===BLOCK===");
-            const lastBlock = blocks[blocks.length - 1];
-            
-            try {
-              const lastParsed = JSON.parse(lastBlock.trim());
-              if (lastParsed.type === "question" && Array.isArray(lastParsed.choices)) {
-                reply = {
-                  type: "resultat",
-                  text: blocks.slice(0, -1).join("===BLOCK==="),
-                  followup: lastParsed,
-                  meta: { mode: "A" }
-                };
-              } else {
-                reply = rawReply;
-              }
-            } catch {
-              reply = rawReply;
-            }
-          } else {
-            reply = rawReply;
-          }
-        } catch {
-          reply = {
-            type: "resultat",
-            text: "Erreur lors de la génération des résultats.",
-            meta: { mode: "A" },
-          };
-        }
+    let reply;
+    try {
+      const data = await response.json();
+      reply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
+    } catch {
+      reply = {
+        type: "resultat",
+        text: "Erreur lors de la génération des résultats.",
+        meta: { mode: "A" },
+      };
+    }
 
-        return res.status(200).json({ reply, conversationId, mode: "A" });
-      }
+    return res.status(200).json({ reply, conversationId, mode: "A" });
+  }
 
       return res.status(200).json({
         reply: buildQuestion(next, state.answers),
