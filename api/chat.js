@@ -834,7 +834,7 @@ Composition journalière :
 Recommandée pour :
   - Fatigue constante
   - Moral fluctuant
-  - Difficulté de concentration
+  • Difficulté de concentration
 
 Contre-indications :
   - Interdiction de grossesse ou d'allaitement.
@@ -1509,19 +1509,48 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 FIN DU DOCUMENT
 `;
 
-console.log("✅ THYREN V18 - Version Simple (Quiz uniquement)");
+console.log("✅ THYREN V19 - Version Améliorée avec Intelligence");
+
+function validateEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
+
+function validateName(name) {
+  return name.length >= 2 && /^[a-zA-ZÀ-ÿ\s-]+$/.test(name);
+}
+
+function isInvalidResponse(value, type) {
+  const val = value.toLowerCase().trim();
+  
+  if (type === "prenom") {
+    return !validateName(value) || val.length < 2 || /^(.)\1+$/.test(val) || val === "aa" || val === "aaa";
+  }
+  
+  if (type === "email") {
+    return !validateEmail(value);
+  }
+  
+  if (type === "condition_detail") {
+    const invalidPhrases = ["france", "belgique", "rien", "nan", "non", "aucun", "???"];
+    return invalidPhrases.some(phrase => val.includes(phrase)) && val.length < 10;
+  }
+  
+  return false;
+}
 
 const QUIZ = [
   {
     id: "Q1",
     text: "Parfait, trouvons ensemble la cure idéale. Pour commencer, quel est votre prénom ?",
     type: "open",
-    key: "prenom"
+    key: "prenom",
+    validate: true
   },
 
   {
     id: "Q2",
-    text: "Quel est votre âge ?",
+    text: "Merci {prenom} ! Quel est votre âge ?",
     type: "choice",
     choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"],
     key: "age"
@@ -1529,7 +1558,7 @@ const QUIZ = [
 
   {
     id: "Q3",
-    text: "Bonjour {prenom}, quel est votre sexe biologique ?",
+    text: "Parfait {prenom}, quel est votre sexe biologique ?",
     type: "choice",
     choices: ["Femme", "Homme"],
     key: "sexe"
@@ -1537,7 +1566,7 @@ const QUIZ = [
 
   {
     id: "Q3_plus",
-    text: "Êtes-vous enceinte ou allaitante ?",
+    text: "Êtes-vous actuellement enceinte ou allaitante ?",
     type: "choice",
     choices: ["Oui", "Non"],
     key: "enceinte",
@@ -1573,38 +1602,40 @@ const QUIZ = [
 
   {
     id: "Q5b",
-    text: "Merci de préciser votre condition, allergie ou traitement.",
+    text: "Merci de préciser votre condition, allergie ou traitement (c'est important pour votre sécurité).",
     type: "open",
     key: "condition_detail",
-    cond: a => a.condition !== "Tout va bien"
+    cond: a => a.condition !== "Tout va bien",
+    validate: true
   },
 
   {
-  id: "Q6_objectif",
-  text: "Bien noté {prenom}, quel est votre objectif principal avec une cure ?",
-  type: "choice",
-  choices: [
-    "Retrouver de l'énergie",
-    "Perdre du poids / relancer le métabolisme",
-    "Mieux dormir",
-    "Réduire le stress / l'anxiété",
-    "Améliorer ma digestion / transit",
-    "Améliorer mon équilibre hormonal",
-    "Autre – j'aimerais préciser"
-  ],
-  key: "objectif"
-},
-{
-  id: "Q6_objectif_autre",
-  text: "Merci de préciser votre objectif en une phrase.",
-  type: "open",
-  key: "plainte",
-  cond: a => a.objectif?.startsWith("Autre")
-},
+    id: "Q6_objectif",
+    text: "Bien noté {prenom}. Quel est votre objectif principal avec une cure ?",
+    type: "choice",
+    choices: [
+      "Retrouver de l'énergie",
+      "Perdre du poids / relancer le métabolisme",
+      "Mieux dormir",
+      "Réduire le stress / l'anxiété",
+      "Améliorer ma digestion / transit",
+      "Améliorer mon équilibre hormonal",
+      "Autre – j'aimerais préciser"
+    ],
+    key: "objectif"
+  },
+
+  {
+    id: "Q6_objectif_autre",
+    text: "Merci de préciser votre objectif en quelques mots.",
+    type: "open",
+    key: "plainte",
+    cond: a => a.objectif?.startsWith("Autre")
+  },
 
   {
     id: "Q7_energie",
-    text: "Comment décririez-vous votre niveau d'énergie au quotidien ?",
+    text: "Parlons maintenant de votre énergie au quotidien. Comment la décririez-vous ?",
     type: "choice",
     choices: [
       "Bonne énergie tout au long de la journée",
@@ -1625,7 +1656,7 @@ const QUIZ = [
 
   {
     id: "Q8_poids",
-    text: "Avez-vous pris du poids sans changer votre alimentation ?",
+    text: "Avez-vous pris du poids récemment sans changer votre alimentation ?",
     type: "choice",
     choices: [
       "Non, mon poids est stable",
@@ -1646,7 +1677,7 @@ const QUIZ = [
 
   {
     id: "Q9_froid",
-    text: "Ressentez-vous souvent le froid (mains ou pieds froids) ?",
+    text: "Avez-vous souvent froid, notamment aux mains ou aux pieds ?",
     type: "choice",
     choices: [
       "Non, température normale",
@@ -1667,7 +1698,7 @@ const QUIZ = [
 
   {
     id: "Q10_humeur",
-    text: "Comment décririez-vous votre humeur ces derniers temps ?",
+    text: "Comment décririez-vous votre humeur ces dernières semaines ?",
     type: "choice",
     choices: [
       "Moral stable",
@@ -1688,7 +1719,7 @@ const QUIZ = [
 
   {
     id: "Q11_sommeil",
-    text: "Votre sommeil est-il réparateur ?",
+    text: "Parlons de votre sommeil. Vous sentez-vous reposé(e) au réveil ?",
     type: "choice",
     choices: [
       "Oui, je dors bien",
@@ -1709,7 +1740,7 @@ const QUIZ = [
 
   {
     id: "Q12_peau",
-    text: "Avez-vous remarqué des changements de la peau ou des cheveux ?",
+    text: "Avez-vous remarqué des changements au niveau de votre peau ou de vos cheveux ?",
     type: "choice",
     choices: [
       "Non, tout est normal",
@@ -1730,7 +1761,7 @@ const QUIZ = [
 
   {
     id: "Q13_transit",
-    text: "Comment est votre transit intestinal ?",
+    text: "Comment fonctionne votre système digestif au quotidien ?",
     type: "choice",
     choices: [
       "Transit régulier",
@@ -1772,7 +1803,7 @@ const QUIZ = [
 
   {
     id: "Q15_concentration",
-    text: "Avez-vous parfois l'esprit confus ou des difficultés de concentration ?",
+    text: "Comment évalueriez-vous votre concentration et votre clarté mentale ?",
     type: "choice",
     choices: [
       "Concentration normale",
@@ -1793,7 +1824,7 @@ const QUIZ = [
 
   {
     id: "Q16_libido",
-    text: "Avez-vous remarqué un changement de votre libido ?",
+    text: "Dernière question sur votre santé : avez-vous remarqué un changement de votre libido ?",
     type: "choice",
     choices: [
       "Aucun changement notable",
@@ -1814,9 +1845,10 @@ const QUIZ = [
 
   {
     id: "Q17_email",
-    text: "Merci {prenom}. Pouvez-vous indiquer votre adresse e-mail pour recevoir vos résultats ?",
+    text: "Parfait {prenom}, nous avons terminé ! Pour recevoir vos résultats personnalisés, quelle est votre adresse e-mail ?",
     type: "open",
-    key: "email"
+    key: "email",
+    validate: true
   }
 ];
 
@@ -1923,7 +1955,36 @@ export default async function handler(req, res) {
       const state = getQuizState(messages);
 
       if (state.step >= 0 && QUIZ[state.step]) {
-        state.answers[QUIZ[state.step].key] = userText.trim();
+        const currentQ = QUIZ[state.step];
+        
+        if (currentQ.validate && currentQ.type === "open") {
+          if (isInvalidResponse(userText, currentQ.key)) {
+            return res.status(200).json({
+              reply: {
+                type: "question",
+                text: currentQ.key === "email" 
+                  ? "🤔 Cette adresse e-mail ne semble pas valide. Pouvez-vous la vérifier ?"
+                  : currentQ.key === "prenom"
+                  ? "🤔 Hmm, je détecte une petite malice ! Pouvez-vous me donner votre vrai prénom ? C'est important pour personnaliser vos recommandations."
+                  : "🤔 Cette réponse ne semble pas complète. Pourriez-vous préciser un peu plus ? C'est essentiel pour votre sécurité.",
+                meta: {
+                  mode: "A",
+                  quizStep: state.step,
+                  answers: state.answers,
+                  progress: {
+                    enabled: true,
+                    current: state.step + 1,
+                    total: QUIZ.length,
+                  },
+                },
+              },
+              conversationId,
+              mode: "A",
+            });
+          }
+        }
+        
+        state.answers[currentQ.key] = userText.trim();
       }
 
       const next = state.step < 0 ? 0 : nextStep(state.step, state.answers);
@@ -1941,59 +2002,102 @@ export default async function handler(req, res) {
         const j90 = fmt(new Date(today.getTime() + 90 * 86400000));
         const a = state.answers;
 
-        const prompt = `Tu es Dr THYREN, expert en micronutrition chez SUPLEMINT.
+        const prompt = `Tu es Dr THYREN, expert médical en micronutrition chez SUPLEMINT.
 
-PROFIL UTILISATEUR:
+PROFIL COMPLET:
 - Prénom: ${a.prenom}
 - Sexe: ${a.sexe}
 - Âge: ${a.age}
-- Condition: ${a.condition} ${a.condition_detail || ""}
-- Plainte principale: ${a.plainte}
+- Condition/Traitement: ${a.condition} ${a.condition_detail || ""}
+- Objectif principal: ${a.objectif || a.plainte}
 
-SYMPTÔMES:
-- Énergie: ${a.energie}
-- Poids: ${a.poids}
-- Froid: ${a.froid}
-- Humeur: ${a.humeur}
-- Sommeil: ${a.sommeil}
-- Peau/cheveux: ${a.peau}
-- Transit: ${a.transit}
-- Gonflement: ${a.gonflement}
-- Concentration: ${a.concentration}
-- Libido: ${a.libido}
+BILAN SYMPTOMATIQUE:
+- Énergie: ${a.energie} ${a.energie_detail || ""}
+- Poids: ${a.poids} ${a.poids_detail || ""}
+- Frilosité: ${a.froid} ${a.froid_detail || ""}
+- Humeur: ${a.humeur} ${a.humeur_detail || ""}
+- Sommeil: ${a.sommeil} ${a.sommeil_detail || ""}
+- Peau/Cheveux: ${a.peau} ${a.peau_detail || ""}
+- Transit: ${a.transit} ${a.transit_detail || ""}
+- Gonflement: ${a.gonflement} ${a.gonflement_detail || ""}
+- Concentration: ${a.concentration} ${a.concentration_detail || ""}
+- Libido: ${a.libido} ${a.libido_detail || ""}
 
-DATES IMPORTANTES:
-- J+14: ${j14}
-- J+90: ${j90}
+DATES CLÉS:
+- Date J+14: ${j14}
+- Date J+90: ${j90}
 
-RÈGLES DE RECOMMANDATION:
-- Fatigue + froid + poids + moral bas → CURE THYROÏDE (prioritaire)
-- Transit lent + poids + thyroide → CURE INTESTIN (tres bonne cure à associé au autre) 
-- Fatigue + moral bas + baisse motivation → CURE ÉNERGIE (cure tres efficace rapidement)
-- poids + Transit lent → CURE POIDS ( cure sur le long term)
-- Problèmes de sommeil → CURE SOMMEIL
-- Stress + humeur fluctuante → CURE ZÉNITUDE
-- Femme 45-60 ans + symptômes hormonaux → CURE MÉNOPAUSE
-- Homme + fatigue + baisse motivation → CURE HOMME+
-- Age + Fatigue → CURE SENIOR
-
-Pour les autre cure voir réponse de l'utilisateur si spécifique.
-
-DONNÉES DES CURES:
+DONNÉES CURES DISPONIBLES:
 ${DATA_CURES}
 
-INSTRUCTIONS:
-Génère un JSON avec 5 blocs de texte séparés par "===BLOCK===":
+ANALYSE MÉDICALE ET RECOMMANDATIONS:
 
-{"type":"resultat","text":"[BLOC1]===BLOCK===[BLOC2]===BLOCK===[BLOC3]===BLOCK===[BLOC4]===BLOCK===[BLOC5]","meta":{"mode":"A"}}
+Tu dois IMPÉRATIVEMENT produire un JSON avec EXACTEMENT ce format (5 blocs séparés par "===BLOCK==="):
 
-BLOC 1: Salutation personnalisée + résumé des symptômes (2-3 phrases)
-BLOC 2: Cure principale recommandée avec URL EXACTE, Pourquoi, composition et objectifs J+14/J+90
-BLOC 3: Cure de soutien si pertinent avec URL EXACTE, Pourquoi, composition et objectifs J+14/J+90
-BLOC 4: Proposition de RDV mensuelle offert avec une de nos nutritioniste : https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
-BLOC 5: Avez vous d'autre question ?
+{"type":"resultat","text":"BLOC1===BLOCK===BLOC2===BLOCK===BLOC3===BLOCK===BLOC4===BLOCK===BLOC5","meta":{"mode":"A"}}
 
-IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
+STRUCTURE OBLIGATOIRE DES BLOCS:
+
+BLOC 1 - DIAGNOSTIC MÉDICAL (analyse scientifique et empathique):
+Bonjour ${a.prenom},
+
+J'ai analysé en détail votre profil santé et vos symptômes. [Expliquer le tableau clinique de manière scientifique mais accessible : interconnexion des symptômes, hypothèses physiologiques (thyroïde, métabolisme, hormones, système nerveux), mécanismes biologiques en jeu. Montrer que chaque symptôme a été étudié et qu'ils forment un tout cohérent].
+
+[Faire le lien entre les symptômes et les déséquilibres possibles : exemple "Votre fatigue constante associée à la frilosité et la prise de poids suggère un métabolisme ralenti, souvent lié à un fonctionnement thyroïdien sous-optimal. Le transit lent et les difficultés de concentration renforcent cette hypothèse car la thyroïde régule ces fonctions."]
+
+BLOC 2 - CURE PRINCIPALE (format standardisé STRICT):
+Cure [NOM EXACT]®
+
+Je vous recommande en priorité la Cure [NOM EXACT]®.
+
+Cette cure est spécifiquement conçue pour [expliquer POURQUOI cette cure répond à LEURS symptômes précis, avec raisonnement médical].
+
+Composition (par jour) :
+[Lister EXACTEMENT comme dans les données: 1× NOM® + 1× NOM® etc]
+
+📅 Premiers effets possibles dès le ${j14}
+📅 Résultats optimaux vers le ${j90}
+
+[Insérer les 3 CTA]
+Commander ma cure
+Ajouter au panier
+En savoir plus
+
+BLOC 3 - CURE COMPLÉMENTAIRE (même format que BLOC 2, ou "Aucune cure complémentaire nécessaire pour le moment"):
+Cure [NOM EXACT]®
+
+En complément, je vous conseille la Cure [NOM EXACT]®.
+
+[Expliquer pourquoi cette 2ème cure se combine bien avec la 1ère, action synergique]
+
+Composition (par jour) :
+[Lister EXACTEMENT]
+
+📅 Premiers effets possibles dès le ${j14}
+📅 Résultats optimaux vers le ${j90}
+
+[Insérer les 3 CTA]
+Commander ma cure
+Ajouter au panier
+En savoir plus
+
+BLOC 4 - RENDEZ-VOUS EXPERT:
+La vraie force d'une cure réside dans sa personnalisation. Nos nutritionnistes sont disponibles dès aujourd'hui pour un échange offert par téléphone ou visio, afin d'adapter précisément ces recommandations à votre situation unique.
+
+[Insérer le CTA]
+Je réserve mon rendez-vous
+
+BLOC 5 - QUESTION FINALE PERSONNALISÉE:
+[Formuler une question sur-mesure en fonction du profil: exemple "Avez-vous des questions sur la gestion de votre fatigue au quotidien ?" ou "Souhaitez-vous en savoir plus sur l'optimisation de votre métabolisme ?" - adapter au contexte]
+
+RÈGLES CRITIQUES:
+- Utiliser les noms EXACTS des cures (avec ®)
+- Utiliser les noms EXACTS des gélules (ADRENO_PLUS, MULTI_VIT, etc)
+- JAMAIS inventer de composition
+- Toujours justifier POURQUOI ces cures (raisonnement médical)
+- Ton: professionnel, empathique, rassurant
+- Structure: EXACTEMENT 5 blocs séparés par ===BLOCK===
+- Ne JAMAIS écrire "BLOC1:", "BLOC 2:", etc dans le texte final`;
 
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
@@ -2002,11 +2106,11 @@ IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "gpt-4o-mini",
+            model: "gpt-4o",
             messages: [{ role: "system", content: prompt }],
             response_format: { type: "json_object" },
-            temperature: 0.3,
-            max_tokens: 2000,
+            temperature: 0.4,
+            max_tokens: 3000,
           }),
         });
 
@@ -2036,17 +2140,17 @@ IMPORTANT: Ne pas mettre "BLOC1:", "B1:" etc dans le texte!`;
       });
     }
 
-if (!isQuiz && isQuestionTrigger && userText.trim().length < 25) {
-  return res.status(200).json({
-    reply: {
-      type: "reponse",
-      text: "Bien sûr ! Quelle est votre question ?",
-      meta: { mode: "B" }
-    },
-    conversationId,
-    mode: "B"
-  });
-}
+    if (!isQuiz && isQuestionTrigger && userText.trim().length < 25) {
+      return res.status(200).json({
+        reply: {
+          type: "reponse",
+          text: "Bien sûr ! Quelle est votre question ?",
+          meta: { mode: "B" }
+        },
+        conversationId,
+        mode: "B"
+      });
+    }
 
     const kbSystem = `
 Tu es Dr THYREN, assistant de SUPLEMINT.
@@ -2054,10 +2158,9 @@ Tu es Dr THYREN, assistant de SUPLEMINT.
 RÈGLE ABSOLUE: tu réponds UNIQUEMENT avec les informations présentes dans les DONNÉES fournies.
 INTERDIT stricte d'inventer, d'estimer, de compléter, de supposer.
 Si une info n'est pas dans les données, réponds exactement:
-"Helas je n'ai pas cette information dans nos données ou je n'ai pas bien compris , veuillez reformuler svp ?."
-Style: très concis, direct, en mode base de donné, 1 à 6 phrases maximum, liste les réponse si necessaire.
-Si la question porte sur un "combien", donne un chiffre si présent dans les données, sinon la phrase ci-dessus.
-Si la question demande un diagnostic médical ou un avis médical: rappelle que tu ne remplaces pas un médecin et propose un RDV avec une de nos nutritioniste : https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
+"Hélas je n'ai pas cette information dans nos données ou je n'ai pas bien compris, veuillez reformuler svp."
+Style: très concis, direct, 1 à 6 phrases maximum.
+Si la question demande un diagnostic médical: rappelle que tu ne remplaces pas un médecin et propose un RDV: https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
 `;
 
     const kbUser = `
@@ -2107,7 +2210,7 @@ Retourne un JSON valide:
     } catch {
       reply = {
         type: "reponse",
-        text: "Helas je n'ai pas cette information dans nos données ou je n'ai pas bien compris , veuillez reformuler svp ?.",
+        text: "Hélas je n'ai pas cette information dans nos données ou je n'ai pas bien compris, veuillez reformuler svp.",
         meta: { mode: "B", source: "kb_only" },
       };
     }
@@ -2115,7 +2218,7 @@ Retourne un JSON valide:
     if (!reply?.text || typeof reply.text !== "string") {
       reply = {
         type: "reponse",
-        text: "Helas je n'ai pas cette information dans nos données ou je n'ai pas bien compris , veuillez reformuler svp ?.",
+        text: "Hélas je n'ai pas cette information dans nos données ou je n'ai pas bien compris, veuillez reformuler svp.",
         meta: { mode: "B", source: "kb_only" },
       };
     }
