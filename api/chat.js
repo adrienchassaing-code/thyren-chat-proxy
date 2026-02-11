@@ -834,7 +834,7 @@ Composition journalière :
 Recommandée pour :
   - Fatigue constante
   - Moral fluctuant
-  • Difficulté de concentration
+  - Difficulté de concentration
 
 Contre-indications :
   - Interdiction de grossesse ou d'allaitement.
@@ -1509,7 +1509,7 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 FIN DU DOCUMENT
 `;
 
-console.log("✅ THYREN V19 - Version Améliorée avec Intelligence");
+console.log("✅ THYREN V20 - Version corrigée avec CTA et formats");
 
 function validateEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -2038,64 +2038,57 @@ Tu dois IMPÉRATIVEMENT produire un JSON avec EXACTEMENT ce format (5 blocs sép
 
 STRUCTURE OBLIGATOIRE DES BLOCS:
 
-BLOC 1 - DIAGNOSTIC MÉDICAL (analyse scientifique et empathique):
-Bonjour ${a.prenom},
+BLOC 1 - DIAGNOSTIC MÉDICAL (1-2 phrases MAX, TRÈS synthétique):
+Bonjour ${a.prenom}, votre profil révèle [synthèse en UNE phrase des mécanismes physio, sans lister les symptômes].
 
-J'ai analysé en détail votre profil santé et vos symptômes. [Expliquer le tableau clinique de manière scientifique mais accessible : interconnexion des symptômes, hypothèses physiologiques (thyroïde, métabolisme, hormones, système nerveux), mécanismes biologiques en jeu. Montrer que chaque symptôme a été étudié et qu'ils forment un tout cohérent].
-
-[Faire le lien entre les symptômes et les déséquilibres possibles : exemple "Votre fatigue constante associée à la frilosité et la prise de poids suggère un métabolisme ralenti, souvent lié à un fonctionnement thyroïdien sous-optimal. Le transit lent et les difficultés de concentration renforcent cette hypothèse car la thyroïde régule ces fonctions."]
-
-BLOC 2 - CURE PRINCIPALE (format standardisé STRICT):
+BLOC 2 - CURE PRINCIPALE (FORMAT EXACT):
 Cure [NOM EXACT]®
+https://www.suplemint.com/products/[handle]
 
-Je vous recommande en priorité la Cure [NOM EXACT]®.
-
-Cette cure est spécifiquement conçue pour [expliquer POURQUOI cette cure répond à LEURS symptômes précis, avec raisonnement médical].
+[Explication du POURQUOI en 2-3 phrases]
 
 Composition (par jour) :
-[Lister EXACTEMENT comme dans les données: 1× NOM® + 1× NOM® etc]
+1× [NOM_EXACT]® + 1× [NOM_EXACT]® + [etc]
 
 📅 Premiers effets possibles dès le ${j14}
 📅 Résultats optimaux vers le ${j90}
 
-[Insérer les 3 CTA]
 Commander ma cure
 Ajouter au panier
 En savoir plus
 
-BLOC 3 - CURE COMPLÉMENTAIRE (même format que BLOC 2, ou "Aucune cure complémentaire nécessaire pour le moment"):
+BLOC 3 - CURE COMPLÉMENTAIRE (même format que BLOC 2, ou dire "Aucune cure complémentaire nécessaire pour le moment"):
 Cure [NOM EXACT]®
+https://www.suplemint.com/products/[handle]
 
-En complément, je vous conseille la Cure [NOM EXACT]®.
-
-[Expliquer pourquoi cette 2ème cure se combine bien avec la 1ère, action synergique]
+[Explication]
 
 Composition (par jour) :
-[Lister EXACTEMENT]
+1× [NOM_EXACT]® + [etc]
 
 📅 Premiers effets possibles dès le ${j14}
 📅 Résultats optimaux vers le ${j90}
 
-[Insérer les 3 CTA]
 Commander ma cure
 Ajouter au panier
 En savoir plus
 
 BLOC 4 - RENDEZ-VOUS EXPERT:
-La vraie force d'une cure réside dans sa personnalisation. Nos nutritionnistes sont disponibles dès aujourd'hui pour un échange offert par téléphone ou visio, afin d'adapter précisément ces recommandations à votre situation unique.
+La vraie force d'une cure réside dans sa personnalisation. Nos nutritionnistes sont disponibles dès aujourd'hui pour un échange offert par téléphone ou visio.
 
-[Insérer le CTA]
-Je réserve mon rendez-vous
+[Je réserve mon rendez-vous](https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252)
 
-BLOC 5 - QUESTION FINALE PERSONNALISÉE:
-[Formuler une question sur-mesure en fonction du profil: exemple "Avez-vous des questions sur la gestion de votre fatigue au quotidien ?" ou "Souhaitez-vous en savoir plus sur l'optimisation de votre métabolisme ?" - adapter au contexte]
+BLOC 5 - QUESTION FINALE AVEC CHOIX (TOUJOURS avec 2 options de réponse):
+{"type":"question","text":"[Question personnalisée au profil]","choices":["Oui, j'aimerais en savoir plus","Non merci, c'est parfait"]}
 
 RÈGLES CRITIQUES:
+- BLOC 1 : MAX 1-2 phrases, sans liste de symptômes
+- BLOCS 2 & 3 : TOUJOURS inclure l'URL complète + 3 CTA texte brut
+- BLOC 4 : TOUJOURS inclure le lien markdown cliquable
+- BLOC 5 : TOUJOURS format question avec choices (array de 2 choix)
 - Utiliser les noms EXACTS des cures (avec ®)
-- Utiliser les noms EXACTS des gélules (ADRENO_PLUS, MULTI_VIT, etc)
+- Utiliser les noms EXACTS des gélules
 - JAMAIS inventer de composition
-- Toujours justifier POURQUOI ces cures (raisonnement médical)
-- Ton: professionnel, empathique, rassurant
 - Structure: EXACTEMENT 5 blocs séparés par ===BLOCK===
 - Ne JAMAIS écrire "BLOC1:", "BLOC 2:", etc dans le texte final`;
 
@@ -2121,7 +2114,30 @@ RÈGLES CRITIQUES:
         let reply;
         try {
           const data = await response.json();
-          reply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
+          const rawReply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
+          
+          if (rawReply.text && rawReply.text.indexOf("===BLOCK===") !== -1) {
+            const blocks = rawReply.text.split("===BLOCK===");
+            const lastBlock = blocks[blocks.length - 1];
+            
+            try {
+              const lastParsed = JSON.parse(lastBlock.trim());
+              if (lastParsed.type === "question" && Array.isArray(lastParsed.choices)) {
+                reply = {
+                  type: "resultat",
+                  text: blocks.slice(0, -1).join("===BLOCK==="),
+                  followup: lastParsed,
+                  meta: { mode: "A" }
+                };
+              } else {
+                reply = rawReply;
+              }
+            } catch {
+              reply = rawReply;
+            }
+          } else {
+            reply = rawReply;
+          }
         } catch {
           reply = {
             type: "resultat",
