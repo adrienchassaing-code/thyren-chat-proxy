@@ -1509,10 +1509,6 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 FIN DU DOCUMENT
 `;
 
-const DATA_COMPOSITIONS = `[... identique ...]`;
-const DATA_CURES = `[... identique ...]`;
-const DATA_SAV = `[... identique ...]`;
-
 console.log("✅ THYREN V25 - IA INTELLIGENTE + MÉMOIRE + PROACTIVE");
 
 function validateEmail(email) {
