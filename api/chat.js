@@ -1509,11 +1509,6 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 FIN DU DOCUMENT
 `;
 
-
-const DATA_COMPOSITIONS = `[... garder identique ...]`;
-const DATA_CURES = `[... garder identique ...]`;
-const DATA_SAV = `[... garder identique ...]`;
-
 console.log("✅ THYREN V28 - CHATGPT QUALITY + 3-5 CTA OBLIGATOIRES");
 
 function validateEmail(email) {
