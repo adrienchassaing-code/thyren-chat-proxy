@@ -2191,7 +2191,7 @@ Retourne un JSON valide:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-5.1",
+        model: "gpt-4o",
         messages: [
           { role: "system", content: kbSystem },
           { role: "user", content: kbUser },
