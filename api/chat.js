@@ -1509,7 +1509,7 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 FIN DU DOCUMENT
 `;
 
-console.log("✅ THYREN V23 - IA INTELLIGENTE TYPE CHATGPT + SÉCURITÉ MÉDICALE");
+console.log("✅ THYREN V24 - CORRECTIONS CTA + GESTION SUITE CONVERSATION");
 
 function validateEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1975,18 +1975,18 @@ export default async function handler(req, res) {
 
       const next = state.step < 0 ? 0 : nextStep(state.step, state.answers);
 
-if (next >= QUIZ.length) {
-  const today = new Date();
-  const fmt = (d) =>
-    d.getDate().toString().padStart(2, "0") + "/" +
-    (d.getMonth() + 1).toString().padStart(2, "0") + "/" +
-    d.getFullYear();
+      if (next >= QUIZ.length) {
+        const today = new Date();
+        const fmt = (d) =>
+          d.getDate().toString().padStart(2, "0") + "/" +
+          (d.getMonth() + 1).toString().padStart(2, "0") + "/" +
+          d.getFullYear();
 
-  const j14 = fmt(new Date(today.getTime() + 14 * 86400000));
-  const j90 = fmt(new Date(today.getTime() + 90 * 86400000));
-  const a = state.answers;
+        const j14 = fmt(new Date(today.getTime() + 14 * 86400000));
+        const j90 = fmt(new Date(today.getTime() + 90 * 86400000));
+        const a = state.answers;
 
-  const prompt = `Tu es Dr THYREN, expert médical en micronutrition chez SUPLEMINT.
+        const prompt = `Tu es Dr THYREN, expert médical en micronutrition chez SUPLEMINT.
 
 PROFIL COMPLET:
 - Prénom: ${a.prenom}
@@ -2043,10 +2043,7 @@ STRUCTURE OBLIGATOIRE DES BLOCS:
 BLOC 1 - DIAGNOSTIC MÉDICAL (3-4 phrases naturelles et empathiques):
 Bonjour ${a.prenom}, votre profil révèle [mécanisme physiopathologique principal en 1 phrase]. [Lien entre 2-3 symptômes clés montrant interconnexion]. [Impact concret sur le quotidien]. Cette situation est réversible avec une approche micronutritionnelle ciblée.
 
-Exemple réel:
-"Bonjour Marie, votre profil révèle un ralentissement métabolique typique d'une fonction thyroïdienne sous-optimale. Votre fatigue constante, frilosité et prise de poids inexpliquée forment un tableau cohérent qui suggère que votre métabolisme de base fonctionne au ralenti. Cela impacte directement votre énergie quotidienne et votre capacité à maintenir un poids stable. Cette situation est réversible avec une approche micronutritionnelle ciblée."
-
-BLOC 2 - CURE PRINCIPALE (FORMAT EXACT):
+BLOC 2 - CURE PRINCIPALE (FORMAT EXACT - ATTENTION AUX CTA):
 Cure [NOM EXACT]®
 https://www.suplemint.com/products/[handle]
 
@@ -2058,10 +2055,9 @@ Composition (par jour) :
 📅 Premiers effets possibles dès le ${j14}
 📅 Résultats optimaux vers le ${j90}
 
-Commander ma cure
-Ajouter au panier
+ATTENTION CTA : Termine BLOC 2 ici. Ne PAS écrire "Commander ma cure" ni "Ajouter au panier" ni "En savoir plus" - ces boutons sont ajoutés automatiquement par le frontend.
 
-BLOC 3 - CURE COMPLÉMENTAIRE (même format que BLOC 2, ou dire "Aucune cure complémentaire nécessaire pour le moment" si pas pertinent)
+BLOC 3 - CURE COMPLÉMENTAIRE (même format que BLOC 2, OU "Aucune cure complémentaire nécessaire pour le moment" si pas pertinent)
 
 BLOC 4 - RENDEZ-VOUS EXPERT:
 La vraie force d'une cure réside dans sa personnalisation. Nos nutritionnistes sont disponibles dès aujourd'hui pour un échange offert par téléphone ou visio.
@@ -2075,58 +2071,57 @@ CHOIX:
 - Oui, j'aimerais en savoir plus
 - Non merci, c'est parfait
 
-Exemple réel:
-"Souhaitez-vous en savoir plus sur l'optimisation de votre métabolisme thyroïdien et comment maintenir ces résultats sur le long terme ?
-
-CHOIX:
-- Oui, j'aimerais en savoir plus
-- Non merci, c'est parfait"
-
 RÈGLES CRITIQUES:
 - SÉCURITÉ : Vérifier TOUTES les contre-indications avant recommandation
 - BLOC 1 : EXACTEMENT 3-4 phrases (naturelles et empathiques)
-- BLOCS 2 & 3 : TOUJOURS inclure URL complète + seulement "Commander ma cure" et "Ajouter au panier" (PAS "En savoir plus")
+- BLOCS 2 & 3 : TOUJOURS inclure URL complète + TERMINER APRÈS les dates J+14/J+90 - NE PAS ÉCRIRE les CTA
 - BLOC 4 : Écrire "Je réserve mon rendez-vous" (sera converti en lien)
 - BLOC 5 : Format texte simple avec "CHOIX:" suivi de 2 options avec tiret
 - Utiliser les noms EXACTS des cures (avec ®)
 - Utiliser les noms EXACTS des gélules dans composition
 - JAMAIS inventer de composition
 - Structure: EXACTEMENT 5 blocs séparés par ===BLOCK===
-- Ton : naturel, empathique, comme ChatGPT (PAS robotique)`;
+- Ton : naturel, empathique, comme ChatGPT (PAS robotique)
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: "Bearer " + KEY,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "gpt-4.1-mini",
-      messages: [{ role: "system", content: prompt }],
-      response_format: { type: "json_object" },
-      temperature: 0.7,
-      max_tokens: 3500,
-    }),
-  });
+INTERDICTIONS ABSOLUES:
+- NE PAS écrire "Commander ma cure" dans le texte
+- NE PAS écrire "Ajouter au panier" dans le texte
+- NE PAS écrire "En savoir plus" dans le texte
+- Ces boutons sont gérés par le frontend`;
 
-  if (!response.ok) {
-    return res.status(500).json({ error: "OpenAI error" });
-  }
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + KEY,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "gpt-4o",
+            messages: [{ role: "system", content: prompt }],
+            response_format: { type: "json_object" },
+            temperature: 0.7,
+            max_tokens: 3500,
+          }),
+        });
 
-  let reply;
-  try {
-    const data = await response.json();
-    reply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
-  } catch {
-    reply = {
-      type: "resultat",
-      text: "Erreur lors de la génération des résultats.",
-      meta: { mode: "A" },
-    };
-  }
+        if (!response.ok) {
+          return res.status(500).json({ error: "OpenAI error" });
+        }
 
-  return res.status(200).json({ reply, conversationId, mode: "A" });
-}
+        let reply;
+        try {
+          const data = await response.json();
+          reply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
+        } catch {
+          reply = {
+            type: "resultat",
+            text: "Erreur lors de la génération des résultats.",
+            meta: { mode: "A" },
+          };
+        }
+
+        return res.status(200).json({ reply, conversationId, mode: "A" });
+      }
 
       return res.status(200).json({
         reply: buildQuestion(next, state.answers),
@@ -2147,7 +2142,7 @@ RÈGLES CRITIQUES:
       });
     }
 
-   const kbSystem = `Tu es Dr THYREN, assistant intelligent de SUPLEMINT.
+    const kbSystem = `Tu es Dr THYREN, assistant intelligent de SUPLEMINT.
 
 Ton comportement : intelligence de ChatGPT, ton naturel et empathique.
 
@@ -2173,8 +2168,8 @@ Si diagnostic médical demandé:
 → Propose RDV: https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
 
 Ton : comme ChatGPT (naturel, intelligent, empathique) - PAS robotique`;
-    
-const kbUser = `QUESTION CLIENT:
+
+    const kbUser = `QUESTION CLIENT:
 ${userText}
 
 DONNÉES COMPOSITIONS:
@@ -2196,15 +2191,15 @@ Retourne un JSON valide:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-  model: "gpt-5",
-  messages: [
-    { role: "system", content: kbSystem },
-    { role: "user", content: kbUser },
-  ],
-  response_format: { type: "json_object" },
-  temperature: 0.7,
-  max_tokens: 1500,
-}),
+        model: "gpt-4o",
+        messages: [
+          { role: "system", content: kbSystem },
+          { role: "user", content: kbUser },
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.7,
+        max_tokens: 1500,
+      }),
     });
 
     if (!kbResponse.ok) {
