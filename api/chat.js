@@ -1509,7 +1509,7 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 FIN DU DOCUMENT
 `;
 
-console.log("✅ THYREN V25 - IA INTELLIGENTE + MÉMOIRE + PROACTIVE");
+console.log("✅ THYREN V26 - IA INTELLIGENTE + MÉMOIRE + PROACTIVE + POST-QUIZ");
 
 function validateEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1567,6 +1567,23 @@ function extractNameFromConversation(messages) {
     }
   }
   return null;
+}
+
+function isPostQuizResponse(messages) {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const msg = messages[i];
+    if (msg.role !== "assistant") continue;
+    
+    try {
+      const content = typeof msg.content === "string" ? msg.content : "";
+      const parsed = JSON.parse(content);
+      
+      if (parsed.type === "resultat") {
+        return true;
+      }
+    } catch {}
+  }
+  return false;
 }
 
 const QUIZ = [
@@ -1949,10 +1966,22 @@ export default async function handler(req, res) {
     const userText = typeof lastMsg === "object" ? lastMsg.text || "" : String(lastMsg);
     const lower = userText.toLowerCase();
 
-    const isQuizTrigger = /(^|\b)(quiz|cure ideale|cure idéale|trouver ma cure|trouver ma cure idéale|je veux faire le quiz|faire le quiz)(\b|$)/i.test(userText);
+    const isQuizTrigger = /(^|\b)(quiz|cure ideale|cure idéale|trouver ma cure|trouver ma cure idéale|je veux faire le quiz|faire le quiz|oui|ok|go|commençons|commence|on y va|c'est parti|allons-y)(\b|$)/i.test(userText);
     const isQuestionTrigger = /(^|\b)(j'ai une question|jai une question|question|peux-tu|peux tu|comment|pourquoi|combien|quand|où)(\b|$)/i.test(lower);
 
     let isQuiz = isQuizTrigger;
+    
+    const previousMsg = messages.slice(-3, -1);
+    for (const m of previousMsg) {
+      const content = typeof m.content === "string" ? m.content : "";
+      if (m.role === "assistant" && /quiz|recommandation personnalisée/i.test(content)) {
+        if (/(^|\b)(oui|ok|go|commençons|commence|d'accord|dacord)(\b|$)/i.test(lower)) {
+          isQuiz = true;
+          break;
+        }
+      }
+    }
+    
     for (const m of messages) {
       try {
         const parsed = JSON.parse(typeof m.content === "string" ? m.content : "{}");
@@ -2164,6 +2193,79 @@ INTERDICTIONS ABSOLUES:
       });
     }
 
+    if (isPostQuizResponse(messages) && !isQuiz) {
+      const lower = userText.toLowerCase();
+      
+      if (/oui|j'aimerais|en savoir plus|yes/i.test(lower)) {
+        const postQuizSystem = `Tu es Dr THYREN, expert médical en micronutrition chez SUPLEMINT.
+
+L'utilisateur vient de terminer le quiz et a demandé plus d'informations.
+
+Ta mission : Donner des conseils personnalisés supplémentaires basés sur sa situation.
+
+CONTEXTE CONVERSATION:
+${messages.slice(-15).map(m => `${m.role}: ${typeof m.content === "string" ? m.content : ""}`).join("\n")}
+
+Réponds de manière :
+- Naturelle et empathique
+- 3-4 phrases maximum
+- Propose des conseils pratiques additionnels
+- Termine TOUJOURS avec des CHOIX CLIQUABLES
+
+Format de sortie :
+{"type":"reponse","text":"...","choices":["Prendre rendez-vous gratuit","Autre question","C'est parfait merci"],"meta":{"mode":"B"}}`;
+
+        const postQuizResponse = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + KEY,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "gpt-4o",
+            messages: [
+              { role: "system", content: postQuizSystem },
+              { role: "user", content: userText },
+            ],
+            response_format: { type: "json_object" },
+            temperature: 0.7,
+            max_tokens: 800,
+          }),
+        });
+
+        if (!postQuizResponse.ok) {
+          return res.status(500).json({ error: "OpenAI error" });
+        }
+
+        let reply;
+        try {
+          const data = await postQuizResponse.json();
+          reply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
+        } catch {
+          reply = {
+            type: "reponse",
+            text: "Parfait ! N'hésitez pas si vous avez d'autres questions. Nos nutritionnistes sont également disponibles pour un échange personnalisé gratuit.",
+            choices: ["Prendre rendez-vous gratuit", "Autre question"],
+            meta: { mode: "B" },
+          };
+        }
+
+        return res.status(200).json({ reply, conversationId, mode: "B" });
+      }
+      
+      if (/non|merci|parfait|c'est bon/i.test(lower)) {
+        return res.status(200).json({
+          reply: {
+            type: "reponse",
+            text: "Parfait ! Je suis là si vous avez besoin. Bonne journée et à très bientôt ! 😊",
+            meta: { mode: "B" }
+          },
+          conversationId,
+          mode: "B",
+        });
+      }
+    }
+
     if (!isQuiz && isQuestionTrigger && userText.trim().length < 25) {
       return res.status(200).json({
         reply: {
@@ -2198,16 +2300,20 @@ INTELLIGENCE PROACTIVE OBLIGATOIRE:
 
 Si l'utilisateur mentionne un SYMPTÔME (mal au ventre, fatigue, insomnie, stress, etc):
 → DIRECT : Analyse quel symptôme + Recommande la cure adaptée + Propose quiz avec BOUTON CLIQUABLE
-→ Exemple: "Pour améliorer le confort digestif, la Cure Intestin serait parfaite (GASTRATOP, ENZYM+, TRANSITEAM). Pour une recommandation personnalisée et complète, je te propose de faire notre quiz de 3 minutes.
+→ Toujours terminer avec des CHOIX CLIQUABLES
+
+Si l'utilisateur demande des infos sur une GÉLULE ou une CURE:
+→ Réponds précisément
+→ Si tu mentionnes une CURE, TOUJOURS ajouter ces CTA:
 
 CHOIX:
-- Oui, je veux faire le quiz
-- Non merci, juste des infos"
+- Faire le quiz personnalisé
+- En savoir plus sur [NOM CURE]
+- Acheter [NOM CURE]
 
 Si l'utilisateur mentionne ALLERGIE ou DIABÈTE ou ANTICOAGULANTS:
 → Analyse les compositions et contre-indications de TOUTES les cures
 → Liste les cures COMPATIBLES vs INCOMPATIBLES avec précision
-→ Exemple: "Vous êtes allergique au poisson. Ces 10 cures contiennent du poisson (OMEGA3 ou KRILL) et sont incompatibles : Énergie, Poids, Senior, Homme+, Articulation, Mémoire, Addict Free, Conception, Allaitement, Cardio. Toutes les autres cures sont compatibles."
 
 Si l'utilisateur pose une question générale SANS faire le quiz:
 → Réponds brièvement (2-3 phrases naturelles)
@@ -2219,7 +2325,16 @@ Si diagnostic médical demandé:
 
 Ton : comme ChatGPT (naturel, intelligent, empathique, PROACTIF) - PAS robotique
 
-RÈGLE D'OR: TOUJOURS proposer des CHOIX CLIQUABLES pour faciliter la navigation !`;
+RÈGLE D'OR: TOUJOURS proposer des CHOIX CLIQUABLES pour faciliter la navigation !
+
+FORMAT JSON DE SORTIE AVEC CHOICES:
+Quand tu proposes des actions, utilise:
+{"type":"reponse","text":"...","choices":["Action 1","Action 2","Action 3"],"meta":{"mode":"B","source":"kb_only"}}
+
+Exemples de choices selon le contexte:
+- Si tu mentionnes une cure: ["Faire le quiz personnalisé", "En savoir plus sur [CURE]", "Acheter [CURE]"]
+- Si symptôme: ["Faire le quiz", "En savoir plus"]
+- Si question générale: ["Faire le quiz", "Autre question"]`;
 
     const kbUser = `QUESTION CLIENT:
 ${userText}
@@ -2233,11 +2348,11 @@ ${DATA_CURES}
 FAQ / SAV:
 ${DATA_SAV}
 
-Retourne un JSON valide avec choix cliquables:
-{"type":"reponse","text":"...","choices":["Option 1","Option 2"],"meta":{"mode":"B","source":"kb_only"}}
+IMPORTANT : Si tu mentionnes une cure dans ta réponse, tu DOIS inclure les 3 CTA :
+choices: ["Faire le quiz personnalisé", "En savoir plus sur [NOM CURE]", "Acheter [NOM CURE]"]
 
-Si tu proposes le quiz, TOUJOURS inclure:
-"choices": ["Oui, je veux faire le quiz", "Non merci, juste des infos"]`;
+Retourne un JSON valide avec choices cliquables:
+{"type":"reponse","text":"...","choices":[...],"meta":{"mode":"B","source":"kb_only"}}`;
 
     const kbResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -2269,6 +2384,7 @@ Si tu proposes le quiz, TOUJOURS inclure:
       reply = {
         type: "reponse",
         text: "Hélas je n'ai pas cette information. Pour une recommandation personnalisée, je t'invite à faire notre quiz de 3 minutes.",
+        choices: ["Faire le quiz", "Autre question"],
         meta: { mode: "B", source: "kb_only" },
       };
     }
