@@ -1509,7 +1509,7 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 FIN DU DOCUMENT
 `;
 
-console.log("✅ THYREN V22 - TOUT CORRIGÉ : CTA, compteur 17/17, intelligence quiz, mode KB intelligent");
+console.log("✅ THYREN V23 - IA INTELLIGENTE TYPE CHATGPT + SÉCURITÉ MÉDICALE");
 
 function validateEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1554,7 +1554,6 @@ const QUIZ = [
     key: "prenom",
     validate: true
   },
-
   {
     id: "Q2",
     text: "Merci {prenom} ! Quel est votre âge ?",
@@ -1562,7 +1561,6 @@ const QUIZ = [
     choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"],
     key: "age"
   },
-
   {
     id: "Q3",
     text: "Parfait {prenom}, quel est votre sexe biologique ?",
@@ -1570,7 +1568,6 @@ const QUIZ = [
     choices: ["Femme", "Homme"],
     key: "sexe"
   },
-
   {
     id: "Q3_plus",
     text: "Êtes-vous actuellement enceinte ou allaitante ?",
@@ -1579,7 +1576,6 @@ const QUIZ = [
     key: "enceinte",
     cond: a => a.sexe === "Femme"
   },
-
   {
     id: "Q4_menopause",
     text: "Concernant votre cycle hormonal, où en êtes-vous ?",
@@ -1591,22 +1587,15 @@ const QUIZ = [
       "Autre – j'aimerais préciser"
     ],
     key: "menopause",
-    cond: a =>
-      a.sexe === "Femme" &&
-      (a.age === "45-60 ans" || a.age === "Plus de 60 ans")
+    cond: a => a.sexe === "Femme" && (a.age === "45-60 ans" || a.age === "Plus de 60 ans")
   },
-
   {
     id: "Q5",
     text: "Avez-vous une condition médicale, une allergie ou prenez-vous un traitement ou des compléments ?",
     type: "choice",
-    choices: [
-      "Tout va bien",
-      "Oui, j'ai une condition / allergie / traitement"
-    ],
+    choices: ["Tout va bien", "Oui, j'ai une condition / allergie / traitement"],
     key: "condition"
   },
-
   {
     id: "Q5b",
     text: "Merci de préciser votre condition, allergie ou traitement (c'est important pour votre sécurité).",
@@ -1615,7 +1604,6 @@ const QUIZ = [
     cond: a => a.condition !== "Tout va bien",
     validate: true
   },
-
   {
     id: "Q6_objectif",
     text: "Bien noté {prenom}. Quel est votre objectif principal avec une cure ?",
@@ -1631,7 +1619,6 @@ const QUIZ = [
     ],
     key: "objectif"
   },
-
   {
     id: "Q6_objectif_autre",
     text: "Merci de préciser votre objectif en quelques mots.",
@@ -1639,7 +1626,6 @@ const QUIZ = [
     key: "plainte",
     cond: a => a.objectif?.startsWith("Autre")
   },
-
   {
     id: "Q7_energie",
     text: "Parlons maintenant de votre énergie au quotidien. Comment la décririez-vous ?",
@@ -1652,7 +1638,6 @@ const QUIZ = [
     ],
     key: "energie"
   },
-
   {
     id: "Q7_energie_autre",
     text: "Merci de préciser comment vous décririez votre niveau d'énergie.",
@@ -1660,7 +1645,6 @@ const QUIZ = [
     key: "energie_detail",
     cond: a => a.energie?.startsWith("Autre")
   },
-
   {
     id: "Q8_poids",
     text: "Avez-vous pris du poids récemment sans changer votre alimentation ?",
@@ -1673,7 +1657,6 @@ const QUIZ = [
     ],
     key: "poids"
   },
-
   {
     id: "Q8_poids_autre",
     text: "Merci de préciser votre situation concernant le poids.",
@@ -1681,7 +1664,6 @@ const QUIZ = [
     key: "poids_detail",
     cond: a => a.poids?.startsWith("Autre")
   },
-
   {
     id: "Q9_froid",
     text: "Avez-vous souvent froid, notamment aux mains ou aux pieds ?",
@@ -1694,7 +1676,6 @@ const QUIZ = [
     ],
     key: "froid"
   },
-
   {
     id: "Q9_froid_autre",
     text: "Merci de préciser comment vous ressentez le froid.",
@@ -1702,7 +1683,6 @@ const QUIZ = [
     key: "froid_detail",
     cond: a => a.froid?.startsWith("Autre")
   },
-
   {
     id: "Q10_humeur",
     text: "Comment décririez-vous votre humeur ces dernières semaines ?",
@@ -1715,7 +1695,6 @@ const QUIZ = [
     ],
     key: "humeur"
   },
-
   {
     id: "Q10_humeur_autre",
     text: "Merci de préciser votre humeur.",
@@ -1723,7 +1702,6 @@ const QUIZ = [
     key: "humeur_detail",
     cond: a => a.humeur?.startsWith("Autre")
   },
-
   {
     id: "Q11_sommeil",
     text: "Parlons de votre sommeil. Vous sentez-vous reposé(e) au réveil ?",
@@ -1736,7 +1714,6 @@ const QUIZ = [
     ],
     key: "sommeil"
   },
-
   {
     id: "Q11_sommeil_autre",
     text: "Merci de préciser comment se passe votre sommeil.",
@@ -1744,7 +1721,6 @@ const QUIZ = [
     key: "sommeil_detail",
     cond: a => a.sommeil?.startsWith("Autre")
   },
-
   {
     id: "Q12_peau",
     text: "Avez-vous remarqué des changements au niveau de votre peau ou de vos cheveux ?",
@@ -1757,7 +1733,6 @@ const QUIZ = [
     ],
     key: "peau"
   },
-
   {
     id: "Q12_peau_autre",
     text: "Merci de préciser les changements observés.",
@@ -1765,7 +1740,6 @@ const QUIZ = [
     key: "peau_detail",
     cond: a => a.peau?.startsWith("Autre")
   },
-
   {
     id: "Q13_transit",
     text: "Comment fonctionne votre système digestif au quotidien ?",
@@ -1778,7 +1752,6 @@ const QUIZ = [
     ],
     key: "transit"
   },
-
   {
     id: "Q13_transit_autre",
     text: "Merci de préciser votre transit.",
@@ -1786,7 +1759,6 @@ const QUIZ = [
     key: "transit_detail",
     cond: a => a.transit?.startsWith("Autre")
   },
-
   {
     id: "Q14_gonflement",
     text: "Avez-vous remarqué un gonflement du visage ou des mains le matin ?",
@@ -1799,7 +1771,6 @@ const QUIZ = [
     ],
     key: "gonflement"
   },
-
   {
     id: "Q14_gonflement_autre",
     text: "Merci de préciser les gonflements observés.",
@@ -1807,7 +1778,6 @@ const QUIZ = [
     key: "gonflement_detail",
     cond: a => a.gonflement?.startsWith("Autre")
   },
-
   {
     id: "Q15_concentration",
     text: "Comment évalueriez-vous votre concentration et votre clarté mentale ?",
@@ -1820,7 +1790,6 @@ const QUIZ = [
     ],
     key: "concentration"
   },
-
   {
     id: "Q15_concentration_autre",
     text: "Merci de préciser vos difficultés de concentration.",
@@ -1828,7 +1797,6 @@ const QUIZ = [
     key: "concentration_detail",
     cond: a => a.concentration?.startsWith("Autre")
   },
-
   {
     id: "Q16_libido",
     text: "Dernière question sur votre santé : avez-vous remarqué un changement de votre libido ?",
@@ -1841,7 +1809,6 @@ const QUIZ = [
     ],
     key: "libido"
   },
-
   {
     id: "Q16_libido_autre",
     text: "Merci de préciser les changements de libido.",
@@ -1849,7 +1816,6 @@ const QUIZ = [
     key: "libido_detail",
     cond: a => a.libido?.startsWith("Autre")
   },
-
   {
     id: "Q17_email",
     text: "Parfait {prenom}, nous avons terminé ! Pour recevoir vos résultats personnalisés, quelle est votre adresse e-mail ?",
@@ -1864,8 +1830,7 @@ function getQuizState(messages) {
   let answers = {};
 
   for (const msg of messages) {
-    const content =
-      typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content);
+    const content = typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content);
 
     if (msg.role === "assistant") {
       try {
@@ -1897,15 +1862,11 @@ function nextStep(step, answers) {
 
 function buildPersonalizedPreface(step, answers) {
   if (step <= 0) return "";
-  
   const prevQ = QUIZ[step - 1];
   if (!prevQ) return "";
-  
   const prevAnswer = answers[prevQ.key];
   if (!prevAnswer || !prevQ.key.endsWith("_detail")) return "";
-  
   const prenom = answers.prenom || "";
-  
   const transitions = [
     `Noté. `,
     `Merci pour ces précisions. `,
@@ -1914,20 +1875,15 @@ function buildPersonalizedPreface(step, answers) {
     `Merci ${prenom}. `,
     `Compris. `,
   ];
-  
   const index = step % transitions.length;
   return transitions[index];
 }
 
 function buildQuestion(step, answers) {
   const q = QUIZ[step];
-  
   const preface = buildPersonalizedPreface(step, answers);
   let text = q.text.replace(/{prenom}/g, answers.prenom || "");
-  
-  if (preface) {
-    text = preface + text;
-  }
+  if (preface) text = preface + text;
 
   const response = {
     type: "question",
@@ -1957,13 +1913,11 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   if (req.method === "OPTIONS") return res.status(204).end();
-  if (req.method !== "POST")
-    return res.status(405).json({ error: "Method Not Allowed" });
+  if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
 
   try {
     const { messages, conversationId } = req.body || {};
-    if (!Array.isArray(messages))
-      return res.status(400).json({ error: "messages required" });
+    if (!Array.isArray(messages)) return res.status(400).json({ error: "messages required" });
 
     const KEY = process.env.OPENAI_API_KEY;
     if (!KEY) return res.status(500).json({ error: "API key missing" });
@@ -1972,13 +1926,8 @@ export default async function handler(req, res) {
     const userText = typeof lastMsg === "object" ? lastMsg.text || "" : String(lastMsg);
     const lower = userText.toLowerCase();
 
-    const isQuizTrigger = /(^|\b)(quiz|cure ideale|cure idéale|trouver ma cure|trouver ma cure idéale)(\b|$)/i.test(
-      userText
-    );
-
-    const isQuestionTrigger = /(^|\b)(j'ai une question|jai une question|question|peux-tu|peux tu|comment|pourquoi|combien|quand|où)(\b|$)/i.test(
-      lower
-    );
+    const isQuizTrigger = /(^|\b)(quiz|cure ideale|cure idéale|trouver ma cure|trouver ma cure idéale)(\b|$)/i.test(userText);
+    const isQuestionTrigger = /(^|\b)(j'ai une question|jai une question|question|peux-tu|peux tu|comment|pourquoi|combien|quand|où)(\b|$)/i.test(lower);
 
     let isQuiz = isQuizTrigger;
     for (const m of messages) {
@@ -2012,11 +1961,7 @@ export default async function handler(req, res) {
                   mode: "A",
                   quizStep: state.step,
                   answers: state.answers,
-                  progress: {
-                    enabled: true,
-                    current: state.step + 1,
-                    total: 17,
-                  },
+                  progress: { enabled: true, current: state.step + 1, total: 17 },
                 },
               },
               conversationId,
@@ -2033,10 +1978,8 @@ export default async function handler(req, res) {
       if (next >= QUIZ.length) {
         const today = new Date();
         const fmt = (d) =>
-          d.getDate().toString().padStart(2, "0") +
-          "/" +
-          (d.getMonth() + 1).toString().padStart(2, "0") +
-          "/" +
+          d.getDate().toString().padStart(2, "0") + "/" +
+          (d.getMonth() + 1).toString().padStart(2, "0") + "/" +
           d.getFullYear();
 
         const j14 = fmt(new Date(today.getTime() + 14 * 86400000));
@@ -2045,48 +1988,78 @@ export default async function handler(req, res) {
 
         const prompt = `Tu es Dr THYREN, expert médical en micronutrition chez SUPLEMINT.
 
-PROFIL COMPLET:
-- Prénom: ${a.prenom}
-- Sexe: ${a.sexe}
-- Âge: ${a.age}
-- Condition/Traitement: ${a.condition} ${a.condition_detail || ""}
-- Objectif principal: ${a.objectif || a.plainte}
+Tu as l'intelligence de ChatGPT + connaissance parfaite de SUPLEMINT + ton naturel et empathique.
 
-BILAN SYMPTOMATIQUE:
-- Énergie: ${a.energie} ${a.energie_detail || ""}
-- Poids: ${a.poids} ${a.poids_detail || ""}
-- Frilosité: ${a.froid} ${a.froid_detail || ""}
-- Humeur: ${a.humeur} ${a.humeur_detail || ""}
-- Sommeil: ${a.sommeil} ${a.sommeil_detail || ""}
-- Peau/Cheveux: ${a.peau} ${a.peau_detail || ""}
-- Transit: ${a.transit} ${a.transit_detail || ""}
-- Gonflement: ${a.gonflement} ${a.gonflement_detail || ""}
-- Concentration: ${a.concentration} ${a.concentration_detail || ""}
-- Libido: ${a.libido} ${a.libido_detail || ""}
+=== PROFIL PATIENT ===
+Prénom: ${a.prenom}
+Sexe: ${a.sexe}
+Âge: ${a.age}
+Grossesse/Allaitement: ${a.enceinte || "Non"}
+Condition médicale: ${a.condition} ${a.condition_detail || ""}
+Objectif principal: ${a.objectif || a.plainte}
 
-DATES CLÉS:
-- Date J+14: ${j14}
-- Date J+90: ${j90}
+=== BILAN SYMPTOMATIQUE ===
+Énergie: ${a.energie} ${a.energie_detail || ""}
+Poids: ${a.poids} ${a.poids_detail || ""}
+Frilosité: ${a.froid} ${a.froid_detail || ""}
+Humeur: ${a.humeur} ${a.humeur_detail || ""}
+Sommeil: ${a.sommeil} ${a.sommeil_detail || ""}
+Peau/Cheveux: ${a.peau} ${a.peau_detail || ""}
+Transit: ${a.transit} ${a.transit_detail || ""}
+Gonflement: ${a.gonflement} ${a.gonflement_detail || ""}
+Concentration: ${a.concentration} ${a.concentration_detail || ""}
+Libido: ${a.libido} ${a.libido_detail || ""}
 
-DONNÉES CURES DISPONIBLES:
+=== BASE DE DONNÉES CURES ===
 ${DATA_CURES}
 
-ANALYSE MÉDICALE ET RECOMMANDATIONS:
+=== PROTOCOLE DE SÉCURITÉ MÉDICALE OBLIGATOIRE ===
 
-Tu dois IMPÉRATIVEMENT produire un JSON avec EXACTEMENT ce format (5 blocs séparés par "===BLOCK==="):
+ÉTAPE 1 - DÉTECTION DES CONTRE-INDICATIONS :
+Analyse chaque cure envisagée pour détecter :
+- Grossesse/allaitement → AUCUNE cure sauf Conception/Allaitement
+- Diabète → INTERDICTION Cure Poids, Immunité, Senior, Homme+, Sport, Mémoire, Conception, Allaitement
+- Anticoagulants → INTERDICTION Cure Intestin, Senior, Articulation, Ménopause, Sport, Mémoire, Conception, Allaitement
+- Antidépresseurs → INTERDICTION Cure Thyroïde, Sommeil, Homme+, Zénitude, Sport, Mémoire
+- Allergie poisson → INTERDICTION toutes cures contenant OMEGA3 ou KRILL
+
+ÉTAPE 2 - VALIDATION CROISÉE :
+Pour CHAQUE cure envisagée, vérifier :
+1. Condition patient vs contre-indications cure
+2. Si match = EXCLUSION IMMÉDIATE de cette cure
+3. Ne JAMAIS recommander une cure contre-indiquée
+
+ÉTAPE 3 - ANALYSE SYMPTOMATIQUE INTELLIGENTE :
+Identifie les patterns physiologiques :
+- Fatigue + frilosité + poids + transit = hypothyroïdie probable → CURE THYROÏDE
+- Fatigue + sommeil + humeur = déséquilibre neurotransmetteurs → CURE ÉNERGIE ou SOMMEIL
+- Transit + poids + peau = dysbiose intestinale → CURE INTESTIN
+- Humeur + stress + sommeil = système nerveux → CURE ZÉNITUDE
+- Femme 45-60 + humeur + sommeil + symptômes hormonaux = CURE MÉNOPAUSE
+
+ÉTAPE 4 - PRIORISATION INTELLIGENTE :
+Ordre de priorité :
+1. CURE THYROÏDE si ≥3 symptômes hypothyroïdie (fatigue, poids, froid, transit, concentration, peau)
+2. CURE INTESTIN si transit problématique (prépare le terrain)
+3. CURE ÉNERGIE si fatigue dominante sans autres symptômes
+4. CURE SOMMEIL si troubles du sommeil dominants
+5. CURE ZÉNITUDE si stress/anxiété dominants
+6. Cures spécifiques selon profil (Ménopause, Homme+, etc.)
+
+=== FORMAT DE SORTIE OBLIGATOIRE ===
+
+JSON avec EXACTEMENT ce format (5 blocs séparés par "===BLOCK==="):
 
 {"type":"resultat","text":"BLOC1===BLOCK===BLOC2===BLOCK===BLOC3===BLOCK===BLOC4===BLOCK===BLOC5","meta":{"mode":"A"}}
 
-STRUCTURE OBLIGATOIRE DES BLOCS:
+BLOC 1 - DIAGNOSTIC MÉDICAL (3-4 phrases, ton naturel et empathique) :
+Bonjour ${a.prenom}, [analyse physiopathologique personnalisée]. [Interconnexion des symptômes]. [Impact quotidien]. Cette situation est réversible avec une approche micronutritionnelle ciblée.
 
-BLOC 1 - DIAGNOSTIC MÉDICAL (3-4 phrases, équilibré et médical):
-Bonjour ${a.prenom}, votre profil révèle [mécanisme physiopathologique principal en 1 phrase]. [Lien entre 2-3 symptômes clés montrant interconnexion]. [Impact concret sur le quotidien]. Cette situation est réversible avec une approche micronutritionnelle ciblée.
-
-BLOC 2 - CURE PRINCIPALE (FORMAT EXACT):
+BLOC 2 - CURE PRINCIPALE (FORMAT EXACT) :
 Cure [NOM EXACT]®
 https://www.suplemint.com/products/[handle]
 
-[Explication du POURQUOI en 2-3 phrases]
+[Explication intelligente du POURQUOI cette cure pour ce profil - 2-3 phrases]
 
 Composition (par jour) :
 1× [NOM_EXACT]® + 1× [NOM_EXACT]® + [etc]
@@ -2097,41 +2070,27 @@ Composition (par jour) :
 Commander ma cure
 Ajouter au panier
 
-BLOC 3 - CURE COMPLÉMENTAIRE (même format que BLOC 2, ou dire "Aucune cure complémentaire nécessaire pour le moment"):
-Cure [NOM EXACT]®
-https://www.suplemint.com/products/[handle]
+BLOC 3 - CURE COMPLÉMENTAIRE (même format que BLOC 2, OU "Aucune cure complémentaire nécessaire pour le moment" si pas pertinent)
 
-[Explication]
-
-Composition (par jour) :
-1× [NOM_EXACT]® + [etc]
-
-📅 Premiers effets possibles dès le ${j14}
-📅 Résultats optimaux vers le ${j90}
-
-Commander ma cure
-Ajouter au panier
-
-BLOC 4 - RENDEZ-VOUS EXPERT:
+BLOC 4 - RENDEZ-VOUS EXPERT :
 La vraie force d'une cure réside dans sa personnalisation. Nos nutritionnistes sont disponibles dès aujourd'hui pour un échange offert par téléphone ou visio.
 
 Je réserve mon rendez-vous
 
-BLOC 5 - QUESTION FINALE PERSONNALISÉE:
-[Question personnalisée au profil de ${a.prenom}]
+BLOC 5 - QUESTION FINALE PERSONNALISÉE :
+[Question intelligente et personnalisée au profil de ${a.prenom}]
 
 CHOIX:
 - Oui, j'aimerais en savoir plus
 - Non merci, c'est parfait
 
-RÈGLES CRITIQUES:
-- BLOC 1 : EXACTEMENT 3-4 phrases
-- BLOCS 2 & 3 : NE PAS ÉCRIRE "En savoir plus" - seulement "Commander ma cure" et "Ajouter au panier"
-- BLOC 4 : Écrire "Je réserve mon rendez-vous" (sera converti en lien cliquable)
-- BLOC 5 : Format texte simple avec "CHOIX:" suivi de 2 options avec tiret
-- Utiliser les noms EXACTS des cures (avec ®)
-- JAMAIS inventer de composition
-- Structure: EXACTEMENT 5 blocs séparés par ===BLOCK===`;
+=== RÈGLES CRITIQUES ===
+- SÉCURITÉ : Ne JAMAIS recommander une cure contre-indiquée pour le profil
+- INTELLIGENCE : Analyse symptomatique comme un médecin
+- TON : Naturel, empathique, conversationnel (comme ChatGPT)
+- PRÉCISION : Noms exacts des cures (avec ®)
+- FORMAT : Exactement 5 blocs séparés par ===BLOCK===
+- CTA : Seulement "Commander ma cure" et "Ajouter au panier" (pas "En savoir plus")`;
 
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
@@ -2143,8 +2102,8 @@ RÈGLES CRITIQUES:
             model: "gpt-4o",
             messages: [{ role: "system", content: prompt }],
             response_format: { type: "json_object" },
-            temperature: 0.4,
-            max_tokens: 3000,
+            temperature: 0.7,
+            max_tokens: 3500,
           }),
         });
 
@@ -2186,27 +2145,37 @@ RÈGLES CRITIQUES:
       });
     }
 
-    const kbSystem = `Tu es Dr THYREN, assistant intelligent de SUPLEMINT.
+    const kbSystem = `Tu es Dr THYREN, assistant intelligent de SUPLEMINT avec l'intelligence de ChatGPT.
 
-RÈGLES ABSOLUES:
-1. Tu réponds UNIQUEMENT avec les informations dans les DONNÉES fournies
-2. INTERDIT d'inventer, estimer, compléter ou supposer
-3. Si info absente: "Hélas je n'ai pas cette information dans nos données"
-4. Style: concis, 2-6 phrases maximum
+Ton comportement :
+- Intelligence conversationnelle de ChatGPT
+- Connaissance parfaite de SUPLEMINT
+- Ton naturel, empathique, et humain
+- Sécurité médicale absolue
 
-INTELLIGENCE CONTEXTUELLE:
-- Si l'utilisateur mentionne ALLERGIE ou DIABÈTE ou ANTICOAGULANTS:
-  → Analyse les compositions et contre-indications
-  → Liste les cures COMPATIBLES vs INCOMPATIBLES
-  → Exemple: "Vous êtes allergique au poisson. Ces cures contiennent du poisson donc incompatibles: [liste]. Ces cures sont compatibles: [liste]."
+Règles strictes :
+1. Tu réponds UNIQUEMENT avec les informations des DONNÉES
+2. INTERDIT d'inventer ou supposer
+3. Si info absente : "Hélas je n'ai pas cette information dans nos données"
+4. Style : naturel et conversationnel (2-6 phrases max)
 
-- Si l'utilisateur pose une question générale SANS faire le quiz:
-  → Réponds brièvement (2-3 phrases)
-  → Push SUBTIL vers le quiz: "Pour une recommandation personnalisée, je vous invite à faire notre quiz de 3 minutes qui analysera votre profil complet."
+Intelligence contextuelle OBLIGATOIRE :
 
-- Si diagnostic médical demandé:
-  → "Je ne remplace pas un médecin"
-  → Propose RDV: https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252`;
+Si ALLERGIE ou DIABÈTE ou ANTICOAGULANTS mentionnés :
+→ Analyse TOUTES les compositions de TOUTES les cures
+→ Cross-check avec TOUTES les contre-indications
+→ Liste PRÉCISE des cures COMPATIBLES vs INCOMPATIBLES
+→ Exemple : "Vous êtes diabétique. Ces cures sont INTERDITES : Poids, Immunité, Senior, Homme+, Sport, Mémoire, Conception, Allaitement. Ces cures sont COMPATIBLES : Thyroïde, Intestin, Énergie, Sommeil, Complète, Zénitude, Détox, Articulation, Peau, Ménopause, Addict Free, Antioxydant."
+
+Si question générale SANS quiz :
+→ Réponds brièvement (2-3 phrases naturelles)
+→ Push subtil vers quiz : "Pour une recommandation personnalisée, je t'invite à faire notre quiz de 3 minutes qui analysera ton profil complet."
+
+Si diagnostic médical demandé :
+→ "Je ne remplace pas un médecin"
+→ Propose RDV : https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
+
+TON : Comme ChatGPT (naturel, intelligent, empathique) - PAS robotique`;
 
     const kbUser = `QUESTION CLIENT:
 ${userText}
@@ -2220,7 +2189,6 @@ ${DATA_CURES}
 FAQ / SAV:
 ${DATA_SAV}
 
-INSTRUCTION DE SORTIE:
 Retourne un JSON valide:
 {"type":"reponse","text":"...","meta":{"mode":"B","source":"kb_only"}}`;
 
@@ -2231,14 +2199,14 @@ Retourne un JSON valide:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "gpt-4o",
         messages: [
           { role: "system", content: kbSystem },
           { role: "user", content: kbUser },
         ],
         response_format: { type: "json_object" },
-        temperature: 0.3,
-        max_tokens: 1000,
+        temperature: 0.7,
+        max_tokens: 1500,
       }),
     });
 
@@ -2253,7 +2221,7 @@ Retourne un JSON valide:
     } catch {
       reply = {
         type: "reponse",
-        text: "Hélas je n'ai pas cette information. Pour une recommandation personnalisée, je vous invite à faire notre quiz de 3 minutes.",
+        text: "Hélas je n'ai pas cette information. Pour une recommandation personnalisée, je t'invite à faire notre quiz de 3 minutes.",
         meta: { mode: "B", source: "kb_only" },
       };
     }
