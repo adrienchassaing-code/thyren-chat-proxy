@@ -1509,8 +1509,6 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 FIN DU DOCUMENT
 `;
 
-// ... (garder DATA_COMPOSITIONS, DATA_CURES, DATA_SAV identiques)
-
 console.log("✅ THYREN V22 - TOUT CORRIGÉ : CTA, compteur 17/17, intelligence quiz, mode KB intelligent");
 
 function validateEmail(email) {
@@ -1522,7 +1520,6 @@ function validateName(name) {
   return name.length >= 2 && /^[a-zA-ZÀ-ÿ\s-]+$/.test(name);
 }
 
-// 🔥 VALIDATION RENFORCÉE pour détecter les conneries
 function isInvalidResponse(value, type) {
   const val = value.toLowerCase().trim();
   
@@ -1536,7 +1533,6 @@ function isInvalidResponse(value, type) {
     return !validateEmail(value);
   }
   
-  // 🔥 Détection réponses absurdes pour questions "Autre - préciser"
   if (type === "condition_detail" || type.endsWith("_detail")) {
     const badWords = ["caca", "pipi", "merde", "connard", "salope", "putin", "fuck", "shit"];
     const veryShort = val.length < 4;
@@ -1551,7 +1547,316 @@ function isInvalidResponse(value, type) {
 }
 
 const QUIZ = [
-  // ... (garder la liste des 17 questions identique)
+  {
+    id: "Q1",
+    text: "Parfait, trouvons ensemble la cure idéale. Pour commencer, quel est votre prénom ?",
+    type: "open",
+    key: "prenom",
+    validate: true
+  },
+
+  {
+    id: "Q2",
+    text: "Merci {prenom} ! Quel est votre âge ?",
+    type: "choice",
+    choices: ["Moins de 30 ans", "30-45 ans", "45-60 ans", "Plus de 60 ans"],
+    key: "age"
+  },
+
+  {
+    id: "Q3",
+    text: "Parfait {prenom}, quel est votre sexe biologique ?",
+    type: "choice",
+    choices: ["Femme", "Homme"],
+    key: "sexe"
+  },
+
+  {
+    id: "Q3_plus",
+    text: "Êtes-vous actuellement enceinte ou allaitante ?",
+    type: "choice",
+    choices: ["Oui", "Non"],
+    key: "enceinte",
+    cond: a => a.sexe === "Femme"
+  },
+
+  {
+    id: "Q4_menopause",
+    text: "Concernant votre cycle hormonal, où en êtes-vous ?",
+    type: "choice",
+    choices: [
+      "Oui, je suis ménopausée",
+      "Oui, j'ai des symptômes de préménopause ou ménopause",
+      "Non, je n'ai pas de symptômes particuliers",
+      "Autre – j'aimerais préciser"
+    ],
+    key: "menopause",
+    cond: a =>
+      a.sexe === "Femme" &&
+      (a.age === "45-60 ans" || a.age === "Plus de 60 ans")
+  },
+
+  {
+    id: "Q5",
+    text: "Avez-vous une condition médicale, une allergie ou prenez-vous un traitement ou des compléments ?",
+    type: "choice",
+    choices: [
+      "Tout va bien",
+      "Oui, j'ai une condition / allergie / traitement"
+    ],
+    key: "condition"
+  },
+
+  {
+    id: "Q5b",
+    text: "Merci de préciser votre condition, allergie ou traitement (c'est important pour votre sécurité).",
+    type: "open",
+    key: "condition_detail",
+    cond: a => a.condition !== "Tout va bien",
+    validate: true
+  },
+
+  {
+    id: "Q6_objectif",
+    text: "Bien noté {prenom}. Quel est votre objectif principal avec une cure ?",
+    type: "choice",
+    choices: [
+      "Retrouver de l'énergie",
+      "Perdre du poids / relancer le métabolisme",
+      "Mieux dormir",
+      "Réduire le stress / l'anxiété",
+      "Améliorer ma digestion / transit",
+      "Améliorer mon équilibre hormonal",
+      "Autre – j'aimerais préciser"
+    ],
+    key: "objectif"
+  },
+
+  {
+    id: "Q6_objectif_autre",
+    text: "Merci de préciser votre objectif en quelques mots.",
+    type: "open",
+    key: "plainte",
+    cond: a => a.objectif?.startsWith("Autre")
+  },
+
+  {
+    id: "Q7_energie",
+    text: "Parlons maintenant de votre énergie au quotidien. Comment la décririez-vous ?",
+    type: "choice",
+    choices: [
+      "Bonne énergie tout au long de la journée",
+      "Fatigue légère ou passagère",
+      "Fatigue constante malgré le repos",
+      "Autre – j'aimerais préciser"
+    ],
+    key: "energie"
+  },
+
+  {
+    id: "Q7_energie_autre",
+    text: "Merci de préciser comment vous décririez votre niveau d'énergie.",
+    type: "open",
+    key: "energie_detail",
+    cond: a => a.energie?.startsWith("Autre")
+  },
+
+  {
+    id: "Q8_poids",
+    text: "Avez-vous pris du poids récemment sans changer votre alimentation ?",
+    type: "choice",
+    choices: [
+      "Non, mon poids est stable",
+      "Oui, une légère prise de poids",
+      "Oui, une prise de poids importante ou inexpliquée",
+      "Autre – j'aimerais préciser"
+    ],
+    key: "poids"
+  },
+
+  {
+    id: "Q8_poids_autre",
+    text: "Merci de préciser votre situation concernant le poids.",
+    type: "open",
+    key: "poids_detail",
+    cond: a => a.poids?.startsWith("Autre")
+  },
+
+  {
+    id: "Q9_froid",
+    text: "Avez-vous souvent froid, notamment aux mains ou aux pieds ?",
+    type: "choice",
+    choices: [
+      "Non, température normale",
+      "Parfois",
+      "Souvent, même quand il fait bon",
+      "Autre – j'aimerais préciser"
+    ],
+    key: "froid"
+  },
+
+  {
+    id: "Q9_froid_autre",
+    text: "Merci de préciser comment vous ressentez le froid.",
+    type: "open",
+    key: "froid_detail",
+    cond: a => a.froid?.startsWith("Autre")
+  },
+
+  {
+    id: "Q10_humeur",
+    text: "Comment décririez-vous votre humeur ces dernières semaines ?",
+    type: "choice",
+    choices: [
+      "Moral stable",
+      "Humeur fluctuante",
+      "Moral bas",
+      "Autre – j'aimerais préciser"
+    ],
+    key: "humeur"
+  },
+
+  {
+    id: "Q10_humeur_autre",
+    text: "Merci de préciser votre humeur.",
+    type: "open",
+    key: "humeur_detail",
+    cond: a => a.humeur?.startsWith("Autre")
+  },
+
+  {
+    id: "Q11_sommeil",
+    text: "Parlons de votre sommeil. Vous sentez-vous reposé(e) au réveil ?",
+    type: "choice",
+    choices: [
+      "Oui, je dors bien",
+      "Sommeil parfois léger ou agité",
+      "Difficultés à dormir ou fatigue au réveil",
+      "Autre – j'aimerais préciser"
+    ],
+    key: "sommeil"
+  },
+
+  {
+    id: "Q11_sommeil_autre",
+    text: "Merci de préciser comment se passe votre sommeil.",
+    type: "open",
+    key: "sommeil_detail",
+    cond: a => a.sommeil?.startsWith("Autre")
+  },
+
+  {
+    id: "Q12_peau",
+    text: "Avez-vous remarqué des changements au niveau de votre peau ou de vos cheveux ?",
+    type: "choice",
+    choices: [
+      "Non, tout est normal",
+      "Peau un peu sèche ou cheveux ternes",
+      "Peau très sèche ou cheveux cassants",
+      "Autre – j'aimerais préciser"
+    ],
+    key: "peau"
+  },
+
+  {
+    id: "Q12_peau_autre",
+    text: "Merci de préciser les changements observés.",
+    type: "open",
+    key: "peau_detail",
+    cond: a => a.peau?.startsWith("Autre")
+  },
+
+  {
+    id: "Q13_transit",
+    text: "Comment fonctionne votre système digestif au quotidien ?",
+    type: "choice",
+    choices: [
+      "Transit régulier",
+      "Parfois un peu lent",
+      "Constipation ou digestion difficile",
+      "Autre – j'aimerais préciser"
+    ],
+    key: "transit"
+  },
+
+  {
+    id: "Q13_transit_autre",
+    text: "Merci de préciser votre transit.",
+    type: "open",
+    key: "transit_detail",
+    cond: a => a.transit?.startsWith("Autre")
+  },
+
+  {
+    id: "Q14_gonflement",
+    text: "Avez-vous remarqué un gonflement du visage ou des mains le matin ?",
+    type: "choice",
+    choices: [
+      "Non",
+      "Parfois",
+      "Oui, visible chaque matin",
+      "Autre – j'aimerais préciser"
+    ],
+    key: "gonflement"
+  },
+
+  {
+    id: "Q14_gonflement_autre",
+    text: "Merci de préciser les gonflements observés.",
+    type: "open",
+    key: "gonflement_detail",
+    cond: a => a.gonflement?.startsWith("Autre")
+  },
+
+  {
+    id: "Q15_concentration",
+    text: "Comment évalueriez-vous votre concentration et votre clarté mentale ?",
+    type: "choice",
+    choices: [
+      "Concentration normale",
+      "Légère distraction",
+      "Brouillard mental",
+      "Autre – j'aimerais préciser"
+    ],
+    key: "concentration"
+  },
+
+  {
+    id: "Q15_concentration_autre",
+    text: "Merci de préciser vos difficultés de concentration.",
+    type: "open",
+    key: "concentration_detail",
+    cond: a => a.concentration?.startsWith("Autre")
+  },
+
+  {
+    id: "Q16_libido",
+    text: "Dernière question sur votre santé : avez-vous remarqué un changement de votre libido ?",
+    type: "choice",
+    choices: [
+      "Aucun changement notable",
+      "Libido variable",
+      "Libido très basse",
+      "Autre – j'aimerais préciser"
+    ],
+    key: "libido"
+  },
+
+  {
+    id: "Q16_libido_autre",
+    text: "Merci de préciser les changements de libido.",
+    type: "open",
+    key: "libido_detail",
+    cond: a => a.libido?.startsWith("Autre")
+  },
+
+  {
+    id: "Q17_email",
+    text: "Parfait {prenom}, nous avons terminé ! Pour recevoir vos résultats personnalisés, quelle est votre adresse e-mail ?",
+    type: "open",
+    key: "email",
+    validate: true
+  }
 ];
 
 function getQuizState(messages) {
@@ -1590,7 +1895,6 @@ function nextStep(step, answers) {
   return n;
 }
 
-// 🔥 NOUVELLE FONCTION : Génère un préambule personnalisé basé sur la réponse précédente
 function buildPersonalizedPreface(step, answers) {
   if (step <= 0) return "";
   
@@ -1598,40 +1902,26 @@ function buildPersonalizedPreface(step, answers) {
   if (!prevQ) return "";
   
   const prevAnswer = answers[prevQ.key];
-  if (!prevAnswer) return "";
+  if (!prevAnswer || !prevQ.key.endsWith("_detail")) return "";
   
   const prenom = answers.prenom || "";
   
-  // Si la réponse précédente était un choix "Autre - préciser" suivi d'un détail
-  if (prevAnswer.startsWith("Autre") && prevQ.key.endsWith("_detail")) {
-    return `Merci ${prenom} pour ces précisions. `;
-  }
+  const transitions = [
+    `Noté. `,
+    `Merci pour ces précisions. `,
+    `Bien reçu. `,
+    `C'est noté. `,
+    `Merci ${prenom}. `,
+    `Compris. `,
+  ];
   
-  // Accusés de réception contextuels
-  const contextualAcks = {
-    "gonflement_detail": `Noté ${prenom}, je prends en compte vos gonflements. `,
-    "energie_detail": `Merci ${prenom}, je note votre niveau d'énergie. `,
-    "poids_detail": `C'est noté ${prenom} concernant votre poids. `,
-    "froid_detail": `Je prends note ${prenom} de votre sensibilité au froid. `,
-    "humeur_detail": `Merci ${prenom} pour ces informations sur votre humeur. `,
-    "sommeil_detail": `Noté ${prenom} concernant votre sommeil. `,
-    "peau_detail": `Je note ${prenom} ces changements cutanés. `,
-    "transit_detail": `C'est noté ${prenom} pour votre transit. `,
-    "concentration_detail": `Merci ${prenom}, je prends en compte ces difficultés de concentration. `,
-    "libido_detail": `Noté ${prenom}. `,
-  };
-  
-  if (contextualAcks[prevQ.key]) {
-    return contextualAcks[prevQ.key];
-  }
-  
-  return "";
+  const index = step % transitions.length;
+  return transitions[index];
 }
 
 function buildQuestion(step, answers) {
   const q = QUIZ[step];
   
-  // 🔥 Ajouter préambule personnalisé
   const preface = buildPersonalizedPreface(step, answers);
   let text = q.text.replace(/{prenom}/g, answers.prenom || "");
   
@@ -1649,7 +1939,7 @@ function buildQuestion(step, answers) {
       progress: {
         enabled: true,
         current: step + 1,
-        total: 17, // 🔥 FORCÉ À 17
+        total: 17,
       },
     },
   };
@@ -1699,72 +1989,46 @@ export default async function handler(req, res) {
     }
 
     if (isQuiz) {
-  const state = getQuizState(messages);
+      const state = getQuizState(messages);
 
-  if (state.step >= 0 && QUIZ[state.step]) {
-    const currentQ = QUIZ[state.step];
-    
-    // 🔥 Validation renforcée pour toutes les questions ouvertes
-    if (currentQ.type === "open") {
-      const validationType = currentQ.validate ? currentQ.key : (currentQ.key.endsWith("_detail") ? currentQ.key : null);
-      
-      if (validationType && isInvalidResponse(userText, validationType)) {
-        const errorMessages = {
-          "prenom": "Hmm, ce prénom ne semble pas sérieux ! Peux-tu me donner ton vrai prénom ? C'est important pour personnaliser ton accompagnement.",
-          "email": "Cette adresse e-mail ne semble pas valide. Peux-tu la vérifier ?",
-          "default": "Cette réponse ne me semble pas complète ou sérieuse. Peux-tu reformuler en quelques mots clairs ? C'est essentiel pour ton bien-être."
-        };
+      if (state.step >= 0 && QUIZ[state.step]) {
+        const currentQ = QUIZ[state.step];
         
-        return res.status(200).json({
-          reply: {
-            type: "question",
-            text: errorMessages[currentQ.key] || errorMessages["default"],
-            meta: {
-              mode: "A",
-              quizStep: state.step,
-              answers: state.answers,
-              progress: {
-                enabled: true,
-                current: state.step + 1,
-                total: 17,
+        if (currentQ.type === "open") {
+          const validationType = currentQ.validate ? currentQ.key : (currentQ.key.endsWith("_detail") ? currentQ.key : null);
+          
+          if (validationType && isInvalidResponse(userText, validationType)) {
+            const errorMessages = {
+              "prenom": "Hmm, ce prénom ne semble pas sérieux ! Peux-tu me donner ton vrai prénom ? C'est important pour personnaliser ton accompagnement.",
+              "email": "Cette adresse e-mail ne semble pas valide. Peux-tu la vérifier ?",
+              "default": "Cette réponse ne me semble pas complète ou sérieuse. Peux-tu reformuler en quelques mots clairs ? C'est essentiel pour ton bien-être."
+            };
+            
+            return res.status(200).json({
+              reply: {
+                type: "question",
+                text: errorMessages[currentQ.key] || errorMessages["default"],
+                meta: {
+                  mode: "A",
+                  quizStep: state.step,
+                  answers: state.answers,
+                  progress: {
+                    enabled: true,
+                    current: state.step + 1,
+                    total: 17,
+                  },
+                },
               },
-            },
-          },
-          conversationId,
-          mode: "A",
-        });
+              conversationId,
+              mode: "A",
+            });
+          }
+        }
+        
+        state.answers[currentQ.key] = userText.trim();
       }
-    }
-    
-    state.answers[currentQ.key] = userText.trim();
-  }
 
-  const next = state.step < 0 ? 0 : nextStep(state.step, state.answers);
-  
-  // ... (reste identique)
-```
-
----
-
-## ✅ **RÉSUMÉ DES CHANGEMENTS**
-
-### **Avant :**
-```
-🤔 Hmm, ce prénom ne semble pas sérieux !
-Noté Adrien, je prends en compte vos gonflements.
-Merci Adrien, je note votre niveau d'énergie.
-C'est noté Adrien concernant votre poids.
-```
-
-### **Après :**
-```
-Hmm, ce prénom ne semble pas sérieux !
-Noté.
-Merci pour ces précisions.
-Bien reçu.
-C'est noté.
-Merci Adrien.
-Compris.
+      const next = state.step < 0 ? 0 : nextStep(state.step, state.answers);
 
       if (next >= QUIZ.length) {
         const today = new Date();
@@ -1922,7 +2186,6 @@ RÈGLES CRITIQUES:
       });
     }
 
-    // 🔥 MODE B INTELLIGENT avec analyse allergies + push quiz
     const kbSystem = `Tu es Dr THYREN, assistant intelligent de SUPLEMINT.
 
 RÈGLES ABSOLUES:
