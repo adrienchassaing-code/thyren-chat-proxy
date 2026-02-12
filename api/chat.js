@@ -1509,7 +1509,11 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 FIN DU DOCUMENT
 `;
 
-console.log("✅ THYREN V24 - CORRECTIONS CTA + GESTION SUITE CONVERSATION");
+const DATA_COMPOSITIONS = `[... identique ...]`;
+const DATA_CURES = `[... identique ...]`;
+const DATA_SAV = `[... identique ...]`;
+
+console.log("✅ THYREN V25 - IA INTELLIGENTE + MÉMOIRE + PROACTIVE");
 
 function validateEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1544,6 +1548,29 @@ function isInvalidResponse(value, type) {
   }
   
   return false;
+}
+
+function extractNameFromConversation(messages) {
+  for (const msg of messages) {
+    if (msg.role !== "user") continue;
+    const content = typeof msg.content === "string" ? msg.content : "";
+    const lower = content.toLowerCase();
+    
+    const patterns = [
+      /je m'appelle ([a-zA-ZÀ-ÿ]+)/i,
+      /mon prénom est ([a-zA-ZÀ-ÿ]+)/i,
+      /c'est ([a-zA-ZÀ-ÿ]+)/i,
+      /^([a-zA-ZÀ-ÿ]{3,15})$/i,
+    ];
+    
+    for (const pattern of patterns) {
+      const match = content.match(pattern);
+      if (match && validateName(match[1])) {
+        return match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
+      }
+    }
+  }
+  return null;
 }
 
 const QUIZ = [
@@ -1926,7 +1953,7 @@ export default async function handler(req, res) {
     const userText = typeof lastMsg === "object" ? lastMsg.text || "" : String(lastMsg);
     const lower = userText.toLowerCase();
 
-    const isQuizTrigger = /(^|\b)(quiz|cure ideale|cure idéale|trouver ma cure|trouver ma cure idéale)(\b|$)/i.test(userText);
+    const isQuizTrigger = /(^|\b)(quiz|cure ideale|cure idéale|trouver ma cure|trouver ma cure idéale|je veux faire le quiz|faire le quiz)(\b|$)/i.test(userText);
     const isQuestionTrigger = /(^|\b)(j'ai une question|jai une question|question|peux-tu|peux tu|comment|pourquoi|combien|quand|où)(\b|$)/i.test(lower);
 
     let isQuiz = isQuizTrigger;
@@ -1939,6 +1966,17 @@ export default async function handler(req, res) {
 
     if (isQuiz) {
       const state = getQuizState(messages);
+      
+      const detectedName = extractNameFromConversation(messages);
+      if (detectedName && !state.answers.prenom && state.step === -1) {
+        state.answers.prenom = detectedName;
+        const next = 1;
+        return res.status(200).json({
+          reply: buildQuestion(next, state.answers),
+          conversationId,
+          mode: "A",
+        });
+      }
 
       if (state.step >= 0 && QUIZ[state.step]) {
         const currentQ = QUIZ[state.step];
@@ -2142,9 +2180,17 @@ INTERDICTIONS ABSOLUES:
       });
     }
 
-    const kbSystem = `Tu es Dr THYREN, assistant intelligent de SUPLEMINT.
+    const conversationContext = messages.slice(-10).map(m => {
+      const content = typeof m.content === "string" ? m.content : "";
+      return `${m.role}: ${content}`;
+    }).join("\n");
 
-Ton comportement : intelligence de ChatGPT, ton naturel et empathique.
+    const kbSystem = `Tu es Dr THYREN, expert médical en micronutrition chez SUPLEMINT.
+
+Ton comportement : ULTRA PROACTIF, intelligent comme ChatGPT, empathique.
+
+CONTEXTE CONVERSATION PRÉCÉDENTE:
+${conversationContext}
 
 Règles strictes:
 1. Tu réponds UNIQUEMENT avec les informations dans les DONNÉES fournies
@@ -2152,22 +2198,32 @@ Règles strictes:
 3. Si info absente: "Hélas je n'ai pas cette information dans nos données"
 4. Style: naturel et conversationnel, 2-6 phrases maximum
 
-Intelligence contextuelle OBLIGATOIRE:
+INTELLIGENCE PROACTIVE OBLIGATOIRE:
+
+Si l'utilisateur mentionne un SYMPTÔME (mal au ventre, fatigue, insomnie, stress, etc):
+→ DIRECT : Analyse quel symptôme + Recommande la cure adaptée + Propose quiz avec BOUTON CLIQUABLE
+→ Exemple: "Pour améliorer le confort digestif, la Cure Intestin serait parfaite (GASTRATOP, ENZYM+, TRANSITEAM). Pour une recommandation personnalisée et complète, je te propose de faire notre quiz de 3 minutes.
+
+CHOIX:
+- Oui, je veux faire le quiz
+- Non merci, juste des infos"
 
 Si l'utilisateur mentionne ALLERGIE ou DIABÈTE ou ANTICOAGULANTS:
 → Analyse les compositions et contre-indications de TOUTES les cures
 → Liste les cures COMPATIBLES vs INCOMPATIBLES avec précision
-→ Exemple: "Vous êtes allergique au poisson. Ces 11 cures contiennent du poisson (OMEGA3 ou KRILL) et sont incompatibles : Énergie, Poids, Senior, Homme+, Articulation, Mémoire, Addict Free, Conception, Allaitement, Cardio. Toutes les autres cures sont compatibles."
+→ Exemple: "Vous êtes allergique au poisson. Ces 10 cures contiennent du poisson (OMEGA3 ou KRILL) et sont incompatibles : Énergie, Poids, Senior, Homme+, Articulation, Mémoire, Addict Free, Conception, Allaitement, Cardio. Toutes les autres cures sont compatibles."
 
 Si l'utilisateur pose une question générale SANS faire le quiz:
 → Réponds brièvement (2-3 phrases naturelles)
-→ Push subtil vers le quiz: "Pour une recommandation personnalisée, je t'invite à faire notre quiz de 3 minutes qui analysera ton profil complet."
+→ TOUJOURS proposer le quiz avec BOUTON CLIQUABLE
 
 Si diagnostic médical demandé:
 → "Je ne remplace pas un médecin"
 → Propose RDV: https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
 
-Ton : comme ChatGPT (naturel, intelligent, empathique) - PAS robotique`;
+Ton : comme ChatGPT (naturel, intelligent, empathique, PROACTIF) - PAS robotique
+
+RÈGLE D'OR: TOUJOURS proposer des CHOIX CLIQUABLES pour faciliter la navigation !`;
 
     const kbUser = `QUESTION CLIENT:
 ${userText}
@@ -2181,8 +2237,11 @@ ${DATA_CURES}
 FAQ / SAV:
 ${DATA_SAV}
 
-Retourne un JSON valide:
-{"type":"reponse","text":"...","meta":{"mode":"B","source":"kb_only"}}`;
+Retourne un JSON valide avec choix cliquables:
+{"type":"reponse","text":"...","choices":["Option 1","Option 2"],"meta":{"mode":"B","source":"kb_only"}}
+
+Si tu proposes le quiz, TOUJOURS inclure:
+"choices": ["Oui, je veux faire le quiz", "Non merci, juste des infos"]`;
 
     const kbResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
