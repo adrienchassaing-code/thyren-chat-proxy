@@ -2147,32 +2147,27 @@ export default async function handler(req, res) {
       const next = state.step < 0 ? 0 : nextStep(state.step, state.answers);
 
 if (next >= QUIZ.length) {
-        // 🔥 NOUVEAU: Enregistrer l'email dans Klaviyo AVANT de générer les résultats
-        console.log("📧 Envoi du profil à Klaviyo...");
-        const klaviyoResult = await sendToKlaviyo(state.answers);
-        
-        if (klaviyoResult.success) {
-          console.log("✅ Profil enregistré dans Klaviyo");
-        } else {
-          console.error("⚠️ Échec Klaviyo (quiz continue):", klaviyoResult.error);
-          // On continue le quiz même si Klaviyo échoue
-        }
-        
-        const today = new Date();
-        const fmt = (d) =>
-      
-      if (next >= QUIZ.length) {
-        const today = new Date();
-        const fmt = (d) =>
-          d.getDate().toString().padStart(2, "0") + "/" +
-          (d.getMonth() + 1).toString().padStart(2, "0") + "/" +
-          d.getFullYear();
+  // 🔥 NOUVEAU: Enregistrer l'email dans Klaviyo AVANT de générer les résultats
+  console.log("📧 Envoi du profil à Klaviyo...");
+  const klaviyoResult = await sendToKlaviyo(state.answers);
 
-        const j14 = fmt(new Date(today.getTime() + 14 * 86400000));
-        const j90 = fmt(new Date(today.getTime() + 90 * 86400000));
-        const a = state.answers;
+  if (klaviyoResult.success) {
+    console.log("✅ Profil enregistré dans Klaviyo");
+  } else {
+    console.error("⚠️ Échec Klaviyo (quiz continue):", klaviyoResult.error);
+    // On continue le quiz même si Klaviyo échoue
+  }
 
-        const prompt = `Tu es Dr THYREN, expert médical en micronutrition chez SUPLEMINT.
+  const today = new Date();
+  const fmt = (d) =>
+    d.getDate().toString().padStart(2, "0") + "/" +
+    (d.getMonth() + 1).toString().padStart(2, "0") + "/" +
+    d.getFullYear();
+
+  const j14 = fmt(new Date(today.getTime() + 14 * 86400000));
+  const j90 = fmt(new Date(today.getTime() + 90 * 86400000));
+  const a = state.answers;     
+  const prompt = `Tu es Dr THYREN, expert médical en micronutrition chez SUPLEMINT.
 
 PROFIL COMPLET:
 - Prénom: ${a.prenom}
