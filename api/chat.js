@@ -1569,6 +1569,93 @@ function extractNameFromConversation(messages) {
   return null;
 }
 
+// 🔥 NOUVELLE FONCTION : Enregistrer l'email dans Klaviyo
+async function sendToKlaviyo(profileData) {
+  const KLAVIYO_API_KEY = process.env.KLAVIYO_API_KEY;
+  
+  if (!KLAVIYO_API_KEY) {
+    console.error("❌ Klaviyo API key missing");
+    return { success: false, error: "API key missing" };
+  }
+
+  try {
+    // Préparer les données du profil
+    const properties = {
+      // Données de base
+      first_name: profileData.prenom || "",
+      age_range: profileData.age || "",
+      gender: profileData.sexe || "",
+      
+      // Conditions médicales
+      medical_condition: profileData.condition || "",
+      medical_condition_detail: profileData.condition_detail || "",
+      is_pregnant: profileData.enceinte || "Non",
+      
+      // Objectif
+      main_goal: profileData.objectif || "",
+      goal_detail: profileData.plainte || "",
+      
+      // Symptômes
+      energy_level: profileData.energie || "",
+      weight_status: profileData.poids || "",
+      cold_sensitivity: profileData.froid || "",
+      mood_status: profileData.humeur || "",
+      sleep_quality: profileData.sommeil || "",
+      skin_hair_status: profileData.peau || "",
+      digestion_status: profileData.transit || "",
+      swelling_status: profileData.gonflement || "",
+      concentration_status: profileData.concentration || "",
+      libido_status: profileData.libido || "",
+      
+      // Métadonnées
+      quiz_completed_at: new Date().toISOString(),
+      quiz_version: "v30",
+      source: "THYREN_QUIZ"
+    };
+
+    // Appel API Klaviyo (v2023-10-15)
+    const response = await fetch("https://a.klaviyo.com/api/profiles/", {
+      method: "POST",
+      headers: {
+        "Authorization": `Klaviyo-API-Key ${KLAVIYO_API_KEY}`,
+        "Content-Type": "application/json",
+        "revision": "2023-10-15"
+      },
+      body: JSON.stringify({
+        data: {
+          type: "profile",
+          attributes: {
+            email: profileData.email,
+            properties: properties,
+            // Consentement marketing explicite
+            subscriptions: {
+              email: {
+                marketing: {
+                  consent: "SUBSCRIBED"
+                }
+              }
+            }
+          }
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("❌ Klaviyo error:", response.status, errorText);
+      return { success: false, error: errorText };
+    }
+
+    const data = await response.json();
+    console.log("✅ Email enregistré dans Klaviyo:", profileData.email);
+    return { success: true, data: data };
+
+  } catch (error) {
+    console.error("❌ Klaviyo exception:", error);
+    return { success: false, error: error.message };
+  }
+}
+
 function isPostQuizResponse(messages) {
   // Parcourir les 10 derniers messages pour détecter les résultats
   const recentMessages = messages.slice(-10);
@@ -2059,6 +2146,21 @@ export default async function handler(req, res) {
 
       const next = state.step < 0 ? 0 : nextStep(state.step, state.answers);
 
+if (next >= QUIZ.length) {
+        // 🔥 NOUVEAU: Enregistrer l'email dans Klaviyo AVANT de générer les résultats
+        console.log("📧 Envoi du profil à Klaviyo...");
+        const klaviyoResult = await sendToKlaviyo(state.answers);
+        
+        if (klaviyoResult.success) {
+          console.log("✅ Profil enregistré dans Klaviyo");
+        } else {
+          console.error("⚠️ Échec Klaviyo (quiz continue):", klaviyoResult.error);
+          // On continue le quiz même si Klaviyo échoue
+        }
+        
+        const today = new Date();
+        const fmt = (d) =>
+      
       if (next >= QUIZ.length) {
         const today = new Date();
         const fmt = (d) =>
