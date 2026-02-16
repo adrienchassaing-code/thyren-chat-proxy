@@ -1572,7 +1572,7 @@ function extractNameFromConversation(messages) {
 // 🔥 NOUVELLE FONCTION : Enregistrer l'email dans Klaviyo
 async function sendToKlaviyo(profileData) {
   const KLAVIYO_API_KEY = process.env.KLAVIYO_API_KEY;
-  const KLAVIYO_LIST_ID = process.env.KLAVIYO_LIST_ID; // Nouvelle variable
+  const KLAVIYO_LIST_ID = process.env.KLAVIYO_LIST_ID;
   
   if (!KLAVIYO_API_KEY) {
     console.error("❌ Klaviyo API key missing");
@@ -1629,11 +1629,11 @@ async function sendToKlaviyo(profileData) {
       return { success: false, error: errorText };
     }
 
-    const profileData_response = await profileResponse.json();
-    const profileId = profileData_response.data.id;
-    console.log("✅ Profil créé dans Klaviyo:", profileData.email, "ID:", profileId);
+    const profileDataResponse = await profileResponse.json();
+    const profileId = profileDataResponse.data.id;
+    console.log("✅ Profil créé/mis à jour dans Klaviyo:", profileData.email);
 
-    // ÉTAPE 2 : Ajouter le profil à la liste (= auto-subscribe)
+    // ÉTAPE 2 : Ajouter à la liste pour avoir statut "Subscribed"
     if (KLAVIYO_LIST_ID) {
       const subscribeResponse = await fetch(`https://a.klaviyo.com/api/lists/${KLAVIYO_LIST_ID}/relationships/profiles/`, {
         method: "POST",
@@ -1656,13 +1656,11 @@ async function sendToKlaviyo(profileData) {
         console.log("✅ Profil abonné à la liste marketing");
       } else {
         const errorText = await subscribeResponse.text();
-        console.error("⚠️ Échec abonnement liste:", subscribeResponse.status, errorText);
+        console.error("⚠️ Échec abonnement:", errorText);
       }
-    } else {
-      console.warn("⚠️ KLAVIYO_LIST_ID manquant - profil non abonné");
     }
 
-    return { success: true, data: profileData_response };
+    return { success: true, data: profileDataResponse };
 
   } catch (error) {
     console.error("❌ Klaviyo exception:", error);
