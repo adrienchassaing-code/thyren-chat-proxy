@@ -1570,6 +1570,7 @@ function extractNameFromConversation(messages) {
 }
 
 // 🔥 NOUVELLE FONCTION : Enregistrer l'email dans Klaviyo
+// 🔥 FONCTION KLAVIYO COMPLÈTE
 async function sendToKlaviyo(profileData) {
   const KLAVIYO_API_KEY = process.env.KLAVIYO_API_KEY;
   const KLAVIYO_LIST_ID = process.env.KLAVIYO_LIST_ID;
@@ -1639,64 +1640,71 @@ async function sendToKlaviyo(profileData) {
     const profileId = profileDataResponse.data.id;
     console.log("✅ Profil créé:", profileData.email, "| ID:", profileId);
 
-// ÉTAPE 2 : Subscribe le profil avec consentement marketing
-if (KLAVIYO_LIST_ID) {
-  console.log("📝 Subscription marketing à la liste:", KLAVIYO_LIST_ID);
-  
-  const subscribeResponse = await fetch(`https://a.klaviyo.com/api/profile-subscription-bulk-create-jobs/`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Klaviyo-API-Key ${KLAVIYO_API_KEY}`,
-      "Content-Type": "application/json",
-      "revision": "2023-10-15"
-    },
-    body: JSON.stringify({
-      data: {
-        type: "profile-subscription-bulk-create-job",
-        attributes: {
-          profiles: {
-            data: [
-              {
-                type: "profile",
-                id: profileId,
-                attributes: {
-                  email: profileData.email,
-                  subscriptions: {
-                    email: {
-                      marketing: {
-                        consent: "SUBSCRIBED"
+    // ÉTAPE 2 : Subscribe le profil avec consentement marketing
+    if (KLAVIYO_LIST_ID) {
+      console.log("📝 Subscription marketing à la liste:", KLAVIYO_LIST_ID);
+      
+      const subscribeResponse = await fetch(`https://a.klaviyo.com/api/profile-subscription-bulk-create-jobs/`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Klaviyo-API-Key ${KLAVIYO_API_KEY}`,
+          "Content-Type": "application/json",
+          "revision": "2023-10-15"
+        },
+        body: JSON.stringify({
+          data: {
+            type: "profile-subscription-bulk-create-job",
+            attributes: {
+              profiles: {
+                data: [
+                  {
+                    type: "profile",
+                    id: profileId,
+                    attributes: {
+                      email: profileData.email,
+                      subscriptions: {
+                        email: {
+                          marketing: {
+                            consent: "SUBSCRIBED"
+                          }
+                        }
                       }
                     }
                   }
+                ]
+              }
+            },
+            relationships: {
+              list: {
+                data: {
+                  type: "list",
+                  id: KLAVIYO_LIST_ID
                 }
               }
-            ]
-          }
-        },
-        relationships: {
-          list: {
-            data: {
-              type: "list",
-              id: KLAVIYO_LIST_ID
             }
           }
-        }
+        })
+      });
+
+      console.log("📊 Statut subscription:", subscribeResponse.status);
+
+      if (subscribeResponse.ok) {
+        console.log("✅ Profil abonné marketing");
+      } else {
+        const errorText = await subscribeResponse.text();
+        console.error("⚠️ Échec subscription:", subscribeResponse.status, errorText);
       }
-    })
-  });
+    } else {
+      console.warn("⚠️ KLAVIYO_LIST_ID manquant - profil NON abonné");
+    }
 
-  console.log("📊 Statut subscription:", subscribeResponse.status);
+    return { success: true, data: profileDataResponse };
 
-  if (subscribeResponse.ok) {
-    console.log("✅ Profil abonné marketing");
-  } else {
-    const errorText = await subscribeResponse.text();
-    console.error("⚠️ Échec subscription:", subscribeResponse.status, errorText);
+  } catch (error) {
+    console.error("❌ Klaviyo exception:", error);
+    return { success: false, error: error.message };
   }
-} else {
-  console.warn("⚠️ KLAVIYO_LIST_ID manquant - profil NON abonné");
 }
-
 function isPostQuizResponse(messages) {
   // Parcourir les 10 derniers messages pour détecter les résultats
   const recentMessages = messages.slice(-10);
