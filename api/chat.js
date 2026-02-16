@@ -1574,6 +1574,10 @@ async function sendToKlaviyo(profileData) {
   const KLAVIYO_API_KEY = process.env.KLAVIYO_API_KEY;
   const KLAVIYO_LIST_ID = process.env.KLAVIYO_LIST_ID;
   
+  console.log("🔍 KLAVIYO_API_KEY présent:", !!KLAVIYO_API_KEY);
+  console.log("🔍 KLAVIYO_LIST_ID présent:", !!KLAVIYO_LIST_ID);
+  console.log("🔍 KLAVIYO_LIST_ID valeur:", KLAVIYO_LIST_ID);
+  
   if (!KLAVIYO_API_KEY) {
     console.error("❌ Klaviyo API key missing");
     return { success: false, error: "API key missing" };
@@ -1604,6 +1608,8 @@ async function sendToKlaviyo(profileData) {
       source: "THYREN_QUIZ"
     };
 
+    console.log("📧 Création profil pour:", profileData.email);
+
     // ÉTAPE 1 : Créer/mettre à jour le profil
     const profileResponse = await fetch("https://a.klaviyo.com/api/profiles/", {
       method: "POST",
@@ -1631,10 +1637,12 @@ async function sendToKlaviyo(profileData) {
 
     const profileDataResponse = await profileResponse.json();
     const profileId = profileDataResponse.data.id;
-    console.log("✅ Profil créé/mis à jour dans Klaviyo:", profileData.email);
+    console.log("✅ Profil créé:", profileData.email, "| ID:", profileId);
 
-    // ÉTAPE 2 : Ajouter à la liste pour avoir statut "Subscribed"
+    // ÉTAPE 2 : Ajouter à la liste
     if (KLAVIYO_LIST_ID) {
+      console.log("📝 Ajout à la liste:", KLAVIYO_LIST_ID);
+      
       const subscribeResponse = await fetch(`https://a.klaviyo.com/api/lists/${KLAVIYO_LIST_ID}/relationships/profiles/`, {
         method: "POST",
         headers: {
@@ -1652,12 +1660,16 @@ async function sendToKlaviyo(profileData) {
         })
       });
 
+      console.log("📊 Statut ajout liste:", subscribeResponse.status);
+
       if (subscribeResponse.ok) {
         console.log("✅ Profil abonné à la liste marketing");
       } else {
         const errorText = await subscribeResponse.text();
-        console.error("⚠️ Échec abonnement:", errorText);
+        console.error("⚠️ Échec abonnement liste:", subscribeResponse.status, errorText);
       }
+    } else {
+      console.warn("⚠️ KLAVIYO_LIST_ID manquant - profil NON abonné");
     }
 
     return { success: true, data: profileDataResponse };
