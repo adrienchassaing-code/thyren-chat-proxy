@@ -1632,21 +1632,6 @@ body: JSON.stringify({
     }
   }
 })
-```
-
-**C'est tout !** Enlève simplement tout le bloc `subscriptions`.
-
----
-
-## 🔄 APRÈS LA MODIFICATION
-
-1. **Sauvegarde** le fichier
-2. **Redéploie** sur Vercel
-3. **Refais le quiz** avec un email de test
-4. **Vérifie les logs** → Tu devrais voir :
-```
-   ✅ Email enregistré dans Klaviyo: test@example.com
-   ✅ Profil enregistré dans Klaviyo
     });
 
     if (!response.ok) {
