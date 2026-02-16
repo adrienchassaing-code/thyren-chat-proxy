@@ -1639,45 +1639,62 @@ async function sendToKlaviyo(profileData) {
     const profileId = profileDataResponse.data.id;
     console.log("✅ Profil créé:", profileData.email, "| ID:", profileId);
 
-    // ÉTAPE 2 : Ajouter à la liste
-    if (KLAVIYO_LIST_ID) {
-      console.log("📝 Ajout à la liste:", KLAVIYO_LIST_ID);
-      
-      const subscribeResponse = await fetch(`https://a.klaviyo.com/api/lists/${KLAVIYO_LIST_ID}/relationships/profiles/`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Klaviyo-API-Key ${KLAVIYO_API_KEY}`,
-          "Content-Type": "application/json",
-          "revision": "2023-10-15"
+// ÉTAPE 2 : Subscribe le profil avec consentement marketing
+if (KLAVIYO_LIST_ID) {
+  console.log("📝 Subscription marketing à la liste:", KLAVIYO_LIST_ID);
+  
+  const subscribeResponse = await fetch(`https://a.klaviyo.com/api/profile-subscription-bulk-create-jobs/`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Klaviyo-API-Key ${KLAVIYO_API_KEY}`,
+      "Content-Type": "application/json",
+      "revision": "2023-10-15"
+    },
+    body: JSON.stringify({
+      data: {
+        type: "profile-subscription-bulk-create-job",
+        attributes: {
+          profiles: {
+            data: [
+              {
+                type: "profile",
+                id: profileId,
+                attributes: {
+                  email: profileData.email,
+                  subscriptions: {
+                    email: {
+                      marketing: {
+                        consent: "SUBSCRIBED"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
         },
-        body: JSON.stringify({
-          data: [
-            {
-              type: "profile",
-              id: profileId
+        relationships: {
+          list: {
+            data: {
+              type: "list",
+              id: KLAVIYO_LIST_ID
             }
-          ]
-        })
-      });
-
-      console.log("📊 Statut ajout liste:", subscribeResponse.status);
-
-      if (subscribeResponse.ok) {
-        console.log("✅ Profil abonné à la liste marketing");
-      } else {
-        const errorText = await subscribeResponse.text();
-        console.error("⚠️ Échec abonnement liste:", subscribeResponse.status, errorText);
+          }
+        }
       }
-    } else {
-      console.warn("⚠️ KLAVIYO_LIST_ID manquant - profil NON abonné");
-    }
+    })
+  });
 
-    return { success: true, data: profileDataResponse };
+  console.log("📊 Statut subscription:", subscribeResponse.status);
 
-  } catch (error) {
-    console.error("❌ Klaviyo exception:", error);
-    return { success: false, error: error.message };
+  if (subscribeResponse.ok) {
+    console.log("✅ Profil abonné marketing");
+  } else {
+    const errorText = await subscribeResponse.text();
+    console.error("⚠️ Échec subscription:", subscribeResponse.status, errorText);
   }
+} else {
+  console.warn("⚠️ KLAVIYO_LIST_ID manquant - profil NON abonné");
 }
 
 function isPostQuizResponse(messages) {
