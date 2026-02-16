@@ -1496,9 +1496,9 @@ Code : STANARNOW10
 Offre : -10% à l'inscription newsletter
 Conditions : Nouveaux inscrits uniquement
 
-Code : JANVIER30
-Offre : -30% sur chaque commande
-Conditions : Valable janvier 2026 uniquement
+Code : THYRO15
+Offre : -15% sur chaque commande
+Conditions : Valable février 2026 uniquement
 
 RENDEZ-VOUS & ACCOMPAGNEMENT
 
@@ -1509,7 +1509,7 @@ R: Nos nutritionnistes sont disponibles pour un échange gratuit et personnalis�
 FIN DU DOCUMENT
 `;
 
-console.log("✅ THYREN V28 - CHATGPT QUALITY + 3-5 CTA OBLIGATOIRES");
+console.log("✅ THYREN V29 - FIX POST-QUIZ + RENDEZ-VOUS CLIQUABLE + 3-5 CTA");
 
 function validateEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1966,27 +1966,32 @@ export default async function handler(req, res) {
     const userText = typeof lastMsg === "object" ? lastMsg.text || "" : String(lastMsg);
     const lower = userText.toLowerCase();
 
+    // DÉTECTION POST-QUIZ EN PREMIER (pour éviter validation email incorrecte)
+    const isPostQuiz = isPostQuizResponse(messages);
+    
     const isQuizTrigger = /(^|\b)(quiz|cure ideale|cure idéale|trouver ma cure|trouver ma cure idéale|je veux faire le quiz|faire le quiz|oui|ok|go|commençons|commence|on y va|c'est parti|allons-y)(\b|$)/i.test(userText);
     const isQuestionTrigger = /(^|\b)(j'ai une question|jai une question|question|peux-tu|peux tu|comment|pourquoi|combien|quand|où)(\b|$)/i.test(lower);
 
-    let isQuiz = isQuizTrigger;
+    let isQuiz = isQuizTrigger && !isPostQuiz; // Exclure post-quiz du mode quiz
     
     const previousMsg = messages.slice(-3, -1);
     for (const m of previousMsg) {
       const content = typeof m.content === "string" ? m.content : "";
       if (m.role === "assistant" && /quiz|recommandation personnalisée/i.test(content)) {
         if (/(^|\b)(oui|ok|go|commençons|commence|d'accord|dacord)(\b|$)/i.test(lower)) {
-          isQuiz = true;
+          isQuiz = true && !isPostQuiz;
           break;
         }
       }
     }
     
-    for (const m of messages) {
-      try {
-        const parsed = JSON.parse(typeof m.content === "string" ? m.content : "{}");
-        if (parsed.meta?.mode === "A") isQuiz = true;
-      } catch {}
+    if (!isPostQuiz) {
+      for (const m of messages) {
+        try {
+          const parsed = JSON.parse(typeof m.content === "string" ? m.content : "{}");
+          if (parsed.meta?.mode === "A") isQuiz = true;
+        } catch {}
+      }
     }
 
     if (isQuiz) {
@@ -2095,6 +2100,7 @@ Identifie les patterns comme un médecin :
 - Troubles du sommeil dominants → CURE SOMMEIL
 - Stress/anxiété dominants → CURE ZÉNITUDE
 - Femme 45-60 ans + symptômes hormonaux → CURE MÉNOPAUSE
+- Autre voir cure la plus inteligente
 
 INSTRUCTION DE SORTIE:
 Tu dois produire un JSON avec EXACTEMENT ce format (5 blocs séparés par "===BLOCK==="):
@@ -2122,10 +2128,10 @@ ATTENTION CTA : Termine BLOC 2 ici. Ne PAS écrire "Commander ma cure" ni "Ajout
 
 BLOC 3 - CURE COMPLÉMENTAIRE (même format que BLOC 2, OU "Aucune cure complémentaire nécessaire pour le moment" si pas pertinent)
 
-BLOC 4 - RENDEZ-VOUS EXPERT:
+BLOC 4 - RENDEZ-VOUS EXPERT (FORMAT EXACT avec URL):
 La vraie force d'une cure réside dans sa personnalisation. Nos nutritionnistes sont disponibles dès aujourd'hui pour un échange offert par téléphone ou visio.
 
-Je réserve mon rendez-vous
+https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
 
 BLOC 5 - QUESTION FINALE PERSONNALISÉE:
 [Question naturelle et personnalisée au profil de ${a.prenom}]
@@ -2138,7 +2144,7 @@ RÈGLES CRITIQUES:
 - SÉCURITÉ : Vérifier TOUTES les contre-indications avant recommandation
 - BLOC 1 : EXACTEMENT 3-4 phrases (naturelles et empathiques)
 - BLOCS 2 & 3 : TOUJOURS inclure URL complète + TERMINER APRÈS les dates J+14/J+90 - NE PAS ÉCRIRE les CTA
-- BLOC 4 : Écrire "Je réserve mon rendez-vous" (sera converti en lien)
+- BLOC 4 : Inclure l'URL complète Cowlendar (sera convertie en bouton cliquable par le frontend)
 - BLOC 5 : Format texte simple avec "CHOIX:" suivi de 2 options avec tiret
 - Utiliser les noms EXACTS des cures (avec ®)
 - Utiliser les noms EXACTS des gélules dans composition
@@ -2150,6 +2156,7 @@ INTERDICTIONS ABSOLUES:
 - NE PAS écrire "Commander ma cure" dans le texte
 - NE PAS écrire "Ajouter au panier" dans le texte
 - NE PAS écrire "En savoir plus" dans le texte
+- NE PAS écrire "Je réserve mon rendez-vous" (juste l'URL suffit)
 - Ces boutons sont gérés par le frontend`;
 
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -2193,7 +2200,7 @@ INTERDICTIONS ABSOLUES:
       });
     }
 
-    if (isPostQuizResponse(messages) && !isQuiz) {
+    if (isPostQuiz && !isQuiz) {
       const lower = userText.toLowerCase();
       
       if (/oui|j'aimerais|en savoir plus|yes/i.test(lower)) {
