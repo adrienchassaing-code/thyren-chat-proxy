@@ -1496,9 +1496,9 @@ Code : STANARNOW10
 Offre : -10% à l'inscription newsletter
 Conditions : Nouveaux inscrits uniquement
 
-Code : THYRO15
-Offre : -15% sur chaque commande
-Conditions : Valable février 2026 uniquement
+Code : JANVIER30
+Offre : -30% sur chaque commande
+Conditions : Valable janvier 2026 uniquement
 
 RENDEZ-VOUS & ACCOMPAGNEMENT
 
@@ -1570,18 +1570,34 @@ function extractNameFromConversation(messages) {
 }
 
 function isPostQuizResponse(messages) {
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const msg = messages[i];
+  // Parcourir les 10 derniers messages pour détecter les résultats
+  const recentMessages = messages.slice(-10);
+  
+  for (let i = recentMessages.length - 1; i >= 0; i--) {
+    const msg = recentMessages[i];
     if (msg.role !== "assistant") continue;
     
     try {
       const content = typeof msg.content === "string" ? msg.content : "";
-      const parsed = JSON.parse(content);
       
-      if (parsed.type === "resultat") {
+      // Méthode 1 : Parser le JSON
+      try {
+        const parsed = JSON.parse(content);
+        if (parsed.type === "resultat") {
+          return true;
+        }
+      } catch {}
+      
+      // Méthode 2 : Détecter les marqueurs textuels des résultats
+      if (content.includes("===BLOCK===") || 
+          content.includes("Cure ") && content.includes("®") ||
+          content.includes("Premiers effets possibles") ||
+          content.includes("Résultats optimaux")) {
         return true;
       }
-    } catch {}
+    } catch (err) {
+      console.error("Error checking post-quiz:", err);
+    }
   }
   return false;
 }
@@ -2100,12 +2116,16 @@ Identifie les patterns comme un médecin :
 - Troubles du sommeil dominants → CURE SOMMEIL
 - Stress/anxiété dominants → CURE ZÉNITUDE
 - Femme 45-60 ans + symptômes hormonaux → CURE MÉNOPAUSE
-- Autre voir cure la plus inteligente
 
 INSTRUCTION DE SORTIE:
 Tu dois produire un JSON avec EXACTEMENT ce format (5 blocs séparés par "===BLOCK==="):
 
-{"type":"resultat","text":"BLOC1===BLOCK===BLOC2===BLOCK===BLOC3===BLOCK===BLOC4===BLOCK===BLOC5","meta":{"mode":"A"}}
+{
+  "type":"resultat",
+  "text":"BLOC1===BLOCK===BLOC2===BLOCK===BLOC3===BLOCK===BLOC4===BLOCK===BLOC5",
+  "appointment_url":"https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252",
+  "meta":{"mode":"A"}
+}
 
 STRUCTURE OBLIGATOIRE DES BLOCS:
 
@@ -2128,10 +2148,10 @@ ATTENTION CTA : Termine BLOC 2 ici. Ne PAS écrire "Commander ma cure" ni "Ajout
 
 BLOC 3 - CURE COMPLÉMENTAIRE (même format que BLOC 2, OU "Aucune cure complémentaire nécessaire pour le moment" si pas pertinent)
 
-BLOC 4 - RENDEZ-VOUS EXPERT (FORMAT EXACT avec URL):
+BLOC 4 - RENDEZ-VOUS EXPERT (FORMAT EXACT):
 La vraie force d'une cure réside dans sa personnalisation. Nos nutritionnistes sont disponibles dès aujourd'hui pour un échange offert par téléphone ou visio.
 
-https://app.cowlendar.com/cal/67d2de1f5736e38664589693/54150414762252
+NOTE: L'URL de rendez-vous sera automatiquement ajoutée comme bouton par le système. Ne l'inclus PAS dans le texte de BLOC 4.
 
 BLOC 5 - QUESTION FINALE PERSONNALISÉE:
 [Question naturelle et personnalisée au profil de ${a.prenom}]
@@ -2144,20 +2164,22 @@ RÈGLES CRITIQUES:
 - SÉCURITÉ : Vérifier TOUTES les contre-indications avant recommandation
 - BLOC 1 : EXACTEMENT 3-4 phrases (naturelles et empathiques)
 - BLOCS 2 & 3 : TOUJOURS inclure URL complète + TERMINER APRÈS les dates J+14/J+90 - NE PAS ÉCRIRE les CTA
-- BLOC 4 : Inclure l'URL complète Cowlendar (sera convertie en bouton cliquable par le frontend)
+- BLOC 4 : Juste le texte d'invitation, PAS d'URL (elle est dans appointment_url)
 - BLOC 5 : Format texte simple avec "CHOIX:" suivi de 2 options avec tiret
 - Utiliser les noms EXACTS des cures (avec ®)
 - Utiliser les noms EXACTS des gélules dans composition
 - JAMAIS inventer de composition
 - Structure: EXACTEMENT 5 blocs séparés par ===BLOCK===
 - Ton : naturel, empathique, comme ChatGPT (PAS robotique)
+- TOUJOURS inclure le champ appointment_url avec l'URL Cowlendar complète
 
 INTERDICTIONS ABSOLUES:
 - NE PAS écrire "Commander ma cure" dans le texte
 - NE PAS écrire "Ajouter au panier" dans le texte
 - NE PAS écrire "En savoir plus" dans le texte
-- NE PAS écrire "Je réserve mon rendez-vous" (juste l'URL suffit)
-- Ces boutons sont gérés par le frontend`;
+- NE PAS écrire "Je réserve mon rendez-vous" dans le texte
+- NE PAS inclure l'URL Cowlendar dans BLOC 4 (elle est dans appointment_url)
+- Ces boutons sont gérés automatiquement par le frontend`;
 
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
@@ -2204,7 +2226,16 @@ INTERDICTIONS ABSOLUES:
       const lower = userText.toLowerCase();
       
       if (/oui|j'aimerais|en savoir plus|yes/i.test(lower)) {
-        const postQuizSystem = `Tu es Dr THYREN, expert médical en micronutrition chez SUPLEMINT.
+        // Fallback immédiat en cas d'erreur
+        const fallbackReply = {
+          type: "reponse",
+          text: "Avec plaisir ! Pour aller plus loin, je te recommande de prendre rendez-vous avec nos nutritionnistes. Ils pourront t'accompagner personnellement dans ta démarche santé. C'est gratuit et sans engagement, tu peux choisir le créneau qui te convient le mieux.",
+          choices: ["Prendre rendez-vous gratuit", "Autre question", "C'est parfait merci"],
+          meta: { mode: "B" },
+        };
+
+        try {
+          const postQuizSystem = `Tu es Dr THYREN, expert médical en micronutrition chez SUPLEMINT.
 
 L'utilisateur vient de terminer le quiz et a demandé plus d'informations.
 
@@ -2222,42 +2253,43 @@ Réponds de manière :
 Format de sortie :
 {"type":"reponse","text":"...","choices":["Prendre rendez-vous gratuit","Autre question","C'est parfait merci"],"meta":{"mode":"B"}}`;
 
-        const postQuizResponse = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            Authorization: "Bearer " + KEY,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "gpt-4o",
-            messages: [
-              { role: "system", content: postQuizSystem },
-              { role: "user", content: userText },
-            ],
-            response_format: { type: "json_object" },
-            temperature: 0.7,
-            max_tokens: 800,
-          }),
-        });
+          const postQuizResponse = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + KEY,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "gpt-4o",
+              messages: [
+                { role: "system", content: postQuizSystem },
+                { role: "user", content: userText },
+              ],
+              response_format: { type: "json_object" },
+              temperature: 0.7,
+              max_tokens: 800,
+            }),
+          });
 
-        if (!postQuizResponse.ok) {
-          return res.status(500).json({ error: "OpenAI error" });
-        }
+          if (!postQuizResponse.ok) {
+            console.error("OpenAI error in post-quiz:", await postQuizResponse.text());
+            return res.status(200).json({ reply: fallbackReply, conversationId, mode: "B" });
+          }
 
-        let reply;
-        try {
           const data = await postQuizResponse.json();
-          reply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
-        } catch {
-          reply = {
-            type: "reponse",
-            text: "Parfait ! N'hésitez pas si vous avez d'autres questions. Nos nutritionnistes sont également disponibles pour un échange personnalisé gratuit.",
-            choices: ["Prendre rendez-vous gratuit", "Autre question"],
-            meta: { mode: "B" },
-          };
-        }
+          const reply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
+          
+          // Vérifier que la réponse est valide
+          if (!reply.text || !reply.choices) {
+            console.error("Invalid OpenAI response:", reply);
+            return res.status(200).json({ reply: fallbackReply, conversationId, mode: "B" });
+          }
 
-        return res.status(200).json({ reply, conversationId, mode: "B" });
+          return res.status(200).json({ reply, conversationId, mode: "B" });
+        } catch (err) {
+          console.error("Post-quiz error:", err);
+          return res.status(200).json({ reply: fallbackReply, conversationId, mode: "B" });
+        }
       }
       
       if (/non|merci|parfait|c'est bon/i.test(lower)) {
@@ -2425,14 +2457,31 @@ RETOURNE JSON avec 3-4 phrases + 3-5 CTA + product_card si cure.`;
     });
 
     if (!kbResponse.ok) {
-      return res.status(500).json({ error: "OpenAI error" });
+      console.error("KB OpenAI error:", await kbResponse.text());
+      // Fallback si l'API échoue
+      return res.status(200).json({
+        reply: {
+          type: "reponse",
+          text: "Je suis désolé, je rencontre un problème technique. Pour t'aider au mieux, je t'invite à faire notre quiz de 3 minutes qui te donnera une recommandation personnalisée, ou à contacter directement nos experts.",
+          choices: ["Faire le quiz", "Parler à un expert", "Autre question"],
+          meta: { mode: "B" },
+        },
+        conversationId,
+        mode: "B",
+      });
     }
 
     let reply;
     try {
       const data = await kbResponse.json();
       reply = JSON.parse(data.choices?.[0]?.message?.content || "{}");
-    } catch {
+      
+      // Vérifier que la réponse est valide
+      if (!reply.text || !reply.choices) {
+        throw new Error("Invalid response structure");
+      }
+    } catch (err) {
+      console.error("KB parsing error:", err);
       reply = {
         type: "reponse",
         text: "Hélas je n'ai pas cette information. Pour une recommandation personnalisée, je t'invite à faire notre quiz de 3 minutes.",
@@ -2443,7 +2492,17 @@ RETOURNE JSON avec 3-4 phrases + 3-5 CTA + product_card si cure.`;
 
     return res.status(200).json({ reply, conversationId, mode: "B" });
   } catch (err) {
-    console.error("❌ Erreur:", err);
-    return res.status(500).json({ error: "Server error" });
+    console.error("❌ Erreur globale:", err);
+    // Dernier fallback : ne jamais retourner d'erreur 500
+    return res.status(200).json({
+      reply: {
+        type: "reponse",
+        text: "Je suis désolé, je rencontre un problème technique momentané. Peux-tu réessayer ? Si le problème persiste, n'hésite pas à contacter nos experts directement.",
+        choices: ["Réessayer", "Faire le quiz", "Parler à un expert"],
+        meta: { mode: "B" },
+      },
+      conversationId: req.body?.conversationId,
+      mode: "B",
+    });
   }
 }
